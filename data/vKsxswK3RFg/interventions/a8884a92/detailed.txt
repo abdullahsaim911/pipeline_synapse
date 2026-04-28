@@ -1,0 +1,13 @@
+In this diagram, we have two objects: a plane and a car. The plane has a mass of 50,000kg and is moving at a velocity of 1m/s, while the car has a mass of 2000kg and is moving at a velocity of 30m/s.
+
+The teacher is showing us this diagram to illustrate the concept of momentum, which is a measure of an object's resistance to changes in its motion. Momentum is defined as the product of an object's mass and its velocity (MV). The teacher is saying that because M is already taken for another purpose, they will use P as the symbol for momentum.
+
+The arrows in the diagram represent the velocities of the plane and the car. The blue color of the arrows indicates that they are moving forward. The equation at the bottom left of the diagram (Momentum = MV) summarizes this concept, stating that the momentum of an object is equal to its mass multiplied by its velocity.
+
+The teacher explains that if an object has zero velocity, its momentum goes to zero because it is not moving at all. Conversely, if an object has a very small mass or is very light compared to our body weight, it will have low momentum and be easy to stop. On the other hand, if an object has both high mass and high velocity, it will have large momentum and be difficult to stop.
+
+The teacher encourages us to think of momentum as a measure of how hard it is to stop something, with more momentum making it harder to stop an object. The teacher also mentions that there are other ways to think about momentum beyond the product of mass and velocity, but in this video they will focus on this definition.
+
+In terms of cross-domain connections, this concept of momentum is related to the concept of velocity, which we discussed earlier. It can also be found in physics and engineering principles, where it plays a crucial role in understanding collisions, projectiles, and the motion of systems with multiple interacting objects.
+
+To help visualize this, imagine a bowling ball and a ping pong ball both moving towards you at the same speed. The bowling ball is much heavier than the ping pong ball, so it will require more effort to stop it. Now, if you throw the bowling ball away from you with the same force as before, the p

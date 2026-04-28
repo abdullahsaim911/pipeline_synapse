@@ -1,0 +1,19 @@
+In this slide, we have a visual presentation that compares the momentum of two objects: an airplane and a car. The slide is divided into two main sections, with each section containing a diagram and accompanying text. The left side represents an airplane with a mass of 50,000 kg and a velocity of 1 m/s, while the right side shows a car with a mass of 2000 kg and a velocity of 30 m/s.
+
+In the middle of the slide, we find the term 'Momentum' and the phrase 'How hard to stop something.' The teacher is explaining that momentum is a quantity that tells us how difficult it is to stop an object. Momentum is calculated as a product of mass and velocity.
+
+First, let's calculate the momentum of the airplane:
+- We call the momentum P-A (Airplane).
+- The mass of the airplane is 50,000 kg.
+- The velocity of the airplane is 1 m/s.
+- Momentum is calculated as mass times velocity, so P-A = 50,000 kg * 1 m/s, which equals 50,000 kgm/s.
+
+Next, we calculate the momentum of the car:
+- We call the momentum P-C (Car).
+- The mass of the car is 2000 kg.
+- The velocity of the car is 30 m/s.
+- Momentum is calculated as mass times velocity, so P-C = 2000 kg * 30 m/s, which equals 60,000 kgm/s.
+
+Comparing both objects, we find that the car has a higher momentum (60,000 kgm/s) compared to the airplane (50,000 kgm/s). This means it will take more effort to stop the car than the airplane. The teacher explains this principle by saying, "The car is the one that's harder to stop, so we can assign that to Superman."
+
+In summary, momentum tells us how difficult it is to stop an object. It is calculated as a product of mass and velocity. In our example, the car has more momentum than the airplane, making it harder to stop. This deepens our

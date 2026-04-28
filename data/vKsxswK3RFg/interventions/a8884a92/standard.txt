@@ -1,0 +1,7 @@
+Your teacher is showing this diagram to explain the concept of momentum, which is a quantity that tells us how hard it is to stop an object. The diagram consists of a plane and a car, each with a mass and velocity. The plane has a mass of 50,000kg and a velocity of 1m/s, while the car has a mass of 2000kg and a velocity of 30m/s.
+
+To visualize this, imagine the plane and car as two objects moving along a straight line. The arrow pointing to the right from the plane represents its movement with a speed of 1m/s, and the arrow pointing to the left from the car represents its movement with a speed of 30m/s.
+
+The equation 'Momentum = MV' written at the bottom left shows that momentum is calculated by multiplying the mass (M) of an object by its velocity (V). In this case, the plane has more mass than the car, but it moves slower, so it has less momentum than the car. This explains why it might be harder to stop the car, which has more momentum.
+
+Your teacher is saying that momentum is a useful concept because it helps us understand how much effort is required to change the motion of an object. In future videos, you will learn other ways to think about momentum, but for now, this simple formula should help you understand its basic principles.

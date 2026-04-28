@@ -1,0 +1,65 @@
+{
+  "content_type": "diagram",
+  "visual_analysis": {
+    "elements": [
+      {
+        "shape": "plane",
+        "text": "50,000kg",
+        "position": "top-left"
+      },
+      {
+        "shape": "car",
+        "text": "2000kg",
+        "position": "top-right"
+      },
+      {
+        "shape": "arrow",
+        "text": "1m/s",
+        "position": "top-center-left"
+      },
+      {
+        "shape": "arrow",
+        "text": "30m/s",
+        "position": "top-center-right"
+      },
+      {
+        "shape": "equation",
+        "text": "Momentum = MV",
+        "position": "bottom-left"
+      }
+    ],
+    "relationships": [
+      {
+        "start": "plane",
+        "end": "arrow",
+        "label": "50,000kg",
+        "direction": "left"
+      },
+      {
+        "start": "car",
+        "end": "arrow",
+        "label": "2000kg",
+        "direction": "right"
+      }
+    ],
+    "spatial_layout": "Linear",
+    "colors_styles": "Black background, white text, blue arrows"
+  },
+  "structural_description": "The diagram consists of a plane and a car, each with a mass and velocity. The plane has a mass of 50,000kg and a velocity of 1m/s, while the car has a mass of 2000kg and a velocity of 30m/s. The plane's mass and velocity are connected by a blue arrow pointing to the right, and the car's mass and velocity are connected by a blue arrow pointing to the left. The equation 'Momentum = MV' is written at the bottom left.",
+  "reading_order": [
+    "plane",
+    "arrow",
+    "car",
+    "arrow",
+    "equation"
+  ],
+  "layout": "Linear",
+  "text_readout": "50,000kg 1m/s 2000kg 30m/s Momentum = MV",
+  "colors_styles": "Black background, white text, blue arrows",
+  "detected_types": [
+    "diagram"
+  ],
+  "conceptual_hints": "",
+  "spatial_map": "",
+  "missing_elements": null
+}

@@ -1,0 +1,51 @@
+{
+  "content_type": "slide",
+  "visual_analysis": {
+    "equations": [
+      {
+        "equation": "P_A = 50,000kg x 1m/s",
+        "result": "50,000 kgm/s"
+      },
+      {
+        "equation": "P_C = 2000kg x 30m/s",
+        "result": "60,000 kgm/s"
+      }
+    ],
+    "diagrams": [
+      {
+        "diagram": "An airplane with a mass of 50,000 kg and a velocity of 1 m/s",
+        "description": "The airplane is shown on the left side of the diagram with a mass of 50,000 kg and a velocity of 1 m/s."
+      },
+      {
+        "diagram": "A car with a mass of 2000 kg and a velocity of 30 m/s",
+        "description": "The car is shown on the right side of the diagram with a mass of 2000 kg and a velocity of 30 m/s."
+      }
+    ],
+    "text": [
+      {
+        "text": "Momentum",
+        "description": "The term 'Momentum' is written in the middle of the diagram."
+      },
+      {
+        "text": "How hard to stop something",
+        "description": "The phrase 'How hard to stop something' is written in the middle of the diagram."
+      }
+    ]
+  },
+  "structural_description": "The slide is divided into two main sections. On the left side, there is a diagram of an airplane with a mass of 50,000 kg and a velocity of 1 m/s. On the right side, there is a diagram of a car with a mass of 2000 kg and a velocity of 30 m/s. In the middle of the slide, the term 'Momentum' and the phrase 'How hard to stop something' are written.",
+  "reading_order": [
+    "diagram of airplane",
+    "diagram of car",
+    "term 'Momentum'",
+    "phrase 'How hard to stop something'"
+  ],
+  "layout": "The slide is organized with two main sections, one for the airplane and one for the car, with the terms 'Momentum' and 'How hard to stop something' in the middle.",
+  "text_readout": "The slide contains a diagram of an airplane with a mass of 50,000 kg and a velocity of 1 m/s, and a diagram of a car with a mass of 2000 kg and a velocity of 30 m/s. The terms 'Momentum' and 'How hard to stop something' are written in the middle of the slide.",
+  "spatial_map": "The airplane diagram is on the left side of the slide, the car diagram is on the right side of the slide, and the terms 'Momentum' and 'How hard to stop something' are in the middle of the slide.",
+  "colors_styles": "The slide uses a black background with white text and lines. The diagrams are colored with blue and red for the airplane and car, respectively.",
+  "missing_elements": null,
+  "detected_types": [
+    "slide"
+  ],
+  "conceptual_hints": ""
+}

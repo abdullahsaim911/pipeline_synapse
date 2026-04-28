@@ -1,0 +1,54 @@
+{
+  "content_type": "slide",
+  "visual_analysis": {
+    "equations": [
+      {
+        "text": "Momentum = p = m * v",
+        "position": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ],
+    "graphs": [
+      {
+        "text": "How hard to stop something",
+        "position": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ],
+    "diagrams": [
+      {
+        "text": "50,000kg 1m/s",
+        "position": {
+          "x": 0,
+          "y": 0
+        }
+      },
+      {
+        "text": "2000kg 30m/s",
+        "position": {
+          "x": 0,
+          "y": 0
+        }
+      }
+    ]
+  },
+  "structural_description": "The slide is organized into three main sections. The top section contains an equation for momentum. The middle section has a graph labeled 'How hard to stop something.' The bottom section shows two diagrams representing different masses and velocities.",
+  "reading_order": [
+    "equations",
+    "graphs",
+    "diagrams"
+  ],
+  "layout": "The slide is divided into three main sections: an equation for momentum at the top, a graph in the middle, and two diagrams at the bottom.",
+  "text_readout": "Momentum = p = m * v\nHow hard to stop something\n50,000kg 1m/s\n2000kg 30m/s",
+  "spatial_map": "The equation is at the top, the graph is in the middle, and the diagrams are at the bottom.",
+  "colors_styles": "The text is in white, the equation is in purple, and the diagrams are in black with blue arrows.",
+  "missing_elements": null,
+  "detected_types": [
+    "slide"
+  ],
+  "conceptual_hints": ""
+}

@@ -1,0 +1,13 @@
+In this slide, we have three main sections that organize our visual content. The top section contains an equation for momentum, which is expressed as a multiplication of mass and velocity (Momentum = p = m * v). This equation is located at the origin (0, 0) of the slide.
+
+The middle section shows a graph labeled 'How hard to stop something.' Although we cannot see the graph, our teacher mentioned that it represents how difficult it is to stop an object based on its momentum. This connection between the graph and the equation suggests that the graph likely plots momentum (p) against some other variable, such as mass or velocity.
+
+The bottom section displays two diagrams representing different masses and velocities: 50,000kg at 1m/s and 2000kg at 30m/s. These diagrams provide concrete examples of objects with varying momentum values.
+
+Our teacher begins by explaining the concept of momentum as a measure of how hard it is to stop an object. They emphasize that more momentum results in greater difficulty stopping an object. This idea is related to our understanding of velocity, which measures the rate of change of position. Momentum can be thought of as a derived quantity, combining both mass and velocity.
+
+The teacher then provides examples to help us better understand the formula for momentum. They begin by discussing what happens when the velocity of an object becomes zero—its momentum also goes to zero, making sense because if something isn't moving, it doesn't take any effort to stop it. Similarly, if the mass of an object is zero, its momentum also approaches zero, as a very light object (like a mosquito) would be easy to stop.
+
+On the other hand, our teacher explains that high momentum corresponds to objects with both high mass and high velocity, such as a freight train moving at 100 kilometers per hour. These objects are difficult to stop because of their considerable inertia. The teacher also discusses the units of momentum, which are kilograms meters per second (kg m/s).
+
+Finally, our teacher asks us to calculate the momenta of both objects displayed on the slide—the airplane and the car. We are encouraged to use the formula for momentum and multiply the mass by velocity for each object to find their respective momentum values. By comparing these values, we can determine which object is harder to stop.
