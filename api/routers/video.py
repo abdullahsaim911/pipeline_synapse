@@ -397,12 +397,18 @@ async def generate_explanation(
         # 5. Call orchestrator function to generate explanation
         orchestrator_instance = get_orchestrator()
 
+        # Check clip confidence and set content_type accordingly
+        content_type_to_use = intervention.content_type or "unknown"
+        if intervention.clip_confidence is not None and intervention.clip_confidence < 0.40:
+            content_type_to_use = "unknown"
+            print(f"[API] Low clip confidence ({intervention.clip_confidence:.2f}) - using 'unknown' content type")
+
         result = orchestrator_instance.generate_intervention_explanation(
             video_id=request.video_id,
             intervention_id=intervention.id,
             intervention_timestamp=intervention.timestamp,
             frame_path=intervention.frame_path,
-            content_type=intervention.content_type or "unknown",
+            content_type=content_type_to_use,
             trigger_reason=intervention.trigger_reason or "VLM Analysis",
             transcript_entries=all_transcripts,
             output_mode=request.output_mode

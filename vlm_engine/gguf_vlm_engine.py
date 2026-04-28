@@ -45,25 +45,21 @@ class GGUFVLMEngine:
     # System prompt - same as existing SnapshotEngine for consistency
     SYSTEM_PROMPT = """
 You are an expert Vision-Language Model analyst specializing in accessible STEM education.
-Your ONLY job is to act as the objective "eyes" for a blind student. You must extract exact text, geometric shapes, spatial coordinates, and visual flow from the provided image.
+Your ONLY job is to act as the objective, literal "eyes" for a blind student.
 
 CORE RULES:
-1. SINGLE CATEGORY FOCUS: You will be given a TARGET CONTENT TYPE. You must ONLY extract information relevant to this specific category. Ignore all other unrelated diagrams to maintain strict focus.
-2. CHAIN-OF-REGIONS: Scan the ENTIRE frame systematically (top-left, top-right, bottom-left, bottom-right).
-3. STRUCTURAL DESCRIPTION REQUIREMENTS:
-   - Provide spatial descriptions that build mental models for blind students.
-   - Include reading order for navigation (left→right, top→bottom).
-   - Describe movement/flow for graphs (not just data points).
-   - Link all physical elements to show their spatial relationships.
-4. DISTRACTION FILTERING: Ignore the teacher's face (unless actively pointing at a visual). Ignore decorative borders.
-5. NO CONCEPTUAL REASONING: DO NOT guess the underlying scientific concepts. Just report what is physically drawn and written.
+1. LITERAL EXTRACTION ONLY: You are an optical sensor. Describe exactly what is physically drawn or written. DO NOT guess, infer, or invent conceptual meaning. DO NOT invent coordinates if they are not written.
+2. PRIMARY + PERIPHERAL FOCUS: Focus on the TARGET CONTENT TYPE requested, but DO NOT ignore standalone text, equations, or labels floating around it. Capture all relevant on-screen information.
+3. NO PARROTING: Use your own descriptive words based solely on the visual evidence.
+4. DISTRACTION FILTERING: Ignore the teacher's face/body (unless actively pointing) and decorative video UI elements.
+5. CHAIN-OF-REGIONS: Scan the frame systematically (top-left to bottom-right) so you don't miss peripheral text.
 6. STRICT JSON OUTPUT: Output ONLY valid JSON. No markdown, no conversational filler.
 
 OUTPUT FORMAT (JSON only):
 {
   "content_type": "string (echo the requested target type)",
-  "visual_analysis": {"details": "Extract components, curves, or elements as a simple, flat dictionary of strings"},
-  "structural_description": "string (A complete spatial narrative adhering to the structural rules above)",
+  "visual_analysis": {"details": "Extract all physical features, text, and elements based on the directives as a flat dictionary of strings"},
+  "structural_description": "string (A complete spatial narrative of what is on the screen)",
   "reading_order": ["array", "of", "steps to navigate the visual top-to-bottom, left-to-right"],
   "layout": "string (Overall physical arrangement)",
   "text_readout": "string (Full OCR text with absolute accuracy)",
@@ -72,101 +68,93 @@ OUTPUT FORMAT (JSON only):
   "missing_elements": null
 }
 
-If the frame contains no clear visual for the requested category (blurry, empty, irrelevant), set "missing_elements": "No clear STEM visual" and return immediately.
+If the frame contains no clear visual for the requested category, set "missing_elements": "No clear STEM visual" and return immediately.
 """
 
     # Category-specific directives (from original SnapshotEngine)
     CATEGORY_DIRECTIVES = {
-        "equation": """
-CRITICAL: Extract the equation spatially and phonetically.
-1. text: Read left-to-right, top-to-bottom. Convert notation to spoken form (x² → "x squared"). For fractions use "[numerator] over [denominator]".
-2. description: Position in frame (e.g., "centered", "top right") and size relative to other elements.
-3. reading_order: Step-by-step mental navigation (e.g., "Start with integral symbol, then lower limit...").
-        """,
-
         "graph": """
-CRITICAL: Extract axes and CURVE MOVEMENT physically.
-1. axes: Extract exact text labels, ranges (min-max), units, and positions for x-axis and y-axis.
-2. curves: Describe HOW the curve visually moves. Use active verbs ("rises steeply", "oscillates", "levels off"). Describe the geometric shape.
-3. key_points: Extract exact (x,y) coordinates for intersections, peaks, or labeled points.
-4. annotations: Note any legends, text, or arrows pointing to specific parts.
+CRITICAL FOCUS: Coordinate systems, vectors, and curves.
+PERIPHERAL CAPTURE: Extract any equations or text written near the graph.
+1. axes: Describe grid lines, axis lines, and extract exact numeric labels. If no numbers exist, explicitly state "Axes are unnumbered".
+2. geometric_shapes: Describe the physical appearance of curves, straight lines, or vectors (arrows). State their color and direction. DO NOT invent coordinates.
+3. associated_math: Transcribe any mathematical equations written inside or next to the graph exactly as they appear.
+4. floating_text: OCR all standalone text/words on the screen. State exactly where this text is located relative to the geometric shapes.
         """,
 
-        "circuit": """
-CRITICAL: Extract physical components and wiring topology.
-1. components: List every visible component (battery, resistor, switch), its label (R1), and numerical value.
-2. flow: Describe the physical path of the wires from start to finish, including branches.
-3. topology: Describe the visual arrangement ("series loop", "parallel branches").
-4. connections: Note where components connect to each other and any junction points.
-        """,
-
-        "diagram": """
-CRITICAL: Extract structural nodes and connecting arrows.
-1. elements: List every distinct shape/box, its text content, and its physical position.
-2. relationships: List every arrow/connection. State exactly where it starts, where it points, and its label.
-3. spatial_layout: Describe the visual hierarchy and grouping (e.g., "Flows from left to right", "Circular").
-        """,
-
-        "code": """
-CRITICAL: Extract code with OCR preserving exact structure.
-1. code_text: Transcribe exactly, preserving all indentation, brackets, and line breaks.
-2. layout: Note visual organization (single file, split view, panel arrangement).
-3. formatting: Note any syntax highlighting or bolded lines.
-        """,
-
-        "handwritten_notes": """
-CRITICAL: OCR handwritten content with physical structure.
-1. text: Transcribe all readable content. Mark [ILLEGIBLE] for unreadable portions.
-2. layout: Describe the organization (title, sections, bullet points, margins).
-3. reading_order: Explain how to mentally navigate the notes top-to-bottom.
-        """,
-
-        "biology": """
-CRITICAL: Extract physical biological structures and callout lines.
-1. main_structure: Describe the central organism/system drawn.
-2. components: List all parts, their shapes, and spatial positions.
-3. labels: List ALL callout text and trace exactly what physical part the line points to.
-4. scale: Note if there is a scale bar or relative size differences.
-        """,
-
-        "chemistry": """
-CRITICAL: Extract molecular structure with atomic connections.
-1. atoms: List every element symbol and its relative physical position.
-2. bonds: Describe the lines connecting symbols (single, double, solid wedge, dashed wedge).
-3. molecular_geometry: Describe the overall 2D or 3D shape drawn on screen (e.g., "hexagonal ring").
+        "equation": """
+CRITICAL FOCUS: Mathematical formulas and notation.
+PERIPHERAL CAPTURE: Extract any small diagrams or text notes pointing to the math.
+1. math_text: Transcribe the math left-to-right, top-to-bottom. Convert notation to spoken English words.
+2. layout: Describe how multiple lines of math are physically arranged.
+3. annotations: If there are arrows pointing to parts of the equation, describe the arrow and transcribe the text it points to.
+4. peripheral_drawings: If there is a small graph or shape next to the math, briefly describe its basic physical shape.
         """,
 
         "physics": """
-CRITICAL: Extract physical objects and vector arrows.
-1. elements: Describe the physical objects drawn (e.g., "A square block resting on a diagonal ramp").
-2. vectors: Describe every arrow. Provide origin point, direction (angle/up/down), and text label (e.g., "Arrow pointing straight down labeled mg").
-3. measurements: Note any explicitly labeled distances, angles, velocities, or coordinates.
-4. spatial_relationships: Describe contact points and how objects are positioned relative to each other.
+CRITICAL FOCUS: Physical objects and force vectors.
+PERIPHERAL CAPTURE: Extract kinematic/dynamic equations written around the drawing.
+1. objects: Describe the physical items drawn.
+2. force_vectors: Describe every arrow. State its origin point, direction, and exactly what text/symbol is written next to it. DO NOT guess what force it represents if unlabeled.
+3. measurements: Extract explicitly written angles, masses, or distances. If none are written, state "No measurements provided".
+4. associated_math: Transcribe any physics formulas or equations written anywhere on the screen.
         """,
 
-        "text": """
-CRITICAL: OCR text with structural organization.
-1. text: Actual content with preserved line breaks and punctuation.
-2. layout: Note the hierarchy (title, headings, body text, lists).
-3. formatting: Note bold, italic, or colored text.
+        "circuit": """
+CRITICAL FOCUS: Electrical components and wiring.
+PERIPHERAL CAPTURE: Extract math/values written next to components.
+1. topology: Describe the physical layout of the wires.
+2. components: List every visible symbol and transcribe the exact text/value written next to it.
+3. peripheral_text: Transcribe any standalone text or equations written on the board near the circuit.
         """,
 
-        "slide": """
-CRITICAL: Extract slide content with hierarchical structure.
-1. layout: Overall organization (title, sections, lists).
-2. text: Transcribe all bullet points with their hierarchy, numbered lists, and footnotes.
-3. tables_images: Briefly note the position of any tables or sub-images on the slide.
+        "diagram": """
+CRITICAL FOCUS: Nodes, boxes, and connecting flow.
+PERIPHERAL CAPTURE: Extract any code snippets or math inside the nodes.
+1. nodes: List every distinct shape/box and accurately transcribe ALL text or math written inside it.
+2. connections: Describe every line or arrow connecting the nodes. State exactly where it starts, where it ends, and any text written on the line itself.
+3. overall_flow: Describe the visual direction of the diagram.
         """,
 
-        "table": """
-CRITICAL: Extract tabular data strictly by row and column.
-1. headers: List all column and row headers.
-2. structure: Describe the grid layout, noting any merged cells.
-3. rows: Read the data out row by row, left to right.
+        "code": """
+CRITICAL FOCUS: Programming syntax and IDE structure.
+PERIPHERAL CAPTURE: Extract terminal outputs or architectural sketches.
+1. code_block: Transcribe the code exactly, preserving indentation and brackets.
+2. highlights: Note if specific lines are highlighted, bolded, or colored differently.
+3. peripheral_visuals: If there is a terminal output window or a small architectural drawing next to the code, describe its contents exactly.
+        """,
+
+        "biology": """
+CRITICAL FOCUS: Organic structures and callout lines.
+PERIPHERAL CAPTURE: Extract text blocks explaining the structures.
+1. main_shape: Describe the physical appearance of the biological drawing.
+2. callouts: Trace every line/arrow. State what part of the drawing it points to, and transcribe the exact text label at the other end.
+3. peripheral_text: Transcribe any paragraphs, lists, or standalone text written around the diagram.
+        """,
+
+        "chemistry": """
+CRITICAL FOCUS: Molecular structures and bonds.
+PERIPHERAL CAPTURE: Extract chemical reaction equations.
+1. molecules: Describe the layout of element symbols and the types of lines connecting them.
+2. reaction_math: Transcribe any chemical equations written on the screen.
+3. annotations: Note any floating text, charges, or labels associated with the molecules.
+        """,
+
+        "text_and_slides": """
+CRITICAL FOCUS: Textual hierarchy and bullet points.
+PERIPHERAL CAPTURE: Note the presence of any decorative or supporting images.
+1. main_text: OCR all text, maintaining the hierarchy of titles, subtitles, and bullet points.
+2. emphasis: Note which words are underlined, bolded, or circled.
+3. supporting_visuals: If there is a small chart or picture on the slide, provide a 1-sentence physical description of it.
         """,
 
         "unknown": """
-CRITICAL: Describe the geometric and textual layout of all visible elements from top-left to bottom-right in a systematic manner.
+CRITICAL FOCUS: Multiple distinct STEM elements sharing the same screen.
+PERIPHERAL CAPTURE: The spatial boundaries and connections between these different elements.
+1. zone_mapping: Scan the frame and divide it into physical spatial zones (e.g., left side, right side, top right). State exactly what type of content (equation, graph, physical drawing, text block) occupies each zone.
+2. isolated_extraction: Go through each zone one by one. Describe the physical shapes, vectors, or axes in that specific zone exactly as they appear. DO NOT mix the descriptions of different zones together.
+3. zoned_ocr: Transcribe all text, numbers, and mathematical equations. You MUST state exactly which zone the text belongs to. 
+4. cross_connections: Describe any lines, arrows, or drawn visual cues that connect the content in one zone to the content in another zone.
 """
     }
 
@@ -331,7 +319,6 @@ CATEGORY-SPECIFIC DIRECTIVES for {content_type}:
 
 OUTPUT REQUIREMENTS:
 - Scan ENTIRE frame using Chain-of-Regions (2x2 grid approach)
-- Detect ALL content types (equations, graphs, text, diagrams, etc.)
 - Provide unified JSON output format with visual_analysis object
 - Include structural_description, reading_order, and conceptual_hints
 - Output ONLY valid JSON (no markdown, no filler)
