@@ -1,0 +1,5 @@
+venv
+.vscode
+*jpg
+__pycache__
+ffmpeg

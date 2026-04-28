@@ -1,0 +1,26 @@
+# Frame Extraction Module (SYNAPSE) Dependencies
+
+# Video Download & Processing
+yt-dlp>=2024.0.0
+
+# Computer Vision & Image Processing
+opencv-python>=4.8.0
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Machine Learning
+torch>=2.0.0
+# Install with appropriate CUDA version if GPU available:
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu118  # For CUDA 11.8
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu121  # For CUDA 12.1
+
+# CLIP Model
+openai-clip>=1.0.0
+
+# Image Quality Metrics (for SSIM fallback)
+scikit-image>=0.21.0
+
+# System Requirements (install separately):
+# - FFmpeg: https://ffmpeg.org/download.html
+#   Windows: Extract to ./ffmpeg/bin/ (module auto-adds to PATH)
+#   Linux/macOS: sudo apt/brew install ffmpeg
