@@ -1,0 +1,654 @@
+{
+  "video_id": "7ukDKVHnac4",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 13.727727800025605,
+  "entry_count": 92,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.491,
+      "end": 5.609999999999999,
+      "duration": 5.119,
+      "text": "The invention of transistors revolutionized human civilization like no other technology"
+    },
+    {
+      "time": "00:10",
+      "start": 10.33,
+      "end": 13.114,
+      "duration": 2.784,
+      "text": "At the heart of a smartphone lies a processor"
+    },
+    {
+      "time": "00:15",
+      "start": 15.24,
+      "end": 18.485,
+      "duration": 3.245,
+      "text": "And this processor holds about 2 billion transistors"
+    },
+    {
+      "time": "00:19",
+      "start": 19.451,
+      "end": 21.96,
+      "duration": 2.509,
+      "text": "What do these incredibly tiny devices do?"
+    },
+    {
+      "time": "00:21",
+      "start": 21.96,
+      "end": 23.297,
+      "duration": 1.337,
+      "text": "How do they work?"
+    },
+    {
+      "time": "00:25",
+      "start": 25.702,
+      "end": 28.971000000000004,
+      "duration": 3.269,
+      "text": "Transistors can act like a switch with no moving parts"
+    },
+    {
+      "time": "00:31",
+      "start": 31.97,
+      "end": 38.28,
+      "duration": 6.31,
+      "text": "They can amplify a weak signal, in fact amplification is the basic function of a transistor"
+    },
+    {
+      "time": "00:38",
+      "start": 38.939,
+      "end": 45.019,
+      "duration": 6.08,
+      "text": "First let's understand the basis of transistors,\nwe will come back to the application part later"
+    },
+    {
+      "time": "00:45",
+      "start": 45.02,
+      "end": 48.02,
+      "duration": 3.0,
+      "text": "Transistors are made of semiconductors such as silicon"
+    },
+    {
+      "time": "00:49",
+      "start": 49.67,
+      "end": 53.449,
+      "duration": 3.779,
+      "text": "Each silicon atom is bonded with four neighboring silicon atoms"
+    },
+    {
+      "time": "00:53",
+      "start": 53.45,
+      "end": 56.45,
+      "duration": 3.0,
+      "text": "Silicon has four electrons in its valence shell"
+    },
+    {
+      "time": "00:56",
+      "start": 56.45,
+      "end": 59.540000000000006,
+      "duration": 3.09,
+      "text": "Let's replace the silicon atom with a four-handed smiley"
+    },
+    {
+      "time": "01:00",
+      "start": 60.579,
+      "end": 63.579,
+      "duration": 3.0,
+      "text": "Each hand holds one electron"
+    },
+    {
+      "time": "01:04",
+      "start": 64.969,
+      "end": 69.58999999999999,
+      "duration": 4.621,
+      "text": "Each one of these electrons goes for sharing with a neighboring silicon atom"
+    },
+    {
+      "time": "01:09",
+      "start": 69.59,
+      "end": 72.409,
+      "duration": 2.819,
+      "text": "This is known as a covalent bond"
+    },
+    {
+      "time": "01:12",
+      "start": 72.409,
+      "end": 75.409,
+      "duration": 3.0,
+      "text": "Currently the electrons are in their valence band"
+    },
+    {
+      "time": "01:16",
+      "start": 76.22,
+      "end": 78.771,
+      "duration": 2.551,
+      "text": "If the pure silicon has to conduct electricity"
+    },
+    {
+      "time": "01:18",
+      "start": 78.771,
+      "end": 83.21000000000001,
+      "duration": 4.439,
+      "text": "The electrons have to absorb some energy and become free electrons"
+    },
+    {
+      "time": "01:24",
+      "start": 84.5,
+      "end": 87.62,
+      "duration": 3.12,
+      "text": "Thus the pure silicon will have a low electrical conductivity"
+    },
+    {
+      "time": "01:30",
+      "start": 90.33,
+      "end": 95.594,
+      "duration": 5.264,
+      "text": "A technique called doping is used to improve the conductivity of semiconductors"
+    },
+    {
+      "time": "01:37",
+      "start": 97.209,
+      "end": 101.22800000000001,
+      "duration": 4.019,
+      "text": "For example say you inject phosphorus with five valence electrons"
+    },
+    {
+      "time": "01:42",
+      "start": 102.09,
+      "end": 105.509,
+      "duration": 3.419,
+      "text": "Here one electron will be free to move in the system"
+    },
+    {
+      "time": "01:45",
+      "start": 105.509,
+      "end": 108.509,
+      "duration": 3.0,
+      "text": "This is known as N-type doping"
+    },
+    {
+      "time": "01:49",
+      "start": 109.97,
+      "end": 113.771,
+      "duration": 3.801,
+      "text": "On the other hand if you inject boron with three valence electrons"
+    },
+    {
+      "time": "01:53",
+      "start": 113.771,
+      "end": 118.01,
+      "duration": 4.239,
+      "text": "There will be a vacant position for an electron this vacant position is known"
+    },
+    {
+      "time": "01:58",
+      "start": 118.019,
+      "end": 121.828,
+      "duration": 3.809,
+      "text": "as a hole and a neighboring electron can fill this hole at any time"
+    },
+    {
+      "time": "02:02",
+      "start": 122.67,
+      "end": 126.299,
+      "duration": 3.629,
+      "text": "This electron movement is visualized as holes moving in opposite direction"
+    },
+    {
+      "time": "02:07",
+      "start": 127.17,
+      "end": 130.17000000000002,
+      "duration": 3.0,
+      "text": "We call this P-type doping"
+    },
+    {
+      "time": "02:11",
+      "start": 131.55,
+      "end": 135.59900000000002,
+      "duration": 4.049,
+      "text": "If you dope a silicon wafer in the following manner a transistor is born"
+    },
+    {
+      "time": "02:17",
+      "start": 137.28,
+      "end": 140.405,
+      "duration": 3.125,
+      "text": "But if you really want to understand how a transistor works,"
+    },
+    {
+      "time": "02:20",
+      "start": 140.462,
+      "end": 147.28,
+      "duration": 6.818,
+      "text": "we have to get a clear idea of what happens at the electron level of a more basic component, a diode"
+    },
+    {
+      "time": "02:27",
+      "start": 147.8,
+      "end": 153.657,
+      "duration": 5.857,
+      "text": "A diode is formed when you dope one part of silicon as a P-type and the other part as an N-type"
+    },
+    {
+      "time": "02:34",
+      "start": 154.234,
+      "end": 158.11,
+      "duration": 3.876,
+      "text": "Something very interesting happens at the boundary of the N and P joint"
+    },
+    {
+      "time": "02:38",
+      "start": 158.75,
+      "end": 160.954,
+      "duration": 2.204,
+      "text": "The abundant electrons on the inside"
+    },
+    {
+      "time": "02:40",
+      "start": 160.96,
+      "end": 165.8,
+      "duration": 4.84,
+      "text": "will have a natural tendency to migrate to the holes that are available on the P side"
+    },
+    {
+      "time": "02:47",
+      "start": 167.15,
+      "end": 170.36,
+      "duration": 3.21,
+      "text": "This will make the P side boundary slightly negatively charged"
+    },
+    {
+      "time": "02:50",
+      "start": 170.36,
+      "end": 173.28,
+      "duration": 2.92,
+      "text": "and the N side slightly positively charged"
+    },
+    {
+      "time": "02:53",
+      "start": 173.28,
+      "end": 178.525,
+      "duration": 5.245,
+      "text": "The resulting electric field will oppose any further natural migration of the electrons"
+    },
+    {
+      "time": "03:00",
+      "start": 180.87,
+      "end": 184.69,
+      "duration": 3.82,
+      "text": "Ff you apply an external power source across the diode as shown,"
+    },
+    {
+      "time": "03:04",
+      "start": 184.69,
+      "end": 187.845,
+      "duration": 3.155,
+      "text": "the power source will attract the electrons and holes"
+    },
+    {
+      "time": "03:08",
+      "start": 188.65,
+      "end": 191.834,
+      "duration": 3.184,
+      "text": "Electricity flow is impossible in this case"
+    },
+    {
+      "time": "03:14",
+      "start": 194.0,
+      "end": 198.45,
+      "duration": 4.45,
+      "text": "However, if you reverse the power connection the situation is quite different"
+    },
+    {
+      "time": "03:18",
+      "start": 198.45,
+      "end": 202.588,
+      "duration": 4.138,
+      "text": "Assume that the power source has enough voltage to overcome the potential barrier"
+    },
+    {
+      "time": "03:22",
+      "start": 202.77,
+      "end": 207.21,
+      "duration": 4.44,
+      "text": "You can immediately see that the electrons will be pushed away by the negative terminal"
+    },
+    {
+      "time": "03:27",
+      "start": 207.21,
+      "end": 209.53,
+      "duration": 2.32,
+      "text": "When the electrons cross the potential barrier,"
+    },
+    {
+      "time": "03:29",
+      "start": 209.53,
+      "end": 214.045,
+      "duration": 4.515,
+      "text": "they will be drained of energy and will easily occupy the holes in the P region"
+    },
+    {
+      "time": "03:34",
+      "start": 214.46,
+      "end": 216.97,
+      "duration": 2.51,
+      "text": "But due to the attraction of the positive terminal,"
+    },
+    {
+      "time": "03:36",
+      "start": 216.97,
+      "end": 220.49099999999999,
+      "duration": 3.521,
+      "text": "these electrons can now jump to the holes nearby in the P region"
+    },
+    {
+      "time": "03:40",
+      "start": 220.502,
+      "end": 222.63,
+      "duration": 2.128,
+      "text": "and flow through the external circuit"
+    },
+    {
+      "time": "03:43",
+      "start": 223.08,
+      "end": 226.43400000000003,
+      "duration": 3.354,
+      "text": "This is known as the forward biasing of a diode"
+    },
+    {
+      "time": "03:48",
+      "start": 228.337,
+      "end": 231.20999999999998,
+      "duration": 2.873,
+      "text": "Just keep this simple principle of a diode in mind,"
+    },
+    {
+      "time": "03:51",
+      "start": 231.21,
+      "end": 234.782,
+      "duration": 3.572,
+      "text": "you will understand the operation of a transistor very easily"
+    },
+    {
+      "time": "04:01",
+      "start": 241.114,
+      "end": 243.171,
+      "duration": 2.057,
+      "text": "Now back to the transistor"
+    },
+    {
+      "time": "04:05",
+      "start": 245.02,
+      "end": 248.60500000000002,
+      "duration": 3.585,
+      "text": "Note that the P layer is really thin and lightly doped"
+    },
+    {
+      "time": "04:09",
+      "start": 249.211,
+      "end": 254.55,
+      "duration": 5.339,
+      "text": "You can easily see that a transistor is essentially two diodes sandwiched back to back"
+    },
+    {
+      "time": "04:14",
+      "start": 254.55,
+      "end": 257.28000000000003,
+      "duration": 2.73,
+      "text": "So whichever way you connect the power source,"
+    },
+    {
+      "time": "04:17",
+      "start": 257.28,
+      "end": 261.794,
+      "duration": 4.514,
+      "text": "one diode will always be reverse biased and block the electricity flow"
+    },
+    {
+      "time": "04:22",
+      "start": 262.24,
+      "end": 265.32,
+      "duration": 3.08,
+      "text": "This means the transistor is in the off state"
+    },
+    {
+      "time": "04:26",
+      "start": 266.49,
+      "end": 269.605,
+      "duration": 3.115,
+      "text": "Now let's connect a second power supply as shown"
+    },
+    {
+      "time": "04:29",
+      "start": 269.7,
+      "end": 273.811,
+      "duration": 4.111,
+      "text": "The power supply should have enough voltage to overcome the potential barrier"
+    },
+    {
+      "time": "04:34",
+      "start": 274.42,
+      "end": 277.42,
+      "duration": 3.0,
+      "text": "So this is just a forward biased diode"
+    },
+    {
+      "time": "04:38",
+      "start": 278.6,
+      "end": 282.82800000000003,
+      "duration": 4.228,
+      "text": "Thus a high number of electrons will be emitted from the N region"
+    },
+    {
+      "time": "04:43",
+      "start": 283.96,
+      "end": 287.69,
+      "duration": 3.73,
+      "text": "Just like in a diode a few electrons will combine with the holes"
+    },
+    {
+      "time": "04:47",
+      "start": 287.69,
+      "end": 291.32,
+      "duration": 3.63,
+      "text": "and jump across the neighboring holes and flow to the base"
+    },
+    {
+      "time": "04:51",
+      "start": 291.89,
+      "end": 295.342,
+      "duration": 3.452,
+      "text": "But there are a lot more electrons that has crossed to the P side,"
+    },
+    {
+      "time": "04:55",
+      "start": 295.348,
+      "end": 297.59000000000003,
+      "duration": 2.242,
+      "text": "what will these remaining electrons do?"
+    },
+    {
+      "time": "04:57",
+      "start": 297.59,
+      "end": 299.262,
+      "duration": 1.672,
+      "text": "Think for a moment"
+    },
+    {
+      "time": "05:00",
+      "start": 300.38,
+      "end": 304.90999999999997,
+      "duration": 4.53,
+      "text": "The remaining electrons will get attracted by the positive terminal of the first power source"
+    },
+    {
+      "time": "05:04",
+      "start": 304.91,
+      "end": 307.06800000000004,
+      "duration": 2.158,
+      "text": "and will flow straight as shown"
+    },
+    {
+      "time": "05:07",
+      "start": 307.2,
+      "end": 309.7,
+      "duration": 2.5,
+      "text": "Note that the P region is very narrow"
+    },
+    {
+      "time": "05:09",
+      "start": 309.7,
+      "end": 315.19399999999996,
+      "duration": 5.494,
+      "text": "which ensures that no remaining electrons flow to the positive terminal of the second power source"
+    },
+    {
+      "time": "05:16",
+      "start": 316.0,
+      "end": 320.348,
+      "duration": 4.348,
+      "text": "In short a small base current is amplified to a high collector current"
+    },
+    {
+      "time": "05:20",
+      "start": 320.71,
+      "end": 325.942,
+      "duration": 5.232,
+      "text": "You can easily correlate the naming of the transistor terminal with the nature of electron flow"
+    },
+    {
+      "time": "05:27",
+      "start": 327.06,
+      "end": 331.79,
+      "duration": 4.73,
+      "text": "Ff you can increase the base current the collector current will increase proportionally,"
+    },
+    {
+      "time": "05:31",
+      "start": 331.79,
+      "end": 334.78200000000004,
+      "duration": 2.992,
+      "text": "this is a clear case of current amplification"
+    },
+    {
+      "time": "05:37",
+      "start": 337.188,
+      "end": 342.219,
+      "duration": 5.031,
+      "text": "The kind of transistor we have discussed is called a bipolar junction transistor"
+    },
+    {
+      "time": "05:42",
+      "start": 342.22,
+      "end": 345.34000000000003,
+      "duration": 3.12,
+      "text": "Let's replace this representative transistor with a realistic one"
+    },
+    {
+      "time": "05:48",
+      "start": 348.709,
+      "end": 353.199,
+      "duration": 4.49,
+      "text": "You can further improve the amplification by introducing one more transistor"
+    },
+    {
+      "time": "05:53",
+      "start": 353.94,
+      "end": 358.217,
+      "duration": 4.277,
+      "text": "Yhe base of this transistor is connected with the emitter of the first transistor"
+    },
+    {
+      "time": "06:02",
+      "start": 362.12,
+      "end": 367.142,
+      "duration": 5.022,
+      "text": "Ff you introduce a weak fluctuating signal at the input like what you would find in a microphone,"
+    },
+    {
+      "time": "06:07",
+      "start": 367.148,
+      "end": 370.26000000000005,
+      "duration": 3.112,
+      "text": "you will get an amplified signal at the loudspeaker"
+    },
+    {
+      "time": "06:13",
+      "start": 373.18,
+      "end": 376.285,
+      "duration": 3.105,
+      "text": "The other interesting thing you can note about this basic circuit,"
+    },
+    {
+      "time": "06:16",
+      "start": 376.29,
+      "end": 378.93100000000004,
+      "duration": 2.641,
+      "text": "is that depending on the value of the applied voltage,"
+    },
+    {
+      "time": "06:18",
+      "start": 378.937,
+      "end": 382.12,
+      "duration": 3.183,
+      "text": "the transistor can be either on or off"
+    },
+    {
+      "time": "06:23",
+      "start": 383.74,
+      "end": 386.74,
+      "duration": 3.0,
+      "text": "Here the transistor acts as a switch"
+    },
+    {
+      "time": "06:27",
+      "start": 387.649,
+      "end": 389.07,
+      "duration": 1.421,
+      "text": "This property of the transistor"
+    },
+    {
+      "time": "06:29",
+      "start": 389.07,
+      "end": 393.171,
+      "duration": 4.101,
+      "text": "opens the doors to the world of digital electronics and digital memory"
+    },
+    {
+      "time": "06:33",
+      "start": 393.75,
+      "end": 398.937,
+      "duration": 5.187,
+      "text": "Using two BJT's you can build the basic dynamic memory element of computer:"
+    },
+    {
+      "time": "06:38",
+      "start": 398.937,
+      "end": 400.63,
+      "duration": 1.693,
+      "text": "a flip-flop"
+    },
+    {
+      "time": "06:40",
+      "start": 400.64,
+      "end": 404.828,
+      "duration": 4.188,
+      "text": "To know more about it please watch the video on the transistor as a switch"
+    },
+    {
+      "time": "06:45",
+      "start": 405.37,
+      "end": 410.531,
+      "duration": 5.161,
+      "text": "Please support us at patreon.com so that we can continue our free educational service"
+    },
+    {
+      "time": "06:50",
+      "start": 410.531,
+      "end": 411.765,
+      "duration": 1.234,
+      "text": "Thank you!"
+    }
+  ]
+}

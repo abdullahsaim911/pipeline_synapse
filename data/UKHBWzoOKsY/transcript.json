@@ -1,0 +1,710 @@
+{
+  "video_id": "UKHBWzoOKsY",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.077175199985504,
+  "entry_count": 100,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.107,
+      "end": 2.9360000000000004,
+      "duration": 2.829,
+      "text": "- [Voiceover] So I have\nthe graph of y is equal to"
+    },
+    {
+      "time": "00:02",
+      "start": 2.936,
+      "end": 6.381,
+      "duration": 3.445,
+      "text": "f of t here, our horizontal\naxis is in terms of time,"
+    },
+    {
+      "time": "00:06",
+      "start": 6.381,
+      "end": 8.115,
+      "duration": 1.734,
+      "text": "in terms of seconds."
+    },
+    {
+      "time": "00:08",
+      "start": 8.115,
+      "end": 10.183,
+      "duration": 2.068,
+      "text": "And this type of function\nis often described as"
+    },
+    {
+      "time": "00:10",
+      "start": 10.183,
+      "end": 14.294,
+      "duration": 4.111,
+      "text": "a square wave, and we see that\nit is a periodic function,"
+    },
+    {
+      "time": "00:14",
+      "start": 14.294,
+      "end": 18.101,
+      "duration": 3.807,
+      "text": "that it completes one\ncycle every two pi seconds."
+    },
+    {
+      "time": "00:18",
+      "start": 18.101,
+      "end": 22.552,
+      "duration": 4.451,
+      "text": "And so we could say its\nperiod is equal to two pi,"
+    },
+    {
+      "time": "00:22",
+      "start": 22.552,
+      "end": 25.16,
+      "duration": 2.608,
+      "text": "if we wanna put the units\nwe could say two pi,"
+    },
+    {
+      "time": "00:25",
+      "start": 25.16,
+      "end": 29.326999999999998,
+      "duration": 4.167,
+      "text": "two pi seconds per cycle,\nwe could write it like that."
+    },
+    {
+      "time": "00:30",
+      "start": 30.956,
+      "end": 32.657,
+      "duration": 1.701,
+      "text": "We could also just write s for seconds."
+    },
+    {
+      "time": "00:32",
+      "start": 32.657,
+      "end": 34.849,
+      "duration": 2.192,
+      "text": "And its frequency is\ngonna be one over that."
+    },
+    {
+      "time": "00:34",
+      "start": 34.849,
+      "end": 39.004,
+      "duration": 4.155,
+      "text": "So we could write its\nfrequency is equal to one over"
+    },
+    {
+      "time": "00:39",
+      "start": 39.004,
+      "end": 42.671,
+      "duration": 3.667,
+      "text": "two pi cycles per second,\ncycles per second,"
+    },
+    {
+      "time": "00:45",
+      "start": 45.476,
+      "end": 48.010999999999996,
+      "duration": 2.535,
+      "text": "it could also be described as hertz."
+    },
+    {
+      "time": "00:48",
+      "start": 48.011,
+      "end": 50.029,
+      "duration": 2.018,
+      "text": "And what we're gonna\nexplore in this video,"
+    },
+    {
+      "time": "00:50",
+      "start": 50.029,
+      "end": 53.059000000000005,
+      "duration": 3.03,
+      "text": "is can we take a periodic\nfunction like this and"
+    },
+    {
+      "time": "00:53",
+      "start": 53.059,
+      "end": 56.599,
+      "duration": 3.54,
+      "text": "represent it as an infinite\nsum of sines and cosines"
+    },
+    {
+      "time": "00:56",
+      "start": 56.599,
+      "end": 60.294,
+      "duration": 3.695,
+      "text": "of different periods or\ndifferent frequencies?"
+    },
+    {
+      "time": "01:00",
+      "start": 60.294,
+      "end": 62.175,
+      "duration": 1.881,
+      "text": "So to write that out a\nlittle bit more clearly,"
+    },
+    {
+      "time": "01:02",
+      "start": 62.175,
+      "end": 65.755,
+      "duration": 3.58,
+      "text": "can we take our f of t,\nso can we take our f of t,"
+    },
+    {
+      "time": "01:05",
+      "start": 65.755,
+      "end": 70.297,
+      "duration": 4.542,
+      "text": "and write it as the sum\nof sines and cosines?"
+    },
+    {
+      "time": "01:10",
+      "start": 70.297,
+      "end": 73.24799999999999,
+      "duration": 2.951,
+      "text": "So can we write it, so\nit's going to be sum,"
+    },
+    {
+      "time": "01:13",
+      "start": 73.248,
+      "end": 76.643,
+      "duration": 3.395,
+      "text": "let's say baseline constant,\nthat'll shift it up or down,"
+    },
+    {
+      "time": "01:16",
+      "start": 76.643,
+      "end": 78.989,
+      "duration": 2.346,
+      "text": "and as we'll see, that's\ngoing to be based on the"
+    },
+    {
+      "time": "01:18",
+      "start": 78.989,
+      "end": 83.024,
+      "duration": 4.035,
+      "text": "average value of the\nfunction over one period."
+    },
+    {
+      "time": "01:23",
+      "start": 83.024,
+      "end": 86.65,
+      "duration": 3.626,
+      "text": "So a sub zero, and\nthen, let's start adding"
+    },
+    {
+      "time": "01:26",
+      "start": 86.65,
+      "end": 88.783,
+      "duration": 2.133,
+      "text": "some periodic functions here."
+    },
+    {
+      "time": "01:28",
+      "start": 88.783,
+      "end": 92.616,
+      "duration": 3.833,
+      "text": "And so let's take a sub\none times cosine of t."
+    },
+    {
+      "time": "01:36",
+      "start": 96.05,
+      "end": 98.606,
+      "duration": 2.556,
+      "text": "Now, why am I starting with cosine of t?"
+    },
+    {
+      "time": "01:38",
+      "start": 98.606,
+      "end": 100.095,
+      "duration": 1.489,
+      "text": "And I could also add a sine of t,"
+    },
+    {
+      "time": "01:40",
+      "start": 100.095,
+      "end": 102.762,
+      "duration": 2.667,
+      "text": "so plus b sub one, of sine of t."
+    },
+    {
+      "time": "01:47",
+      "start": 107.89,
+      "end": 110.75,
+      "duration": 2.86,
+      "text": "Why am I starting with\ncosine of t and sine of t?"
+    },
+    {
+      "time": "01:50",
+      "start": 110.75,
+      "end": 113.862,
+      "duration": 3.112,
+      "text": "Well, if our original function\nhas a period of two pi,"
+    },
+    {
+      "time": "01:53",
+      "start": 113.862,
+      "end": 115.90299999999999,
+      "duration": 2.041,
+      "text": "and I just set up this one so it does have"
+    },
+    {
+      "time": "01:55",
+      "start": 115.903,
+      "end": 118.251,
+      "duration": 2.348,
+      "text": "a period of two pi, well\nit would make sense that it"
+    },
+    {
+      "time": "01:58",
+      "start": 118.251,
+      "end": 121.271,
+      "duration": 3.02,
+      "text": "would involve some functions\nthat have periods of two pi."
+    },
+    {
+      "time": "02:01",
+      "start": 121.271,
+      "end": 123.935,
+      "duration": 2.664,
+      "text": "And these weights will tell\nus how much they involve it."
+    },
+    {
+      "time": "02:03",
+      "start": 123.935,
+      "end": 127.307,
+      "duration": 3.372,
+      "text": "If a one is much larger\nthan b one, well it says,"
+    },
+    {
+      "time": "02:07",
+      "start": 127.307,
+      "end": 129.55700000000002,
+      "duration": 2.25,
+      "text": "okay, this has a lot more\nof cosine of t in it,"
+    },
+    {
+      "time": "02:09",
+      "start": 129.557,
+      "end": 132.628,
+      "duration": 3.071,
+      "text": "than it has of sine of t in it."
+    },
+    {
+      "time": "02:12",
+      "start": 132.628,
+      "end": 134.97299999999998,
+      "duration": 2.345,
+      "text": "And that by itself isn't going\nto describe this function,"
+    },
+    {
+      "time": "02:14",
+      "start": 134.973,
+      "end": 136.36200000000002,
+      "duration": 1.389,
+      "text": "because we know what this would look like."
+    },
+    {
+      "time": "02:16",
+      "start": 136.362,
+      "end": 138.89499999999998,
+      "duration": 2.533,
+      "text": "This would look like\na very clean sinusoid,"
+    },
+    {
+      "time": "02:18",
+      "start": 138.895,
+      "end": 140.472,
+      "duration": 1.577,
+      "text": "not like a square wave."
+    },
+    {
+      "time": "02:20",
+      "start": 140.472,
+      "end": 143.812,
+      "duration": 3.34,
+      "text": "And so what we're gonna do\nis we're gonna add sinusoids"
+    },
+    {
+      "time": "02:23",
+      "start": 143.812,
+      "end": 146.788,
+      "duration": 2.976,
+      "text": "of frequencies that are\nmultiples of these frequencies."
+    },
+    {
+      "time": "02:26",
+      "start": 146.788,
+      "end": 150.955,
+      "duration": 4.167,
+      "text": "So let's add a sub two, so\nanother waiting coefficient,"
+    },
+    {
+      "time": "02:34",
+      "start": 154.708,
+      "end": 156.541,
+      "duration": 1.833,
+      "text": "times cosine of two t."
+    },
+    {
+      "time": "02:37",
+      "start": 157.91,
+      "end": 160.159,
+      "duration": 2.249,
+      "text": "This has a frequency of one over two pi,"
+    },
+    {
+      "time": "02:40",
+      "start": 160.159,
+      "end": 161.95399999999998,
+      "duration": 1.795,
+      "text": "this has twice the frequency,"
+    },
+    {
+      "time": "02:41",
+      "start": 161.954,
+      "end": 164.133,
+      "duration": 2.179,
+      "text": "this has a frequency of one over pi."
+    },
+    {
+      "time": "02:44",
+      "start": 164.133,
+      "end": 167.883,
+      "duration": 3.75,
+      "text": "And then a sub three\ntimes cosine of three t."
+    },
+    {
+      "time": "02:49",
+      "start": 169.034,
+      "end": 172.349,
+      "duration": 3.315,
+      "text": "And I'm gonna keep going\non and on and on forever."
+    },
+    {
+      "time": "02:52",
+      "start": 172.349,
+      "end": 174.21099999999998,
+      "duration": 1.862,
+      "text": "And I'm gonna do the same\nthing with the sines."
+    },
+    {
+      "time": "02:54",
+      "start": 174.211,
+      "end": 178.37800000000001,
+      "duration": 4.167,
+      "text": "So plus b two sine of two t\nplus b three sine of three t."
+    },
+    {
+      "time": "03:05",
+      "start": 185.034,
+      "end": 187.396,
+      "duration": 2.362,
+      "text": "And you might be saying,\nwell, okay, this seems like"
+    },
+    {
+      "time": "03:07",
+      "start": 187.396,
+      "end": 189.97799999999998,
+      "duration": 2.582,
+      "text": "a fun little mathematical exercise,"
+    },
+    {
+      "time": "03:09",
+      "start": 189.978,
+      "end": 192.092,
+      "duration": 2.114,
+      "text": "but why do folks even do this?"
+    },
+    {
+      "time": "03:12",
+      "start": 192.092,
+      "end": 196.06400000000002,
+      "duration": 3.972,
+      "text": "Well this was first\nexplored, and they're named,"
+    },
+    {
+      "time": "03:16",
+      "start": 196.064,
+      "end": 198.44,
+      "duration": 2.376,
+      "text": "series like this, infinite\nseries where you represent"
+    },
+    {
+      "time": "03:18",
+      "start": 198.44,
+      "end": 201.187,
+      "duration": 2.747,
+      "text": "something by essentially\nweighted sines and cosines,"
+    },
+    {
+      "time": "03:21",
+      "start": 201.187,
+      "end": 203.95100000000002,
+      "duration": 2.764,
+      "text": "this was explored originally by Fourier,"
+    },
+    {
+      "time": "03:23",
+      "start": 203.951,
+      "end": 205.56199999999998,
+      "duration": 1.611,
+      "text": "and they're called Fourier Series."
+    },
+    {
+      "time": "03:25",
+      "start": 205.562,
+      "end": 208.549,
+      "duration": 2.987,
+      "text": "And they were interesting\nto him in the study of"
+    },
+    {
+      "time": "03:28",
+      "start": 208.549,
+      "end": 210.64600000000002,
+      "duration": 2.097,
+      "text": "differential equations,\nbecause a lot of differential"
+    },
+    {
+      "time": "03:30",
+      "start": 210.646,
+      "end": 214.813,
+      "duration": 4.167,
+      "text": "equations are easy to solve\nwhen you involve sines"
+    },
+    {
+      "time": "03:36",
+      "start": 216.774,
+      "end": 220.212,
+      "duration": 3.438,
+      "text": "and cosines, but not as\nobvious to solve when you have"
+    },
+    {
+      "time": "03:40",
+      "start": 220.212,
+      "end": 223.952,
+      "duration": 3.74,
+      "text": "more general functions, like\nmaybe a square wave here."
+    },
+    {
+      "time": "03:43",
+      "start": 223.952,
+      "end": 225.423,
+      "duration": 1.471,
+      "text": "But if you could\nrepresent that square wave"
+    },
+    {
+      "time": "03:45",
+      "start": 225.423,
+      "end": 227.551,
+      "duration": 2.128,
+      "text": "as sums of sines and cosines,"
+    },
+    {
+      "time": "03:47",
+      "start": 227.551,
+      "end": 229.48499999999999,
+      "duration": 1.934,
+      "text": "then all of a sudden you\nmight be able to find"
+    },
+    {
+      "time": "03:49",
+      "start": 229.485,
+      "end": 233.70800000000003,
+      "duration": 4.223,
+      "text": "more general solutions to\nyour differential equations."
+    },
+    {
+      "time": "03:53",
+      "start": 233.708,
+      "end": 236.006,
+      "duration": 2.298,
+      "text": "Another really interesting\nthing about this,"
+    },
+    {
+      "time": "03:56",
+      "start": 236.006,
+      "end": 238.975,
+      "duration": 2.969,
+      "text": "and this is really the\nfoundation of signal processing,"
+    },
+    {
+      "time": "03:58",
+      "start": 238.975,
+      "end": 242.692,
+      "duration": 3.717,
+      "text": "it's very used, it's heavily\nused in electrical engineering,"
+    },
+    {
+      "time": "04:02",
+      "start": 242.692,
+      "end": 246.109,
+      "duration": 3.417,
+      "text": "is you can view these\ncoefficients as they are,"
+    },
+    {
+      "time": "04:06",
+      "start": 246.109,
+      "end": 248.494,
+      "duration": 2.385,
+      "text": "they're weights on\nthese cosines and sines,"
+    },
+    {
+      "time": "04:08",
+      "start": 248.494,
+      "end": 250.384,
+      "duration": 1.89,
+      "text": "but another way to think about it is,"
+    },
+    {
+      "time": "04:10",
+      "start": 250.384,
+      "end": 252.504,
+      "duration": 2.12,
+      "text": "they tell you how much\nof different frequencies"
+    },
+    {
+      "time": "04:12",
+      "start": 252.504,
+      "end": 254.76899999999998,
+      "duration": 2.265,
+      "text": "that this function contains."
+    },
+    {
+      "time": "04:14",
+      "start": 254.769,
+      "end": 259.71,
+      "duration": 4.941,
+      "text": "So, for example, if a one\nis much bigger than a two,"
+    },
+    {
+      "time": "04:19",
+      "start": 259.71,
+      "end": 261.92199999999997,
+      "duration": 2.212,
+      "text": "then that tells you that\nthat function contains"
+    },
+    {
+      "time": "04:21",
+      "start": 261.922,
+      "end": 265.331,
+      "duration": 3.409,
+      "text": "a lot more of the one over\ntwo pi hertz frequency"
+    },
+    {
+      "time": "04:25",
+      "start": 265.331,
+      "end": 268.098,
+      "duration": 2.767,
+      "text": "than the one over pi frequency."
+    },
+    {
+      "time": "04:28",
+      "start": 268.098,
+      "end": 272.015,
+      "duration": 3.917,
+      "text": "Or maybe a three is bigger\nthan a one or a two."
+    },
+    {
+      "time": "04:33",
+      "start": 273.536,
+      "end": 276.156,
+      "duration": 2.62,
+      "text": "And so you can start to\nsay, hey, this helps us"
+    },
+    {
+      "time": "04:36",
+      "start": 276.156,
+      "end": 278.781,
+      "duration": 2.625,
+      "text": "start to think of a function\nnot just in terms of the time"
+    },
+    {
+      "time": "04:38",
+      "start": 278.781,
+      "end": 282.213,
+      "duration": 3.432,
+      "text": "domain which f of t does,\nbut it can start bringing us"
+    },
+    {
+      "time": "04:42",
+      "start": 282.213,
+      "end": 284.35400000000004,
+      "duration": 2.141,
+      "text": "to saying well, how much do\nwe have of each frequency?"
+    },
+    {
+      "time": "04:44",
+      "start": 284.354,
+      "end": 287.26599999999996,
+      "duration": 2.912,
+      "text": "And as we'll see with Fourier\nSeries and eventually,"
+    },
+    {
+      "time": "04:47",
+      "start": 287.266,
+      "end": 289.24800000000005,
+      "duration": 1.982,
+      "text": "Fourier Transforms, that's\ngoing to get us into"
+    },
+    {
+      "time": "04:49",
+      "start": 289.248,
+      "end": 292.219,
+      "duration": 2.971,
+      "text": "the frequency domain,\nwhere we can start doing"
+    },
+    {
+      "time": "04:52",
+      "start": 292.219,
+      "end": 294.272,
+      "duration": 2.053,
+      "text": "some signal processing."
+    },
+    {
+      "time": "04:54",
+      "start": 294.272,
+      "end": 296.615,
+      "duration": 2.343,
+      "text": "So we're going to explore\nall of that in future videos."
+    },
+    {
+      "time": "04:56",
+      "start": 296.615,
+      "end": 298.077,
+      "duration": 1.462,
+      "text": "In order to understand how we can actually"
+    },
+    {
+      "time": "04:58",
+      "start": 298.077,
+      "end": 302.358,
+      "duration": 4.281,
+      "text": "find these coefficients, we're\ngonna review a little bit"
+    },
+    {
+      "time": "05:02",
+      "start": 302.358,
+      "end": 304.807,
+      "duration": 2.449,
+      "text": "of our trigonometry, especially\nintegrating trig functions,"
+    },
+    {
+      "time": "05:04",
+      "start": 304.807,
+      "end": 306.5,
+      "duration": 1.693,
+      "text": "and then we're gonna solve for these,"
+    },
+    {
+      "time": "05:06",
+      "start": 306.5,
+      "end": 308.545,
+      "duration": 2.045,
+      "text": "and we're gonna see how\ngood we can approximate"
+    },
+    {
+      "time": "05:08",
+      "start": 308.545,
+      "end": 309.795,
+      "duration": 1.25,
+      "text": "our function f."
+    }
+  ]
+}

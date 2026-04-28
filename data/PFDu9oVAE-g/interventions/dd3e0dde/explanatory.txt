@@ -1,0 +1,13 @@
+Your Teacher is showing this graph to explain how changing the coordinate system can simplify certain matrix operations. Here's a complete mental model of the visual content for you:
+
+1. COMPLETE VISUAL DESCRIPTION:
+Imagine a grid with two axes labeled from -1 to 1, both for x and y. In this grid, there is a linear curve that rises steeply starting from the origin (0,0) and reaches its peak at point (2,2). An arrow points from the origin to the peak of the curve.
+
+2. WHAT THE TEACHER IS EXPLAINING:
+Your teacher is showing this graph to explain how changing the basis vectors can make matrix operations easier, especially when dealing with diagonal matrices. The new set of basis vectors, which are also eigenvectors, is called an eigenbasis.
+
+3. THE CONCEPT BEING EXPLAINED:
+The concept being explained here is that of an eigenbasis. When you change your coordinate system so that the eigenvectors become your basis vectors, the resulting matrix is guaranteed to be diagonal with its corresponding eigenvalues down that diagonal. This simplifies matrix operations, as in the example given, computing the 100th power of a matrix would be much easier when working in an eigenbasis.
+
+4. HOW THE VISUAL LINKS TO THE CONCEPT:
+The graph shows a linear curve that represents a transformation of basis vectors. The steep rise of the curve from the origin to its peak (2,2) shows how the basis vectors get scaled during this transformation. The arrow pointing from the origin to the peak visualizes the change in direction of these basis vectors. In this new coordinate system, the resulting matrix is diagonal, as represented by the linear curve. This simplifies matrix operations, making them "lovely" to work with.

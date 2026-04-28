@@ -1,0 +1,186 @@
+[
+  {
+    "timestamp": "05:02",
+    "timestamp_seconds": 302.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0000_05_02.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2963,
+    "clip_confidence": 0.2963
+  },
+  {
+    "timestamp": "05:40",
+    "timestamp_seconds": 340.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0001_05_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2976,
+    "clip_confidence": 0.2976
+  },
+  {
+    "timestamp": "07:24",
+    "timestamp_seconds": 444.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0002_07_24.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3034,
+    "clip_confidence": 0.3034
+  },
+  {
+    "timestamp": "09:34",
+    "timestamp_seconds": 574.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0003_09_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3004,
+    "clip_confidence": 0.3004
+  },
+  {
+    "timestamp": "09:56",
+    "timestamp_seconds": 596.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0004_09_56.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3055,
+    "clip_confidence": 0.3055
+  },
+  {
+    "timestamp": "11:34",
+    "timestamp_seconds": 694.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0005_11_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3172,
+    "clip_confidence": 0.3172
+  },
+  {
+    "timestamp": "11:38",
+    "timestamp_seconds": 698.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0006_11_38.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3174,
+    "clip_confidence": 0.3174
+  },
+  {
+    "timestamp": "11:40",
+    "timestamp_seconds": 700.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0007_11_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3174,
+    "clip_confidence": 0.3174
+  },
+  {
+    "timestamp": "11:42",
+    "timestamp_seconds": 702.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0008_11_42.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3174,
+    "clip_confidence": 0.3174
+  },
+  {
+    "timestamp": "11:44",
+    "timestamp_seconds": 704.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0009_11_44.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3172,
+    "clip_confidence": 0.3172
+  },
+  {
+    "timestamp": "13:20",
+    "timestamp_seconds": 800.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0010_13_20.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3024,
+    "clip_confidence": 0.3024
+  },
+  {
+    "timestamp": "15:10",
+    "timestamp_seconds": 910.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0011_15_10.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3174,
+    "clip_confidence": 0.3174
+  },
+  {
+    "timestamp": "15:12",
+    "timestamp_seconds": 912.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0012_15_12.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3172,
+    "clip_confidence": 0.3172
+  },
+  {
+    "timestamp": "15:14",
+    "timestamp_seconds": 914.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0013_15_14.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3172,
+    "clip_confidence": 0.3172
+  },
+  {
+    "timestamp": "15:24",
+    "timestamp_seconds": 924.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0014_15_24.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3176,
+    "clip_confidence": 0.3176
+  },
+  {
+    "timestamp": "15:26",
+    "timestamp_seconds": 926.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0015_15_26.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3179,
+    "clip_confidence": 0.3179
+  },
+  {
+    "timestamp": "15:28",
+    "timestamp_seconds": 928.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0016_15_28.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3179,
+    "clip_confidence": 0.3179
+  },
+  {
+    "timestamp": "15:30",
+    "timestamp_seconds": 930.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0017_15_30.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3175,
+    "clip_confidence": 0.3175
+  },
+  {
+    "timestamp": "15:32",
+    "timestamp_seconds": 932.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0018_15_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3175,
+    "clip_confidence": 0.3175
+  },
+  {
+    "timestamp": "15:34",
+    "timestamp_seconds": 934.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0019_15_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3175,
+    "clip_confidence": 0.3175
+  },
+  {
+    "timestamp": "15:36",
+    "timestamp_seconds": 936.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0020_15_36.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3176,
+    "clip_confidence": 0.3176
+  },
+  {
+    "timestamp": "15:38",
+    "timestamp_seconds": 938.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0021_15_38.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3176,
+    "clip_confidence": 0.3176
+  },
+  {
+    "timestamp": "15:40",
+    "timestamp_seconds": 940.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\ANyVpMS3HL4\\keyframes\\frame_0022_15_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3173,
+    "clip_confidence": 0.3173
+  }
+]

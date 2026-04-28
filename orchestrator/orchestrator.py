@@ -1276,7 +1276,11 @@ class PipelineOrchestrator:
                 f.write(explanation)
             print(f"[Orchestrator] Text explanation saved: {text_file_path}")
 
-            # Return result (Ollama cleanup happens in finally block)
+            # Stop Ollama immediately after successful completion
+            stop_ollama(ollama_process)
+            log_memory_state("After Ollama Stop (success path)")
+
+            # Return result
             return {
                 "intervention_id": intervention_id,
                 "text_explanation": explanation,
@@ -1292,7 +1296,8 @@ class PipelineOrchestrator:
 
         finally:
             # Cleanup Ollama (if it was started)
-            if ollama_process is not None:
+            # Use 'in locals()' to avoid NameError if ollama_process was never defined
+            if 'ollama_process' in locals() and ollama_process is not None:
                 try:
                     stop_ollama(ollama_process)
                 except Exception as cleanup_error:

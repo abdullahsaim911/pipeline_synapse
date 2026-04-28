@@ -1,0 +1,74 @@
+[
+  {
+    "timestamp": "00:04",
+    "timestamp_seconds": 4.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0000_00_04.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3206,
+    "clip_confidence": 0.3206
+  },
+  {
+    "timestamp": "00:44",
+    "timestamp_seconds": 44.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0001_00_44.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3165,
+    "clip_confidence": 0.3165
+  },
+  {
+    "timestamp": "01:22",
+    "timestamp_seconds": 82.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0002_01_22.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3201,
+    "clip_confidence": 0.3201
+  },
+  {
+    "timestamp": "02:06",
+    "timestamp_seconds": 126.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0003_02_06.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3279,
+    "clip_confidence": 0.3279
+  },
+  {
+    "timestamp": "02:34",
+    "timestamp_seconds": 154.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0004_02_34.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3114,
+    "clip_confidence": 0.3114
+  },
+  {
+    "timestamp": "02:50",
+    "timestamp_seconds": 170.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0005_02_50.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3122,
+    "clip_confidence": 0.3122
+  },
+  {
+    "timestamp": "03:18",
+    "timestamp_seconds": 198.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0006_03_18.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3187,
+    "clip_confidence": 0.3187
+  },
+  {
+    "timestamp": "03:50",
+    "timestamp_seconds": 230.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0007_03_50.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3198,
+    "clip_confidence": 0.3198
+  },
+  {
+    "timestamp": "04:20",
+    "timestamp_seconds": 260.0,
+    "frame_path": "data\\5ugDJhmmkFM\\keyframes\\frame_0008_04_20.jpg",
+    "content_type": "non-educational",
+    "complexity_score": 0.2821,
+    "clip_confidence": 0.0
+  }
+]

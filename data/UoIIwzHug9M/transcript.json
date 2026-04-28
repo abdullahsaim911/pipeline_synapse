@@ -1,0 +1,2019 @@
+{
+  "video_id": "UoIIwzHug9M",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 6.757459499989636,
+  "entry_count": 287,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.45,
+      "end": 1.283,
+      "duration": 0.833,
+      "text": "- [Narrator] You have a baseball"
+    },
+    {
+      "time": "00:01",
+      "start": 1.283,
+      "end": 3.6,
+      "duration": 2.317,
+      "text": "and a ping pong ball being hurled at you,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.6,
+      "end": 5.49,
+      "duration": 1.89,
+      "text": "let's say at pretty much the same speed."
+    },
+    {
+      "time": "00:05",
+      "start": 5.49,
+      "end": 7.08,
+      "duration": 1.59,
+      "text": "Now, if you try to catch it,"
+    },
+    {
+      "time": "00:07",
+      "start": 7.08,
+      "end": 9.27,
+      "duration": 2.19,
+      "text": "you probably know that catching a baseball"
+    },
+    {
+      "time": "00:09",
+      "start": 9.27,
+      "end": 10.5,
+      "duration": 1.23,
+      "text": "is gonna hurt your hand more"
+    },
+    {
+      "time": "00:10",
+      "start": 10.5,
+      "end": 12.33,
+      "duration": 1.83,
+      "text": "compared to the ping pong ball, right?"
+    },
+    {
+      "time": "00:12",
+      "start": 12.33,
+      "end": 13.71,
+      "duration": 1.38,
+      "text": "But why?"
+    },
+    {
+      "time": "00:13",
+      "start": 13.71,
+      "end": 15.06,
+      "duration": 1.35,
+      "text": "Well, you might say that baseballs"
+    },
+    {
+      "time": "00:15",
+      "start": 15.06,
+      "end": 17.22,
+      "duration": 2.16,
+      "text": "are more massive, and\ntherefore, it hurts more."
+    },
+    {
+      "time": "00:17",
+      "start": 17.22,
+      "end": 19.08,
+      "duration": 1.86,
+      "text": "But why, if something is more massive,"
+    },
+    {
+      "time": "00:19",
+      "start": 19.08,
+      "end": 21.06,
+      "duration": 1.98,
+      "text": "it would hurt more?"
+    },
+    {
+      "time": "00:21",
+      "start": 21.06,
+      "end": 22.95,
+      "duration": 1.89,
+      "text": "That's an interesting question."
+    },
+    {
+      "time": "00:22",
+      "start": 22.95,
+      "end": 24.75,
+      "duration": 1.8,
+      "text": "And also, because we know"
+    },
+    {
+      "time": "00:24",
+      "start": 24.75,
+      "end": 25.83,
+      "duration": 1.08,
+      "text": "that baseball's going to hurt more"
+    },
+    {
+      "time": "00:25",
+      "start": 25.83,
+      "end": 26.88,
+      "duration": 1.05,
+      "text": "when you try to catch it,"
+    },
+    {
+      "time": "00:26",
+      "start": 26.88,
+      "end": 30.24,
+      "duration": 3.36,
+      "text": "we instinctively pull\nour hand back, right?"
+    },
+    {
+      "time": "00:30",
+      "start": 30.24,
+      "end": 32.16,
+      "duration": 1.92,
+      "text": "That reduces the amount of pain,"
+    },
+    {
+      "time": "00:32",
+      "start": 32.16,
+      "end": 34.13999999999999,
+      "duration": 1.98,
+      "text": "but again, why?"
+    },
+    {
+      "time": "00:34",
+      "start": 34.14,
+      "end": 36.3,
+      "duration": 2.16,
+      "text": "Why does, you know, moving your hand back,"
+    },
+    {
+      "time": "00:36",
+      "start": 36.3,
+      "end": 39.029999999999994,
+      "duration": 2.73,
+      "text": "while you're catching the\nball reduces the pain?"
+    },
+    {
+      "time": "00:39",
+      "start": 39.03,
+      "end": 39.863,
+      "duration": 0.833,
+      "text": "We're going to try and answer"
+    },
+    {
+      "time": "00:39",
+      "start": 39.863,
+      "end": 42.12,
+      "duration": 2.257,
+      "text": "these questions in this\nvideo, by discovering"
+    },
+    {
+      "time": "00:42",
+      "start": 42.12,
+      "end": 45.089999999999996,
+      "duration": 2.97,
+      "text": "a brand new quantity called Momentum."
+    },
+    {
+      "time": "00:45",
+      "start": 45.09,
+      "end": 46.11000000000001,
+      "duration": 1.02,
+      "text": "So, let's begin."
+    },
+    {
+      "time": "00:46",
+      "start": 46.11,
+      "end": 47.61,
+      "duration": 1.5,
+      "text": "So, what is momentum?"
+    },
+    {
+      "time": "00:47",
+      "start": 47.61,
+      "end": 48.96,
+      "duration": 1.35,
+      "text": "Well, instead of telling you,"
+    },
+    {
+      "time": "00:48",
+      "start": 48.96,
+      "end": 50.04,
+      "duration": 1.08,
+      "text": "why don't we just try"
+    },
+    {
+      "time": "00:50",
+      "start": 50.04,
+      "end": 52.32,
+      "duration": 2.28,
+      "text": "and figure it out together, okay."
+    },
+    {
+      "time": "00:52",
+      "start": 52.32,
+      "end": 53.160000000000004,
+      "duration": 0.84,
+      "text": "So, where do we start?"
+    },
+    {
+      "time": "00:53",
+      "start": 53.16,
+      "end": 55.26,
+      "duration": 2.1,
+      "text": "We'll start with Newton's second law."
+    },
+    {
+      "time": "00:55",
+      "start": 55.26,
+      "end": 56.22,
+      "duration": 0.96,
+      "text": "You probably already know,"
+    },
+    {
+      "time": "00:56",
+      "start": 56.22,
+      "end": 57.33,
+      "duration": 1.11,
+      "text": "Newton second law states"
+    },
+    {
+      "time": "00:57",
+      "start": 57.33,
+      "end": 59.339999999999996,
+      "duration": 2.01,
+      "text": "that the acceleration of an object"
+    },
+    {
+      "time": "00:59",
+      "start": 59.34,
+      "end": 62.733000000000004,
+      "duration": 3.393,
+      "text": "equals the net force\nacting on that object,"
+    },
+    {
+      "time": "01:03",
+      "start": 63.84,
+      "end": 65.433,
+      "duration": 1.593,
+      "text": "divided by its mass."
+    },
+    {
+      "time": "01:06",
+      "start": 66.48,
+      "end": 67.44,
+      "duration": 0.96,
+      "text": "Now, let's rearrange this"
+    },
+    {
+      "time": "01:07",
+      "start": 67.44,
+      "end": 70.11,
+      "duration": 2.67,
+      "text": "by multiplying by M on both sides."
+    },
+    {
+      "time": "01:10",
+      "start": 70.11,
+      "end": 75.03,
+      "duration": 4.92,
+      "text": "So, we will get net force equals mass"
+    },
+    {
+      "time": "01:15",
+      "start": 75.03,
+      "end": 76.983,
+      "duration": 1.953,
+      "text": "times the acceleration."
+    },
+    {
+      "time": "01:18",
+      "start": 78.09,
+      "end": 80.04,
+      "duration": 1.95,
+      "text": "Alright, what do we do next?"
+    },
+    {
+      "time": "01:20",
+      "start": 80.04,
+      "end": 81.99000000000001,
+      "duration": 1.95,
+      "text": "Well, let's try and\nsubstitute for acceleration."
+    },
+    {
+      "time": "01:21",
+      "start": 81.99,
+      "end": 83.16,
+      "duration": 1.17,
+      "text": "What exactly is acceleration?"
+    },
+    {
+      "time": "01:23",
+      "start": 83.16,
+      "end": 84.945,
+      "duration": 1.785,
+      "text": "Remember, acceleration is the rate"
+    },
+    {
+      "time": "01:24",
+      "start": 84.945,
+      "end": 86.69999999999999,
+      "duration": 1.755,
+      "text": "of change of velocity."
+    },
+    {
+      "time": "01:26",
+      "start": 86.7,
+      "end": 88.5,
+      "duration": 1.8,
+      "text": "So, let's write that down."
+    },
+    {
+      "time": "01:28",
+      "start": 88.5,
+      "end": 93.5,
+      "duration": 5.0,
+      "text": "Equals M times rate of change of velocity."
+    },
+    {
+      "time": "01:33",
+      "start": 93.72,
+      "end": 94.74,
+      "duration": 1.02,
+      "text": "So, that's change in velocity"
+    },
+    {
+      "time": "01:34",
+      "start": 94.74,
+      "end": 96.50999999999999,
+      "duration": 1.77,
+      "text": "divided by the time taken for the change."
+    },
+    {
+      "time": "01:36",
+      "start": 96.51,
+      "end": 99.24300000000001,
+      "duration": 2.733,
+      "text": "And now I can just put this M over here,"
+    },
+    {
+      "time": "01:40",
+      "start": 100.68,
+      "end": 104.47000000000001,
+      "duration": 3.79,
+      "text": "and write it as change in MV"
+    },
+    {
+      "time": "01:46",
+      "start": 106.95,
+      "end": 110.28,
+      "duration": 3.33,
+      "text": "divided by delta T."
+    },
+    {
+      "time": "01:50",
+      "start": 110.28,
+      "end": 112.59,
+      "duration": 2.31,
+      "text": "So let's do this, divided by delta T."
+    },
+    {
+      "time": "01:52",
+      "start": 112.59,
+      "end": 113.88000000000001,
+      "duration": 1.29,
+      "text": "Now at this point you may be like,"
+    },
+    {
+      "time": "01:53",
+      "start": 113.88,
+      "end": 114.78,
+      "duration": 0.9,
+      "text": "whoa, whoa, whoa."
+    },
+    {
+      "time": "01:54",
+      "start": 114.78,
+      "end": 115.62,
+      "duration": 0.84,
+      "text": "What just happened?"
+    },
+    {
+      "time": "01:55",
+      "start": 115.62,
+      "end": 117.15,
+      "duration": 1.53,
+      "text": "Why did you put that M inside?"
+    },
+    {
+      "time": "01:57",
+      "start": 117.15,
+      "end": 119.01,
+      "duration": 1.86,
+      "text": "How are we allowed to do that?"
+    },
+    {
+      "time": "01:59",
+      "start": 119.01,
+      "end": 120.36,
+      "duration": 1.35,
+      "text": "And I say, that's a great question."
+    },
+    {
+      "time": "02:00",
+      "start": 120.36,
+      "end": 122.19,
+      "duration": 1.83,
+      "text": "Always ask questions whenever"
+    },
+    {
+      "time": "02:02",
+      "start": 122.19,
+      "end": 124.11,
+      "duration": 1.92,
+      "text": "a step doesn't make sense to us."
+    },
+    {
+      "time": "02:04",
+      "start": 124.11,
+      "end": 125.258,
+      "duration": 1.148,
+      "text": "So let's look at it."
+    },
+    {
+      "time": "02:05",
+      "start": 125.258,
+      "end": 127.44,
+      "duration": 2.182,
+      "text": "What does this really mean?"
+    },
+    {
+      "time": "02:07",
+      "start": 127.44,
+      "end": 129.06,
+      "duration": 1.62,
+      "text": "So, if we were to expand that,"
+    },
+    {
+      "time": "02:09",
+      "start": 129.06,
+      "end": 130.65,
+      "duration": 1.59,
+      "text": "it basically, it means"
+    },
+    {
+      "time": "02:10",
+      "start": 130.65,
+      "end": 132.39000000000001,
+      "duration": 1.74,
+      "text": "mass times change in velocity"
+    },
+    {
+      "time": "02:12",
+      "start": 132.39,
+      "end": 133.47,
+      "duration": 1.08,
+      "text": "is basically final velocity"
+    },
+    {
+      "time": "02:13",
+      "start": 133.47,
+      "end": 134.64,
+      "duration": 1.17,
+      "text": "minus initial velocity divided"
+    },
+    {
+      "time": "02:14",
+      "start": 134.64,
+      "end": 136.89,
+      "duration": 2.25,
+      "text": "by the time taken for that change, right."
+    },
+    {
+      "time": "02:16",
+      "start": 136.89,
+      "end": 140.13,
+      "duration": 3.24,
+      "text": "Now, I can just multiply\nthis inside, isn't it?"
+    },
+    {
+      "time": "02:20",
+      "start": 140.13,
+      "end": 143.88,
+      "duration": 3.75,
+      "text": "So, I can do this, right?"
+    },
+    {
+      "time": "02:23",
+      "start": 143.88,
+      "end": 145.76999999999998,
+      "duration": 1.89,
+      "text": "So, this becomes mass times final velocity"
+    },
+    {
+      "time": "02:25",
+      "start": 145.77,
+      "end": 147.78,
+      "duration": 2.01,
+      "text": "minus mass times initial velocity"
+    },
+    {
+      "time": "02:27",
+      "start": 147.78,
+      "end": 150.57,
+      "duration": 2.79,
+      "text": "divided by the change in time."
+    },
+    {
+      "time": "02:30",
+      "start": 150.57,
+      "end": 152.1,
+      "duration": 1.53,
+      "text": "Or the time taken for that change, right?"
+    },
+    {
+      "time": "02:32",
+      "start": 152.1,
+      "end": 153.96,
+      "duration": 1.86,
+      "text": "And that's exactly what this is."
+    },
+    {
+      "time": "02:33",
+      "start": 153.96,
+      "end": 155.61,
+      "duration": 1.65,
+      "text": "So notice this now represents"
+    },
+    {
+      "time": "02:35",
+      "start": 155.61,
+      "end": 159.81,
+      "duration": 4.2,
+      "text": "change in MV, right."
+    },
+    {
+      "time": "02:39",
+      "start": 159.81,
+      "end": 162.84,
+      "duration": 3.03,
+      "text": "So, that's what we did over here."
+    },
+    {
+      "time": "02:42",
+      "start": 162.84,
+      "end": 164.82,
+      "duration": 1.98,
+      "text": "Anyways, in doing so,"
+    },
+    {
+      "time": "02:44",
+      "start": 164.82,
+      "end": 166.73999999999998,
+      "duration": 1.92,
+      "text": "look at what we have achieved."
+    },
+    {
+      "time": "02:46",
+      "start": 166.74,
+      "end": 169.20000000000002,
+      "duration": 2.46,
+      "text": "We have now found that the net force"
+    },
+    {
+      "time": "02:49",
+      "start": 169.2,
+      "end": 170.76,
+      "duration": 1.56,
+      "text": "acting on a body equals"
+    },
+    {
+      "time": "02:50",
+      "start": 170.76,
+      "end": 174.09,
+      "duration": 3.33,
+      "text": "change in this new quantity"
+    },
+    {
+      "time": "02:54",
+      "start": 174.09,
+      "end": 176.79,
+      "duration": 2.7,
+      "text": "divided by the time taken for that change."
+    },
+    {
+      "time": "02:56",
+      "start": 176.79,
+      "end": 177.92999999999998,
+      "duration": 1.14,
+      "text": "Since we are discovering"
+    },
+    {
+      "time": "02:57",
+      "start": 177.93,
+      "end": 179.31,
+      "duration": 1.38,
+      "text": "a new quantity over here,"
+    },
+    {
+      "time": "02:59",
+      "start": 179.31,
+      "end": 181.71,
+      "duration": 2.4,
+      "text": "we thought let's just give it a name."
+    },
+    {
+      "time": "03:01",
+      "start": 181.71,
+      "end": 185.55,
+      "duration": 3.84,
+      "text": "And we call this quantity the Momentum."
+    },
+    {
+      "time": "03:05",
+      "start": 185.55,
+      "end": 188.43,
+      "duration": 2.88,
+      "text": "And, the letter we use for that is P."
+    },
+    {
+      "time": "03:08",
+      "start": 188.43,
+      "end": 191.07,
+      "duration": 2.64,
+      "text": "Probably because a M is\ntaken from mass, right."
+    },
+    {
+      "time": "03:11",
+      "start": 191.07,
+      "end": 192.54,
+      "duration": 1.47,
+      "text": "So, let's write that down."
+    },
+    {
+      "time": "03:12",
+      "start": 192.54,
+      "end": 195.51,
+      "duration": 2.97,
+      "text": "So, net force acting on an object"
+    },
+    {
+      "time": "03:15",
+      "start": 195.51,
+      "end": 200.25,
+      "duration": 4.74,
+      "text": "will now become change in momentum,"
+    },
+    {
+      "time": "03:20",
+      "start": 200.25,
+      "end": 204.18,
+      "duration": 3.93,
+      "text": "divided by the time taken for the change."
+    },
+    {
+      "time": "03:24",
+      "start": 204.18,
+      "end": 205.17000000000002,
+      "duration": 0.99,
+      "text": "And we'll try and make sense"
+    },
+    {
+      "time": "03:25",
+      "start": 205.17,
+      "end": 206.51999999999998,
+      "duration": 1.35,
+      "text": "of what this equation is telling us."
+    },
+    {
+      "time": "03:26",
+      "start": 206.52,
+      "end": 209.85000000000002,
+      "duration": 3.33,
+      "text": "Let's just investigate what momentum is."
+    },
+    {
+      "time": "03:29",
+      "start": 209.85,
+      "end": 212.94299999999998,
+      "duration": 3.093,
+      "text": "So, what we found so far is that momentum."
+    },
+    {
+      "time": "03:34",
+      "start": 214.243,
+      "end": 215.076,
+      "duration": 0.833,
+      "text": "Momentum."
+    },
+    {
+      "time": "03:35",
+      "start": 215.076,
+      "end": 216.14,
+      "duration": 1.064,
+      "text": "Oops, oops."
+    },
+    {
+      "time": "03:36",
+      "start": 216.14,
+      "end": 217.95299999999997,
+      "duration": 1.813,
+      "text": "Momentum."
+    },
+    {
+      "time": "03:39",
+      "start": 219.0,
+      "end": 222.6,
+      "duration": 3.6,
+      "text": "Momentum P, or what exactly is it?"
+    },
+    {
+      "time": "03:42",
+      "start": 222.6,
+      "end": 223.433,
+      "duration": 0.833,
+      "text": "Well, it's this thing."
+    },
+    {
+      "time": "03:43",
+      "start": 223.433,
+      "end": 226.26,
+      "duration": 2.827,
+      "text": "So, it's mass times velocity."
+    },
+    {
+      "time": "03:46",
+      "start": 226.26,
+      "end": 229.32,
+      "duration": 3.06,
+      "text": "Okay, so what can we\nimmediately see from here?"
+    },
+    {
+      "time": "03:49",
+      "start": 229.32,
+      "end": 230.57999999999998,
+      "duration": 1.26,
+      "text": "Well, the first thing\nwe can immediately see"
+    },
+    {
+      "time": "03:50",
+      "start": 230.58,
+      "end": 232.17000000000002,
+      "duration": 1.59,
+      "text": "is that momentum must be whatever it is."
+    },
+    {
+      "time": "03:52",
+      "start": 232.17,
+      "end": 233.48999999999998,
+      "duration": 1.32,
+      "text": "It's a vector quantity."
+    },
+    {
+      "time": "03:53",
+      "start": 233.49,
+      "end": 235.35000000000002,
+      "duration": 1.86,
+      "text": "Because velocity is a vector quantity."
+    },
+    {
+      "time": "03:55",
+      "start": 235.35,
+      "end": 236.7,
+      "duration": 1.35,
+      "text": "So momentum should have both,"
+    },
+    {
+      "time": "03:56",
+      "start": 236.7,
+      "end": 239.25,
+      "duration": 2.55,
+      "text": "direction and magnitude."
+    },
+    {
+      "time": "03:59",
+      "start": 239.25,
+      "end": 240.78,
+      "duration": 1.53,
+      "text": "Another thing we can\nimmediately write down,"
+    },
+    {
+      "time": "04:00",
+      "start": 240.78,
+      "end": 242.1,
+      "duration": 1.32,
+      "text": "is its units."
+    },
+    {
+      "time": "04:02",
+      "start": 242.1,
+      "end": 243.42,
+      "duration": 1.32,
+      "text": "So, can you, can you pause the video"
+    },
+    {
+      "time": "04:03",
+      "start": 243.42,
+      "end": 245.94,
+      "duration": 2.52,
+      "text": "and see if you can write\ndown its units yourself?"
+    },
+    {
+      "time": "04:05",
+      "start": 245.94,
+      "end": 246.78,
+      "duration": 0.84,
+      "text": "Okay, let's see."
+    },
+    {
+      "time": "04:06",
+      "start": 246.78,
+      "end": 248.28,
+      "duration": 1.5,
+      "text": "So unit of this will be the unit of mass"
+    },
+    {
+      "time": "04:08",
+      "start": 248.28,
+      "end": 249.39000000000001,
+      "duration": 1.11,
+      "text": "times unit of velocity."
+    },
+    {
+      "time": "04:09",
+      "start": 249.39,
+      "end": 251.79,
+      "duration": 2.4,
+      "text": "Unit of mass is kilograms, standard unit."
+    },
+    {
+      "time": "04:11",
+      "start": 251.79,
+      "end": 253.2,
+      "duration": 1.41,
+      "text": "And the standard unit of velocity"
+    },
+    {
+      "time": "04:13",
+      "start": 253.2,
+      "end": 255.23999999999998,
+      "duration": 2.04,
+      "text": "will become meters per second."
+    },
+    {
+      "time": "04:15",
+      "start": 255.24,
+      "end": 257.22,
+      "duration": 1.98,
+      "text": "So, the unit of momentum"
+    },
+    {
+      "time": "04:17",
+      "start": 257.22,
+      "end": 259.44000000000005,
+      "duration": 2.22,
+      "text": "is kilogram meters per second."
+    },
+    {
+      "time": "04:19",
+      "start": 259.44,
+      "end": 261.025,
+      "duration": 1.585,
+      "text": "Okay, but now let's try to understand"
+    },
+    {
+      "time": "04:21",
+      "start": 261.025,
+      "end": 263.37,
+      "duration": 2.345,
+      "text": "what is momentum trying to tell us?"
+    },
+    {
+      "time": "04:23",
+      "start": 263.37,
+      "end": 265.26,
+      "duration": 1.89,
+      "text": "Well, we can see that momentum"
+    },
+    {
+      "time": "04:25",
+      "start": 265.26,
+      "end": 267.09,
+      "duration": 1.83,
+      "text": "is directly related to mass."
+    },
+    {
+      "time": "04:27",
+      "start": 267.09,
+      "end": 268.71,
+      "duration": 1.62,
+      "text": "That means if you have more mass,"
+    },
+    {
+      "time": "04:28",
+      "start": 268.71,
+      "end": 270.0,
+      "duration": 1.29,
+      "text": "we can get more momentum."
+    },
+    {
+      "time": "04:30",
+      "start": 270.0,
+      "end": 271.65,
+      "duration": 1.65,
+      "text": "And you also see that momentum"
+    },
+    {
+      "time": "04:31",
+      "start": 271.65,
+      "end": 273.63,
+      "duration": 1.98,
+      "text": "is directly related to velocity."
+    },
+    {
+      "time": "04:33",
+      "start": 273.63,
+      "end": 275.37,
+      "duration": 1.74,
+      "text": "That means more velocity,"
+    },
+    {
+      "time": "04:35",
+      "start": 275.37,
+      "end": 277.2,
+      "duration": 1.83,
+      "text": "you get more momentum."
+    },
+    {
+      "time": "04:37",
+      "start": 277.2,
+      "end": 279.47999999999996,
+      "duration": 2.28,
+      "text": "But what's important,\nis that it's the product"
+    },
+    {
+      "time": "04:39",
+      "start": 279.48,
+      "end": 281.1,
+      "duration": 1.62,
+      "text": "that decides what the momentum is."
+    },
+    {
+      "time": "04:41",
+      "start": 281.1,
+      "end": 283.41,
+      "duration": 2.31,
+      "text": "So, let's take a few examples."
+    },
+    {
+      "time": "04:43",
+      "start": 283.41,
+      "end": 285.45000000000005,
+      "duration": 2.04,
+      "text": "Going back to the example of the baseball"
+    },
+    {
+      "time": "04:45",
+      "start": 285.45,
+      "end": 286.77,
+      "duration": 1.32,
+      "text": "and the ping bong ball,"
+    },
+    {
+      "time": "04:46",
+      "start": 286.77,
+      "end": 288.96,
+      "duration": 2.19,
+      "text": "if they have the same velocity,"
+    },
+    {
+      "time": "04:48",
+      "start": 288.96,
+      "end": 291.23999999999995,
+      "duration": 2.28,
+      "text": "then which of the two\nwould have more momentum?"
+    },
+    {
+      "time": "04:51",
+      "start": 291.24,
+      "end": 292.49,
+      "duration": 1.25,
+      "text": "Can you think about that?"
+    },
+    {
+      "time": "04:53",
+      "start": 293.52,
+      "end": 294.35999999999996,
+      "duration": 0.84,
+      "text": "Well, let's see."
+    },
+    {
+      "time": "04:54",
+      "start": 294.36,
+      "end": 296.55,
+      "duration": 2.19,
+      "text": "We know that they have\nthe same of velocity."
+    },
+    {
+      "time": "04:56",
+      "start": 296.55,
+      "end": 299.49,
+      "duration": 2.94,
+      "text": "So, their V is exactly the same."
+    },
+    {
+      "time": "04:59",
+      "start": 299.49,
+      "end": 303.57,
+      "duration": 4.08,
+      "text": "But, baseball has much more mass."
+    },
+    {
+      "time": "05:03",
+      "start": 303.57,
+      "end": 304.62,
+      "duration": 1.05,
+      "text": "The ping pong ball on the other hand"
+    },
+    {
+      "time": "05:04",
+      "start": 304.62,
+      "end": 306.33,
+      "duration": 1.71,
+      "text": "is a very tiny mass."
+    },
+    {
+      "time": "05:06",
+      "start": 306.33,
+      "end": 309.21299999999997,
+      "duration": 2.883,
+      "text": "And so notice, if you look at the product,"
+    },
+    {
+      "time": "05:09",
+      "start": 309.213,
+      "end": 312.0,
+      "duration": 2.787,
+      "text": "the product of mass and velocity"
+    },
+    {
+      "time": "05:12",
+      "start": 312.0,
+      "end": 313.32,
+      "duration": 1.32,
+      "text": "for the baseball is much higher,"
+    },
+    {
+      "time": "05:13",
+      "start": 313.32,
+      "end": 315.27,
+      "duration": 1.95,
+      "text": "and therefore the baseball"
+    },
+    {
+      "time": "05:15",
+      "start": 315.27,
+      "end": 317.82,
+      "duration": 2.55,
+      "text": "ends up having a higher momentum."
+    },
+    {
+      "time": "05:17",
+      "start": 317.82,
+      "end": 319.29,
+      "duration": 1.47,
+      "text": "Maybe that's got something to do with"
+    },
+    {
+      "time": "05:19",
+      "start": 319.29,
+      "end": 321.15000000000003,
+      "duration": 1.86,
+      "text": "why it hurts, when you\ntry to catch a baseball."
+    },
+    {
+      "time": "05:21",
+      "start": 321.15,
+      "end": 322.38,
+      "duration": 1.23,
+      "text": "But anyways, we'll get back to that."
+    },
+    {
+      "time": "05:22",
+      "start": 322.38,
+      "end": 324.71999999999997,
+      "duration": 2.34,
+      "text": "But, just because something has more mass"
+    },
+    {
+      "time": "05:24",
+      "start": 324.72,
+      "end": 326.43,
+      "duration": 1.71,
+      "text": "doesn't mean it has more momentum."
+    },
+    {
+      "time": "05:26",
+      "start": 326.43,
+      "end": 327.81,
+      "duration": 1.38,
+      "text": "Well, in this particular case,"
+    },
+    {
+      "time": "05:27",
+      "start": 327.81,
+      "end": 330.27,
+      "duration": 2.46,
+      "text": "we knew that they had the same velocity."
+    },
+    {
+      "time": "05:30",
+      "start": 330.27,
+      "end": 331.65,
+      "duration": 1.38,
+      "text": "That's why we could infer"
+    },
+    {
+      "time": "05:31",
+      "start": 331.65,
+      "end": 333.17999999999995,
+      "duration": 1.53,
+      "text": "that if it has more mass,"
+    },
+    {
+      "time": "05:33",
+      "start": 333.18,
+      "end": 335.04,
+      "duration": 1.86,
+      "text": "it should have more momentum, right."
+    },
+    {
+      "time": "05:35",
+      "start": 335.04,
+      "end": 336.3,
+      "duration": 1.26,
+      "text": "But in general, if we don't know"
+    },
+    {
+      "time": "05:36",
+      "start": 336.3,
+      "end": 337.71000000000004,
+      "duration": 1.41,
+      "text": "about their velocities,"
+    },
+    {
+      "time": "05:37",
+      "start": 337.71,
+      "end": 338.76,
+      "duration": 1.05,
+      "text": "then we can't infer anything."
+    },
+    {
+      "time": "05:38",
+      "start": 338.76,
+      "end": 340.06,
+      "duration": 1.3,
+      "text": "We should always calculate the product."
+    },
+    {
+      "time": "05:40",
+      "start": 340.06,
+      "end": 341.91,
+      "duration": 1.85,
+      "text": "It is the product that\ndecides the momentum."
+    },
+    {
+      "time": "05:41",
+      "start": 341.91,
+      "end": 345.48,
+      "duration": 3.57,
+      "text": "For example, consider a massive train"
+    },
+    {
+      "time": "05:45",
+      "start": 345.48,
+      "end": 349.593,
+      "duration": 4.113,
+      "text": "which has like humongous\nmass, but at rest."
+    },
+    {
+      "time": "05:51",
+      "start": 351.51,
+      "end": 355.11,
+      "duration": 3.6,
+      "text": "If its velocity is zero,\nwhat is its momentum?"
+    },
+    {
+      "time": "05:55",
+      "start": 355.11,
+      "end": 356.52000000000004,
+      "duration": 1.41,
+      "text": "Well, it's gonna be zero."
+    },
+    {
+      "time": "05:56",
+      "start": 356.52,
+      "end": 359.19,
+      "duration": 2.67,
+      "text": "It doesn't matter how massive it is."
+    },
+    {
+      "time": "05:59",
+      "start": 359.19,
+      "end": 361.59,
+      "duration": 2.4,
+      "text": "If it's not moving, it\ndoesn't have any momentum."
+    },
+    {
+      "time": "06:01",
+      "start": 361.59,
+      "end": 365.48999999999995,
+      "duration": 3.9,
+      "text": "So, a massive train at\nrest has no momentum."
+    },
+    {
+      "time": "06:05",
+      "start": 365.49,
+      "end": 367.11,
+      "duration": 1.62,
+      "text": "This ping pong ball has more momentum"
+    },
+    {
+      "time": "06:07",
+      "start": 367.11,
+      "end": 369.54,
+      "duration": 2.43,
+      "text": "than this train, because it's moving."
+    },
+    {
+      "time": "06:09",
+      "start": 369.54,
+      "end": 371.49,
+      "duration": 1.95,
+      "text": "So, it's not just the mass,"
+    },
+    {
+      "time": "06:11",
+      "start": 371.49,
+      "end": 373.53000000000003,
+      "duration": 2.04,
+      "text": "it's the product of mass and the velocity"
+    },
+    {
+      "time": "06:13",
+      "start": 373.53,
+      "end": 375.75,
+      "duration": 2.22,
+      "text": "that decides the momentum."
+    },
+    {
+      "time": "06:15",
+      "start": 375.75,
+      "end": 377.25,
+      "duration": 1.5,
+      "text": "Alright, now we might be saying,"
+    },
+    {
+      "time": "06:17",
+      "start": 377.25,
+      "end": 379.05,
+      "duration": 1.8,
+      "text": "Hey fine, that's great and all."
+    },
+    {
+      "time": "06:19",
+      "start": 379.05,
+      "end": 380.25,
+      "duration": 1.2,
+      "text": "But why should we still care"
+    },
+    {
+      "time": "06:20",
+      "start": 380.25,
+      "end": 382.26,
+      "duration": 2.01,
+      "text": "about momentum, right?"
+    },
+    {
+      "time": "06:22",
+      "start": 382.26,
+      "end": 385.05,
+      "duration": 2.79,
+      "text": "Well for that, let's come\nback to this equation."
+    },
+    {
+      "time": "06:25",
+      "start": 385.05,
+      "end": 387.57,
+      "duration": 2.52,
+      "text": "And let me just take this\nand put it over here."
+    },
+    {
+      "time": "06:27",
+      "start": 387.57,
+      "end": 389.25,
+      "duration": 1.68,
+      "text": "Okay, earlier Newton\nsecond law was saying,"
+    },
+    {
+      "time": "06:29",
+      "start": 389.25,
+      "end": 390.87,
+      "duration": 1.62,
+      "text": "that force causes an acceleration."
+    },
+    {
+      "time": "06:30",
+      "start": 390.87,
+      "end": 392.28000000000003,
+      "duration": 1.41,
+      "text": "But now we can get a look at it"
+    },
+    {
+      "time": "06:32",
+      "start": 392.28,
+      "end": 394.5,
+      "duration": 2.22,
+      "text": "from a slightly different perspective."
+    },
+    {
+      "time": "06:34",
+      "start": 394.5,
+      "end": 396.87,
+      "duration": 2.37,
+      "text": "What is this equation trying to tell us?"
+    },
+    {
+      "time": "06:36",
+      "start": 396.87,
+      "end": 398.64,
+      "duration": 1.77,
+      "text": "Well, it's saying that the net force"
+    },
+    {
+      "time": "06:38",
+      "start": 398.64,
+      "end": 401.03999999999996,
+      "duration": 2.4,
+      "text": "acting on an object equals"
+    },
+    {
+      "time": "06:41",
+      "start": 401.04,
+      "end": 402.24,
+      "duration": 1.2,
+      "text": "change in momentum divided"
+    },
+    {
+      "time": "06:42",
+      "start": 402.24,
+      "end": 403.47,
+      "duration": 1.23,
+      "text": "by the time taken for the change."
+    },
+    {
+      "time": "06:43",
+      "start": 403.47,
+      "end": 405.45000000000005,
+      "duration": 1.98,
+      "text": "In other words, it equals"
+    },
+    {
+      "time": "06:45",
+      "start": 405.45,
+      "end": 409.26,
+      "duration": 3.81,
+      "text": "rate of change of momentum."
+    },
+    {
+      "time": "06:49",
+      "start": 409.26,
+      "end": 411.75,
+      "duration": 2.49,
+      "text": "And I love this, because\nthis is very similar"
+    },
+    {
+      "time": "06:51",
+      "start": 411.75,
+      "end": 413.694,
+      "duration": 1.944,
+      "text": "to how we have seen quantities before."
+    },
+    {
+      "time": "06:53",
+      "start": 413.694,
+      "end": 415.71000000000004,
+      "duration": 2.016,
+      "text": "For example, velocity"
+    },
+    {
+      "time": "06:55",
+      "start": 415.71,
+      "end": 417.53999999999996,
+      "duration": 1.83,
+      "text": "is rate of change of position."
+    },
+    {
+      "time": "06:57",
+      "start": 417.54,
+      "end": 420.48,
+      "duration": 2.94,
+      "text": "It tells us how quickly\nposition is changing."
+    },
+    {
+      "time": "07:00",
+      "start": 420.48,
+      "end": 422.55,
+      "duration": 2.07,
+      "text": "Acceleration is rate\nof change of velocity."
+    },
+    {
+      "time": "07:02",
+      "start": 422.55,
+      "end": 425.85,
+      "duration": 3.3,
+      "text": "It tells us how quickly\nvelocity is changing."
+    },
+    {
+      "time": "07:05",
+      "start": 425.85,
+      "end": 428.31,
+      "duration": 2.46,
+      "text": "Now, we can see net force"
+    },
+    {
+      "time": "07:08",
+      "start": 428.31,
+      "end": 430.11,
+      "duration": 1.8,
+      "text": "is rate of change of momentum."
+    },
+    {
+      "time": "07:10",
+      "start": 430.11,
+      "end": 431.49,
+      "duration": 1.38,
+      "text": "Which means it tells us"
+    },
+    {
+      "time": "07:11",
+      "start": 431.49,
+      "end": 434.7,
+      "duration": 3.21,
+      "text": "how quickly momentum is changing."
+    },
+    {
+      "time": "07:14",
+      "start": 434.7,
+      "end": 436.71,
+      "duration": 2.01,
+      "text": "In other words, if you have a lot"
+    },
+    {
+      "time": "07:16",
+      "start": 436.71,
+      "end": 438.71999999999997,
+      "duration": 2.01,
+      "text": "of momentum changing per second,"
+    },
+    {
+      "time": "07:18",
+      "start": 438.72,
+      "end": 439.59000000000003,
+      "duration": 0.87,
+      "text": "that means there must be"
+    },
+    {
+      "time": "07:19",
+      "start": 439.59,
+      "end": 442.26,
+      "duration": 2.67,
+      "text": "a huge force acting on you, net force."
+    },
+    {
+      "time": "07:22",
+      "start": 442.26,
+      "end": 444.63,
+      "duration": 2.37,
+      "text": "The net force acting on you must be a lot."
+    },
+    {
+      "time": "07:24",
+      "start": 444.63,
+      "end": 447.27,
+      "duration": 2.64,
+      "text": "On the other hand, if there's a very small"
+    },
+    {
+      "time": "07:27",
+      "start": 447.27,
+      "end": 449.90999999999997,
+      "duration": 2.64,
+      "text": "momentum change happening per second,"
+    },
+    {
+      "time": "07:29",
+      "start": 449.91,
+      "end": 451.02500000000003,
+      "duration": 1.115,
+      "text": "then the net force acting on you"
+    },
+    {
+      "time": "07:31",
+      "start": 451.025,
+      "end": 454.08,
+      "duration": 3.055,
+      "text": "must also be very small."
+    },
+    {
+      "time": "07:34",
+      "start": 454.08,
+      "end": 455.7,
+      "duration": 1.62,
+      "text": "A beautiful new perspective"
+    },
+    {
+      "time": "07:35",
+      "start": 455.7,
+      "end": 457.14,
+      "duration": 1.44,
+      "text": "of Newton's second law."
+    },
+    {
+      "time": "07:37",
+      "start": 457.14,
+      "end": 459.0,
+      "duration": 1.86,
+      "text": "But another benefit of this formulation,"
+    },
+    {
+      "time": "07:39",
+      "start": 459.0,
+      "end": 460.71,
+      "duration": 1.71,
+      "text": "is look, the time."
+    },
+    {
+      "time": "07:40",
+      "start": 460.71,
+      "end": 462.51,
+      "duration": 1.8,
+      "text": "The time over which this force is acting."
+    },
+    {
+      "time": "07:42",
+      "start": 462.51,
+      "end": 464.90999999999997,
+      "duration": 2.4,
+      "text": "The time over which that\nmomentum is changing."
+    },
+    {
+      "time": "07:44",
+      "start": 464.91,
+      "end": 467.58000000000004,
+      "duration": 2.67,
+      "text": "That's visible to us, in this perspective."
+    },
+    {
+      "time": "07:47",
+      "start": 467.58,
+      "end": 470.13,
+      "duration": 2.55,
+      "text": "Well earlier that was\nhidden in the acceleration."
+    },
+    {
+      "time": "07:50",
+      "start": 470.13,
+      "end": 471.0,
+      "duration": 0.87,
+      "text": "So, it's still there."
+    },
+    {
+      "time": "07:51",
+      "start": 471.0,
+      "end": 472.92,
+      "duration": 1.92,
+      "text": "This is the time over\nwhich the force is acting."
+    },
+    {
+      "time": "07:52",
+      "start": 472.92,
+      "end": 474.57,
+      "duration": 1.65,
+      "text": "But it was kind of hidden over here."
+    },
+    {
+      "time": "07:54",
+      "start": 474.57,
+      "end": 476.43,
+      "duration": 1.86,
+      "text": "But now it's there."
+    },
+    {
+      "time": "07:56",
+      "start": 476.43,
+      "end": 479.19,
+      "duration": 2.76,
+      "text": "We can see it, and we\nwill use it later on."
+    },
+    {
+      "time": "07:59",
+      "start": 479.19,
+      "end": 480.9,
+      "duration": 1.71,
+      "text": "We'll see how to use it in the next video."
+    },
+    {
+      "time": "08:00",
+      "start": 480.9,
+      "end": 482.15999999999997,
+      "duration": 1.26,
+      "text": "But anyways, lets now,"
+    },
+    {
+      "time": "08:02",
+      "start": 482.16,
+      "end": 484.113,
+      "duration": 1.953,
+      "text": "apply this to our initial question."
+    },
+    {
+      "time": "08:05",
+      "start": 485.31,
+      "end": 486.33,
+      "duration": 1.02,
+      "text": "Even though these two bolts"
+    },
+    {
+      "time": "08:06",
+      "start": 486.33,
+      "end": 487.77,
+      "duration": 1.44,
+      "text": "are moving at the same speed,"
+    },
+    {
+      "time": "08:07",
+      "start": 487.77,
+      "end": 491.82,
+      "duration": 4.05,
+      "text": "the baseball has a much higher momentum"
+    },
+    {
+      "time": "08:11",
+      "start": 491.82,
+      "end": 493.74,
+      "duration": 1.92,
+      "text": "compared to the ping pong ball."
+    },
+    {
+      "time": "08:13",
+      "start": 493.74,
+      "end": 494.94,
+      "duration": 1.2,
+      "text": "The small arrow mark shows"
+    },
+    {
+      "time": "08:14",
+      "start": 494.94,
+      "end": 496.70799999999997,
+      "duration": 1.768,
+      "text": "smaller momentum over here, okay."
+    },
+    {
+      "time": "08:16",
+      "start": 496.708,
+      "end": 498.72,
+      "duration": 2.012,
+      "text": "Now, if we stop it,"
+    },
+    {
+      "time": "08:18",
+      "start": 498.72,
+      "end": 500.16,
+      "duration": 1.44,
+      "text": "then the momentum goes to zero."
+    },
+    {
+      "time": "08:20",
+      "start": 500.16,
+      "end": 502.41,
+      "duration": 2.25,
+      "text": "So, clearly there is a change in momentum."
+    },
+    {
+      "time": "08:22",
+      "start": 502.41,
+      "end": 503.67,
+      "duration": 1.26,
+      "text": "Now, let's say if we stop it"
+    },
+    {
+      "time": "08:23",
+      "start": 503.67,
+      "end": 506.13,
+      "duration": 2.46,
+      "text": "in pretty much the same\ntime, then we will see"
+    },
+    {
+      "time": "08:26",
+      "start": 506.13,
+      "end": 508.29,
+      "duration": 2.16,
+      "text": "that the change in momentum\nis much larger here,"
+    },
+    {
+      "time": "08:28",
+      "start": 508.29,
+      "end": 509.58000000000004,
+      "duration": 1.29,
+      "text": "because the momentum was bigger"
+    },
+    {
+      "time": "08:29",
+      "start": 509.58,
+      "end": 511.65,
+      "duration": 2.07,
+      "text": "to begin with, compared to over here."
+    },
+    {
+      "time": "08:31",
+      "start": 511.65,
+      "end": 514.02,
+      "duration": 2.37,
+      "text": "Which means we have a much bigger"
+    },
+    {
+      "time": "08:34",
+      "start": 514.02,
+      "end": 516.36,
+      "duration": 2.34,
+      "text": "rate of change of momentum over here,"
+    },
+    {
+      "time": "08:36",
+      "start": 516.36,
+      "end": 518.13,
+      "duration": 1.77,
+      "text": "compared to over here."
+    },
+    {
+      "time": "08:38",
+      "start": 518.13,
+      "end": 519.21,
+      "duration": 1.08,
+      "text": "Since we have a bigger"
+    },
+    {
+      "time": "08:39",
+      "start": 519.21,
+      "end": 520.89,
+      "duration": 1.68,
+      "text": "rate of change of momentum over here,"
+    },
+    {
+      "time": "08:40",
+      "start": 520.89,
+      "end": 523.77,
+      "duration": 2.88,
+      "text": "that means, we are putting a big force"
+    },
+    {
+      "time": "08:43",
+      "start": 523.77,
+      "end": 527.43,
+      "duration": 3.66,
+      "text": "on the ball here, compared to over here."
+    },
+    {
+      "time": "08:47",
+      "start": 527.43,
+      "end": 528.9,
+      "duration": 1.47,
+      "text": "And if you put a big force on the ball,"
+    },
+    {
+      "time": "08:48",
+      "start": 528.9,
+      "end": 530.5799999999999,
+      "duration": 1.68,
+      "text": "that means the ball also\nputs a big force on you."
+    },
+    {
+      "time": "08:50",
+      "start": 530.58,
+      "end": 533.94,
+      "duration": 3.36,
+      "text": "And that's why this hurts more."
+    },
+    {
+      "time": "08:53",
+      "start": 533.94,
+      "end": 535.9200000000001,
+      "duration": 1.98,
+      "text": "And, so now you can see why mass matters,"
+    },
+    {
+      "time": "08:55",
+      "start": 535.92,
+      "end": 538.86,
+      "duration": 2.94,
+      "text": "because it gives you more momentum."
+    },
+    {
+      "time": "08:58",
+      "start": 538.86,
+      "end": 540.54,
+      "duration": 1.68,
+      "text": "Finally, why is it while we are catching"
+    },
+    {
+      "time": "09:00",
+      "start": 540.54,
+      "end": 541.8,
+      "duration": 1.26,
+      "text": "something heavy like this,"
+    },
+    {
+      "time": "09:01",
+      "start": 541.8,
+      "end": 543.66,
+      "duration": 1.86,
+      "text": "we instinctively pull our hand back?"
+    },
+    {
+      "time": "09:03",
+      "start": 543.66,
+      "end": 544.98,
+      "duration": 1.32,
+      "text": "How does that help us?"
+    },
+    {
+      "time": "09:04",
+      "start": 544.98,
+      "end": 546.21,
+      "duration": 1.23,
+      "text": "How does that reduce"
+    },
+    {
+      "time": "09:06",
+      "start": 546.21,
+      "end": 547.59,
+      "duration": 1.38,
+      "text": "the amount of pain that we get?"
+    },
+    {
+      "time": "09:07",
+      "start": 547.59,
+      "end": 550.8000000000001,
+      "duration": 3.21,
+      "text": "Ooh, when we pull our hand back,"
+    },
+    {
+      "time": "09:10",
+      "start": 550.8,
+      "end": 553.0799999999999,
+      "duration": 2.28,
+      "text": "we are increasing the time"
+    },
+    {
+      "time": "09:13",
+      "start": 553.08,
+      "end": 555.9300000000001,
+      "duration": 2.85,
+      "text": "or which that ball is\ncoming to a stop, right."
+    },
+    {
+      "time": "09:15",
+      "start": 555.93,
+      "end": 558.15,
+      "duration": 2.22,
+      "text": "In other words, we are increasing the time"
+    },
+    {
+      "time": "09:18",
+      "start": 558.15,
+      "end": 560.1899999999999,
+      "duration": 2.04,
+      "text": "over which that momentum is changing."
+    },
+    {
+      "time": "09:20",
+      "start": 560.19,
+      "end": 561.75,
+      "duration": 1.56,
+      "text": "This number becomes the denominator,"
+    },
+    {
+      "time": "09:21",
+      "start": 561.75,
+      "end": 562.98,
+      "duration": 1.23,
+      "text": "becomes bigger."
+    },
+    {
+      "time": "09:22",
+      "start": 562.98,
+      "end": 566.13,
+      "duration": 3.15,
+      "text": "As a result of that, we are deliberately"
+    },
+    {
+      "time": "09:26",
+      "start": 566.13,
+      "end": 569.9399999999999,
+      "duration": 3.81,
+      "text": "slowing down the momentum change."
+    },
+    {
+      "time": "09:29",
+      "start": 569.94,
+      "end": 572.0400000000001,
+      "duration": 2.1,
+      "text": "So, we are reducing"
+    },
+    {
+      "time": "09:32",
+      "start": 572.04,
+      "end": 574.3199999999999,
+      "duration": 2.28,
+      "text": "the rate of change of momentum."
+    },
+    {
+      "time": "09:34",
+      "start": 574.32,
+      "end": 577.38,
+      "duration": 3.06,
+      "text": "As a result, when you do this,"
+    },
+    {
+      "time": "09:37",
+      "start": 577.38,
+      "end": 582.38,
+      "duration": 5.0,
+      "text": "the force acting on you will also reduce."
+    },
+    {
+      "time": "09:42",
+      "start": 582.57,
+      "end": 584.6700000000001,
+      "duration": 2.1,
+      "text": "Isn't that beautiful?"
+    },
+    {
+      "time": "09:44",
+      "start": 584.67,
+      "end": 586.68,
+      "duration": 2.01,
+      "text": "And almost an everyday application"
+    },
+    {
+      "time": "09:46",
+      "start": 586.68,
+      "end": 588.87,
+      "duration": 2.19,
+      "text": "of this new formulation."
+    },
+    {
+      "time": "09:48",
+      "start": 588.87,
+      "end": 590.58,
+      "duration": 1.71,
+      "text": "That the net force acting on you"
+    },
+    {
+      "time": "09:50",
+      "start": 590.58,
+      "end": 592.4100000000001,
+      "duration": 1.83,
+      "text": "equals the rate of change of momentum."
+    },
+    {
+      "time": "09:52",
+      "start": 592.41,
+      "end": 593.2429999999999,
+      "duration": 0.833,
+      "text": "In the next video,"
+    },
+    {
+      "time": "09:53",
+      "start": 593.243,
+      "end": 595.1700000000001,
+      "duration": 1.927,
+      "text": "we'll take this to a whole new level."
+    },
+    {
+      "time": "09:55",
+      "start": 595.17,
+      "end": 596.16,
+      "duration": 0.99,
+      "text": "And they one of the most"
+    },
+    {
+      "time": "09:56",
+      "start": 596.16,
+      "end": 599.103,
+      "duration": 2.943,
+      "text": "fundamental principles of physics."
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "content_type": "biology",
+  "detected_types": [
+    "biology"
+  ],
+  "visual_analysis": {},
+  "structural_description": "Error: JSON parse error",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "{\n  \"content_type\": \"biology\",\n  \"detected_types\": [\"all\", \"types\", \"present\"],\n  \"visual_analysis\": {\n    \"biology\": {\n      \"main_structure\": \"Human circulatory system\",\n      \"components\": [\n        {\n          \"name\": \"Heart\",\n          \"type\": \"organ\",\n          \"position\": \"top-left\",\n          \"description\": \"Pump that circulates blood throughout the body\",\n          \"function\": \"pumping blood\",\n          \"relationships\": [\"arteries",
+  "text_readout": "{\n  \"content_type\": \"biology\",\n  \"detected_types\": [\"all\", \"types\", \"present\"],\n  \"visual_analysis\": {\n    \"biology\": {\n      \"main_structure\": \"Human circulatory system\",\n      \"components\": [\n        {\n          \"name\": \"Heart\",\n          \"type\": \"organ\",\n          \"position\": \"top-left\",\n          \"description\": \"Pump that circulates blood throughout the body\",\n          \"function\": \"pumping blood\",\n          \"relationships\": [\"arteries",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": "error",
+  "_error": "JSON parse error"
+}

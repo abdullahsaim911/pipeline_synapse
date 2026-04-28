@@ -1,0 +1,42 @@
+[
+  {
+    "timestamp": "00:04",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0000_00_04.jpg",
+    "content_type": "circuit"
+  },
+  {
+    "timestamp": "00:34",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0001_00_34.jpg",
+    "content_type": "equation"
+  },
+  {
+    "timestamp": "00:44",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0002_00_44.jpg",
+    "content_type": "flowchart"
+  },
+  {
+    "timestamp": "01:24",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0003_01_24.jpg",
+    "content_type": "flowchart"
+  },
+  {
+    "timestamp": "01:40",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0004_01_40.jpg",
+    "content_type": "equation"
+  },
+  {
+    "timestamp": "02:44",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0005_02_44.jpg",
+    "content_type": "equation"
+  },
+  {
+    "timestamp": "02:56",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0006_02_56.jpg",
+    "content_type": "equation"
+  },
+  {
+    "timestamp": "04:18",
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0007_04_18.jpg",
+    "content_type": "equation"
+  }
+]

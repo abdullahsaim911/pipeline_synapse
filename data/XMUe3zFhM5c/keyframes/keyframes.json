@@ -1,0 +1,74 @@
+[
+  {
+    "timestamp": "00:06",
+    "timestamp_seconds": 6.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0000_00_06.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3212,
+    "clip_confidence": 0.3212
+  },
+  {
+    "timestamp": "00:08",
+    "timestamp_seconds": 8.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0001_00_08.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3212,
+    "clip_confidence": 0.3212
+  },
+  {
+    "timestamp": "00:10",
+    "timestamp_seconds": 10.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0002_00_10.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3259,
+    "clip_confidence": 0.3259
+  },
+  {
+    "timestamp": "01:08",
+    "timestamp_seconds": 68.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0003_01_08.jpg",
+    "content_type": "code",
+    "complexity_score": 0.315,
+    "clip_confidence": 0.315
+  },
+  {
+    "timestamp": "02:04",
+    "timestamp_seconds": 124.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0004_02_04.jpg",
+    "content_type": "code",
+    "complexity_score": 0.3042,
+    "clip_confidence": 0.3042
+  },
+  {
+    "timestamp": "05:24",
+    "timestamp_seconds": 324.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0005_05_24.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3221,
+    "clip_confidence": 0.3221
+  },
+  {
+    "timestamp": "05:52",
+    "timestamp_seconds": 352.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0006_05_52.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.321,
+    "clip_confidence": 0.321
+  },
+  {
+    "timestamp": "05:54",
+    "timestamp_seconds": 354.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0007_05_54.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.321,
+    "clip_confidence": 0.321
+  },
+  {
+    "timestamp": "05:58",
+    "timestamp_seconds": 358.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\XMUe3zFhM5c\\keyframes\\frame_0008_05_58.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.321,
+    "clip_confidence": 0.321
+  }
+]

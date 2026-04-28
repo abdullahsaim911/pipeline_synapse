@@ -1,0 +1,2061 @@
+{
+  "video_id": "PJMFxBIqkSs",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.708876600023359,
+  "entry_count": 293,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.0,
+      "end": 1.29,
+      "duration": 1.29,
+      "text": "- [Instructor] When we shoot a cannon,"
+    },
+    {
+      "time": "00:01",
+      "start": 1.29,
+      "end": 3.54,
+      "duration": 2.25,
+      "text": "not only does the ball go forward,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.54,
+      "end": 6.42,
+      "duration": 2.88,
+      "text": "but the cannon itself goes backward."
+    },
+    {
+      "time": "00:06",
+      "start": 6.42,
+      "end": 8.37,
+      "duration": 1.95,
+      "text": "This means when we shot it,"
+    },
+    {
+      "time": "00:08",
+      "start": 8.37,
+      "end": 11.219999999999999,
+      "duration": 2.85,
+      "text": "the ball gained a forward momentum"
+    },
+    {
+      "time": "00:11",
+      "start": 11.22,
+      "end": 14.88,
+      "duration": 3.66,
+      "text": "and the cannon itself also\ngained a backward momentum."
+    },
+    {
+      "time": "00:14",
+      "start": 14.88,
+      "end": 16.41,
+      "duration": 1.53,
+      "text": "And the big question is if we know"
+    },
+    {
+      "time": "00:16",
+      "start": 16.41,
+      "end": 19.89,
+      "duration": 3.48,
+      "text": "what the forward momentum of\nthe ball is, can we figure out"
+    },
+    {
+      "time": "00:19",
+      "start": 19.89,
+      "end": 22.2,
+      "duration": 2.31,
+      "text": "what the backward\nmomentum of the cannon is?"
+    },
+    {
+      "time": "00:22",
+      "start": 22.2,
+      "end": 24.45,
+      "duration": 2.25,
+      "text": "Because that's important\nwhen you're designing this"
+    },
+    {
+      "time": "00:24",
+      "start": 24.45,
+      "end": 25.65,
+      "duration": 1.2,
+      "text": "for safety and everything."
+    },
+    {
+      "time": "00:25",
+      "start": 25.65,
+      "end": 28.08,
+      "duration": 2.43,
+      "text": "So how do you figure out the\ncannon's backward momentum?"
+    },
+    {
+      "time": "00:28",
+      "start": 28.08,
+      "end": 29.639999999999997,
+      "duration": 1.56,
+      "text": "Well, we're gonna figure\nout how to do that"
+    },
+    {
+      "time": "00:29",
+      "start": 29.64,
+      "end": 31.77,
+      "duration": 2.13,
+      "text": "by discovering one of the\nmost powerful principles"
+    },
+    {
+      "time": "00:31",
+      "start": 31.77,
+      "end": 35.22,
+      "duration": 3.45,
+      "text": "of physics, that is\nconservation of momentum."
+    },
+    {
+      "time": "00:35",
+      "start": 35.22,
+      "end": 36.053,
+      "duration": 0.833,
+      "text": "So let's begin."
+    },
+    {
+      "time": "00:36",
+      "start": 36.053,
+      "end": 37.769999999999996,
+      "duration": 1.717,
+      "text": "So to figure out its momentum,"
+    },
+    {
+      "time": "00:37",
+      "start": 37.77,
+      "end": 39.300000000000004,
+      "duration": 1.53,
+      "text": "the first question that comes to my mind"
+    },
+    {
+      "time": "00:39",
+      "start": 39.3,
+      "end": 41.61,
+      "duration": 2.31,
+      "text": "is is there an equation\nthat connects, I don't know,"
+    },
+    {
+      "time": "00:41",
+      "start": 41.61,
+      "end": 43.62,
+      "duration": 2.01,
+      "text": "maybe forces and momentum?"
+    },
+    {
+      "time": "00:43",
+      "start": 43.62,
+      "end": 45.419999999999995,
+      "duration": 1.8,
+      "text": "And yes, the answer is yes."
+    },
+    {
+      "time": "00:45",
+      "start": 45.42,
+      "end": 46.77,
+      "duration": 1.35,
+      "text": "We've seen it in a previous video."
+    },
+    {
+      "time": "00:46",
+      "start": 46.77,
+      "end": 50.67,
+      "duration": 3.9,
+      "text": "We saw the net force acting on an object"
+    },
+    {
+      "time": "00:50",
+      "start": 50.67,
+      "end": 55.67,
+      "duration": 5.0,
+      "text": "equals the rate of change\nof momentum of that object."
+    },
+    {
+      "time": "00:56",
+      "start": 56.55,
+      "end": 59.37,
+      "duration": 2.82,
+      "text": "Now, I could try to use\nthis, but there's a problem."
+    },
+    {
+      "time": "00:59",
+      "start": 59.37,
+      "end": 63.209999999999994,
+      "duration": 3.84,
+      "text": "I don't know the net\nforce acting on my cannon."
+    },
+    {
+      "time": "01:03",
+      "start": 63.21,
+      "end": 66.69,
+      "duration": 3.48,
+      "text": "I don't know how much force\nis acting when we fired it."
+    },
+    {
+      "time": "01:06",
+      "start": 66.69,
+      "end": 69.24,
+      "duration": 2.55,
+      "text": "I also don't know for how\nlong that force was acting."
+    },
+    {
+      "time": "01:09",
+      "start": 69.24,
+      "end": 70.073,
+      "duration": 0.833,
+      "text": "So I don't know."
+    },
+    {
+      "time": "01:10",
+      "start": 70.073,
+      "end": 73.16999999999999,
+      "duration": 3.097,
+      "text": "So I don't know if I\ncan use this equation,"
+    },
+    {
+      "time": "01:13",
+      "start": 73.17,
+      "end": 75.21000000000001,
+      "duration": 2.04,
+      "text": "but wait, wait a second."
+    },
+    {
+      "time": "01:15",
+      "start": 75.21,
+      "end": 76.71,
+      "duration": 1.5,
+      "text": "Let's think about the forces acting"
+    },
+    {
+      "time": "01:16",
+      "start": 76.71,
+      "end": 78.72,
+      "duration": 2.01,
+      "text": "over here a little bit more carefully."
+    },
+    {
+      "time": "01:18",
+      "start": 78.72,
+      "end": 80.78999999999999,
+      "duration": 2.07,
+      "text": "Who is pushing on this cannon?"
+    },
+    {
+      "time": "01:20",
+      "start": 80.79,
+      "end": 83.7,
+      "duration": 2.91,
+      "text": "I mean, somebody must be pushing\nback on this cannon, right?"
+    },
+    {
+      "time": "01:23",
+      "start": 83.7,
+      "end": 85.56,
+      "duration": 1.86,
+      "text": "Otherwise it would've moved backwards."
+    },
+    {
+      "time": "01:25",
+      "start": 85.56,
+      "end": 87.09,
+      "duration": 1.53,
+      "text": "Who is doing that?"
+    },
+    {
+      "time": "01:27",
+      "start": 87.09,
+      "end": 90.78,
+      "duration": 3.69,
+      "text": "Remember, cannons or stuff\ncannot push on themselves?"
+    },
+    {
+      "time": "01:30",
+      "start": 90.78,
+      "end": 93.81,
+      "duration": 3.03,
+      "text": "Objects cannot exert\na force on themselves."
+    },
+    {
+      "time": "01:33",
+      "start": 93.81,
+      "end": 95.76,
+      "duration": 1.95,
+      "text": "All different kinds of\nforces that you can think of"
+    },
+    {
+      "time": "01:35",
+      "start": 95.76,
+      "end": 97.59,
+      "duration": 1.83,
+      "text": "or interactions that you can think of"
+    },
+    {
+      "time": "01:37",
+      "start": 97.59,
+      "end": 101.13000000000001,
+      "duration": 3.54,
+      "text": "must be between two\nparticles or two objects."
+    },
+    {
+      "time": "01:41",
+      "start": 101.13,
+      "end": 102.3,
+      "duration": 1.17,
+      "text": "Like in this particular case,"
+    },
+    {
+      "time": "01:42",
+      "start": 102.3,
+      "end": 104.36999999999999,
+      "duration": 2.07,
+      "text": "I can actually see the\ntwo objects over here,"
+    },
+    {
+      "time": "01:44",
+      "start": 104.37,
+      "end": 105.87,
+      "duration": 1.5,
+      "text": "the cannon and the ball."
+    },
+    {
+      "time": "01:45",
+      "start": 105.87,
+      "end": 109.2,
+      "duration": 3.33,
+      "text": "So if I call this ball as A,\nthen we know it's the cannon"
+    },
+    {
+      "time": "01:49",
+      "start": 109.2,
+      "end": 111.39,
+      "duration": 2.19,
+      "text": "that is pushing the ball forward."
+    },
+    {
+      "time": "01:51",
+      "start": 111.39,
+      "end": 115.77,
+      "duration": 4.38,
+      "text": "So it is pushing, is putting\na force forward on A."
+    },
+    {
+      "time": "01:56",
+      "start": 116.85,
+      "end": 119.64,
+      "duration": 2.79,
+      "text": "The cannon is the one\nthat's pushing it forward."
+    },
+    {
+      "time": "01:59",
+      "start": 119.64,
+      "end": 122.82000000000001,
+      "duration": 3.18,
+      "text": "And therefore, from\nNewton's third law, we know"
+    },
+    {
+      "time": "02:02",
+      "start": 122.82,
+      "end": 127.35,
+      "duration": 4.53,
+      "text": "that the ball must be\npushing the cannon backward."
+    },
+    {
+      "time": "02:07",
+      "start": 127.35,
+      "end": 132.12,
+      "duration": 4.77,
+      "text": "So it's the ball that is pushing,"
+    },
+    {
+      "time": "02:12",
+      "start": 132.12,
+      "end": 135.18,
+      "duration": 3.06,
+      "text": "it's putting a force on the cannon."
+    },
+    {
+      "time": "02:15",
+      "start": 135.18,
+      "end": 137.73000000000002,
+      "duration": 2.55,
+      "text": "Let's call the cannon as\nour object B over here."
+    },
+    {
+      "time": "02:17",
+      "start": 137.73,
+      "end": 139.59,
+      "duration": 1.86,
+      "text": "Now, there will be other\nforces acting over here,"
+    },
+    {
+      "time": "02:19",
+      "start": 139.59,
+      "end": 141.42000000000002,
+      "duration": 1.83,
+      "text": "like friction and air\nresistance and stuff,"
+    },
+    {
+      "time": "02:21",
+      "start": 141.42,
+      "end": 142.35,
+      "duration": 0.93,
+      "text": "but let's ignore them."
+    },
+    {
+      "time": "02:22",
+      "start": 142.35,
+      "end": 144.84,
+      "duration": 2.49,
+      "text": "Let's assume that those\nforces are very negligible."
+    },
+    {
+      "time": "02:24",
+      "start": 144.84,
+      "end": 147.3,
+      "duration": 2.46,
+      "text": "So we'll assume that those\nforces are not there, okay?"
+    },
+    {
+      "time": "02:27",
+      "start": 147.3,
+      "end": 150.12,
+      "duration": 2.82,
+      "text": "Then these are the only two\nforces acting over here."
+    },
+    {
+      "time": "02:30",
+      "start": 150.12,
+      "end": 154.38,
+      "duration": 4.26,
+      "text": "Then let's see what happens\nif we apply this equation"
+    },
+    {
+      "time": "02:34",
+      "start": 154.38,
+      "end": 156.03,
+      "duration": 1.65,
+      "text": "to these two objects."
+    },
+    {
+      "time": "02:36",
+      "start": 156.03,
+      "end": 157.11,
+      "duration": 1.08,
+      "text": "So let's do that."
+    },
+    {
+      "time": "02:37",
+      "start": 157.11,
+      "end": 159.21,
+      "duration": 2.1,
+      "text": "So if I apply that\nequation for our object A,"
+    },
+    {
+      "time": "02:39",
+      "start": 159.21,
+      "end": 160.043,
+      "duration": 0.833,
+      "text": "which is the ball,"
+    },
+    {
+      "time": "02:40",
+      "start": 160.043,
+      "end": 164.763,
+      "duration": 4.72,
+      "text": "we can say the net force,\nthe total force acting on A,"
+    },
+    {
+      "time": "02:45",
+      "start": 165.72,
+      "end": 167.301,
+      "duration": 1.581,
+      "text": "which is basically this one force"
+    },
+    {
+      "time": "02:47",
+      "start": 167.301,
+      "end": 169.5,
+      "duration": 2.199,
+      "text": "because there's only one\nforce over here, acting on A,"
+    },
+    {
+      "time": "02:49",
+      "start": 169.5,
+      "end": 172.923,
+      "duration": 3.423,
+      "text": "that should equal the rate\nof change of momentum of A."
+    },
+    {
+      "time": "02:55",
+      "start": 175.62,
+      "end": 177.18,
+      "duration": 1.56,
+      "text": "Okay."
+    },
+    {
+      "time": "02:57",
+      "start": 177.18,
+      "end": 180.03,
+      "duration": 2.85,
+      "text": "And similarly, I can now\nwrite the total force"
+    },
+    {
+      "time": "03:00",
+      "start": 180.03,
+      "end": 184.53,
+      "duration": 4.5,
+      "text": "or the net force acting\non B, which is this force"
+    },
+    {
+      "time": "03:04",
+      "start": 184.53,
+      "end": 185.55,
+      "duration": 1.02,
+      "text": "because there are no other forces."
+    },
+    {
+      "time": "03:05",
+      "start": 185.55,
+      "end": 187.05,
+      "duration": 1.5,
+      "text": "That's what we are assuming."
+    },
+    {
+      "time": "03:07",
+      "start": 187.05,
+      "end": 192.0,
+      "duration": 4.95,
+      "text": "That should be the rate\nof change of momentum of B"
+    },
+    {
+      "time": "03:12",
+      "start": 192.0,
+      "end": 194.64,
+      "duration": 2.64,
+      "text": "of the cannon, okay?"
+    },
+    {
+      "time": "03:14",
+      "start": 194.64,
+      "end": 196.52999999999997,
+      "duration": 1.89,
+      "text": "But remember, from Newton's third law,"
+    },
+    {
+      "time": "03:16",
+      "start": 196.53,
+      "end": 199.59,
+      "duration": 3.06,
+      "text": "these two forces are equal and opposite"
+    },
+    {
+      "time": "03:19",
+      "start": 199.59,
+      "end": 200.67000000000002,
+      "duration": 1.08,
+      "text": "because we're assuming"
+    },
+    {
+      "time": "03:20",
+      "start": 200.67,
+      "end": 202.10999999999999,
+      "duration": 1.44,
+      "text": "that these are the only two forces acting."
+    },
+    {
+      "time": "03:22",
+      "start": 202.11,
+      "end": 203.34,
+      "duration": 1.23,
+      "text": "There are no other forces."
+    },
+    {
+      "time": "03:23",
+      "start": 203.34,
+      "end": 206.1,
+      "duration": 2.76,
+      "text": "So these two must be equal and opposite."
+    },
+    {
+      "time": "03:26",
+      "start": 206.1,
+      "end": 209.16,
+      "duration": 3.06,
+      "text": "In other words, this must be\nequal and opposite to this."
+    },
+    {
+      "time": "03:29",
+      "start": 209.16,
+      "end": 211.23,
+      "duration": 2.07,
+      "text": "So let's write that down and\nlet's write that condition."
+    },
+    {
+      "time": "03:31",
+      "start": 211.23,
+      "end": 214.85999999999999,
+      "duration": 3.63,
+      "text": "If A and B are only\ninteracting with each other,"
+    },
+    {
+      "time": "03:34",
+      "start": 214.86,
+      "end": 216.93,
+      "duration": 2.07,
+      "text": "and when I say interacting,\nI mean putting forces,"
+    },
+    {
+      "time": "03:36",
+      "start": 216.93,
+      "end": 218.55,
+      "duration": 1.62,
+      "text": "they're putting forces only on each other."
+    },
+    {
+      "time": "03:38",
+      "start": 218.55,
+      "end": 220.86,
+      "duration": 2.31,
+      "text": "No other forces that I mean."
+    },
+    {
+      "time": "03:40",
+      "start": 220.86,
+      "end": 223.41000000000003,
+      "duration": 2.55,
+      "text": "Then these two forces must\nbe equal and opposite."
+    },
+    {
+      "time": "03:43",
+      "start": 223.41,
+      "end": 225.48,
+      "duration": 2.07,
+      "text": "Therefore, this must be equal\nand opposite to this one."
+    },
+    {
+      "time": "03:45",
+      "start": 225.48,
+      "end": 226.35,
+      "duration": 0.87,
+      "text": "So let's write that down."
+    },
+    {
+      "time": "03:46",
+      "start": 226.35,
+      "end": 228.9,
+      "duration": 2.55,
+      "text": "The rate of change of momentum of A"
+    },
+    {
+      "time": "03:48",
+      "start": 228.9,
+      "end": 231.84,
+      "duration": 2.94,
+      "text": "must be equal and opposite to,"
+    },
+    {
+      "time": "03:51",
+      "start": 231.84,
+      "end": 233.55,
+      "duration": 1.71,
+      "text": "opposite, so negative sign,"
+    },
+    {
+      "time": "03:53",
+      "start": 233.55,
+      "end": 236.46,
+      "duration": 2.91,
+      "text": "to rate of change of momentum of B."
+    },
+    {
+      "time": "03:56",
+      "start": 236.46,
+      "end": 240.78,
+      "duration": 4.32,
+      "text": "And now, what about this\ndelta T? What about this time?"
+    },
+    {
+      "time": "04:00",
+      "start": 240.78,
+      "end": 244.23,
+      "duration": 3.45,
+      "text": "Well, this time represents\nthe time over which the force"
+    },
+    {
+      "time": "04:04",
+      "start": 244.23,
+      "end": 246.89999999999998,
+      "duration": 2.67,
+      "text": "was acting on A, and\nthis represents the time"
+    },
+    {
+      "time": "04:06",
+      "start": 246.9,
+      "end": 248.94,
+      "duration": 2.04,
+      "text": "over which the force was acting on B."
+    },
+    {
+      "time": "04:08",
+      "start": 248.94,
+      "end": 253.8,
+      "duration": 4.86,
+      "text": "But look, for whatever time\nthe cannon is pushing the ball,"
+    },
+    {
+      "time": "04:13",
+      "start": 253.8,
+      "end": 255.48000000000002,
+      "duration": 1.68,
+      "text": "for the same time, the\nball will be pushing back"
+    },
+    {
+      "time": "04:15",
+      "start": 255.48,
+      "end": 256.74,
+      "duration": 1.26,
+      "text": "on the cannon, right?"
+    },
+    {
+      "time": "04:16",
+      "start": 256.74,
+      "end": 258.48,
+      "duration": 1.74,
+      "text": "I mean, if the cannon was\npushing on the ball, say,"
+    },
+    {
+      "time": "04:18",
+      "start": 258.48,
+      "end": 260.79,
+      "duration": 2.31,
+      "text": "I don't know, maybe for\na couple of milliseconds,"
+    },
+    {
+      "time": "04:20",
+      "start": 260.79,
+      "end": 262.68,
+      "duration": 1.89,
+      "text": "the ball will also be\npushing back on the cannon"
+    },
+    {
+      "time": "04:22",
+      "start": 262.68,
+      "end": 264.66,
+      "duration": 1.98,
+      "text": "only for a couple of milliseconds."
+    },
+    {
+      "time": "04:24",
+      "start": 264.66,
+      "end": 265.92,
+      "duration": 1.26,
+      "text": "Once the contact is broken,"
+    },
+    {
+      "time": "04:25",
+      "start": 265.92,
+      "end": 268.26,
+      "duration": 2.34,
+      "text": "then they're no longer\nputting a force on each other."
+    },
+    {
+      "time": "04:28",
+      "start": 268.26,
+      "end": 271.05,
+      "duration": 2.79,
+      "text": "Therefore, since these are the two equal"
+    },
+    {
+      "time": "04:31",
+      "start": 271.05,
+      "end": 273.39,
+      "duration": 2.34,
+      "text": "and opposite forces, they\nmust be acting on each other"
+    },
+    {
+      "time": "04:33",
+      "start": 273.39,
+      "end": 274.97999999999996,
+      "duration": 1.59,
+      "text": "for exactly the same time."
+    },
+    {
+      "time": "04:34",
+      "start": 274.98,
+      "end": 276.63,
+      "duration": 1.65,
+      "text": "This time must be the same as this one."
+    },
+    {
+      "time": "04:36",
+      "start": 276.63,
+      "end": 278.67,
+      "duration": 2.04,
+      "text": "So I can cancel this out."
+    },
+    {
+      "time": "04:38",
+      "start": 278.67,
+      "end": 283.08000000000004,
+      "duration": 4.41,
+      "text": "And so what I find now is\nthat the change in momentum"
+    },
+    {
+      "time": "04:43",
+      "start": 283.08,
+      "end": 286.91999999999996,
+      "duration": 3.84,
+      "text": "of A should exactly equal,"
+    },
+    {
+      "time": "04:46",
+      "start": 286.92,
+      "end": 291.92,
+      "duration": 5.0,
+      "text": "but opposite to the\nchange in momentum of B"
+    },
+    {
+      "time": "04:52",
+      "start": 292.23,
+      "end": 295.92,
+      "duration": 3.69,
+      "text": "and this, we're gonna box\nthis along with the condition"
+    },
+    {
+      "time": "04:55",
+      "start": 295.92,
+      "end": 297.869,
+      "duration": 1.949,
+      "text": "'cause this condition is gonna\nbe super important for us."
+    },
+    {
+      "time": "04:57",
+      "start": 297.869,
+      "end": 299.76000000000005,
+      "duration": 1.891,
+      "text": "So what is this telling us?"
+    },
+    {
+      "time": "04:59",
+      "start": 299.76,
+      "end": 303.59999999999997,
+      "duration": 3.84,
+      "text": "This is saying that whatever\nmomentum object A gains,"
+    },
+    {
+      "time": "05:03",
+      "start": 303.6,
+      "end": 306.03000000000003,
+      "duration": 2.43,
+      "text": "object B will lose."
+    },
+    {
+      "time": "05:06",
+      "start": 306.03,
+      "end": 307.59,
+      "duration": 1.56,
+      "text": "I say lose because\nthere's an opposite sign."
+    },
+    {
+      "time": "05:07",
+      "start": 307.59,
+      "end": 309.03,
+      "duration": 1.44,
+      "text": "So if this gains, it'll lose,"
+    },
+    {
+      "time": "05:09",
+      "start": 309.03,
+      "end": 310.16999999999996,
+      "duration": 1.14,
+      "text": "but whatever this gains,"
+    },
+    {
+      "time": "05:10",
+      "start": 310.17,
+      "end": 313.32,
+      "duration": 3.15,
+      "text": "it'll lose the same amount of momentum."
+    },
+    {
+      "time": "05:13",
+      "start": 313.32,
+      "end": 314.55,
+      "duration": 1.23,
+      "text": "So whatever this gains,"
+    },
+    {
+      "time": "05:14",
+      "start": 314.55,
+      "end": 316.47,
+      "duration": 1.92,
+      "text": "this will lose the same\namount of momentum."
+    },
+    {
+      "time": "05:16",
+      "start": 316.47,
+      "end": 317.88000000000005,
+      "duration": 1.41,
+      "text": "Whatever this gains,"
+    },
+    {
+      "time": "05:17",
+      "start": 317.88,
+      "end": 319.68,
+      "duration": 1.8,
+      "text": "this will lose the same\namount of momentum."
+    },
+    {
+      "time": "05:19",
+      "start": 319.68,
+      "end": 323.55,
+      "duration": 3.87,
+      "text": "In other words, the total\nmomentum of both the cannon"
+    },
+    {
+      "time": "05:23",
+      "start": 323.55,
+      "end": 327.78000000000003,
+      "duration": 4.23,
+      "text": "and the ball together does\nnot change after firing it."
+    },
+    {
+      "time": "05:27",
+      "start": 327.78,
+      "end": 330.33,
+      "duration": 2.55,
+      "text": "The total momentum stays the same."
+    },
+    {
+      "time": "05:30",
+      "start": 330.33,
+      "end": 335.09999999999997,
+      "duration": 4.77,
+      "text": "This is called the principle\nof conservation of momentum."
+    },
+    {
+      "time": "05:35",
+      "start": 335.1,
+      "end": 336.48,
+      "duration": 1.38,
+      "text": "And a helpful analogy over here"
+    },
+    {
+      "time": "05:36",
+      "start": 336.48,
+      "end": 338.34000000000003,
+      "duration": 1.86,
+      "text": "to think about would be in terms of money."
+    },
+    {
+      "time": "05:38",
+      "start": 338.34,
+      "end": 340.77,
+      "duration": 2.43,
+      "text": "So imagine I had some $100 dollars with me"
+    },
+    {
+      "time": "05:40",
+      "start": 340.77,
+      "end": 343.89,
+      "duration": 3.12,
+      "text": "and you had some $200 with you, okay?"
+    },
+    {
+      "time": "05:43",
+      "start": 343.89,
+      "end": 345.81,
+      "duration": 1.92,
+      "text": "Now, if there's a condition which says"
+    },
+    {
+      "time": "05:45",
+      "start": 345.81,
+      "end": 348.18,
+      "duration": 2.37,
+      "text": "that we are only going\nto be exchanging money"
+    },
+    {
+      "time": "05:48",
+      "start": 348.18,
+      "end": 350.64,
+      "duration": 2.46,
+      "text": "amongst ourselves, okay?"
+    },
+    {
+      "time": "05:50",
+      "start": 350.64,
+      "end": 355.08,
+      "duration": 4.44,
+      "text": "Then notice whatever money\nI lose, if I lose some $20,"
+    },
+    {
+      "time": "05:55",
+      "start": 355.08,
+      "end": 356.43,
+      "duration": 1.35,
+      "text": "you would've gained that $20"
+    },
+    {
+      "time": "05:56",
+      "start": 356.43,
+      "end": 359.25,
+      "duration": 2.82,
+      "text": "because you're are only exchanging\nmoney amongst ourselves."
+    },
+    {
+      "time": "05:59",
+      "start": 359.25,
+      "end": 361.83,
+      "duration": 2.58,
+      "text": "Whatever money you lose,\nif you lose, I don't know,"
+    },
+    {
+      "time": "06:01",
+      "start": 361.83,
+      "end": 364.77,
+      "duration": 2.94,
+      "text": "maybe $50, I would've gained that $50"
+    },
+    {
+      "time": "06:04",
+      "start": 364.77,
+      "end": 367.68,
+      "duration": 2.91,
+      "text": "because we are only exchanging\nmoney amongst ourselves."
+    },
+    {
+      "time": "06:07",
+      "start": 367.68,
+      "end": 371.61,
+      "duration": 3.93,
+      "text": "So whatever amount of money\nwe exchange amongst ourselves,"
+    },
+    {
+      "time": "06:11",
+      "start": 371.61,
+      "end": 372.87,
+      "duration": 1.26,
+      "text": "money that I have will change,"
+    },
+    {
+      "time": "06:12",
+      "start": 372.87,
+      "end": 374.04,
+      "duration": 1.17,
+      "text": "money that you have will change,"
+    },
+    {
+      "time": "06:14",
+      "start": 374.04,
+      "end": 377.85,
+      "duration": 3.81,
+      "text": "but our total money\nwould stay the same, $300"
+    },
+    {
+      "time": "06:17",
+      "start": 377.85,
+      "end": 380.16,
+      "duration": 2.31,
+      "text": "because we are only exchanging\nmoney amongst ourselves."
+    },
+    {
+      "time": "06:20",
+      "start": 380.16,
+      "end": 382.53000000000003,
+      "duration": 2.37,
+      "text": "That's what's happening over here."
+    },
+    {
+      "time": "06:22",
+      "start": 382.53,
+      "end": 385.79999999999995,
+      "duration": 3.27,
+      "text": "Because these two objects\nare only interacting"
+    },
+    {
+      "time": "06:25",
+      "start": 385.8,
+      "end": 388.56,
+      "duration": 2.76,
+      "text": "with each other, whatever\nmomentum one gains,"
+    },
+    {
+      "time": "06:28",
+      "start": 388.56,
+      "end": 390.51,
+      "duration": 1.95,
+      "text": "they're exchanging momentum over here."
+    },
+    {
+      "time": "06:30",
+      "start": 390.51,
+      "end": 392.82,
+      "duration": 2.31,
+      "text": "Whatever momentum one gains,\nthe other one must be losing."
+    },
+    {
+      "time": "06:32",
+      "start": 392.82,
+      "end": 396.24,
+      "duration": 3.42,
+      "text": "Therefore, the total momentum\nthat they have stays the same."
+    },
+    {
+      "time": "06:36",
+      "start": 396.24,
+      "end": 397.38,
+      "duration": 1.14,
+      "text": "But now you can also understand"
+    },
+    {
+      "time": "06:37",
+      "start": 397.38,
+      "end": 399.678,
+      "duration": 2.298,
+      "text": "and appreciate why this\ncondition is important."
+    },
+    {
+      "time": "06:39",
+      "start": 399.678,
+      "end": 401.55,
+      "duration": 1.872,
+      "text": "I mean, if you come back over here,"
+    },
+    {
+      "time": "06:41",
+      "start": 401.55,
+      "end": 404.85,
+      "duration": 3.3,
+      "text": "if we start exchanging\nmoney with a third person,"
+    },
+    {
+      "time": "06:44",
+      "start": 404.85,
+      "end": 407.49,
+      "duration": 2.64,
+      "text": "if we start exchanging\nmoney with a third person,"
+    },
+    {
+      "time": "06:47",
+      "start": 407.49,
+      "end": 408.78000000000003,
+      "duration": 1.29,
+      "text": "then this will not work."
+    },
+    {
+      "time": "06:48",
+      "start": 408.78,
+      "end": 411.11999999999995,
+      "duration": 2.34,
+      "text": "Then the total money that\nyou and I have will change"
+    },
+    {
+      "time": "06:51",
+      "start": 411.12,
+      "end": 414.36,
+      "duration": 3.24,
+      "text": "because now there's a third\nperson involved over here."
+    },
+    {
+      "time": "06:54",
+      "start": 414.36,
+      "end": 416.37,
+      "duration": 2.01,
+      "text": "That's the reason why this only works"
+    },
+    {
+      "time": "06:56",
+      "start": 416.37,
+      "end": 420.223,
+      "duration": 3.853,
+      "text": "as long as the two objects\nare only exchanging forces,"
+    },
+    {
+      "time": "07:00",
+      "start": 420.223,
+      "end": 422.27500000000003,
+      "duration": 2.052,
+      "text": "interacting with each\nother, exchanging momentum"
+    },
+    {
+      "time": "07:02",
+      "start": 422.275,
+      "end": 425.31,
+      "duration": 3.035,
+      "text": "with each other, or putting\nforces on each other."
+    },
+    {
+      "time": "07:05",
+      "start": 425.31,
+      "end": 429.72,
+      "duration": 4.41,
+      "text": "If there are forces from\noutside these two objects,"
+    },
+    {
+      "time": "07:09",
+      "start": 429.72,
+      "end": 431.46000000000004,
+      "duration": 1.74,
+      "text": "so we could call this as our system,"
+    },
+    {
+      "time": "07:11",
+      "start": 431.46,
+      "end": 433.97999999999996,
+      "duration": 2.52,
+      "text": "and if there are forces\noutside of the system,"
+    },
+    {
+      "time": "07:13",
+      "start": 433.98,
+      "end": 436.74,
+      "duration": 2.76,
+      "text": "I mean, unbalanced forces\nfrom outside the system,"
+    },
+    {
+      "time": "07:16",
+      "start": 436.74,
+      "end": 438.87,
+      "duration": 2.13,
+      "text": "balanced forces outside the\nsystem will not affect us."
+    },
+    {
+      "time": "07:18",
+      "start": 438.87,
+      "end": 442.17,
+      "duration": 3.3,
+      "text": "But if there are unbalanced\nforces outside the system,"
+    },
+    {
+      "time": "07:22",
+      "start": 442.17,
+      "end": 444.57,
+      "duration": 2.4,
+      "text": "then no, the momentum of this system"
+    },
+    {
+      "time": "07:24",
+      "start": 444.57,
+      "end": 446.79,
+      "duration": 2.22,
+      "text": "will not be conserved anymore."
+    },
+    {
+      "time": "07:26",
+      "start": 446.79,
+      "end": 448.8,
+      "duration": 2.01,
+      "text": "And the beauty is this can be extended"
+    },
+    {
+      "time": "07:28",
+      "start": 448.8,
+      "end": 450.18,
+      "duration": 1.38,
+      "text": "to any number of objects."
+    },
+    {
+      "time": "07:30",
+      "start": 450.18,
+      "end": 452.19,
+      "duration": 2.01,
+      "text": "Imagine now if we had three objects,"
+    },
+    {
+      "time": "07:32",
+      "start": 452.19,
+      "end": 455.07,
+      "duration": 2.88,
+      "text": "and again, under the condition\nthat they're only interacting"
+    },
+    {
+      "time": "07:35",
+      "start": 455.07,
+      "end": 458.04,
+      "duration": 2.97,
+      "text": "with each other, then the total momentum"
+    },
+    {
+      "time": "07:38",
+      "start": 458.04,
+      "end": 460.8,
+      "duration": 2.76,
+      "text": "of those three objects\nshould stay the same."
+    },
+    {
+      "time": "07:40",
+      "start": 460.8,
+      "end": 462.75,
+      "duration": 1.95,
+      "text": "Again, the condition"
+    },
+    {
+      "time": "07:42",
+      "start": 462.75,
+      "end": 464.826,
+      "duration": 2.076,
+      "text": "is that there shouldn't be a fourth object"
+    },
+    {
+      "time": "07:44",
+      "start": 464.826,
+      "end": 466.8,
+      "duration": 1.974,
+      "text": "that they're interacting with."
+    },
+    {
+      "time": "07:46",
+      "start": 466.8,
+      "end": 469.35,
+      "duration": 2.55,
+      "text": "Then that would be an external force."
+    },
+    {
+      "time": "07:49",
+      "start": 469.35,
+      "end": 470.49,
+      "duration": 1.14,
+      "text": "Then that will change the momentum"
+    },
+    {
+      "time": "07:50",
+      "start": 470.49,
+      "end": 472.74,
+      "duration": 2.25,
+      "text": "of those three objects together."
+    },
+    {
+      "time": "07:52",
+      "start": 472.74,
+      "end": 473.91,
+      "duration": 1.17,
+      "text": "That makes sense, right?"
+    },
+    {
+      "time": "07:53",
+      "start": 473.91,
+      "end": 476.82000000000005,
+      "duration": 2.91,
+      "text": "This is the powerful\nconservation of momentum."
+    },
+    {
+      "time": "07:56",
+      "start": 476.82,
+      "end": 478.46999999999997,
+      "duration": 1.65,
+      "text": "All right, now, let's\nsee if we can apply this"
+    },
+    {
+      "time": "07:58",
+      "start": 478.47,
+      "end": 480.06,
+      "duration": 1.59,
+      "text": "to answer our original question."
+    },
+    {
+      "time": "08:00",
+      "start": 480.06,
+      "end": 484.02,
+      "duration": 3.96,
+      "text": "So we'll consider the case\nbefore we shot the cannon."
+    },
+    {
+      "time": "08:04",
+      "start": 484.02,
+      "end": 488.37,
+      "duration": 4.35,
+      "text": "So remember, momentum is\nmass times velocity, right?"
+    },
+    {
+      "time": "08:08",
+      "start": 488.37,
+      "end": 490.23,
+      "duration": 1.86,
+      "text": "Now, before we shot the cannon,"
+    },
+    {
+      "time": "08:10",
+      "start": 490.23,
+      "end": 491.52000000000004,
+      "duration": 1.29,
+      "text": "the cannon was at rest."
+    },
+    {
+      "time": "08:11",
+      "start": 491.52,
+      "end": 493.74,
+      "duration": 2.22,
+      "text": "So its velocity was zero,\nits momentum was zero,"
+    },
+    {
+      "time": "08:13",
+      "start": 493.74,
+      "end": 495.39,
+      "duration": 1.65,
+      "text": "the ball was also at rest."
+    },
+    {
+      "time": "08:15",
+      "start": 495.39,
+      "end": 498.09,
+      "duration": 2.7,
+      "text": "Its velocity is zero. So\nits momentum was also zero."
+    },
+    {
+      "time": "08:18",
+      "start": 498.09,
+      "end": 500.09999999999997,
+      "duration": 2.01,
+      "text": "So the total initial momentum"
+    },
+    {
+      "time": "08:20",
+      "start": 500.1,
+      "end": 503.64300000000003,
+      "duration": 3.543,
+      "text": "before firing was zero,"
+    },
+    {
+      "time": "08:25",
+      "start": 505.35,
+      "end": 508.74,
+      "duration": 3.39,
+      "text": "which means after firing,\nsince we're assuming"
+    },
+    {
+      "time": "08:28",
+      "start": 508.74,
+      "end": 511.08,
+      "duration": 2.34,
+      "text": "that they're only\ninteracting with each other,"
+    },
+    {
+      "time": "08:31",
+      "start": 511.08,
+      "end": 513.36,
+      "duration": 2.28,
+      "text": "the total final momentum\nmust stay the same."
+    },
+    {
+      "time": "08:33",
+      "start": 513.36,
+      "end": 515.88,
+      "duration": 2.52,
+      "text": "That's what the principle of\nconservation of momentum says."
+    },
+    {
+      "time": "08:35",
+      "start": 515.88,
+      "end": 516.93,
+      "duration": 1.05,
+      "text": "That the total final momentum"
+    },
+    {
+      "time": "08:36",
+      "start": 516.93,
+      "end": 518.43,
+      "duration": 1.5,
+      "text": "must equal the total initial momentum."
+    },
+    {
+      "time": "08:38",
+      "start": 518.43,
+      "end": 522.87,
+      "duration": 4.44,
+      "text": "So the total final\nmomentum must also be zero."
+    },
+    {
+      "time": "08:42",
+      "start": 522.87,
+      "end": 524.61,
+      "duration": 1.74,
+      "text": "Now, we might be thinking,\n\"Well, how can that be?"
+    },
+    {
+      "time": "08:44",
+      "start": 524.61,
+      "end": 526.26,
+      "duration": 1.65,
+      "text": "How can the total final momentum be zero"
+    },
+    {
+      "time": "08:46",
+      "start": 526.26,
+      "end": 527.76,
+      "duration": 1.5,
+      "text": "because they are now moving."
+    },
+    {
+      "time": "08:47",
+      "start": 527.76,
+      "end": 529.38,
+      "duration": 1.62,
+      "text": "So there is some momentum.\""
+    },
+    {
+      "time": "08:49",
+      "start": 529.38,
+      "end": 532.26,
+      "duration": 2.88,
+      "text": "Well, remember, momentum\nis a vector quantity."
+    },
+    {
+      "time": "08:52",
+      "start": 532.26,
+      "end": 535.77,
+      "duration": 3.51,
+      "text": "So the only way the total\nfinal momentum can be zero"
+    },
+    {
+      "time": "08:55",
+      "start": 535.77,
+      "end": 540.77,
+      "duration": 5.0,
+      "text": "is if whatever is the forward\nmomentum that this ball has,"
+    },
+    {
+      "time": "09:01",
+      "start": 541.98,
+      "end": 546.98,
+      "duration": 5.0,
+      "text": "this cannon must have the\nexact same backward momentum."
+    },
+    {
+      "time": "09:07",
+      "start": 547.65,
+      "end": 550.98,
+      "duration": 3.33,
+      "text": "So whatever forward momentum\nthe ball must be having,"
+    },
+    {
+      "time": "09:10",
+      "start": 550.98,
+      "end": 555.6,
+      "duration": 4.62,
+      "text": "the cannon must be having the\nexact same backward momentum"
+    },
+    {
+      "time": "09:15",
+      "start": 555.6,
+      "end": 556.71,
+      "duration": 1.11,
+      "text": "because when that happens,"
+    },
+    {
+      "time": "09:16",
+      "start": 556.71,
+      "end": 559.02,
+      "duration": 2.31,
+      "text": "it's a vector they can now cancel out"
+    },
+    {
+      "time": "09:19",
+      "start": 559.02,
+      "end": 560.85,
+      "duration": 1.83,
+      "text": "because they're in the opposite direction."
+    },
+    {
+      "time": "09:20",
+      "start": 560.85,
+      "end": 563.49,
+      "duration": 2.64,
+      "text": "That's the only way they\ncan conserve momentum,"
+    },
+    {
+      "time": "09:23",
+      "start": 563.49,
+      "end": 566.3100000000001,
+      "duration": 2.82,
+      "text": "which means we've answered\nour original question."
+    },
+    {
+      "time": "09:26",
+      "start": 566.31,
+      "end": 569.67,
+      "duration": 3.36,
+      "text": "The backward momentum of the\ncannon must be exactly the same"
+    },
+    {
+      "time": "09:29",
+      "start": 569.67,
+      "end": 573.12,
+      "duration": 3.45,
+      "text": "as the forward momentum of that ball."
+    },
+    {
+      "time": "09:33",
+      "start": 573.12,
+      "end": 575.1,
+      "duration": 1.98,
+      "text": "And since we know how to\ncalculate the momentum,"
+    },
+    {
+      "time": "09:35",
+      "start": 575.1,
+      "end": 577.2900000000001,
+      "duration": 2.19,
+      "text": "since we know momentum\nis mass times velocity,"
+    },
+    {
+      "time": "09:37",
+      "start": 577.29,
+      "end": 578.49,
+      "duration": 1.2,
+      "text": "we can now also understand"
+    },
+    {
+      "time": "09:38",
+      "start": 578.49,
+      "end": 581.97,
+      "duration": 3.48,
+      "text": "that since this has much\nmore mass than this,"
+    },
+    {
+      "time": "09:41",
+      "start": 581.97,
+      "end": 583.53,
+      "duration": 1.56,
+      "text": "they have the same momentum."
+    },
+    {
+      "time": "09:43",
+      "start": 583.53,
+      "end": 587.13,
+      "duration": 3.6,
+      "text": "This is more massive, this\nshould have less velocity."
+    },
+    {
+      "time": "09:47",
+      "start": 587.13,
+      "end": 590.28,
+      "duration": 3.15,
+      "text": "And so it makes sense that\nthe ball travels a lot faster"
+    },
+    {
+      "time": "09:50",
+      "start": 590.28,
+      "end": 594.0899999999999,
+      "duration": 3.81,
+      "text": "compared to how much the\ncannon travels backwards."
+    },
+    {
+      "time": "09:54",
+      "start": 594.09,
+      "end": 595.08,
+      "duration": 0.99,
+      "text": "So they'll have different speeds,"
+    },
+    {
+      "time": "09:55",
+      "start": 595.08,
+      "end": 597.0300000000001,
+      "duration": 1.95,
+      "text": "but they should have the same momentum."
+    },
+    {
+      "time": "09:57",
+      "start": 597.03,
+      "end": 599.6999999999999,
+      "duration": 2.67,
+      "text": "But this now brings us to the final part,"
+    },
+    {
+      "time": "09:59",
+      "start": 599.7,
+      "end": 601.62,
+      "duration": 1.92,
+      "text": "which is you may be saying, \"Well, yeah,"
+    },
+    {
+      "time": "10:01",
+      "start": 601.62,
+      "end": 603.99,
+      "duration": 2.37,
+      "text": "but remember in reality,"
+    },
+    {
+      "time": "10:03",
+      "start": 603.99,
+      "end": 606.84,
+      "duration": 2.85,
+      "text": "we do have frictional forces over here."
+    },
+    {
+      "time": "10:06",
+      "start": 606.84,
+      "end": 610.5600000000001,
+      "duration": 3.72,
+      "text": "We do have air resistance\nover here, right?"
+    },
+    {
+      "time": "10:10",
+      "start": 610.56,
+      "end": 614.01,
+      "duration": 3.45,
+      "text": "So technically, technically\nspeaking, in reality,"
+    },
+    {
+      "time": "10:14",
+      "start": 614.01,
+      "end": 616.92,
+      "duration": 2.91,
+      "text": "in a real case, these are not\nthe only two forces acting."
+    },
+    {
+      "time": "10:16",
+      "start": 616.92,
+      "end": 618.51,
+      "duration": 1.59,
+      "text": "There are other forces acting."
+    },
+    {
+      "time": "10:18",
+      "start": 618.51,
+      "end": 622.29,
+      "duration": 3.78,
+      "text": "So there are external forces on my system."
+    },
+    {
+      "time": "10:22",
+      "start": 622.29,
+      "end": 625.17,
+      "duration": 2.88,
+      "text": "My system is the cannon\nand the ball together."
+    },
+    {
+      "time": "10:25",
+      "start": 625.17,
+      "end": 628.4399999999999,
+      "duration": 3.27,
+      "text": "So technically, momentum is not conserved"
+    },
+    {
+      "time": "10:28",
+      "start": 628.44,
+      "end": 629.8800000000001,
+      "duration": 1.44,
+      "text": "because this condition is violated."
+    },
+    {
+      "time": "10:29",
+      "start": 629.88,
+      "end": 631.56,
+      "duration": 1.68,
+      "text": "There are external forces, right?"
+    },
+    {
+      "time": "10:31",
+      "start": 631.56,
+      "end": 634.7099999999999,
+      "duration": 3.15,
+      "text": "So technically speaking,\nthis is not true, right?"
+    },
+    {
+      "time": "10:34",
+      "start": 634.71,
+      "end": 637.5600000000001,
+      "duration": 2.85,
+      "text": "And I'll say, yes,\ntechnically that is not true"
+    },
+    {
+      "time": "10:37",
+      "start": 637.56,
+      "end": 639.0899999999999,
+      "duration": 1.53,
+      "text": "but here's the beauty."
+    },
+    {
+      "time": "10:39",
+      "start": 639.09,
+      "end": 641.88,
+      "duration": 2.79,
+      "text": "Remember, we are considering\nthat initial and the final"
+    },
+    {
+      "time": "10:41",
+      "start": 641.88,
+      "end": 643.08,
+      "duration": 1.2,
+      "text": "when we are talking about, we are talking"
+    },
+    {
+      "time": "10:43",
+      "start": 643.08,
+      "end": 645.36,
+      "duration": 2.28,
+      "text": "about just before shooting the ball"
+    },
+    {
+      "time": "10:45",
+      "start": 645.36,
+      "end": 647.85,
+      "duration": 2.49,
+      "text": "and just after that shooting the ball,"
+    },
+    {
+      "time": "10:47",
+      "start": 647.85,
+      "end": 650.0400000000001,
+      "duration": 2.19,
+      "text": "that time interval is extremely tiny."
+    },
+    {
+      "time": "10:50",
+      "start": 650.04,
+      "end": 651.5999999999999,
+      "duration": 1.56,
+      "text": "This is the time interval\nwe're talking about."
+    },
+    {
+      "time": "10:51",
+      "start": 651.6,
+      "end": 654.36,
+      "duration": 2.76,
+      "text": "It's a very small time interval."
+    },
+    {
+      "time": "10:54",
+      "start": 654.36,
+      "end": 658.14,
+      "duration": 3.78,
+      "text": "During that time interval,\nthe effects of friction"
+    },
+    {
+      "time": "10:58",
+      "start": 658.14,
+      "end": 661.8,
+      "duration": 3.66,
+      "text": "and the effects of air\nresistance are very minimal."
+    },
+    {
+      "time": "11:01",
+      "start": 661.8,
+      "end": 664.7099999999999,
+      "duration": 2.91,
+      "text": "The dominant forces are these two."
+    },
+    {
+      "time": "11:04",
+      "start": 664.71,
+      "end": 667.95,
+      "duration": 3.24,
+      "text": "These are the one that\nhave the maximum effect."
+    },
+    {
+      "time": "11:07",
+      "start": 667.95,
+      "end": 672.09,
+      "duration": 4.14,
+      "text": "So even though it's true that\ntechnically these forces exist"
+    },
+    {
+      "time": "11:12",
+      "start": 672.09,
+      "end": 675.45,
+      "duration": 3.36,
+      "text": "because their effects in\nreality, in practical,"
+    },
+    {
+      "time": "11:15",
+      "start": 675.45,
+      "end": 677.58,
+      "duration": 2.13,
+      "text": "actual cases are very tiny"
+    },
+    {
+      "time": "11:17",
+      "start": 677.58,
+      "end": 681.99,
+      "duration": 4.41,
+      "text": "during that small time,\nwe can still ignore them"
+    },
+    {
+      "time": "11:21",
+      "start": 681.99,
+      "end": 685.17,
+      "duration": 3.18,
+      "text": "and get a very good approximate answer."
+    },
+    {
+      "time": "11:25",
+      "start": 685.17,
+      "end": 687.5999999999999,
+      "duration": 2.43,
+      "text": "But if you take a big\ngap between the initial"
+    },
+    {
+      "time": "11:27",
+      "start": 687.6,
+      "end": 690.9,
+      "duration": 3.3,
+      "text": "and the final momentum, if\nyou wait for a long time"
+    },
+    {
+      "time": "11:30",
+      "start": 690.9,
+      "end": 693.4499999999999,
+      "duration": 2.55,
+      "text": "after firing, then yes,"
+    },
+    {
+      "time": "11:33",
+      "start": 693.45,
+      "end": 695.37,
+      "duration": 1.92,
+      "text": "momentum will definitely not be conserved"
+    },
+    {
+      "time": "11:35",
+      "start": 695.37,
+      "end": 696.99,
+      "duration": 1.62,
+      "text": "because now the effects of friction"
+    },
+    {
+      "time": "11:36",
+      "start": 696.99,
+      "end": 699.51,
+      "duration": 2.52,
+      "text": "and air resistance will\nbe definitely felt."
+    },
+    {
+      "time": "11:39",
+      "start": 699.51,
+      "end": 700.77,
+      "duration": 1.26,
+      "text": "You will see that this cannon"
+    },
+    {
+      "time": "11:40",
+      "start": 700.77,
+      "end": 702.6,
+      "duration": 1.83,
+      "text": "will eventually come to a stop."
+    },
+    {
+      "time": "11:42",
+      "start": 702.6,
+      "end": 704.9150000000001,
+      "duration": 2.315,
+      "text": "You'll see this ball would\nthen fall into the ground"
+    },
+    {
+      "time": "11:44",
+      "start": 704.915,
+      "end": 706.89,
+      "duration": 1.975,
+      "text": "and eventually come to the stop."
+    },
+    {
+      "time": "11:46",
+      "start": 706.89,
+      "end": 710.25,
+      "duration": 3.36,
+      "text": "Now clearly, the momentum\nhas gone out of the system."
+    },
+    {
+      "time": "11:50",
+      "start": 710.25,
+      "end": 713.55,
+      "duration": 3.3,
+      "text": "Now the effects of other\nforces cannot be neglected."
+    },
+    {
+      "time": "11:53",
+      "start": 713.55,
+      "end": 716.3399999999999,
+      "duration": 2.79,
+      "text": "But the key idea is if you use it"
+    },
+    {
+      "time": "11:56",
+      "start": 716.34,
+      "end": 719.85,
+      "duration": 3.51,
+      "text": "for a very short time while\nthat explosion happened,"
+    },
+    {
+      "time": "11:59",
+      "start": 719.85,
+      "end": 721.62,
+      "duration": 1.77,
+      "text": "during which that explosion happened,"
+    },
+    {
+      "time": "12:01",
+      "start": 721.62,
+      "end": 724.98,
+      "duration": 3.36,
+      "text": "then we can ignore the effects\nof all the other forces"
+    },
+    {
+      "time": "12:04",
+      "start": 724.98,
+      "end": 726.54,
+      "duration": 1.56,
+      "text": "because these would be the dominant forces"
+    },
+    {
+      "time": "12:06",
+      "start": 726.54,
+      "end": 730.05,
+      "duration": 3.51,
+      "text": "and we will still get a pretty,\npretty good approximation,"
+    },
+    {
+      "time": "12:10",
+      "start": 730.05,
+      "end": 733.41,
+      "duration": 3.36,
+      "text": "which means conservation of\nmomentum is a powerful tool"
+    },
+    {
+      "time": "12:13",
+      "start": 733.41,
+      "end": 735.7199999999999,
+      "duration": 2.31,
+      "text": "to use when you're dealing\nwith forces that last"
+    },
+    {
+      "time": "12:15",
+      "start": 735.72,
+      "end": 738.9300000000001,
+      "duration": 3.21,
+      "text": "for small times, like explosion forces"
+    },
+    {
+      "time": "12:18",
+      "start": 738.93,
+      "end": 740.67,
+      "duration": 1.74,
+      "text": "or when we're dealing with collisions."
+    },
+    {
+      "time": "12:20",
+      "start": 740.67,
+      "end": 742.41,
+      "duration": 1.74,
+      "text": "Whenever such things happen,"
+    },
+    {
+      "time": "12:22",
+      "start": 742.41,
+      "end": 744.48,
+      "duration": 2.07,
+      "text": "we're gonna use conservation of momentum."
+    },
+    {
+      "time": "12:24",
+      "start": 744.48,
+      "end": 746.283,
+      "duration": 1.803,
+      "text": "It's gonna be our go-to tool."
+    }
+  ]
+}

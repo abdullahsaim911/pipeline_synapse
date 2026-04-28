@@ -1,0 +1,274 @@
+[
+  {
+    "timestamp": "00:16",
+    "timestamp_seconds": 16.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0000_00_16.jpg",
+    "content_type": "notes",
+    "complexity_score": 0.3314,
+    "clip_confidence": 0.3314
+  },
+  {
+    "timestamp": "00:32",
+    "timestamp_seconds": 32.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0001_00_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3192,
+    "clip_confidence": 0.3192
+  },
+  {
+    "timestamp": "00:50",
+    "timestamp_seconds": 50.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0002_00_50.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.2988,
+    "clip_confidence": 0.2988
+  },
+  {
+    "timestamp": "01:10",
+    "timestamp_seconds": 70.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0003_01_10.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3765,
+    "clip_confidence": 0.3765
+  },
+  {
+    "timestamp": "01:46",
+    "timestamp_seconds": 106.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0004_01_46.jpg",
+    "content_type": "geometry",
+    "complexity_score": 0.371,
+    "clip_confidence": 0.371
+  },
+  {
+    "timestamp": "02:00",
+    "timestamp_seconds": 120.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0005_02_00.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.3852,
+    "clip_confidence": 0.3852
+  },
+  {
+    "timestamp": "03:42",
+    "timestamp_seconds": 222.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0006_03_42.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.293,
+    "clip_confidence": 0.293
+  },
+  {
+    "timestamp": "03:56",
+    "timestamp_seconds": 236.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0007_03_56.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3739,
+    "clip_confidence": 0.3739
+  },
+  {
+    "timestamp": "04:28",
+    "timestamp_seconds": 268.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0008_04_28.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.282,
+    "clip_confidence": 0.282
+  },
+  {
+    "timestamp": "04:32",
+    "timestamp_seconds": 272.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0009_04_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2971,
+    "clip_confidence": 0.2971
+  },
+  {
+    "timestamp": "04:46",
+    "timestamp_seconds": 286.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0010_04_46.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.2805,
+    "clip_confidence": 0.2805
+  },
+  {
+    "timestamp": "04:50",
+    "timestamp_seconds": 290.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0011_04_50.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2986,
+    "clip_confidence": 0.2986
+  },
+  {
+    "timestamp": "04:54",
+    "timestamp_seconds": 294.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0012_04_54.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3696,
+    "clip_confidence": 0.3696
+  },
+  {
+    "timestamp": "05:18",
+    "timestamp_seconds": 318.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0013_05_18.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.2998,
+    "clip_confidence": 0.2998
+  },
+  {
+    "timestamp": "05:40",
+    "timestamp_seconds": 340.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0014_05_40.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2804,
+    "clip_confidence": 0.2804
+  },
+  {
+    "timestamp": "07:20",
+    "timestamp_seconds": 440.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0015_07_20.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3184,
+    "clip_confidence": 0.3184
+  },
+  {
+    "timestamp": "08:04",
+    "timestamp_seconds": 484.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0016_08_04.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.4391,
+    "clip_confidence": 0.4391
+  },
+  {
+    "timestamp": "10:32",
+    "timestamp_seconds": 632.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0017_10_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.4241,
+    "clip_confidence": 0.4241
+  },
+  {
+    "timestamp": "10:48",
+    "timestamp_seconds": 648.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0018_10_48.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.2961,
+    "clip_confidence": 0.2961
+  },
+  {
+    "timestamp": "11:34",
+    "timestamp_seconds": 694.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0019_11_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.4305,
+    "clip_confidence": 0.4305
+  },
+  {
+    "timestamp": "12:08",
+    "timestamp_seconds": 728.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0020_12_08.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3683,
+    "clip_confidence": 0.3683
+  },
+  {
+    "timestamp": "12:26",
+    "timestamp_seconds": 746.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0021_12_26.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3092,
+    "clip_confidence": 0.3092
+  },
+  {
+    "timestamp": "12:52",
+    "timestamp_seconds": 772.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0022_12_52.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3956,
+    "clip_confidence": 0.3956
+  },
+  {
+    "timestamp": "13:10",
+    "timestamp_seconds": 790.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0023_13_10.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.302,
+    "clip_confidence": 0.302
+  },
+  {
+    "timestamp": "13:20",
+    "timestamp_seconds": 800.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0024_13_20.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.372,
+    "clip_confidence": 0.372
+  },
+  {
+    "timestamp": "13:50",
+    "timestamp_seconds": 830.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0025_13_50.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2749,
+    "clip_confidence": 0.2749
+  },
+  {
+    "timestamp": "14:34",
+    "timestamp_seconds": 874.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0026_14_34.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.2859,
+    "clip_confidence": 0.2859
+  },
+  {
+    "timestamp": "14:40",
+    "timestamp_seconds": 880.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0027_14_40.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3015,
+    "clip_confidence": 0.3015
+  },
+  {
+    "timestamp": "14:44",
+    "timestamp_seconds": 884.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0028_14_44.jpg",
+    "content_type": "geometry",
+    "complexity_score": 0.3443,
+    "clip_confidence": 0.3443
+  },
+  {
+    "timestamp": "15:06",
+    "timestamp_seconds": 906.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0029_15_06.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3632,
+    "clip_confidence": 0.3632
+  },
+  {
+    "timestamp": "15:52",
+    "timestamp_seconds": 952.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0030_15_52.jpg",
+    "content_type": "graph",
+    "complexity_score": 0.3978,
+    "clip_confidence": 0.3978
+  },
+  {
+    "timestamp": "16:18",
+    "timestamp_seconds": 978.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0031_16_18.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2986,
+    "clip_confidence": 0.2986
+  },
+  {
+    "timestamp": "16:24",
+    "timestamp_seconds": 984.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0032_16_24.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.3409,
+    "clip_confidence": 0.3409
+  },
+  {
+    "timestamp": "16:36",
+    "timestamp_seconds": 996.0,
+    "frame_path": "data\\PFDu9oVAE-g\\keyframes\\frame_0033_16_36.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3456,
+    "clip_confidence": 0.3456
+  }
+]

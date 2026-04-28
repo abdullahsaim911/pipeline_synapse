@@ -1,0 +1,130 @@
+[
+  {
+    "timestamp": "00:36",
+    "timestamp_seconds": 36.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0000_00_36.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2702,
+    "clip_confidence": 0.2702
+  },
+  {
+    "timestamp": "01:40",
+    "timestamp_seconds": 100.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0001_01_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2846,
+    "clip_confidence": 0.2846
+  },
+  {
+    "timestamp": "02:42",
+    "timestamp_seconds": 162.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0002_02_42.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2845,
+    "clip_confidence": 0.2845
+  },
+  {
+    "timestamp": "03:14",
+    "timestamp_seconds": 194.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0003_03_14.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2659,
+    "clip_confidence": 0.2659
+  },
+  {
+    "timestamp": "05:26",
+    "timestamp_seconds": 326.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0004_05_26.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.308,
+    "clip_confidence": 0.308
+  },
+  {
+    "timestamp": "07:26",
+    "timestamp_seconds": 446.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0005_07_26.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3125,
+    "clip_confidence": 0.3125
+  },
+  {
+    "timestamp": "07:28",
+    "timestamp_seconds": 448.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0006_07_28.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3125,
+    "clip_confidence": 0.3125
+  },
+  {
+    "timestamp": "07:30",
+    "timestamp_seconds": 450.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0007_07_30.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3145,
+    "clip_confidence": 0.3145
+  },
+  {
+    "timestamp": "07:32",
+    "timestamp_seconds": 452.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0008_07_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3145,
+    "clip_confidence": 0.3145
+  },
+  {
+    "timestamp": "10:28",
+    "timestamp_seconds": 628.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0009_10_28.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3115,
+    "clip_confidence": 0.3115
+  },
+  {
+    "timestamp": "10:30",
+    "timestamp_seconds": 630.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0010_10_30.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3132,
+    "clip_confidence": 0.3132
+  },
+  {
+    "timestamp": "10:32",
+    "timestamp_seconds": 632.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0011_10_32.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3145,
+    "clip_confidence": 0.3145
+  },
+  {
+    "timestamp": "10:34",
+    "timestamp_seconds": 634.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0012_10_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3162,
+    "clip_confidence": 0.3162
+  },
+  {
+    "timestamp": "10:36",
+    "timestamp_seconds": 636.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0013_10_36.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.319,
+    "clip_confidence": 0.319
+  },
+  {
+    "timestamp": "10:38",
+    "timestamp_seconds": 638.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0014_10_38.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.319,
+    "clip_confidence": 0.319
+  },
+  {
+    "timestamp": "10:40",
+    "timestamp_seconds": 640.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\d8EA5TxGzcY\\keyframes\\frame_0015_10_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3201,
+    "clip_confidence": 0.3201
+  }
+]

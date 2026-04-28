@@ -1,0 +1,98 @@
+[
+  {
+    "timestamp": "00:16",
+    "timestamp_seconds": 16.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0000_00_16.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3019,
+    "clip_confidence": 0.3019
+  },
+  {
+    "timestamp": "00:24",
+    "timestamp_seconds": 24.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0001_00_24.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3063,
+    "clip_confidence": 0.3063
+  },
+  {
+    "timestamp": "02:44",
+    "timestamp_seconds": 164.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0002_02_44.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3073,
+    "clip_confidence": 0.3073
+  },
+  {
+    "timestamp": "04:36",
+    "timestamp_seconds": 276.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0003_04_36.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3275,
+    "clip_confidence": 0.3275
+  },
+  {
+    "timestamp": "04:42",
+    "timestamp_seconds": 282.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0004_04_42.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.346,
+    "clip_confidence": 0.346
+  },
+  {
+    "timestamp": "04:44",
+    "timestamp_seconds": 284.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0005_04_44.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.346,
+    "clip_confidence": 0.346
+  },
+  {
+    "timestamp": "04:46",
+    "timestamp_seconds": 286.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0006_04_46.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.346,
+    "clip_confidence": 0.346
+  },
+  {
+    "timestamp": "04:48",
+    "timestamp_seconds": 288.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0007_04_48.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3458,
+    "clip_confidence": 0.3458
+  },
+  {
+    "timestamp": "04:50",
+    "timestamp_seconds": 290.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0008_04_50.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3459,
+    "clip_confidence": 0.3459
+  },
+  {
+    "timestamp": "04:52",
+    "timestamp_seconds": 292.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0009_04_52.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3365,
+    "clip_confidence": 0.3365
+  },
+  {
+    "timestamp": "07:32",
+    "timestamp_seconds": 452.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0010_07_32.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3426,
+    "clip_confidence": 0.3426
+  },
+  {
+    "timestamp": "07:36",
+    "timestamp_seconds": 456.0,
+    "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0011_07_36.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3402,
+    "clip_confidence": 0.3402
+  }
+]

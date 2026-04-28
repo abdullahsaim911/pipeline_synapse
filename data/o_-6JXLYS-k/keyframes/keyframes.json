@@ -1,0 +1,122 @@
+[
+  {
+    "timestamp": "00:04",
+    "timestamp_seconds": 4.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0000_00_04.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3089,
+    "clip_confidence": 0.3089
+  },
+  {
+    "timestamp": "00:44",
+    "timestamp_seconds": 44.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0001_00_44.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3441,
+    "clip_confidence": 0.3441
+  },
+  {
+    "timestamp": "01:04",
+    "timestamp_seconds": 64.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0002_01_04.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3331,
+    "clip_confidence": 0.3331
+  },
+  {
+    "timestamp": "01:16",
+    "timestamp_seconds": 76.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0003_01_16.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3217,
+    "clip_confidence": 0.3217
+  },
+  {
+    "timestamp": "01:56",
+    "timestamp_seconds": 116.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0004_01_56.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3238,
+    "clip_confidence": 0.3238
+  },
+  {
+    "timestamp": "02:08",
+    "timestamp_seconds": 128.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0005_02_08.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3315,
+    "clip_confidence": 0.3315
+  },
+  {
+    "timestamp": "03:16",
+    "timestamp_seconds": 196.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0006_03_16.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.347,
+    "clip_confidence": 0.347
+  },
+  {
+    "timestamp": "03:40",
+    "timestamp_seconds": 220.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0007_03_40.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3051,
+    "clip_confidence": 0.3051
+  },
+  {
+    "timestamp": "03:46",
+    "timestamp_seconds": 226.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0008_03_46.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3079,
+    "clip_confidence": 0.3079
+  },
+  {
+    "timestamp": "03:52",
+    "timestamp_seconds": 232.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0009_03_52.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3041,
+    "clip_confidence": 0.3041
+  },
+  {
+    "timestamp": "04:08",
+    "timestamp_seconds": 248.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0010_04_08.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3536,
+    "clip_confidence": 0.3536
+  },
+  {
+    "timestamp": "04:40",
+    "timestamp_seconds": 280.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0011_04_40.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.275,
+    "clip_confidence": 0.275
+  },
+  {
+    "timestamp": "04:54",
+    "timestamp_seconds": 294.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0012_04_54.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3002,
+    "clip_confidence": 0.3002
+  },
+  {
+    "timestamp": "04:58",
+    "timestamp_seconds": 298.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0013_04_58.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3221,
+    "clip_confidence": 0.3221
+  },
+  {
+    "timestamp": "05:28",
+    "timestamp_seconds": 328.0,
+    "frame_path": "F:\\Prototyping\\Synapse\\data\\o_-6JXLYS-k\\keyframes\\frame_0014_05_28.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3396,
+    "clip_confidence": 0.3396
+  }
+]

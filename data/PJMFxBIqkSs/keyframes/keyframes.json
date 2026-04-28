@@ -1,0 +1,146 @@
+[
+  {
+    "timestamp": "00:02",
+    "timestamp_seconds": 2.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0000_00_02.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2707,
+    "clip_confidence": 0.2707
+  },
+  {
+    "timestamp": "00:28",
+    "timestamp_seconds": 28.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0001_00_28.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2737,
+    "clip_confidence": 0.2737
+  },
+  {
+    "timestamp": "01:02",
+    "timestamp_seconds": 62.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0002_01_02.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2703,
+    "clip_confidence": 0.2703
+  },
+  {
+    "timestamp": "01:22",
+    "timestamp_seconds": 82.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0003_01_22.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2706,
+    "clip_confidence": 0.2706
+  },
+  {
+    "timestamp": "02:22",
+    "timestamp_seconds": 142.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0004_02_22.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2733,
+    "clip_confidence": 0.2733
+  },
+  {
+    "timestamp": "02:32",
+    "timestamp_seconds": 152.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0005_02_32.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2731,
+    "clip_confidence": 0.2731
+  },
+  {
+    "timestamp": "04:04",
+    "timestamp_seconds": 244.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0006_04_04.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2945,
+    "clip_confidence": 0.2945
+  },
+  {
+    "timestamp": "04:58",
+    "timestamp_seconds": 298.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0007_04_58.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3036,
+    "clip_confidence": 0.3036
+  },
+  {
+    "timestamp": "10:08",
+    "timestamp_seconds": 608.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0008_10_08.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3244,
+    "clip_confidence": 0.3244
+  },
+  {
+    "timestamp": "11:22",
+    "timestamp_seconds": 682.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0009_11_22.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3258,
+    "clip_confidence": 0.3258
+  },
+  {
+    "timestamp": "11:28",
+    "timestamp_seconds": 688.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0010_11_28.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.326,
+    "clip_confidence": 0.326
+  },
+  {
+    "timestamp": "11:40",
+    "timestamp_seconds": 700.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0011_11_40.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3258,
+    "clip_confidence": 0.3258
+  },
+  {
+    "timestamp": "11:44",
+    "timestamp_seconds": 704.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0012_11_44.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3261,
+    "clip_confidence": 0.3261
+  },
+  {
+    "timestamp": "11:46",
+    "timestamp_seconds": 706.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0013_11_46.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3263,
+    "clip_confidence": 0.3263
+  },
+  {
+    "timestamp": "11:50",
+    "timestamp_seconds": 710.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0014_11_50.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3261,
+    "clip_confidence": 0.3261
+  },
+  {
+    "timestamp": "11:52",
+    "timestamp_seconds": 712.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0015_11_52.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3266,
+    "clip_confidence": 0.3266
+  },
+  {
+    "timestamp": "11:58",
+    "timestamp_seconds": 718.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0016_11_58.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3258,
+    "clip_confidence": 0.3258
+  },
+  {
+    "timestamp": "12:14",
+    "timestamp_seconds": 734.0,
+    "frame_path": "data\\PJMFxBIqkSs\\keyframes\\frame_0017_12_14.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.3258,
+    "clip_confidence": 0.3258
+  }
+]

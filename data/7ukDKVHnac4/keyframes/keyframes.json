@@ -1,0 +1,82 @@
+[
+  {
+    "timestamp": "00:26",
+    "timestamp_seconds": 26.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0000_00_26.jpg",
+    "content_type": "circuit",
+    "complexity_score": 0.3376,
+    "clip_confidence": 0.3376
+  },
+  {
+    "timestamp": "00:50",
+    "timestamp_seconds": 50.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0001_00_50.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3249,
+    "clip_confidence": 0.3249
+  },
+  {
+    "timestamp": "02:16",
+    "timestamp_seconds": 136.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0002_02_16.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.329,
+    "clip_confidence": 0.329
+  },
+  {
+    "timestamp": "02:22",
+    "timestamp_seconds": 142.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0003_02_22.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3565,
+    "clip_confidence": 0.3565
+  },
+  {
+    "timestamp": "03:54",
+    "timestamp_seconds": 234.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0004_03_54.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3661,
+    "clip_confidence": 0.3661
+  },
+  {
+    "timestamp": "03:56",
+    "timestamp_seconds": 236.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0005_03_56.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3665,
+    "clip_confidence": 0.3665
+  },
+  {
+    "timestamp": "03:58",
+    "timestamp_seconds": 238.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0006_03_58.jpg",
+    "content_type": "slide",
+    "complexity_score": 0.3663,
+    "clip_confidence": 0.3663
+  },
+  {
+    "timestamp": "04:04",
+    "timestamp_seconds": 244.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0007_04_04.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.348,
+    "clip_confidence": 0.348
+  },
+  {
+    "timestamp": "05:14",
+    "timestamp_seconds": 314.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0008_05_14.jpg",
+    "content_type": "circuit",
+    "complexity_score": 0.3618,
+    "clip_confidence": 0.3618
+  },
+  {
+    "timestamp": "05:26",
+    "timestamp_seconds": 326.0,
+    "frame_path": "data\\7ukDKVHnac4\\keyframes\\frame_0009_05_26.jpg",
+    "content_type": "circuit",
+    "complexity_score": 0.3643,
+    "clip_confidence": 0.3643
+  }
+]

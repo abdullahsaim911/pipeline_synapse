@@ -1,0 +1,829 @@
+{
+  "video_id": "Bt6V7D5av9A",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.348591599962674,
+  "entry_count": 117,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.424,
+      "end": 1.692,
+      "duration": 1.268,
+      "text": "- [Voiceover] Now we're\nready to start hooking up"
+    },
+    {
+      "time": "00:01",
+      "start": 1.692,
+      "end": 6.111,
+      "duration": 4.419,
+      "text": "our components into circuits,\nand one of the two things"
+    },
+    {
+      "time": "00:06",
+      "start": 6.111,
+      "end": 9.583,
+      "duration": 3.472,
+      "text": "that are going to be very useful\nto us are Kirchhoff's laws."
+    },
+    {
+      "time": "00:09",
+      "start": 9.583,
+      "end": 11.279,
+      "duration": 1.696,
+      "text": "In this video we're gonna talk"
+    },
+    {
+      "time": "00:11",
+      "start": 11.279,
+      "end": 13.779,
+      "duration": 2.5,
+      "text": "about Kirchhoff's voltage law."
+    },
+    {
+      "time": "00:15",
+      "start": 15.978,
+      "end": 17.073,
+      "duration": 1.095,
+      "text": "If we look at this circuit here,"
+    },
+    {
+      "time": "00:17",
+      "start": 17.073,
+      "end": 21.240000000000002,
+      "duration": 4.167,
+      "text": "this is a voltage source, let's\njust say this is 10 volts."
+    },
+    {
+      "time": "00:22",
+      "start": 22.862,
+      "end": 24.910999999999998,
+      "duration": 2.049,
+      "text": "We'll put a resistor connected to it"
+    },
+    {
+      "time": "00:24",
+      "start": 24.911,
+      "end": 27.662000000000003,
+      "duration": 2.751,
+      "text": "and let's say the resistor is 200 ohms."
+    },
+    {
+      "time": "00:27",
+      "start": 27.662,
+      "end": 31.212,
+      "duration": 3.55,
+      "text": "Just for something to talk about."
+    },
+    {
+      "time": "00:31",
+      "start": 31.212,
+      "end": 34.497,
+      "duration": 3.285,
+      "text": "One of the things I can do\nhere is I can label this"
+    },
+    {
+      "time": "00:34",
+      "start": 34.497,
+      "end": 36.354,
+      "duration": 1.857,
+      "text": "with voltages on the different nodes."
+    },
+    {
+      "time": "00:36",
+      "start": 36.354,
+      "end": 37.876,
+      "duration": 1.522,
+      "text": "Here's one node down here."
+    },
+    {
+      "time": "00:37",
+      "start": 37.876,
+      "end": 40.986999999999995,
+      "duration": 3.111,
+      "text": "I'm going to arbitrarily\ncall this zero volts."
+    },
+    {
+      "time": "00:40",
+      "start": 40.987,
+      "end": 43.416000000000004,
+      "duration": 2.429,
+      "text": "Then if I go through this voltage source,"
+    },
+    {
+      "time": "00:43",
+      "start": 43.416,
+      "end": 47.166,
+      "duration": 3.75,
+      "text": "this node up here is\ngoing to be at 10 volts."
+    },
+    {
+      "time": "00:48",
+      "start": 48.959,
+      "end": 50.413000000000004,
+      "duration": 1.454,
+      "text": "10 volts."
+    },
+    {
+      "time": "00:50",
+      "start": 50.413,
+      "end": 52.602,
+      "duration": 2.189,
+      "text": "So here's a little bit of jargon."
+    },
+    {
+      "time": "00:52",
+      "start": 52.602,
+      "end": 54.739,
+      "duration": 2.137,
+      "text": "We call this voltage here."
+    },
+    {
+      "time": "00:54",
+      "start": 54.739,
+      "end": 58.410999999999994,
+      "duration": 3.672,
+      "text": "The voltage goes up as we go\nthrough the voltage source,"
+    },
+    {
+      "time": "00:58",
+      "start": 58.411,
+      "end": 61.161,
+      "duration": 2.75,
+      "text": "and that's called a voltage rise."
+    },
+    {
+      "time": "01:04",
+      "start": 64.872,
+      "end": 66.621,
+      "duration": 1.749,
+      "text": "Over on this side, if we are standing"
+    },
+    {
+      "time": "01:06",
+      "start": 66.621,
+      "end": 68.86399999999999,
+      "duration": 2.243,
+      "text": "at this point in the circuit right here"
+    },
+    {
+      "time": "01:08",
+      "start": 68.864,
+      "end": 73.351,
+      "duration": 4.487,
+      "text": "and we went from this\nnode down to this node,"
+    },
+    {
+      "time": "01:13",
+      "start": 73.351,
+      "end": 76.908,
+      "duration": 3.557,
+      "text": "like that, the voltage\nwould go from 10 volts"
+    },
+    {
+      "time": "01:16",
+      "start": 76.908,
+      "end": 79.059,
+      "duration": 2.151,
+      "text": "down to zero volts in this circuit,"
+    },
+    {
+      "time": "01:19",
+      "start": 79.059,
+      "end": 81.809,
+      "duration": 2.75,
+      "text": "and that's called a voltage drop."
+    },
+    {
+      "time": "01:24",
+      "start": 84.881,
+      "end": 88.031,
+      "duration": 3.15,
+      "text": "That's just a little\nbit of slang, or jargon"
+    },
+    {
+      "time": "01:28",
+      "start": 88.031,
+      "end": 91.41000000000001,
+      "duration": 3.379,
+      "text": "that we use to talk\nabout changes in voltage."
+    },
+    {
+      "time": "01:31",
+      "start": 91.41,
+      "end": 93.198,
+      "duration": 1.788,
+      "text": "Now I can make an observation about this."
+    },
+    {
+      "time": "01:33",
+      "start": 93.198,
+      "end": 96.88399999999999,
+      "duration": 3.686,
+      "text": "If I look at this voltage\nrise here, it's 10 volts,"
+    },
+    {
+      "time": "01:36",
+      "start": 96.884,
+      "end": 101.051,
+      "duration": 4.167,
+      "text": "and if I look at that voltage\ndrop, the drop is 10 volts."
+    },
+    {
+      "time": "01:41",
+      "start": 101.899,
+      "end": 104.482,
+      "duration": 2.583,
+      "text": "I can say the drop is 10 volts,"
+    },
+    {
+      "time": "01:45",
+      "start": 105.52,
+      "end": 109.687,
+      "duration": 4.167,
+      "text": "or I could say the rise on\nthis side is minus 10 volts."
+    },
+    {
+      "time": "01:50",
+      "start": 110.768,
+      "end": 112.77,
+      "duration": 2.002,
+      "text": "A rise of minus 10."
+    },
+    {
+      "time": "01:52",
+      "start": 112.77,
+      "end": 116.149,
+      "duration": 3.379,
+      "text": "These two expressions mean\nexactly the same thing."
+    },
+    {
+      "time": "01:56",
+      "start": 116.149,
+      "end": 118.752,
+      "duration": 2.603,
+      "text": "It meant that the voltage\nwent from 10 volts"
+    },
+    {
+      "time": "01:58",
+      "start": 118.752,
+      "end": 123.07799999999999,
+      "duration": 4.326,
+      "text": "to zero volts, sort of going\nthrough this 200 ohm resistor."
+    },
+    {
+      "time": "02:03",
+      "start": 123.078,
+      "end": 125.054,
+      "duration": 1.976,
+      "text": "So I ran a little expression for this,"
+    },
+    {
+      "time": "02:05",
+      "start": 125.054,
+      "end": 128.554,
+      "duration": 3.5,
+      "text": "which is, v-rise minus v-drop equals what?"
+    },
+    {
+      "time": "02:14",
+      "start": 134.774,
+      "end": 136.483,
+      "duration": 1.709,
+      "text": "Equals zero."
+    },
+    {
+      "time": "02:16",
+      "start": 136.483,
+      "end": 139.499,
+      "duration": 3.016,
+      "text": "I went up 10 volts, back down 10 volts,"
+    },
+    {
+      "time": "02:19",
+      "start": 139.499,
+      "end": 143.105,
+      "duration": 3.606,
+      "text": "I end up back at zero volts,\nand that's this right here."
+    },
+    {
+      "time": "02:23",
+      "start": 143.105,
+      "end": 146.375,
+      "duration": 3.27,
+      "text": "This is a form of Kirchhoff's voltage law."
+    },
+    {
+      "time": "02:26",
+      "start": 146.375,
+      "end": 149.287,
+      "duration": 2.912,
+      "text": "It says the voltage rises minus"
+    },
+    {
+      "time": "02:29",
+      "start": 149.287,
+      "end": 152.99800000000002,
+      "duration": 3.711,
+      "text": "the voltage drops is equal to zero."
+    },
+    {
+      "time": "02:32",
+      "start": 152.998,
+      "end": 155.279,
+      "duration": 2.281,
+      "text": "So if we just plug our\nactual numbers in here"
+    },
+    {
+      "time": "02:35",
+      "start": 155.279,
+      "end": 158.529,
+      "duration": 3.25,
+      "text": "what we get is 10 minus 10 equals zero."
+    },
+    {
+      "time": "02:43",
+      "start": 163.556,
+      "end": 164.98600000000002,
+      "duration": 1.43,
+      "text": "I'm gonna draw this circuit again."
+    },
+    {
+      "time": "02:44",
+      "start": 164.986,
+      "end": 166.761,
+      "duration": 1.775,
+      "text": "Let's draw another\nversion of this circuit."
+    },
+    {
+      "time": "02:46",
+      "start": 166.761,
+      "end": 170.928,
+      "duration": 4.167,
+      "text": "This time we'll have two\nresistors instead of one."
+    },
+    {
+      "time": "02:57",
+      "start": 177.75,
+      "end": 179.083,
+      "duration": 1.333,
+      "text": "We'll make it..."
+    },
+    {
+      "time": "03:02",
+      "start": 182.266,
+      "end": 185.266,
+      "duration": 3.0,
+      "text": "We'll make it two 100 ohm resistors."
+    },
+    {
+      "time": "03:09",
+      "start": 189.877,
+      "end": 191.279,
+      "duration": 1.402,
+      "text": "Let's go through and label these."
+    },
+    {
+      "time": "03:11",
+      "start": 191.279,
+      "end": 193.61599999999999,
+      "duration": 2.337,
+      "text": "This is again 10 volts."
+    },
+    {
+      "time": "03:13",
+      "start": 193.616,
+      "end": 196.65900000000002,
+      "duration": 3.043,
+      "text": "So this node is at zero volts."
+    },
+    {
+      "time": "03:16",
+      "start": 196.659,
+      "end": 198.929,
+      "duration": 2.27,
+      "text": "This node is at 10 volts."
+    },
+    {
+      "time": "03:18",
+      "start": 198.929,
+      "end": 199.762,
+      "duration": 0.833,
+      "text": "What's this node?"
+    },
+    {
+      "time": "03:19",
+      "start": 199.762,
+      "end": 201.693,
+      "duration": 1.931,
+      "text": "This node here is..."
+    },
+    {
+      "time": "03:21",
+      "start": 201.693,
+      "end": 203.41600000000003,
+      "duration": 1.723,
+      "text": "These are equal resistors,"
+    },
+    {
+      "time": "03:23",
+      "start": 203.416,
+      "end": 206.249,
+      "duration": 2.833,
+      "text": "so this is gonna be at five volts."
+    },
+    {
+      "time": "03:29",
+      "start": 209.077,
+      "end": 212.0,
+      "duration": 2.923,
+      "text": "That's this node voltage\nhere with respect to here."
+    },
+    {
+      "time": "03:32",
+      "start": 212.0,
+      "end": 213.833,
+      "duration": 1.833,
+      "text": "So that is five volts."
+    },
+    {
+      "time": "03:35",
+      "start": 215.499,
+      "end": 217.082,
+      "duration": 1.583,
+      "text": "This is five volts."
+    },
+    {
+      "time": "03:43",
+      "start": 223.523,
+      "end": 225.446,
+      "duration": 1.923,
+      "text": "And this is 10 volts."
+    },
+    {
+      "time": "03:45",
+      "start": 225.446,
+      "end": 227.595,
+      "duration": 2.149,
+      "text": "So let's just do our visit again."
+    },
+    {
+      "time": "03:47",
+      "start": 227.595,
+      "end": 230.786,
+      "duration": 3.191,
+      "text": "Let's start here and\ncount the rises and drops."
+    },
+    {
+      "time": "03:50",
+      "start": 230.786,
+      "end": 234.953,
+      "duration": 4.167,
+      "text": "We go up 10 volts, then we\nhave a voltage drop of five,"
+    },
+    {
+      "time": "03:56",
+      "start": 236.727,
+      "end": 238.891,
+      "duration": 2.164,
+      "text": "then we have another voltage drop of five,"
+    },
+    {
+      "time": "03:58",
+      "start": 238.891,
+      "end": 240.706,
+      "duration": 1.815,
+      "text": "and then we get back to zero."
+    },
+    {
+      "time": "04:00",
+      "start": 240.706,
+      "end": 242.05499999999998,
+      "duration": 1.349,
+      "text": "We can write the sum of the rises"
+    },
+    {
+      "time": "04:02",
+      "start": 242.055,
+      "end": 244.832,
+      "duration": 2.777,
+      "text": "and the falls just like we did before."
+    },
+    {
+      "time": "04:04",
+      "start": 244.832,
+      "end": 248.999,
+      "duration": 4.167,
+      "text": "We can say 10 volts minus\nfive minus five equals zero."
+    },
+    {
+      "time": "04:12",
+      "start": 252.469,
+      "end": 253.302,
+      "duration": 0.833,
+      "text": "Alright."
+    },
+    {
+      "time": "04:13",
+      "start": 253.302,
+      "end": 254.47199999999998,
+      "duration": 1.17,
+      "text": "So I can generalize this."
+    },
+    {
+      "time": "04:14",
+      "start": 254.472,
+      "end": 258.88,
+      "duration": 4.408,
+      "text": "We can say this is general\nwe can do the summation,"
+    },
+    {
+      "time": "04:18",
+      "start": 258.88,
+      "end": 260.576,
+      "duration": 1.696,
+      "text": "that's the summation symbol,"
+    },
+    {
+      "time": "04:20",
+      "start": 260.576,
+      "end": 264.743,
+      "duration": 4.167,
+      "text": "of the v-rise minus the sum\nof the v-fall equals zero."
+    },
+    {
+      "time": "04:35",
+      "start": 275.649,
+      "end": 279.668,
+      "duration": 4.019,
+      "text": "This is a form of Kirchhoff's voltage law."
+    },
+    {
+      "time": "04:39",
+      "start": 279.668,
+      "end": 282.152,
+      "duration": 2.484,
+      "text": "The sum of the voltage rises minus the sum"
+    },
+    {
+      "time": "04:42",
+      "start": 282.152,
+      "end": 285.837,
+      "duration": 3.685,
+      "text": "of the voltage falls is\nalways equal to zero."
+    },
+    {
+      "time": "04:45",
+      "start": 285.837,
+      "end": 287.692,
+      "duration": 1.855,
+      "text": "There's a more compact way to write this"
+    },
+    {
+      "time": "04:47",
+      "start": 287.692,
+      "end": 291.885,
+      "duration": 4.193,
+      "text": "that I like better, and that\nis, we start at this corner..."
+    },
+    {
+      "time": "04:51",
+      "start": 291.885,
+      "end": 294.876,
+      "duration": 2.991,
+      "text": "We start at any corner of the circuit."
+    },
+    {
+      "time": "04:54",
+      "start": 294.876,
+      "end": 297.226,
+      "duration": 2.35,
+      "text": "Let's say we start here."
+    },
+    {
+      "time": "04:57",
+      "start": 297.226,
+      "end": 300.893,
+      "duration": 3.667,
+      "text": "We're gonna go up 10\nvolts, down five volts,"
+    },
+    {
+      "time": "05:02",
+      "start": 302.098,
+      "end": 303.728,
+      "duration": 1.63,
+      "text": "and down five volts."
+    },
+    {
+      "time": "05:03",
+      "start": 303.728,
+      "end": 306.946,
+      "duration": 3.218,
+      "text": "So what we're adding is the voltage rises."
+    },
+    {
+      "time": "05:06",
+      "start": 306.946,
+      "end": 309.85,
+      "duration": 2.904,
+      "text": "We're adding all the voltage rises."
+    },
+    {
+      "time": "05:09",
+      "start": 309.85,
+      "end": 310.93300000000005,
+      "duration": 1.083,
+      "text": "Rise plus 10."
+    },
+    {
+      "time": "05:12",
+      "start": 312.77,
+      "end": 316.428,
+      "duration": 3.658,
+      "text": "That's a rise of minus five\nand a rise of minus five."
+    },
+    {
+      "time": "05:16",
+      "start": 316.428,
+      "end": 320.59499999999997,
+      "duration": 4.167,
+      "text": "So I can write this with\njust one summation symbol."
+    },
+    {
+      "time": "05:22",
+      "start": 322.949,
+      "end": 327.116,
+      "duration": 4.167,
+      "text": "The voltages around the\nloop, where i takes us all"
+    },
+    {
+      "time": "05:28",
+      "start": 328.711,
+      "end": 331.79400000000004,
+      "duration": 3.083,
+      "text": "the way around the loop, equals zero."
+    },
+    {
+      "time": "05:33",
+      "start": 333.45,
+      "end": 336.828,
+      "duration": 3.378,
+      "text": "So this means I start\nany place on the circuit,"
+    },
+    {
+      "time": "05:36",
+      "start": 336.828,
+      "end": 339.51099999999997,
+      "duration": 2.683,
+      "text": "go around in some direction,\nthis way or this way,"
+    },
+    {
+      "time": "05:39",
+      "start": 339.511,
+      "end": 342.32800000000003,
+      "duration": 2.817,
+      "text": "up, down, down, and I end up back"
+    },
+    {
+      "time": "05:42",
+      "start": 342.328,
+      "end": 345.613,
+      "duration": 3.285,
+      "text": "at the same voltage I started at."
+    },
+    {
+      "time": "05:45",
+      "start": 345.613,
+      "end": 348.53,
+      "duration": 2.917,
+      "text": "So let's put a box around that too."
+    },
+    {
+      "time": "05:54",
+      "start": 354.652,
+      "end": 357.735,
+      "duration": 3.083,
+      "text": "This is Kvl, Kirchhoff's voltage law."
+    },
+    {
+      "time": "05:59",
+      "start": 359.992,
+      "end": 361.875,
+      "duration": 1.883,
+      "text": "Now I started over here in this corner,"
+    },
+    {
+      "time": "06:01",
+      "start": 361.875,
+      "end": 362.864,
+      "duration": 0.989,
+      "text": "but I could start anywhere."
+    },
+    {
+      "time": "06:02",
+      "start": 362.864,
+      "end": 364.69899999999996,
+      "duration": 1.835,
+      "text": "If I started at the top and went"
+    },
+    {
+      "time": "06:04",
+      "start": 364.699,
+      "end": 368.03200000000004,
+      "duration": 3.333,
+      "text": "around clockwise, if I started here say,"
+    },
+    {
+      "time": "06:10",
+      "start": 370.207,
+      "end": 373.79,
+      "duration": 3.583,
+      "text": "I would go minus five,\nminus five, plus 10,"
+    },
+    {
+      "time": "06:15",
+      "start": 375.24,
+      "end": 376.188,
+      "duration": 0.948,
+      "text": "and I'd get the same answer."
+    },
+    {
+      "time": "06:16",
+      "start": 376.188,
+      "end": 378.257,
+      "duration": 2.069,
+      "text": "I'd still get back to zero."
+    },
+    {
+      "time": "06:18",
+      "start": 378.257,
+      "end": 381.162,
+      "duration": 2.905,
+      "text": "If I start here and I\ngo around the other way,"
+    },
+    {
+      "time": "06:21",
+      "start": 381.162,
+      "end": 382.68399999999997,
+      "duration": 1.522,
+      "text": "the same thing happens."
+    },
+    {
+      "time": "06:22",
+      "start": 382.684,
+      "end": 385.26700000000005,
+      "duration": 2.583,
+      "text": "Plus five rise, plus five rise,"
+    },
+    {
+      "time": "06:26",
+      "start": 386.542,
+      "end": 388.98499999999996,
+      "duration": 2.443,
+      "text": "and this is a 10 volt drop,"
+    },
+    {
+      "time": "06:28",
+      "start": 388.985,
+      "end": 391.348,
+      "duration": 2.363,
+      "text": "so it works whichever way\nyou go around the loop,"
+    },
+    {
+      "time": "06:31",
+      "start": 391.348,
+      "end": 395.015,
+      "duration": 3.667,
+      "text": "and it works for whatever\nnode you start at."
+    },
+    {
+      "time": "06:37",
+      "start": 397.05,
+      "end": 401.12600000000003,
+      "duration": 4.076,
+      "text": "That's the essence of\nKirchhoff's voltage law."
+    },
+    {
+      "time": "06:41",
+      "start": 401.126,
+      "end": 403.46,
+      "duration": 2.334,
+      "text": "We're gonna pair this\nwith the current law,"
+    },
+    {
+      "time": "06:43",
+      "start": 403.46,
+      "end": 405.996,
+      "duration": 2.536,
+      "text": "Kirchhoff's current\nlaw, and with those two,"
+    },
+    {
+      "time": "06:45",
+      "start": 405.996,
+      "end": 409.666,
+      "duration": 3.67,
+      "text": "that's our tools for\ndoing circuit analysis."
+    }
+  ]
+}

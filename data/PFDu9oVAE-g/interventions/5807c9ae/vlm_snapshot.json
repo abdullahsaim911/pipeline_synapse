@@ -1,0 +1,17 @@
+{
+  "content_type": "equation",
+  "visual_analysis": {},
+  "structural_description": "The image contains a black background with a speech bubble in the center containing the text 'Not all matrices can become diagonal'. Below the speech bubble, there are four blue characters with a pi symbol, and to the right, there is a brown character with a pi symbol. The characters are arranged in a horizontal line.",
+  "reading_order": [
+    "Start with the speech bubble, then read the characters from left to right"
+  ],
+  "layout": "The characters are arranged in a horizontal line on a black background.",
+  "text_readout": "Not all matrices can become diagonal",
+  "spatial_map": "The speech bubble is in the center of the image, above the characters. The characters are arranged in a horizontal line below the speech bubble.",
+  "colors_styles": "The characters are blue and brown with a pi symbol, and the background is black.",
+  "missing_elements": null,
+  "detected_types": [
+    "equation"
+  ],
+  "conceptual_hints": ""
+}

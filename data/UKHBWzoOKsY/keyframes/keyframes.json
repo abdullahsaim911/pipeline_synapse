@@ -1,0 +1,66 @@
+[
+  {
+    "timestamp": "00:04",
+    "timestamp_seconds": 4.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0000_00_04.jpg",
+    "content_type": "circuit",
+    "complexity_score": 0.2917,
+    "clip_confidence": 0.2917
+  },
+  {
+    "timestamp": "00:34",
+    "timestamp_seconds": 34.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0001_00_34.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.2963,
+    "clip_confidence": 0.2963
+  },
+  {
+    "timestamp": "00:44",
+    "timestamp_seconds": 44.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0002_00_44.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.302,
+    "clip_confidence": 0.302
+  },
+  {
+    "timestamp": "01:22",
+    "timestamp_seconds": 82.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0003_01_22.jpg",
+    "content_type": "flowchart",
+    "complexity_score": 0.3044,
+    "clip_confidence": 0.3044
+  },
+  {
+    "timestamp": "01:40",
+    "timestamp_seconds": 100.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0004_01_40.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3079,
+    "clip_confidence": 0.3079
+  },
+  {
+    "timestamp": "02:44",
+    "timestamp_seconds": 164.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0005_02_44.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3134,
+    "clip_confidence": 0.3134
+  },
+  {
+    "timestamp": "02:48",
+    "timestamp_seconds": 168.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0006_02_48.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3165,
+    "clip_confidence": 0.3165
+  },
+  {
+    "timestamp": "04:18",
+    "timestamp_seconds": 258.0,
+    "frame_path": "data\\UKHBWzoOKsY\\keyframes\\frame_0007_04_18.jpg",
+    "content_type": "equation",
+    "complexity_score": 0.3276,
+    "clip_confidence": 0.3276
+  }
+]

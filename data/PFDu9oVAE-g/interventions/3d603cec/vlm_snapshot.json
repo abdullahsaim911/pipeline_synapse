@@ -1,0 +1,18 @@
+{
+  "content_type": "notes",
+  "visual_analysis": {},
+  "structural_description": "The image contains a black background with white text. The text is centered and reads: \"Last time, I asked: 'What does mathematics mean to you?', and some people answered: 'The manipulation of numbers, the manipulation of structures.' And if I had asked what music means to you, would you have answered: 'The manipulation of notes?' \" -Serge Lang",
+  "reading_order": [
+    "Last time, I asked: 'What does mathematics mean to you?', and some people answered: 'The manipulation of numbers, the manipulation of structures.' And if I had asked what music means to you, would you have answered: 'The manipulation of notes?' ",
+    "-Serge Lang"
+  ],
+  "layout": "The text is centered on a black background.",
+  "text_readout": "Last time, I asked: 'What does mathematics mean to you?', and some people answered: 'The manipulation of numbers, the manipulation of structures.' And if I had asked what music means to you, would you have answered: 'The manipulation of notes?' -Serge Lang",
+  "spatial_map": "The text is located in the center of the image.",
+  "colors_styles": "The text is white on a black background.",
+  "missing_elements": null,
+  "detected_types": [
+    "notes"
+  ],
+  "conceptual_hints": ""
+}

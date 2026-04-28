@@ -1,0 +1,81 @@
+{
+  "content_type": "graph",
+  "visual_analysis": {
+    "axes": {
+      "x_axis": {
+        "labels": [
+          "1",
+          "-1",
+          "0",
+          "1"
+        ],
+        "units": "",
+        "positions": [
+          0,
+          1,
+          2,
+          3
+        ]
+      },
+      "y_axis": {
+        "labels": [
+          "1",
+          "-1",
+          "0",
+          "1"
+        ],
+        "units": "",
+        "positions": [
+          0,
+          1,
+          2,
+          3
+        ]
+      }
+    },
+    "curves": {
+      "curve_1": {
+        "movement": "rises steeply",
+        "shape": "linear"
+      }
+    },
+    "key_points": {
+      "intersection_1": {
+        "x": 1,
+        "y": 1
+      },
+      "peak_1": {
+        "x": 2,
+        "y": 2
+      }
+    },
+    "annotations": {
+      "arrow_1": {
+        "start": [
+          1,
+          1
+        ],
+        "end": [
+          2,
+          2
+        ]
+      }
+    }
+  },
+  "structural_description": "The graph consists of two axes, one labeled with the range [-1, 1] for both x and y. A linear curve rises steeply from the origin (0,0) to the point (2,2), then levels off. An arrow points from the origin to the point (2,2).",
+  "reading_order": [
+    "top-left",
+    "top-right",
+    "bottom-left",
+    "bottom-right"
+  ],
+  "layout": "The graph is displayed on a black background with a grid of blue and white lines. The axes are labeled with the range [-1, 1] for both x and y.",
+  "text_readout": "The graph shows a linear curve that rises steeply from the origin (0,0) to the point (2,2), then levels off. An arrow points from the origin to the point (2,2).",
+  "spatial_map": "The origin is at the bottom left corner of the graph. The x-axis is on the left side, and the y-axis is on the right side. The arrow is pointing from the origin to the point (2,2).",
+  "colors_styles": "The graph uses a black background with blue and white grid lines. The curve is represented by a solid line. The arrow is a solid line with a yellow tip.",
+  "missing_elements": null,
+  "detected_types": [
+    "graph"
+  ],
+  "conceptual_hints": ""
+}
