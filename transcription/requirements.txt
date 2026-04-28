@@ -1,0 +1,27 @@
+# Transcription Module (Synapse) Dependencies
+
+# YouTube Transcript API (Fast Path)
+youtube-transcript-api>=0.6.0
+
+# AI Transcription (Faster-Whisper - 4-5x faster than original)
+faster-whisper>=1.0.0
+
+# Video Download & Audio Extraction
+yt-dlp>=2024.0.0
+
+# Hardware Detection (CUDA/CPU)
+torch>=2.0.0
+# Install with appropriate CUDA version if GPU available:
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu118  # For CUDA 11.8
+# torch>=2.0.0 --index-url https://download.pytorch.org/whl/cu121  # For CUDA 12.1
+
+# Audio Processing
+numpy>=1.24.0
+
+# Optional: Original Whisper (slower, but more widely compatible)
+# openai-whisper>=20230314
+
+# System Requirements (install separately):
+# - FFmpeg: https://ffmpeg.org/download.html
+#   Windows: Add to system PATH
+#   Linux/macOS: sudo apt/brew install ffmpeg

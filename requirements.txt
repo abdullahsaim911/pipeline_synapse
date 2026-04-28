@@ -1,0 +1,88 @@
+# SYNAPSE - Complete Project Dependencies
+# This file includes all dependencies for all three modules
+
+# =============================================================================
+# Core Dependencies (Common to all modules)
+# =============================================================================
+numpy>=1.24.0
+torch>=2.0.0
+
+# =============================================================================
+# Frame Extraction Module Dependencies
+# =============================================================================
+yt-dlp>=2024.0.0
+opencv-python>=4.8.0
+Pillow>=10.0.0
+openai-clip>=1.0.0
+scikit-image>=0.21.0
+
+# =============================================================================
+# Transcription Module Dependencies
+# =============================================================================
+youtube-transcript-api>=0.6.0
+faster-whisper>=1.0.0
+
+# =============================================================================
+# Fusion Module Dependencies
+# =============================================================================
+sentence-transformers>=2.2.0
+requests>=2.31.0
+
+# =============================================================================
+# VLM Module Dependencies
+# =============================================================================
+llama-cpp-python>=0.3.0
+
+# Install llama-cpp-python with CUDA support:
+#   pip install llama-cpp-python --upgrade --no-cache-dir --force-reinstall --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu124
+
+# =============================================================================
+# API Dependencies
+# =============================================================================
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.10.0
+pydantic-settings>=2.6.0
+sqlalchemy>=2.0.36
+python-multipart>=0.0.12
+
+# =============================================================================
+# Additional Dependencies for Pipeline
+# =============================================================================
+transformers>=4.40.0
+qwen-vl-utils>=0.0.8
+accelerate>=0.30.0
+bitsandbytes>=0.43.0
+psutil>=5.9.0
+
+# =============================================================================
+# Installation Notes
+# =============================================================================
+
+# 1. Standard installation (CPU only):
+#    pip install -r requirements.txt
+
+# 2. GPU acceleration (CUDA):
+#    pip install -r requirements.txt
+#    pip install torch --index-url https://download.pytorch.org/whl/cu121  # For CUDA 12.1
+
+# 3. Individual module installation:
+#    pip install -r frame-extraction/requirements.txt
+#    pip install -r Transcription-Module--Synapse-/requirements.txt
+#    pip install -r Fusion-Module--Synapse-/requirements.txt
+
+# =============================================================================
+# System Requirements (install separately)
+# =============================================================================
+
+# FFmpeg (Required for Frame Extraction & Transcription):
+#   - Windows: https://ffmpeg.org/download.html
+#     Extract to ./ffmpeg/bin/ for Frame Extraction module
+#     Add to system PATH for Transcription module
+#   - Linux: sudo apt install ffmpeg
+#   - macOS: brew install ffmpeg
+
+# Ollama (Required for Fusion Module):
+#   - Download: https://ollama.ai/download
+#   - Pull model: ollama pull mistral
+#   - Verify: ollama list
