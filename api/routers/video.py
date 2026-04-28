@@ -467,3 +467,112 @@ async def toggle_bookmark(
         intervention_id=intervention_id,
         is_bookmarked=intervention.is_bookmarked
     )
+
+
+# ============================================================================
+# Endpoint 5: Get Interventions with Explanations
+# ============================================================================
+
+@router.get("/{video_id}/interventions", response_model=ProcessVideoResponse)
+async def get_interventions_with_explanations(
+    video_id: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Get all intervention points that have explanations for a video.
+
+    Returns interventions in reverse chronological order (recent to old).
+    Structure matches Endpoint 2's ProcessVideoResponse.
+
+    Args:
+        video_id: YouTube video ID
+
+    Returns:
+        ProcessVideoResponse with video metadata and interventions with explanations
+    """
+    # 1. Validate video exists
+    video = db.query(Video).filter(Video.id == video_id).first()
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    # 2. Get interventions that have explanations (join with Explanation table)
+    interventions_with_explanations = db.query(Intervention).join(
+        Explanation,
+        Intervention.id == Explanation.intervention_id
+    ).filter(
+        Intervention.video_id == video_id
+    ).order_by(
+        Intervention.created_at.desc()  # Recent to old
+    ).distinct().all()
+
+    # 3. Convert to response models
+    intervention_responses = [InterventionResponse.model_validate(i) for i in interventions_with_explanations]
+
+    # 4. Calculate category counts
+    category_counts = calculate_category_counts(interventions_with_explanations)
+
+    # 5. Return response matching Endpoint 2 structure
+    return ProcessVideoResponse(
+        video_id=video.id,
+        title=video.title,
+        duration_seconds=video.duration_seconds,
+        duration_formatted=video.duration_formatted,
+        total_keyframes=video.total_keyframes,
+        total_interventions=len(intervention_responses),
+        interventions=intervention_responses,
+        category_counts=category_counts
+    )
+
+
+# ============================================================================
+# Endpoint 6: Get Explanation by Intervention ID
+# ============================================================================
+
+@router.get("/intervention/{intervention_id}/explanation", response_model=GenerateExplanationResponse)
+async def get_intervention_explanation(
+    intervention_id: str,
+    output_mode: str = "explanatory",
+    db: Session = Depends(get_db)
+):
+    """
+    Get explanation for a specific intervention if already generated.
+
+    Returns the same structure as the explain endpoint.
+    If explanation doesn't exist, returns 404.
+
+    Args:
+        intervention_id: UUID of the intervention
+        output_mode: "brief", "explanatory" (default), or "detailed"
+
+    Returns:
+        GenerateExplanationResponse with text, audio, and file paths
+    """
+    # 1. Check if intervention exists
+    intervention = db.query(Intervention).filter(
+        Intervention.id == intervention_id
+    ).first()
+
+    if not intervention:
+        raise HTTPException(status_code=404, detail="Intervention not found")
+
+    # 2. Check if explanation exists for this intervention and mode
+    explanation = db.query(Explanation).filter(
+        Explanation.intervention_id == intervention_id,
+        Explanation.output_mode == output_mode
+    ).first()
+
+    if not explanation:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Explanation not found for mode '{output_mode}'. Generate it first."
+        )
+
+    # 3. Return response matching Endpoint 3 structure
+    return GenerateExplanationResponse(
+        intervention_id=intervention_id,
+        text_explanation=explanation.text_explanation,
+        audio_file_path=explanation.audio_file_path,
+        text_file_path=explanation.text_file_path,
+        vlm_snapshot_path=explanation.vlm_snapshot_path,
+        output_mode=explanation.output_mode
+    )
