@@ -427,7 +427,38 @@ OUTPUT REQUIREMENTS:
         }
 
     def cleanup(self):
-        """Release resources."""
-        if hasattr(self, 'model'):
+        """Release resources and free GPU memory."""
+        # Step 1: Reset model context if available (llama-cpp-python method)
+        if hasattr(self, 'model') and self.model is not None:
+            try:
+                if hasattr(self.model, 'reset'):
+                    self.model.reset()
+            except Exception as e:
+                print(f"[GGUF VLM Engine] Warning during model reset: {e}")
+
+            # Step 2: Delete chat handler if it exists
+            if hasattr(self, 'chat_handler') and self.chat_handler is not None:
+                try:
+                    del self.chat_handler
+                except Exception as e:
+                    print(f"[GGUF VLM Engine] Warning deleting chat_handler: {e}")
+
+            # Step 3: Delete the model reference
             del self.model
+
+        # Step 4: Force garbage collection to release Python object references
+        import gc
+        gc.collect()
+
+        # Step 5: Clear CUDA cache if torch is available (releases VRAM blocks)
+        try:
+            import torch
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                torch.cuda.synchronize()
+        except ImportError:
+            pass
+        except Exception as e:
+            print(f"[GGUF VLM Engine] Warning during CUDA cleanup: {e}")
+
         print("[GGUF VLM Engine] Cleanup complete")

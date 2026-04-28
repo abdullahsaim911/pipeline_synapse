@@ -1302,14 +1302,25 @@ class PipelineOrchestrator:
                     stop_ollama(ollama_process)
                 except Exception as cleanup_error:
                     print(f"[Orchestrator] Error stopping Ollama during cleanup: {cleanup_error}")
+
             # Cleanup VLM engine
             if vlm_engine is not None:
                 try:
                     vlm_engine.cleanup()
                 except Exception as cleanup_error:
                     print(f"[Orchestrator] Error cleaning up VLM: {cleanup_error}")
-            clear_gpu_memory()
-            log_memory_state("After Single Intervention Cleanup")
+
+            # Clear GPU memory (wrap to ensure logging happens even if this fails)
+            try:
+                clear_gpu_memory()
+            except Exception as cleanup_error:
+                print(f"[Orchestrator] Error clearing GPU memory: {cleanup_error}")
+
+            # Log final state (wrap to ensure it doesn't fail)
+            try:
+                log_memory_state("After Single Intervention Cleanup")
+            except Exception as cleanup_error:
+                print(f"[Orchestrator] Error logging memory state: {cleanup_error}")
 
 
 # Example usage
