@@ -1,0 +1,17 @@
+Your Teacher is showing this to explain the concept of momentum, which is a measure of an object's resistance to change in motion and is calculated as the product of its mass and velocity.
+
+1. Complete Visual Description:
+   - The visual is divided into four zones: top left, top right, bottom left, and bottom right.
+   - In the top left zone, there is a physical drawing of an airplane with the text "50,000kg 1m/s" which represents a heavy object moving at a low speed.
+   - In the top right zone, there is a physical drawing of a car with the text "2000kg 30m/s", which represents a lighter object moving at a high speed.
+   - In the bottom left zone, there is an equation that reads "Momentum = MV" and the text "How hard to stop something", which explains the formula for calculating momentum and its significance.
+   - In the bottom right zone, there is a physical drawing of a train, which represents a very heavy object moving at a significant speed. This visual element shows how difficult it would be to stop such an object, demonstrating the concept of high momentum.
+
+2. What the Teacher is Explaining:
+   - Your teacher is explaining that objects with high mass and high velocity have high momentum, making them harder to stop. On the other hand, objects with low mass or low velocity have low momentum, making them easier to stop. The teacher also mentions that the units of momentum are Mass times Velocity (MV).
+
+3. The Concept Being Explained:
+   - Momentum is a measure of an object's resistance to change in motion. It is calculated as the product of an object's mass and its velocity. Objects with high mass or high velocity have more momentum, making them harder to stop.
+
+4. How the Visual Links to the Concept:
+   - The visual elements show the behavior of objects with different masses and velocities, demonstrating the concept of momentum. For instance, the airplane (50,000kg 1m/s) has more mass but less speed compared to the car (2000kg 30m/s), yet it is still harder to stop due to its higher momentum. The train, which is a very heavy object moving at a significant speed,

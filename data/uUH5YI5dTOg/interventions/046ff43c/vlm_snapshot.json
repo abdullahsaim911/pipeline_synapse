@@ -1,0 +1,43 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "top_left": "A neural cell",
+      "top_center": "Obligate asymmetric replication",
+      "top_right": "Red blood cell",
+      "middle_left": "Bone",
+      "middle_center": "Adipose",
+      "middle_right": "Cartilage",
+      "bottom_left": "Bone",
+      "bottom_center": "Adipose",
+      "bottom_right": "Cartilage"
+    },
+    "structural_description": "The frame is divided into multiple zones, each containing different STEM elements. The top left corner shows a neural cell, the top center shows 'obligate asymmetric replication', and the top right corner shows a red blood cell. The middle left, center, and right corners show bone, adipose, and cartilage, respectively. The bottom left, center, and right corners also show bone, adipose, and cartilage, respectively.",
+    "reading_order": [
+      "top_left",
+      "top_center",
+      "top_right",
+      "middle_left",
+      "middle_center",
+      "middle_right",
+      "bottom_left",
+      "bottom_center",
+      "bottom_right"
+    ],
+    "layout": "The frame is divided into a 3x3 grid, with each cell containing a different STEM element.",
+    "text_readout": "neural cell\nobligate asymmetric replication\nred blood cell\nBone\nAdipose\nCartilage\nBone\nAdipose\nCartilage",
+    "spatial_map": "The neural cell is in the top left corner, 'obligate asymmetric replication' is in the top center, and the red blood cell is in the top right corner. Bone is in the middle left, adipose is in the middle center, and cartilage is in the middle right. Bone is also in the bottom left, adipose is in the bottom center, and cartilage is in the bottom right.",
+    "colors_styles": "The frame uses a black background with white text and lines. The STEM elements are drawn in different colors: green for the neural cell, red for the red blood cell, and white for the bone, adipose, and cartilage."
+  },
+  "missing_elements": null,
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": ""
+}

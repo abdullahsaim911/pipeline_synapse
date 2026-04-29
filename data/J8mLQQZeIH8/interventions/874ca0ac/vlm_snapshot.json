@@ -1,0 +1,64 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "zone_mapping": {
+      "top_left": "Physical drawing of an apple falling towards Earth",
+      "top_right": "Physical drawing of a soccer ball being kicked",
+      "bottom_left": "Physical drawing of a person doing pull-ups",
+      "bottom_right": "Physical drawing of a person doing pull-ups with a bar"
+    },
+    "isolated_extraction": {
+      "top_left": {
+        "physical_shape": "Apple",
+        "vector": "Downward arrow",
+        "axis": "Vertical",
+        "color": "Red",
+        "shading": "Solid"
+      },
+      "top_right": {
+        "physical_shape": "Soccer ball",
+        "vector": "Upward arrow",
+        "axis": "Vertical",
+        "color": "Black and white",
+        "shading": "Solid"
+      },
+      "bottom_left": {
+        "physical_shape": "Person",
+        "vector": "Upward arrow",
+        "axis": "Vertical",
+        "color": "White",
+        "shading": "Solid"
+      },
+      "bottom_right": {
+        "physical_shape": "Person",
+        "vector": "Upward arrow",
+        "axis": "Vertical",
+        "color": "White",
+        "shading": "Solid"
+      }
+    },
+    "structural_description": "The frame is divided into four zones, each containing a physical drawing of a different STEM element. The top left zone shows an apple falling towards Earth, the top right zone shows a soccer ball being kicked, the bottom left zone shows a person doing pull-ups, and the bottom right zone shows a person doing pull-ups with a bar.",
+    "reading_order": [
+      "top_left",
+      "top_right",
+      "bottom_left",
+      "bottom_right"
+    ],
+    "layout": "The frame is arranged in a 2x2 grid, with each zone containing a different physical drawing.",
+    "text_readout": "Newton's Law III",
+    "spatial_map": "The apple is in the top left zone, the soccer ball is in the top right zone, the person doing pull-ups is in the bottom left zone, and the person doing pull-ups with a bar is in the bottom right zone.",
+    "colors_styles": "The apple and soccer ball are drawn with solid lines and solid colors, while the person doing pull-ups and the person doing pull-ups with a bar are drawn with solid lines and white color.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

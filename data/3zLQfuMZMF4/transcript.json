@@ -1,0 +1,773 @@
+{
+  "video_id": "3zLQfuMZMF4",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.327232300000105,
+  "entry_count": 109,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.44,
+      "end": 4.640000000000001,
+      "duration": 4.2,
+      "text": "understand integration by parts in just"
+    },
+    {
+      "time": "00:02",
+      "start": 2.08,
+      "end": 6.399,
+      "duration": 4.319,
+      "text": "four minutes the integration by parts is"
+    },
+    {
+      "time": "00:04",
+      "start": 4.64,
+      "end": 8.16,
+      "duration": 3.52,
+      "text": "used when we are trying to integrate an"
+    },
+    {
+      "time": "00:06",
+      "start": 6.399,
+      "end": 10.879999999999999,
+      "duration": 4.481,
+      "text": "expression whose factors are different"
+    },
+    {
+      "time": "00:08",
+      "start": 8.16,
+      "end": 12.799,
+      "duration": 4.639,
+      "text": "types of functions for example in this"
+    },
+    {
+      "time": "00:10",
+      "start": 10.88,
+      "end": 16.199,
+      "duration": 5.319,
+      "text": "expression we have 2X which is an"
+    },
+    {
+      "time": "00:12",
+      "start": 12.799,
+      "end": 18.56,
+      "duration": 5.761,
+      "text": "algebra and sin x which is a"
+    },
+    {
+      "time": "00:16",
+      "start": 16.199,
+      "end": 22.039,
+      "duration": 5.84,
+      "text": "trigonometry in this expression we have"
+    },
+    {
+      "time": "00:18",
+      "start": 18.56,
+      "end": 24.358999999999998,
+      "duration": 5.799,
+      "text": "an algebraic and an exponential"
+    },
+    {
+      "time": "00:22",
+      "start": 22.039,
+      "end": 27.279000000000003,
+      "duration": 5.24,
+      "text": "function and for this we have an"
+    },
+    {
+      "time": "00:24",
+      "start": 24.359,
+      "end": 29.080000000000002,
+      "duration": 4.721,
+      "text": "exponential and a trigonometric function"
+    },
+    {
+      "time": "00:27",
+      "start": 27.279,
+      "end": 30.599,
+      "duration": 3.32,
+      "text": "in these situations we have two"
+    },
+    {
+      "time": "00:29",
+      "start": 29.08,
+      "end": 32.719,
+      "duration": 3.639,
+      "text": "different types of function funs and it"
+    },
+    {
+      "time": "00:30",
+      "start": 30.599,
+      "end": 34.96,
+      "duration": 4.361,
+      "text": "cannot be solved by using substitution"
+    },
+    {
+      "time": "00:32",
+      "start": 32.719,
+      "end": 37.079,
+      "duration": 4.36,
+      "text": "method therefore we have to use"
+    },
+    {
+      "time": "00:34",
+      "start": 34.96,
+      "end": 39.879,
+      "duration": 4.919,
+      "text": "integration by parts and here is the"
+    },
+    {
+      "time": "00:37",
+      "start": 37.079,
+      "end": 41.8,
+      "duration": 4.721,
+      "text": "formula of it in case you are wondering"
+    },
+    {
+      "time": "00:39",
+      "start": 39.879,
+      "end": 44.36,
+      "duration": 4.481,
+      "text": "how the formula is derived I'll be"
+    },
+    {
+      "time": "00:41",
+      "start": 41.8,
+      "end": 46.239,
+      "duration": 4.439,
+      "text": "briefly explaining it otherwise you can"
+    },
+    {
+      "time": "00:44",
+      "start": 44.36,
+      "end": 47.36,
+      "duration": 3.0,
+      "text": "directly skip to the following parts of"
+    },
+    {
+      "time": "00:46",
+      "start": 46.239,
+      "end": 49.64,
+      "duration": 3.401,
+      "text": "this"
+    },
+    {
+      "time": "00:47",
+      "start": 47.36,
+      "end": 52.079,
+      "duration": 4.719,
+      "text": "video remember the formula of the"
+    },
+    {
+      "time": "00:49",
+      "start": 49.64,
+      "end": 54.16,
+      "duration": 4.52,
+      "text": "product rule the formula of integration"
+    },
+    {
+      "time": "00:52",
+      "start": 52.079,
+      "end": 56.28,
+      "duration": 4.201,
+      "text": "by parts is just basically the reverse"
+    },
+    {
+      "time": "00:54",
+      "start": 54.16,
+      "end": 58.358999999999995,
+      "duration": 4.199,
+      "text": "of it as you can see we take the"
+    },
+    {
+      "time": "00:56",
+      "start": 56.28,
+      "end": 61.120000000000005,
+      "duration": 4.84,
+      "text": "anti-derivative or integral of the"
+    },
+    {
+      "time": "00:58",
+      "start": 58.359,
+      "end": 63.079,
+      "duration": 4.72,
+      "text": "product rule formula"
+    },
+    {
+      "time": "01:01",
+      "start": 61.12,
+      "end": 65.119,
+      "duration": 3.999,
+      "text": "for the left hand side notice that we"
+    },
+    {
+      "time": "01:03",
+      "start": 63.079,
+      "end": 66.64,
+      "duration": 3.561,
+      "text": "have both integral and derivative so in"
+    },
+    {
+      "time": "01:05",
+      "start": 65.119,
+      "end": 69.36,
+      "duration": 4.241,
+      "text": "the end we left with"
+    },
+    {
+      "time": "01:06",
+      "start": 66.64,
+      "end": 71.799,
+      "duration": 5.159,
+      "text": "UV and for the right hand side notice"
+    },
+    {
+      "time": "01:09",
+      "start": 69.36,
+      "end": 74.32,
+      "duration": 4.96,
+      "text": "that we can actually cancel out the"
+    },
+    {
+      "time": "01:11",
+      "start": 71.799,
+      "end": 77.68,
+      "duration": 5.881,
+      "text": "DX therefore we only left with the"
+    },
+    {
+      "time": "01:14",
+      "start": 74.32,
+      "end": 80.67999999999999,
+      "duration": 6.36,
+      "text": "integral of UV plus the integral of V"
+    },
+    {
+      "time": "01:17",
+      "start": 77.68,
+      "end": 84.2,
+      "duration": 6.52,
+      "text": "du we swap the position and bring the"
+    },
+    {
+      "time": "01:20",
+      "start": 80.68,
+      "end": 86.2,
+      "duration": 5.52,
+      "text": "integral of VD to the other side that's"
+    },
+    {
+      "time": "01:24",
+      "start": 84.2,
+      "end": 88.84,
+      "duration": 4.64,
+      "text": "how we derive the formula of integration"
+    },
+    {
+      "time": "01:26",
+      "start": 86.2,
+      "end": 91.56,
+      "duration": 5.36,
+      "text": "by parts from the formula of the product"
+    },
+    {
+      "time": "01:28",
+      "start": 88.84,
+      "end": 93.0,
+      "duration": 4.16,
+      "text": "rule notice that the integral of the"
+    },
+    {
+      "time": "01:31",
+      "start": 91.56,
+      "end": 95.36,
+      "duration": 3.8,
+      "text": "function that we wanted to integrate"
+    },
+    {
+      "time": "01:33",
+      "start": 93.0,
+      "end": 97.56,
+      "duration": 4.56,
+      "text": "consist of U and DV meaning that we let"
+    },
+    {
+      "time": "01:35",
+      "start": 95.36,
+      "end": 99.84,
+      "duration": 4.48,
+      "text": "part of the function equals to U and DV"
+    },
+    {
+      "time": "01:37",
+      "start": 97.56,
+      "end": 101.399,
+      "duration": 3.839,
+      "text": "before we perform integration on it but"
+    },
+    {
+      "time": "01:39",
+      "start": 99.84,
+      "end": 103.96000000000001,
+      "duration": 4.12,
+      "text": "how do we know whether which part of the"
+    },
+    {
+      "time": "01:41",
+      "start": 101.399,
+      "end": 107.2,
+      "duration": 5.801,
+      "text": "function is equal to U or"
+    },
+    {
+      "time": "01:43",
+      "start": 103.96,
+      "end": 110.91999999999999,
+      "duration": 6.96,
+      "text": "DV for the selection of U just remember"
+    },
+    {
+      "time": "01:47",
+      "start": 107.2,
+      "end": 114.159,
+      "duration": 6.959,
+      "text": "the acronym li8 where L for logarithmic"
+    },
+    {
+      "time": "01:50",
+      "start": 110.92,
+      "end": 116.32000000000001,
+      "duration": 5.4,
+      "text": "function such as the natural log of x i"
+    },
+    {
+      "time": "01:54",
+      "start": 114.159,
+      "end": 119.43900000000001,
+      "duration": 5.28,
+      "text": "for inverse trigonometric function such"
+    },
+    {
+      "time": "01:56",
+      "start": 116.32,
+      "end": 123.15899999999999,
+      "duration": 6.839,
+      "text": "as inverse of sinx a for algebraic"
+    },
+    {
+      "time": "01:59",
+      "start": 119.439,
+      "end": 126.24,
+      "duration": 6.801,
+      "text": "function such as X or 2x^2 t for"
+    },
+    {
+      "time": "02:03",
+      "start": 123.159,
+      "end": 128.87900000000002,
+      "duration": 5.72,
+      "text": "trigonometric function such as cosine X"
+    },
+    {
+      "time": "02:06",
+      "start": 126.24,
+      "end": 131.35999999999999,
+      "duration": 5.12,
+      "text": "and lastly e for exponential function"
+    },
+    {
+      "time": "02:08",
+      "start": 128.879,
+      "end": 133.72,
+      "duration": 4.841,
+      "text": "such as e ra to the power of X or 2 ra"
+    },
+    {
+      "time": "02:11",
+      "start": 131.36,
+      "end": 136.64000000000001,
+      "duration": 5.28,
+      "text": "to the power of X we choose part of the"
+    },
+    {
+      "time": "02:13",
+      "start": 133.72,
+      "end": 139.48,
+      "duration": 5.76,
+      "text": "function equals to U by using this"
+    },
+    {
+      "time": "02:16",
+      "start": 136.64,
+      "end": 142.11999999999998,
+      "duration": 5.48,
+      "text": "order as an example for this function we"
+    },
+    {
+      "time": "02:19",
+      "start": 139.48,
+      "end": 144.35999999999999,
+      "duration": 4.88,
+      "text": "have 2X which is an algebraic function"
+    },
+    {
+      "time": "02:22",
+      "start": 142.12,
+      "end": 146.8,
+      "duration": 4.68,
+      "text": "and sin x which is a trigonometric"
+    },
+    {
+      "time": "02:24",
+      "start": 144.36,
+      "end": 148.20000000000002,
+      "duration": 3.84,
+      "text": "function notice that algebraic function"
+    },
+    {
+      "time": "02:26",
+      "start": 146.8,
+      "end": 150.72,
+      "duration": 3.92,
+      "text": "has a higher order compared to"
+    },
+    {
+      "time": "02:28",
+      "start": 148.2,
+      "end": 152.92,
+      "duration": 4.72,
+      "text": "trigonometric so we choose 2x as the"
+    },
+    {
+      "time": "02:30",
+      "start": 150.72,
+      "end": 155.04,
+      "duration": 4.32,
+      "text": "part of the function that equals to U"
+    },
+    {
+      "time": "02:32",
+      "start": 152.92,
+      "end": 156.92,
+      "duration": 4.0,
+      "text": "after we have chosen the U the remaining"
+    },
+    {
+      "time": "02:35",
+      "start": 155.04,
+      "end": 158.76,
+      "duration": 3.72,
+      "text": "part of the function becomes DV"
+    },
+    {
+      "time": "02:36",
+      "start": 156.92,
+      "end": 162.0,
+      "duration": 5.08,
+      "text": "including the"
+    },
+    {
+      "time": "02:38",
+      "start": 158.76,
+      "end": 164.879,
+      "duration": 6.119,
+      "text": "DX then we differentiate the U so that"
+    },
+    {
+      "time": "02:42",
+      "start": 162.0,
+      "end": 168.0,
+      "duration": 6.0,
+      "text": "we will be getting du in terms of"
+    },
+    {
+      "time": "02:44",
+      "start": 164.879,
+      "end": 170.35999999999999,
+      "duration": 5.481,
+      "text": "DX and for DV we integrate it and we"
+    },
+    {
+      "time": "02:48",
+      "start": 168.0,
+      "end": 172.04,
+      "duration": 4.04,
+      "text": "will be getting V this step is crucial"
+    },
+    {
+      "time": "02:50",
+      "start": 170.36,
+      "end": 175.08,
+      "duration": 4.72,
+      "text": "so that we can plug in the terms into"
+    },
+    {
+      "time": "02:52",
+      "start": 172.04,
+      "end": 177.319,
+      "duration": 5.279,
+      "text": "the formula of integration by parts now"
+    },
+    {
+      "time": "02:55",
+      "start": 175.08,
+      "end": 178.92000000000002,
+      "duration": 3.84,
+      "text": "let us solve for this example the first"
+    },
+    {
+      "time": "02:57",
+      "start": 177.319,
+      "end": 181.2,
+      "duration": 3.881,
+      "text": "step is to choose part of the function"
+    },
+    {
+      "time": "02:58",
+      "start": 178.92,
+      "end": 184.159,
+      "duration": 5.239,
+      "text": "to be U and and DV just like what we"
+    },
+    {
+      "time": "03:01",
+      "start": 181.2,
+      "end": 185.72,
+      "duration": 4.52,
+      "text": "have done previously for the U we take"
+    },
+    {
+      "time": "03:04",
+      "start": 184.159,
+      "end": 189.12,
+      "duration": 4.961,
+      "text": "the derivative of it and we will be"
+    },
+    {
+      "time": "03:05",
+      "start": 185.72,
+      "end": 192.44,
+      "duration": 6.72,
+      "text": "getting two bring DX to the other side"
+    },
+    {
+      "time": "03:09",
+      "start": 189.12,
+      "end": 194.56,
+      "duration": 5.44,
+      "text": "so that we have du in terms of DX and"
+    },
+    {
+      "time": "03:12",
+      "start": 192.44,
+      "end": 197.159,
+      "duration": 4.719,
+      "text": "for the DV we take integral on both"
+    },
+    {
+      "time": "03:14",
+      "start": 194.56,
+      "end": 199.56,
+      "duration": 5.0,
+      "text": "sides for integral of DV you can think"
+    },
+    {
+      "time": "03:17",
+      "start": 197.159,
+      "end": 203.12,
+      "duration": 5.961,
+      "text": "it as the integral of 1 DV so we will be"
+    },
+    {
+      "time": "03:19",
+      "start": 199.56,
+      "end": 204.599,
+      "duration": 5.039,
+      "text": "getting V integrate sinx and we get"
+    },
+    {
+      "time": "03:23",
+      "start": 203.12,
+      "end": 207.36,
+      "duration": 4.24,
+      "text": "Negative cosine"
+    },
+    {
+      "time": "03:24",
+      "start": 204.599,
+      "end": 209.92,
+      "duration": 5.321,
+      "text": "X now we have all the terms and we can"
+    },
+    {
+      "time": "03:27",
+      "start": 207.36,
+      "end": 214.28,
+      "duration": 6.92,
+      "text": "plug them into the formula accordingly"
+    },
+    {
+      "time": "03:29",
+      "start": 209.92,
+      "end": 217.04,
+      "duration": 7.12,
+      "text": "for U we have 2X and DV we have sinx"
+    },
+    {
+      "time": "03:34",
+      "start": 214.28,
+      "end": 218.68,
+      "duration": 4.4,
+      "text": "DX notice that this is exactly the same"
+    },
+    {
+      "time": "03:37",
+      "start": 217.04,
+      "end": 220.28,
+      "duration": 3.24,
+      "text": "as the initial function that we wanted"
+    },
+    {
+      "time": "03:38",
+      "start": 218.68,
+      "end": 224.28,
+      "duration": 5.6,
+      "text": "to"
+    },
+    {
+      "time": "03:40",
+      "start": 220.28,
+      "end": 226.68,
+      "duration": 6.4,
+      "text": "integrate for the u and v we have 2X and"
+    },
+    {
+      "time": "03:44",
+      "start": 224.28,
+      "end": 230.159,
+      "duration": 5.879,
+      "text": "cosine"
+    },
+    {
+      "time": "03:46",
+      "start": 226.68,
+      "end": 232.28,
+      "duration": 5.6,
+      "text": "X and lastly for the V and du we have"
+    },
+    {
+      "time": "03:50",
+      "start": 230.159,
+      "end": 234.76,
+      "duration": 4.601,
+      "text": "negative cosine X and"
+    },
+    {
+      "time": "03:52",
+      "start": 232.28,
+      "end": 237.599,
+      "duration": 5.319,
+      "text": "2dx all we going to do now is to take"
+    },
+    {
+      "time": "03:54",
+      "start": 234.76,
+      "end": 239.959,
+      "duration": 5.199,
+      "text": "the integral of this part notice that we"
+    },
+    {
+      "time": "03:57",
+      "start": 237.599,
+      "end": 241.83999999999997,
+      "duration": 4.241,
+      "text": "have a constant which is the -2 we can"
+    },
+    {
+      "time": "03:59",
+      "start": 239.959,
+      "end": 244.68,
+      "duration": 4.721,
+      "text": "bring the constant to the outside of the"
+    },
+    {
+      "time": "04:01",
+      "start": 241.84,
+      "end": 247.239,
+      "duration": 5.399,
+      "text": "integral here we have minus and -2 in"
+    },
+    {
+      "time": "04:04",
+      "start": 244.68,
+      "end": 251.20000000000002,
+      "duration": 6.52,
+      "text": "Brackets so we get positive integrate"
+    },
+    {
+      "time": "04:07",
+      "start": 247.239,
+      "end": 256.04,
+      "duration": 8.801,
+      "text": "cosine X we get sinx therefore we have"
+    },
+    {
+      "time": "04:11",
+      "start": 251.2,
+      "end": 258.44,
+      "duration": 7.24,
+      "text": "-2X cosin x + 2 sin x and we are done"
+    },
+    {
+      "time": "04:16",
+      "start": 256.04,
+      "end": 260.199,
+      "duration": 4.159,
+      "text": "but remember don't forget to add plus C"
+    },
+    {
+      "time": "04:18",
+      "start": 258.44,
+      "end": 263.0,
+      "duration": 4.56,
+      "text": "after we have finished integrating and"
+    },
+    {
+      "time": "04:20",
+      "start": 260.199,
+      "end": 265.56,
+      "duration": 5.361,
+      "text": "we got our final answer I spent hours"
+    },
+    {
+      "time": "04:23",
+      "start": 263.0,
+      "end": 267.52,
+      "duration": 4.52,
+      "text": "making videos explaining math topics and"
+    },
+    {
+      "time": "04:25",
+      "start": 265.56,
+      "end": 269.759,
+      "duration": 4.199,
+      "text": "all I ask for in return is simply to"
+    },
+    {
+      "time": "04:27",
+      "start": 267.52,
+      "end": 273.639,
+      "duration": 6.119,
+      "text": "like And subscribe thanks for watching"
+    },
+    {
+      "time": "04:29",
+      "start": 269.759,
+      "end": 273.639,
+      "duration": 3.88,
+      "text": "ing see you in the next video"
+    }
+  ]
+}

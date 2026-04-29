@@ -1,0 +1,1914 @@
+{
+  "video_id": "J8mLQQZeIH8",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 5.638585400000011,
+  "entry_count": 272,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.24,
+      "end": 1.41,
+      "duration": 1.17,
+      "text": "- [Narrator] Earth puts\na force on an apple,"
+    },
+    {
+      "time": "00:01",
+      "start": 1.41,
+      "end": 2.67,
+      "duration": 1.26,
+      "text": "making it fall down."
+    },
+    {
+      "time": "00:02",
+      "start": 2.67,
+      "end": 3.503,
+      "duration": 0.833,
+      "text": "But the question is,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.503,
+      "end": 5.79,
+      "duration": 2.287,
+      "text": "does the apple put a force\non the earth, as well?"
+    },
+    {
+      "time": "00:05",
+      "start": 5.79,
+      "end": 10.79,
+      "duration": 5.0,
+      "text": "And if it does, is that force\nbigger, smaller, or the same?"
+    },
+    {
+      "time": "00:10",
+      "start": 10.86,
+      "end": 12.719999999999999,
+      "duration": 1.86,
+      "text": "That's what we're gonna\nfind out in this video."
+    },
+    {
+      "time": "00:12",
+      "start": 12.72,
+      "end": 13.860000000000001,
+      "duration": 1.14,
+      "text": "And to try and answer this question,"
+    },
+    {
+      "time": "00:13",
+      "start": 13.86,
+      "end": 15.629999999999999,
+      "duration": 1.77,
+      "text": "let's start with some familiar examples."
+    },
+    {
+      "time": "00:15",
+      "start": 15.63,
+      "end": 16.740000000000002,
+      "duration": 1.11,
+      "text": "Consider kicking a ball."
+    },
+    {
+      "time": "00:16",
+      "start": 16.74,
+      "end": 18.959999999999997,
+      "duration": 2.22,
+      "text": "When you kick a ball, you\nput a force on the ball."
+    },
+    {
+      "time": "00:18",
+      "start": 18.96,
+      "end": 20.7,
+      "duration": 1.74,
+      "text": "Does the ball put a\nforce back on your leg?"
+    },
+    {
+      "time": "00:20",
+      "start": 20.7,
+      "end": 22.89,
+      "duration": 2.19,
+      "text": "Well, yeah, because your leg does"
+    },
+    {
+      "time": "00:22",
+      "start": 22.89,
+      "end": 24.3,
+      "duration": 1.41,
+      "text": "get hurt a little bit, right?"
+    },
+    {
+      "time": "00:24",
+      "start": 24.3,
+      "end": 25.98,
+      "duration": 1.68,
+      "text": "I mean, if you want an extreme case,"
+    },
+    {
+      "time": "00:25",
+      "start": 25.98,
+      "end": 27.3,
+      "duration": 1.32,
+      "text": "imagine this is an iron ball"
+    },
+    {
+      "time": "00:27",
+      "start": 27.3,
+      "end": 28.71,
+      "duration": 1.41,
+      "text": "and you're kicking it very hard,"
+    },
+    {
+      "time": "00:28",
+      "start": 28.71,
+      "end": 32.67,
+      "duration": 3.96,
+      "text": "and now you can imagine that\nfoot really, really hurting."
+    },
+    {
+      "time": "00:32",
+      "start": 32.67,
+      "end": 34.74,
+      "duration": 2.07,
+      "text": "So yes, when you put a force on the ball,"
+    },
+    {
+      "time": "00:34",
+      "start": 34.74,
+      "end": 37.29,
+      "duration": 2.55,
+      "text": "the ball also puts a force back on you."
+    },
+    {
+      "time": "00:37",
+      "start": 37.29,
+      "end": 39.9,
+      "duration": 2.61,
+      "text": "When you kick the ball,\nthe ball kicks you back."
+    },
+    {
+      "time": "00:39",
+      "start": 39.9,
+      "end": 41.73,
+      "duration": 1.83,
+      "text": "Let's take another example."
+    },
+    {
+      "time": "00:41",
+      "start": 41.73,
+      "end": 42.962999999999994,
+      "duration": 1.233,
+      "text": "When you're pulling up,"
+    },
+    {
+      "time": "00:46",
+      "start": 46.11,
+      "end": 48.54,
+      "duration": 2.43,
+      "text": "you're putting a downward\nforce on that bar."
+    },
+    {
+      "time": "00:48",
+      "start": 48.54,
+      "end": 50.04,
+      "duration": 1.5,
+      "text": "Okay, now that force\nis actually over here,"
+    },
+    {
+      "time": "00:50",
+      "start": 50.04,
+      "end": 51.72,
+      "duration": 1.68,
+      "text": "but I'm just putting it over here, okay?"
+    },
+    {
+      "time": "00:51",
+      "start": 51.72,
+      "end": 53.31,
+      "duration": 1.59,
+      "text": "You're pulling down on that bar,"
+    },
+    {
+      "time": "00:53",
+      "start": 53.31,
+      "end": 55.35,
+      "duration": 2.04,
+      "text": "so you put a force on that bar down,"
+    },
+    {
+      "time": "00:55",
+      "start": 55.35,
+      "end": 57.6,
+      "duration": 2.25,
+      "text": "but then why do you get pulled up?"
+    },
+    {
+      "time": "00:57",
+      "start": 57.6,
+      "end": 62.6,
+      "duration": 5.0,
+      "text": "Ooh, that means that bar is\nalso putting a force on you."
+    },
+    {
+      "time": "01:02",
+      "start": 62.76,
+      "end": 63.9,
+      "duration": 1.14,
+      "text": "So what we are seeing over here"
+    },
+    {
+      "time": "01:03",
+      "start": 63.9,
+      "end": 66.72,
+      "duration": 2.82,
+      "text": "is when one object puts\na force on the other,"
+    },
+    {
+      "time": "01:06",
+      "start": 66.72,
+      "end": 70.2,
+      "duration": 3.48,
+      "text": "the other puts a force\nback on the first object."
+    },
+    {
+      "time": "01:10",
+      "start": 70.2,
+      "end": 71.55,
+      "duration": 1.35,
+      "text": "So coming back over here,"
+    },
+    {
+      "time": "01:11",
+      "start": 71.55,
+      "end": 73.61999999999999,
+      "duration": 2.07,
+      "text": "we could now use this and\nwe could guess that, hey,"
+    },
+    {
+      "time": "01:13",
+      "start": 73.62,
+      "end": 75.51,
+      "duration": 1.89,
+      "text": "if the earth puts a force on the apple,"
+    },
+    {
+      "time": "01:15",
+      "start": 75.51,
+      "end": 78.84,
+      "duration": 3.33,
+      "text": "maybe the apple also puts a\nforce back on the earth as well."
+    },
+    {
+      "time": "01:18",
+      "start": 78.84,
+      "end": 82.17,
+      "duration": 3.33,
+      "text": "But now comes the big question,\nwhich force is bigger?"
+    },
+    {
+      "time": "01:22",
+      "start": 82.17,
+      "end": 83.003,
+      "duration": 0.833,
+      "text": "Well, for that, again,"
+    },
+    {
+      "time": "01:23",
+      "start": 83.003,
+      "end": 85.05,
+      "duration": 2.047,
+      "text": "let's come back to our familiar examples."
+    },
+    {
+      "time": "01:25",
+      "start": 85.05,
+      "end": 87.84,
+      "duration": 2.79,
+      "text": "What if I kick the ball harder?"
+    },
+    {
+      "time": "01:27",
+      "start": 87.84,
+      "end": 90.45,
+      "duration": 2.61,
+      "text": "Well, now you can imagine\nyour leg getting hurt"
+    },
+    {
+      "time": "01:30",
+      "start": 90.45,
+      "end": 92.07000000000001,
+      "duration": 1.62,
+      "text": "slightly more than before."
+    },
+    {
+      "time": "01:32",
+      "start": 92.07,
+      "end": 95.85,
+      "duration": 3.78,
+      "text": "In other words, the ball also\nkicks you harder. Interesting."
+    },
+    {
+      "time": "01:35",
+      "start": 95.85,
+      "end": 98.97,
+      "duration": 3.12,
+      "text": "What happens if you\npull on the bar harder?"
+    },
+    {
+      "time": "01:38",
+      "start": 98.97,
+      "end": 101.13,
+      "duration": 2.16,
+      "text": "Hey, you get pulled up quickly, as well."
+    },
+    {
+      "time": "01:41",
+      "start": 101.13,
+      "end": 102.42,
+      "duration": 1.29,
+      "text": "That means, ooh,"
+    },
+    {
+      "time": "01:42",
+      "start": 102.42,
+      "end": 105.81,
+      "duration": 3.39,
+      "text": "the pull up bar also puts\na harder force on you."
+    },
+    {
+      "time": "01:45",
+      "start": 105.81,
+      "end": 107.58,
+      "duration": 1.77,
+      "text": "Okay, and I'm gonna save you the trouble,"
+    },
+    {
+      "time": "01:47",
+      "start": 107.58,
+      "end": 110.39999999999999,
+      "duration": 2.82,
+      "text": "people have measured these\nforces, and it turns out"
+    },
+    {
+      "time": "01:50",
+      "start": 110.4,
+      "end": 114.42,
+      "duration": 4.02,
+      "text": "that these forces are\nalways of equal magnitude,"
+    },
+    {
+      "time": "01:54",
+      "start": 114.42,
+      "end": 117.63,
+      "duration": 3.21,
+      "text": "and that's what we call\nNewton's third law."
+    },
+    {
+      "time": "01:57",
+      "start": 117.63,
+      "end": 122.46,
+      "duration": 4.83,
+      "text": "Newton's third law says that\nwhen A puts a force on B,"
+    },
+    {
+      "time": "02:02",
+      "start": 122.46,
+      "end": 127.46,
+      "duration": 5.0,
+      "text": "B will put an equal and\nopposite force back on A."
+    },
+    {
+      "time": "02:08",
+      "start": 128.49,
+      "end": 131.19,
+      "duration": 2.7,
+      "text": "Now, we can also write this\nin the form of an equation."
+    },
+    {
+      "time": "02:11",
+      "start": 131.19,
+      "end": 134.43,
+      "duration": 3.24,
+      "text": "We can say that the force that A puts on B"
+    },
+    {
+      "time": "02:14",
+      "start": 134.43,
+      "end": 137.19,
+      "duration": 2.76,
+      "text": "will always be equal and opposite"
+    },
+    {
+      "time": "02:17",
+      "start": 137.19,
+      "end": 140.25,
+      "duration": 3.06,
+      "text": "to the force that B puts on A."
+    },
+    {
+      "time": "02:20",
+      "start": 140.25,
+      "end": 142.5,
+      "duration": 2.25,
+      "text": "Think about it, you put\na force on that ball,"
+    },
+    {
+      "time": "02:22",
+      "start": 142.5,
+      "end": 146.49,
+      "duration": 3.99,
+      "text": "the ball puts an equal but\nopposite force back on your foot."
+    },
+    {
+      "time": "02:26",
+      "start": 146.49,
+      "end": 148.92000000000002,
+      "duration": 2.43,
+      "text": "You pull down on the bar,"
+    },
+    {
+      "time": "02:28",
+      "start": 148.92,
+      "end": 150.51,
+      "duration": 1.59,
+      "text": "the bar will pull up on you"
+    },
+    {
+      "time": "02:30",
+      "start": 150.51,
+      "end": 152.07,
+      "duration": 1.56,
+      "text": "with an equal and opposite force."
+    },
+    {
+      "time": "02:32",
+      "start": 152.07,
+      "end": 153.84,
+      "duration": 1.77,
+      "text": "And the same thing applies over here."
+    },
+    {
+      "time": "02:33",
+      "start": 153.84,
+      "end": 156.27,
+      "duration": 2.43,
+      "text": "Whatever force the\nearth puts on the apple,"
+    },
+    {
+      "time": "02:36",
+      "start": 156.27,
+      "end": 158.01000000000002,
+      "duration": 1.74,
+      "text": "the apple will put an equal,"
+    },
+    {
+      "time": "02:38",
+      "start": 158.01,
+      "end": 162.57299999999998,
+      "duration": 4.563,
+      "text": "but opposite force back on\nearth, Newton's third law."
+    },
+    {
+      "time": "02:43",
+      "start": 163.47,
+      "end": 165.75,
+      "duration": 2.28,
+      "text": "But wait a second, I have\na huge problem with this."
+    },
+    {
+      "time": "02:45",
+      "start": 165.75,
+      "end": 167.07,
+      "duration": 1.32,
+      "text": "We are saying that the earth"
+    },
+    {
+      "time": "02:47",
+      "start": 167.07,
+      "end": 169.89,
+      "duration": 2.82,
+      "text": "and the apple put the\nsame force on each other?"
+    },
+    {
+      "time": "02:49",
+      "start": 169.89,
+      "end": 171.80999999999997,
+      "duration": 1.92,
+      "text": "But if that is the case,\nthen why is it the apple"
+    },
+    {
+      "time": "02:51",
+      "start": 171.81,
+      "end": 173.55,
+      "duration": 1.74,
+      "text": "that accelerates very\nquickly towards the earth,"
+    },
+    {
+      "time": "02:53",
+      "start": 173.55,
+      "end": 174.87,
+      "duration": 1.32,
+      "text": "but the earth doesn't accelerate"
+    },
+    {
+      "time": "02:54",
+      "start": 174.87,
+      "end": 176.64000000000001,
+      "duration": 1.77,
+      "text": "very quickly towards the apple?"
+    },
+    {
+      "time": "02:56",
+      "start": 176.64,
+      "end": 179.30999999999997,
+      "duration": 2.67,
+      "text": "Ah, now we're talking about acceleration."
+    },
+    {
+      "time": "02:59",
+      "start": 179.31,
+      "end": 181.05,
+      "duration": 1.74,
+      "text": "When it comes to acceleration,"
+    },
+    {
+      "time": "03:01",
+      "start": 181.05,
+      "end": 184.17000000000002,
+      "duration": 3.12,
+      "text": "we have to think about not just the force,"
+    },
+    {
+      "time": "03:04",
+      "start": 184.17,
+      "end": 185.25,
+      "duration": 1.08,
+      "text": "but the mass, as well."
+    },
+    {
+      "time": "03:05",
+      "start": 185.25,
+      "end": 186.51,
+      "duration": 1.26,
+      "text": "Remember it said Newton's second law,"
+    },
+    {
+      "time": "03:06",
+      "start": 186.51,
+      "end": 188.25,
+      "duration": 1.74,
+      "text": "it says the acceleration is the net force"
+    },
+    {
+      "time": "03:08",
+      "start": 188.25,
+      "end": 189.51,
+      "duration": 1.26,
+      "text": "divided by the mass?"
+    },
+    {
+      "time": "03:09",
+      "start": 189.51,
+      "end": 192.87,
+      "duration": 3.36,
+      "text": "If objects have a huge mass,\nthey have a lot more inertia,"
+    },
+    {
+      "time": "03:12",
+      "start": 192.87,
+      "end": 196.08,
+      "duration": 3.21,
+      "text": "and that makes it much harder\nfor them to accelerate."
+    },
+    {
+      "time": "03:16",
+      "start": 196.08,
+      "end": 197.955,
+      "duration": 1.875,
+      "text": "So now think about them."
+    },
+    {
+      "time": "03:17",
+      "start": 197.955,
+      "end": 200.55,
+      "duration": 2.595,
+      "text": "Earth has a huge mass,"
+    },
+    {
+      "time": "03:20",
+      "start": 200.55,
+      "end": 202.71,
+      "duration": 2.16,
+      "text": "and therefore, it's much\nharder to accelerate,"
+    },
+    {
+      "time": "03:22",
+      "start": 202.71,
+      "end": 205.53,
+      "duration": 2.82,
+      "text": "and therefore, when you put\nthat force on the earth,"
+    },
+    {
+      "time": "03:25",
+      "start": 205.53,
+      "end": 206.67,
+      "duration": 1.14,
+      "text": "it'll hardly accelerate,"
+    },
+    {
+      "time": "03:26",
+      "start": 206.67,
+      "end": 208.07999999999998,
+      "duration": 1.41,
+      "text": "its mass is humongous,"
+    },
+    {
+      "time": "03:28",
+      "start": 208.08,
+      "end": 210.39000000000001,
+      "duration": 2.31,
+      "text": "or hardly, for all practical purposes,"
+    },
+    {
+      "time": "03:30",
+      "start": 210.39,
+      "end": 211.89299999999997,
+      "duration": 1.503,
+      "text": "that acceleration is zero."
+    },
+    {
+      "time": "03:32",
+      "start": 212.85,
+      "end": 215.51999999999998,
+      "duration": 2.67,
+      "text": "But when you put that\nsame force on the apple,"
+    },
+    {
+      "time": "03:35",
+      "start": 215.52,
+      "end": 217.86,
+      "duration": 2.34,
+      "text": "that force is exactly\nequal, put on the apple,"
+    },
+    {
+      "time": "03:37",
+      "start": 217.86,
+      "end": 219.51000000000002,
+      "duration": 1.65,
+      "text": "well, apple has a much tiny mass,"
+    },
+    {
+      "time": "03:39",
+      "start": 219.51,
+      "end": 221.45999999999998,
+      "duration": 1.95,
+      "text": "and so because it has a much smaller mass,"
+    },
+    {
+      "time": "03:41",
+      "start": 221.46,
+      "end": 223.47,
+      "duration": 2.01,
+      "text": "it's much easier to accelerate the apple."
+    },
+    {
+      "time": "03:43",
+      "start": 223.47,
+      "end": 226.44,
+      "duration": 2.97,
+      "text": "That's why, when you put\nthat same force on the apple,"
+    },
+    {
+      "time": "03:46",
+      "start": 226.44,
+      "end": 228.48,
+      "duration": 2.04,
+      "text": "you will see a big\nacceleration on the apple."
+    },
+    {
+      "time": "03:48",
+      "start": 228.48,
+      "end": 231.45,
+      "duration": 2.97,
+      "text": "And since our eyes can\nsee the acceleration,"
+    },
+    {
+      "time": "03:51",
+      "start": 231.45,
+      "end": 233.51999999999998,
+      "duration": 2.07,
+      "text": "and we don't think\nusually about the masses,"
+    },
+    {
+      "time": "03:53",
+      "start": 233.52,
+      "end": 235.35000000000002,
+      "duration": 1.83,
+      "text": "that's why we make a\nmistake thinking that hey,"
+    },
+    {
+      "time": "03:55",
+      "start": 235.35,
+      "end": 237.57,
+      "duration": 2.22,
+      "text": "if there's a big acceleration,\nthere must be a lot bigger,"
+    },
+    {
+      "time": "03:57",
+      "start": 237.57,
+      "end": 239.07,
+      "duration": 1.5,
+      "text": "there's a bigger force acting on it."
+    },
+    {
+      "time": "03:59",
+      "start": 239.07,
+      "end": 240.93,
+      "duration": 1.86,
+      "text": "That's the mistake we tend to make."
+    },
+    {
+      "time": "04:00",
+      "start": 240.93,
+      "end": 242.70000000000002,
+      "duration": 1.77,
+      "text": "But be very careful about that,"
+    },
+    {
+      "time": "04:02",
+      "start": 242.7,
+      "end": 244.67999999999998,
+      "duration": 1.98,
+      "text": "Newton's third law has no exceptions."
+    },
+    {
+      "time": "04:04",
+      "start": 244.68,
+      "end": 247.68,
+      "duration": 3.0,
+      "text": "The two pairs of forces\nwill always be equal"
+    },
+    {
+      "time": "04:07",
+      "start": 247.68,
+      "end": 249.36,
+      "duration": 1.68,
+      "text": "regardless of their velocities,"
+    },
+    {
+      "time": "04:09",
+      "start": 249.36,
+      "end": 251.76000000000002,
+      "duration": 2.4,
+      "text": "regardless of their accelerations."
+    },
+    {
+      "time": "04:11",
+      "start": 251.76,
+      "end": 252.593,
+      "duration": 0.833,
+      "text": "Wait a second,"
+    },
+    {
+      "time": "04:12",
+      "start": 252.593,
+      "end": 254.91,
+      "duration": 2.317,
+      "text": "I have another problem\nwith Newton's third law."
+    },
+    {
+      "time": "04:14",
+      "start": 254.91,
+      "end": 259.02,
+      "duration": 4.11,
+      "text": "If the forces are always\nequal and opposite always,"
+    },
+    {
+      "time": "04:19",
+      "start": 259.02,
+      "end": 261.81,
+      "duration": 2.79,
+      "text": "then shouldn't the\nforces always cancel out?"
+    },
+    {
+      "time": "04:21",
+      "start": 261.81,
+      "end": 264.36,
+      "duration": 2.55,
+      "text": "Shouldn't the forces always be balanced?"
+    },
+    {
+      "time": "04:24",
+      "start": 264.36,
+      "end": 265.92,
+      "duration": 1.56,
+      "text": "There should never be\nan acceleration, right?"
+    },
+    {
+      "time": "04:25",
+      "start": 265.92,
+      "end": 267.75,
+      "duration": 1.83,
+      "text": "Like, what's going on?"
+    },
+    {
+      "time": "04:27",
+      "start": 267.75,
+      "end": 271.14,
+      "duration": 3.39,
+      "text": "Again, that's an interesting\nquestion, but think about it."
+    },
+    {
+      "time": "04:31",
+      "start": 271.14,
+      "end": 272.78999999999996,
+      "duration": 1.65,
+      "text": "These two equal and opposite forces"
+    },
+    {
+      "time": "04:32",
+      "start": 272.79,
+      "end": 275.01000000000005,
+      "duration": 2.22,
+      "text": "are always on different objects."
+    },
+    {
+      "time": "04:35",
+      "start": 275.01,
+      "end": 277.59,
+      "duration": 2.58,
+      "text": "For example, when I kick the ball,"
+    },
+    {
+      "time": "04:37",
+      "start": 277.59,
+      "end": 279.57,
+      "duration": 1.98,
+      "text": "the first force is on the ball,"
+    },
+    {
+      "time": "04:39",
+      "start": 279.57,
+      "end": 282.71999999999997,
+      "duration": 3.15,
+      "text": "and then that equal and opposite\nforce is back on the leg,"
+    },
+    {
+      "time": "04:42",
+      "start": 282.72,
+      "end": 284.55,
+      "duration": 1.83,
+      "text": "these are two different objects."
+    },
+    {
+      "time": "04:44",
+      "start": 284.55,
+      "end": 285.45,
+      "duration": 0.9,
+      "text": "Now, for example,"
+    },
+    {
+      "time": "04:45",
+      "start": 285.45,
+      "end": 288.69,
+      "duration": 3.24,
+      "text": "I'm doing the physics for\nthis football, let's say,"
+    },
+    {
+      "time": "04:48",
+      "start": 288.69,
+      "end": 291.3,
+      "duration": 2.61,
+      "text": "then I won't care about the\nleg in my free ball diagram,"
+    },
+    {
+      "time": "04:51",
+      "start": 291.3,
+      "end": 294.66,
+      "duration": 3.36,
+      "text": "I will only think about the\nforces acting on the ball."
+    },
+    {
+      "time": "04:54",
+      "start": 294.66,
+      "end": 296.46000000000004,
+      "duration": 1.8,
+      "text": "There might be this force\nbecause of the kick,"
+    },
+    {
+      "time": "04:56",
+      "start": 296.46,
+      "end": 298.02,
+      "duration": 1.56,
+      "text": "there might be other forces acting on it,"
+    },
+    {
+      "time": "04:58",
+      "start": 298.02,
+      "end": 299.54999999999995,
+      "duration": 1.53,
+      "text": "and I'll take the net force of that"
+    },
+    {
+      "time": "04:59",
+      "start": 299.55,
+      "end": 301.95,
+      "duration": 2.4,
+      "text": "and it'll divide by the mass\nto calculate its acceleration."
+    },
+    {
+      "time": "05:01",
+      "start": 301.95,
+      "end": 303.84,
+      "duration": 1.89,
+      "text": "Notice the force that comes on the foot"
+    },
+    {
+      "time": "05:03",
+      "start": 303.84,
+      "end": 306.78,
+      "duration": 2.94,
+      "text": "is no longer in my equations, okay?"
+    },
+    {
+      "time": "05:06",
+      "start": 306.78,
+      "end": 308.46,
+      "duration": 1.68,
+      "text": "Because I don't care about that."
+    },
+    {
+      "time": "05:08",
+      "start": 308.46,
+      "end": 312.75,
+      "duration": 4.29,
+      "text": "So since these two\nforces are always acting,"
+    },
+    {
+      "time": "05:12",
+      "start": 312.75,
+      "end": 315.45,
+      "duration": 2.7,
+      "text": "always acting on two different objects,"
+    },
+    {
+      "time": "05:15",
+      "start": 315.45,
+      "end": 318.96,
+      "duration": 3.51,
+      "text": "over here, you can see, when\nI'm pulling down on the bar,"
+    },
+    {
+      "time": "05:18",
+      "start": 318.96,
+      "end": 320.84999999999997,
+      "duration": 1.89,
+      "text": "that force is on the bar,"
+    },
+    {
+      "time": "05:20",
+      "start": 320.85,
+      "end": 322.38,
+      "duration": 1.53,
+      "text": "now look at the equal and opposite force,"
+    },
+    {
+      "time": "05:22",
+      "start": 322.38,
+      "end": 324.65999999999997,
+      "duration": 2.28,
+      "text": "that is acting on me over here."
+    },
+    {
+      "time": "05:24",
+      "start": 324.66,
+      "end": 326.1,
+      "duration": 1.44,
+      "text": "Same as the case over here."
+    },
+    {
+      "time": "05:26",
+      "start": 326.1,
+      "end": 327.72,
+      "duration": 1.62,
+      "text": "One force is on the apple,"
+    },
+    {
+      "time": "05:27",
+      "start": 327.72,
+      "end": 330.603,
+      "duration": 2.883,
+      "text": "that other equal and opposite\nforce is on the earth."
+    },
+    {
+      "time": "05:31",
+      "start": 331.83,
+      "end": 335.03999999999996,
+      "duration": 3.21,
+      "text": "So since the two forces are\nalways on two different objects,"
+    },
+    {
+      "time": "05:35",
+      "start": 335.04,
+      "end": 337.08000000000004,
+      "duration": 2.04,
+      "text": "they will not cancel out."
+    },
+    {
+      "time": "05:37",
+      "start": 337.08,
+      "end": 339.3,
+      "duration": 2.22,
+      "text": "Okay, another question\nthat we could be having"
+    },
+    {
+      "time": "05:39",
+      "start": 339.3,
+      "end": 340.77000000000004,
+      "duration": 1.47,
+      "text": "is that in a lot of places you'll see"
+    },
+    {
+      "time": "05:40",
+      "start": 340.77,
+      "end": 343.89,
+      "duration": 3.12,
+      "text": "Newton's third law written\nas action and reaction."
+    },
+    {
+      "time": "05:43",
+      "start": 343.89,
+      "end": 346.46999999999997,
+      "duration": 2.58,
+      "text": "Every action has equal\nand opposite reaction."
+    },
+    {
+      "time": "05:46",
+      "start": 346.47,
+      "end": 348.69000000000005,
+      "duration": 2.22,
+      "text": "I don't really like that wording,"
+    },
+    {
+      "time": "05:48",
+      "start": 348.69,
+      "end": 352.41,
+      "duration": 3.72,
+      "text": "mainly because words\nlike action and reaction"
+    },
+    {
+      "time": "05:52",
+      "start": 352.41,
+      "end": 353.94,
+      "duration": 1.53,
+      "text": "makes us feel like we're talking about"
+    },
+    {
+      "time": "05:53",
+      "start": 353.94,
+      "end": 357.21,
+      "duration": 3.27,
+      "text": "some kind of an action\nthat you're doing, right?"
+    },
+    {
+      "time": "05:57",
+      "start": 357.21,
+      "end": 358.53,
+      "duration": 1.32,
+      "text": "But when it comes to Newton's third law,"
+    },
+    {
+      "time": "05:58",
+      "start": 358.53,
+      "end": 359.72999999999996,
+      "duration": 1.2,
+      "text": "we're not talking about any action,"
+    },
+    {
+      "time": "05:59",
+      "start": 359.73,
+      "end": 361.59000000000003,
+      "duration": 1.86,
+      "text": "we're talking about forces."
+    },
+    {
+      "time": "06:01",
+      "start": 361.59,
+      "end": 365.36999999999995,
+      "duration": 3.78,
+      "text": "It's only applicable to\nforces and nothing else."
+    },
+    {
+      "time": "06:05",
+      "start": 365.37,
+      "end": 367.56,
+      "duration": 2.19,
+      "text": "So because there's a\nchance of misconception,"
+    },
+    {
+      "time": "06:07",
+      "start": 367.56,
+      "end": 369.39,
+      "duration": 1.83,
+      "text": "I usually don't like to talk about that."
+    },
+    {
+      "time": "06:09",
+      "start": 369.39,
+      "end": 370.5,
+      "duration": 1.11,
+      "text": "But there's another big problem"
+    },
+    {
+      "time": "06:10",
+      "start": 370.5,
+      "end": 373.26,
+      "duration": 2.76,
+      "text": "with using the words action and reaction."
+    },
+    {
+      "time": "06:13",
+      "start": 373.26,
+      "end": 377.46,
+      "duration": 4.2,
+      "text": "See, reaction usually\nhappens after action."
+    },
+    {
+      "time": "06:17",
+      "start": 377.46,
+      "end": 381.0,
+      "duration": 3.54,
+      "text": "So again, this might make\nus feel like, you know,"
+    },
+    {
+      "time": "06:21",
+      "start": 381.0,
+      "end": 382.23,
+      "duration": 1.23,
+      "text": "you first hit the ball,"
+    },
+    {
+      "time": "06:22",
+      "start": 382.23,
+      "end": 384.3,
+      "duration": 2.07,
+      "text": "so this is the action force, for example,"
+    },
+    {
+      "time": "06:24",
+      "start": 384.3,
+      "end": 387.42,
+      "duration": 3.12,
+      "text": "then the ball hits you\nback as a reaction force."
+    },
+    {
+      "time": "06:27",
+      "start": 387.42,
+      "end": 391.26,
+      "duration": 3.84,
+      "text": "You might think like that, but\nturns out, that's not true."
+    },
+    {
+      "time": "06:31",
+      "start": 391.26,
+      "end": 394.34999999999997,
+      "duration": 3.09,
+      "text": "These two forces always\nhappen at the same time."
+    },
+    {
+      "time": "06:34",
+      "start": 394.35,
+      "end": 395.67,
+      "duration": 1.32,
+      "text": "When you're kicking the ball"
+    },
+    {
+      "time": "06:35",
+      "start": 395.67,
+      "end": 397.47,
+      "duration": 1.8,
+      "text": "at the same time the ball kicks you back,"
+    },
+    {
+      "time": "06:37",
+      "start": 397.47,
+      "end": 399.27000000000004,
+      "duration": 1.8,
+      "text": "it's not that the one force\nhappens before the other,"
+    },
+    {
+      "time": "06:39",
+      "start": 399.27,
+      "end": 400.79999999999995,
+      "duration": 1.53,
+      "text": "it happens at the same time,"
+    },
+    {
+      "time": "06:40",
+      "start": 400.8,
+      "end": 403.8,
+      "duration": 3.0,
+      "text": "the force lost for the same time, as well."
+    },
+    {
+      "time": "06:43",
+      "start": 403.8,
+      "end": 405.72,
+      "duration": 1.92,
+      "text": "Similarly, when you are\npulling down on the bar"
+    },
+    {
+      "time": "06:45",
+      "start": 405.72,
+      "end": 409.53000000000003,
+      "duration": 3.81,
+      "text": "at exactly the same time, the\nbar is pulling back up on you."
+    },
+    {
+      "time": "06:49",
+      "start": 409.53,
+      "end": 411.57,
+      "duration": 2.04,
+      "text": "Since these forces act at the same time"
+    },
+    {
+      "time": "06:51",
+      "start": 411.57,
+      "end": 413.37,
+      "duration": 1.8,
+      "text": "and they last for the same time,"
+    },
+    {
+      "time": "06:53",
+      "start": 413.37,
+      "end": 414.33,
+      "duration": 0.96,
+      "text": "that's why, again,"
+    },
+    {
+      "time": "06:54",
+      "start": 414.33,
+      "end": 417.51,
+      "duration": 3.18,
+      "text": "the words action and reaction\ncan be highly misleading."
+    },
+    {
+      "time": "06:57",
+      "start": 417.51,
+      "end": 419.76,
+      "duration": 2.25,
+      "text": "So I'm just gonna get rid of that."
+    },
+    {
+      "time": "06:59",
+      "start": 419.76,
+      "end": 421.8,
+      "duration": 2.04,
+      "text": "Okay, the last question\nwe could be having is,"
+    },
+    {
+      "time": "07:01",
+      "start": 421.8,
+      "end": 423.72,
+      "duration": 1.92,
+      "text": "where would Newton's\nthird law be applicable"
+    },
+    {
+      "time": "07:03",
+      "start": 423.72,
+      "end": 426.78000000000003,
+      "duration": 3.06,
+      "text": "when it comes to say,\nproblem solving, for example?"
+    },
+    {
+      "time": "07:06",
+      "start": 426.78,
+      "end": 428.58,
+      "duration": 1.8,
+      "text": "It's mostly applicable"
+    },
+    {
+      "time": "07:08",
+      "start": 428.58,
+      "end": 432.12,
+      "duration": 3.54,
+      "text": "when the force on one\nobject is given to you,"
+    },
+    {
+      "time": "07:12",
+      "start": 432.12,
+      "end": 434.46,
+      "duration": 2.34,
+      "text": "but you're asked to do the\ncalculations and the physics,"
+    },
+    {
+      "time": "07:14",
+      "start": 434.46,
+      "end": 436.91999999999996,
+      "duration": 2.46,
+      "text": "or maybe say, asked to\ncalculate the acceleration"
+    },
+    {
+      "time": "07:16",
+      "start": 436.92,
+      "end": 438.51,
+      "duration": 1.59,
+      "text": "of the other object."
+    },
+    {
+      "time": "07:18",
+      "start": 438.51,
+      "end": 441.48,
+      "duration": 2.97,
+      "text": "For example, let's say we're given that,"
+    },
+    {
+      "time": "07:21",
+      "start": 441.48,
+      "end": 443.22,
+      "duration": 1.74,
+      "text": "hey, a fish is swimming in water"
+    },
+    {
+      "time": "07:23",
+      "start": 443.22,
+      "end": 446.91,
+      "duration": 3.69,
+      "text": "and it's pushing the water back\nwith a force of 10 newtons."
+    },
+    {
+      "time": "07:26",
+      "start": 446.91,
+      "end": 450.36,
+      "duration": 3.45,
+      "text": "So this 10 newtons of\nforce is on the water."
+    },
+    {
+      "time": "07:30",
+      "start": 450.36,
+      "end": 451.32,
+      "duration": 0.96,
+      "text": "But now what if we're asked"
+    },
+    {
+      "time": "07:31",
+      "start": 451.32,
+      "end": 453.87,
+      "duration": 2.55,
+      "text": "to calculate the acceleration of the fish?"
+    },
+    {
+      "time": "07:33",
+      "start": 453.87,
+      "end": 454.74,
+      "duration": 0.87,
+      "text": "How do we calculate that?"
+    },
+    {
+      "time": "07:34",
+      "start": 454.74,
+      "end": 457.41,
+      "duration": 2.67,
+      "text": "Because we don't know the\nforce acting on the fish."
+    },
+    {
+      "time": "07:37",
+      "start": 457.41,
+      "end": 459.3,
+      "duration": 1.89,
+      "text": "Well, this is where we can\nuse Newton's third law."
+    },
+    {
+      "time": "07:39",
+      "start": 459.3,
+      "end": 462.03000000000003,
+      "duration": 2.73,
+      "text": "Well, if the fish pushes the water back"
+    },
+    {
+      "time": "07:42",
+      "start": 462.03,
+      "end": 463.29299999999995,
+      "duration": 1.263,
+      "text": "with 10 newtons of the force,"
+    },
+    {
+      "time": "07:43",
+      "start": 463.293,
+      "end": 466.74,
+      "duration": 3.447,
+      "text": "then the water will push the fish forward"
+    },
+    {
+      "time": "07:46",
+      "start": 466.74,
+      "end": 468.44,
+      "duration": 1.7,
+      "text": "with exactly equal, but opposite force,"
+    },
+    {
+      "time": "07:48",
+      "start": 468.44,
+      "end": 470.49,
+      "duration": 2.05,
+      "text": "so 10 newtons of force, as well."
+    },
+    {
+      "time": "07:50",
+      "start": 470.49,
+      "end": 471.96000000000004,
+      "duration": 1.47,
+      "text": "So now that I have that force,"
+    },
+    {
+      "time": "07:51",
+      "start": 471.96,
+      "end": 473.28,
+      "duration": 1.32,
+      "text": "and if there are other forces\nacting on the fish as well,"
+    },
+    {
+      "time": "07:53",
+      "start": 473.28,
+      "end": 474.96,
+      "duration": 1.68,
+      "text": "and it's given to me,"
+    },
+    {
+      "time": "07:54",
+      "start": 474.96,
+      "end": 476.09999999999997,
+      "duration": 1.14,
+      "text": "then I can calculate the net force"
+    },
+    {
+      "time": "07:56",
+      "start": 476.1,
+      "end": 478.02000000000004,
+      "duration": 1.92,
+      "text": "acting on the total\nforce acting on the fish,"
+    },
+    {
+      "time": "07:58",
+      "start": 478.02,
+      "end": 480.63,
+      "duration": 2.61,
+      "text": "and then I can calculate\nthe acceleration of it."
+    },
+    {
+      "time": "08:00",
+      "start": 480.63,
+      "end": 482.58,
+      "duration": 1.95,
+      "text": "Another example, another familiar example"
+    },
+    {
+      "time": "08:02",
+      "start": 482.58,
+      "end": 484.91999999999996,
+      "duration": 2.34,
+      "text": "could be when you fill\nup a balloon with air"
+    },
+    {
+      "time": "08:04",
+      "start": 484.92,
+      "end": 486.57,
+      "duration": 1.65,
+      "text": "and you let go of it, what happens?"
+    },
+    {
+      "time": "08:06",
+      "start": 486.57,
+      "end": 488.01,
+      "duration": 1.44,
+      "text": "The balloon flies off."
+    },
+    {
+      "time": "08:08",
+      "start": 488.01,
+      "end": 489.06,
+      "duration": 1.05,
+      "text": "Why does that happen?"
+    },
+    {
+      "time": "08:09",
+      "start": 489.06,
+      "end": 491.37,
+      "duration": 2.31,
+      "text": "It's a classic application\nof Newton's third law."
+    },
+    {
+      "time": "08:11",
+      "start": 491.37,
+      "end": 494.31,
+      "duration": 2.94,
+      "text": "You can see the balloon is pushing down"
+    },
+    {
+      "time": "08:14",
+      "start": 494.31,
+      "end": 497.43,
+      "duration": 3.12,
+      "text": "on the air with some force."
+    },
+    {
+      "time": "08:17",
+      "start": 497.43,
+      "end": 498.84000000000003,
+      "duration": 1.41,
+      "text": "Now, according to Newton third law,"
+    },
+    {
+      "time": "08:18",
+      "start": 498.84,
+      "end": 501.86999999999995,
+      "duration": 3.03,
+      "text": "the air pushes back on the balloon"
+    },
+    {
+      "time": "08:21",
+      "start": 501.87,
+      "end": 505.26,
+      "duration": 3.39,
+      "text": "with exactly the same force\nin the opposite direction,"
+    },
+    {
+      "time": "08:25",
+      "start": 505.26,
+      "end": 508.17,
+      "duration": 2.91,
+      "text": "and it's that force that\nmakes the balloon go up."
+    },
+    {
+      "time": "08:28",
+      "start": 508.17,
+      "end": 509.28000000000003,
+      "duration": 1.11,
+      "text": "And yes, if you're wondering,"
+    },
+    {
+      "time": "08:29",
+      "start": 509.28,
+      "end": 511.79999999999995,
+      "duration": 2.52,
+      "text": "rockets also work on a\nvery similar principle."
+    },
+    {
+      "time": "08:31",
+      "start": 511.8,
+      "end": 513.78,
+      "duration": 1.98,
+      "text": "Now, of course, rockets\nare way more complicated"
+    },
+    {
+      "time": "08:33",
+      "start": 513.78,
+      "end": 515.52,
+      "duration": 1.74,
+      "text": "than a balloon with air filled in it,"
+    },
+    {
+      "time": "08:35",
+      "start": 515.52,
+      "end": 516.4499999999999,
+      "duration": 0.93,
+      "text": "but at the end of the day,"
+    },
+    {
+      "time": "08:36",
+      "start": 516.45,
+      "end": 517.86,
+      "duration": 1.41,
+      "text": "thinking about the forces over there,"
+    },
+    {
+      "time": "08:37",
+      "start": 517.86,
+      "end": 519.75,
+      "duration": 1.89,
+      "text": "the rocket puts a lot of force"
+    },
+    {
+      "time": "08:39",
+      "start": 519.75,
+      "end": 522.06,
+      "duration": 2.31,
+      "text": "on the hot gases that come out,"
+    },
+    {
+      "time": "08:42",
+      "start": 522.06,
+      "end": 523.9799999999999,
+      "duration": 1.92,
+      "text": "and the gases will put a lot of force,"
+    },
+    {
+      "time": "08:43",
+      "start": 523.98,
+      "end": 526.38,
+      "duration": 2.4,
+      "text": "equal and opposite force,\non the rocket itself,"
+    },
+    {
+      "time": "08:46",
+      "start": 526.38,
+      "end": 528.06,
+      "duration": 1.68,
+      "text": "making the rocket accelerate upwards."
+    },
+    {
+      "time": "08:48",
+      "start": 528.06,
+      "end": 530.0699999999999,
+      "duration": 2.01,
+      "text": "But of course, there's a lot more going on"
+    },
+    {
+      "time": "08:50",
+      "start": 530.07,
+      "end": 531.2700000000001,
+      "duration": 1.2,
+      "text": "when it comes to rockets."
+    },
+    {
+      "time": "08:51",
+      "start": 531.27,
+      "end": 532.74,
+      "duration": 1.47,
+      "text": "Okay, let's take one last example"
+    },
+    {
+      "time": "08:52",
+      "start": 532.74,
+      "end": 534.0,
+      "duration": 1.26,
+      "text": "before wrapping things up."
+    },
+    {
+      "time": "08:54",
+      "start": 534.0,
+      "end": 535.68,
+      "duration": 1.68,
+      "text": "We have Batman standing the ground,"
+    },
+    {
+      "time": "08:55",
+      "start": 535.68,
+      "end": 538.9799999999999,
+      "duration": 3.3,
+      "text": "and we know that gravity\nis pulling down on him,"
+    },
+    {
+      "time": "08:58",
+      "start": 538.98,
+      "end": 541.2,
+      "duration": 2.22,
+      "text": "but the ground puts an\nupward force on him,"
+    },
+    {
+      "time": "09:01",
+      "start": 541.2,
+      "end": 542.6400000000001,
+      "duration": 1.44,
+      "text": "the normal force."
+    },
+    {
+      "time": "09:02",
+      "start": 542.64,
+      "end": 544.8,
+      "duration": 2.16,
+      "text": "Are these two the equal\nand opposite forces"
+    },
+    {
+      "time": "09:04",
+      "start": 544.8,
+      "end": 545.9399999999999,
+      "duration": 1.14,
+      "text": "that Newton's third law talks about?"
+    },
+    {
+      "time": "09:05",
+      "start": 545.94,
+      "end": 548.9730000000001,
+      "duration": 3.033,
+      "text": "Why don't you pause the\nvideo and think about it?"
+    },
+    {
+      "time": "09:10",
+      "start": 550.77,
+      "end": 553.8,
+      "duration": 3.03,
+      "text": "Well, the answer is no,"
+    },
+    {
+      "time": "09:13",
+      "start": 553.8,
+      "end": 555.7199999999999,
+      "duration": 1.92,
+      "text": "because remember, the way\nI like to think about it,"
+    },
+    {
+      "time": "09:15",
+      "start": 555.72,
+      "end": 557.97,
+      "duration": 2.25,
+      "text": "for me, the biggest clue for me"
+    },
+    {
+      "time": "09:17",
+      "start": 557.97,
+      "end": 559.2900000000001,
+      "duration": 1.32,
+      "text": "is that the equal and opposite force"
+    },
+    {
+      "time": "09:19",
+      "start": 559.29,
+      "end": 561.48,
+      "duration": 2.19,
+      "text": "are always acting on\ntwo different objects."
+    },
+    {
+      "time": "09:21",
+      "start": 561.48,
+      "end": 563.82,
+      "duration": 2.34,
+      "text": "Think about this, always\non two different objects."
+    },
+    {
+      "time": "09:23",
+      "start": 563.82,
+      "end": 567.9300000000001,
+      "duration": 4.11,
+      "text": "But here, this gravitational\nforce is acting on Batman,"
+    },
+    {
+      "time": "09:27",
+      "start": 567.93,
+      "end": 570.93,
+      "duration": 3.0,
+      "text": "and the ground is pushing\nup on, again, Batman,"
+    },
+    {
+      "time": "09:30",
+      "start": 570.93,
+      "end": 572.9699999999999,
+      "duration": 2.04,
+      "text": "so this normal force is\nalso acting on Batman."
+    },
+    {
+      "time": "09:32",
+      "start": 572.97,
+      "end": 575.3100000000001,
+      "duration": 2.34,
+      "text": "So these cannot be equal\nand opposite forces"
+    },
+    {
+      "time": "09:35",
+      "start": 575.31,
+      "end": 577.1099999999999,
+      "duration": 1.8,
+      "text": "that Newton's third law talks about."
+    },
+    {
+      "time": "09:37",
+      "start": 577.11,
+      "end": 579.3000000000001,
+      "duration": 2.19,
+      "text": "In fact, these need not be equal."
+    },
+    {
+      "time": "09:39",
+      "start": 579.3,
+      "end": 581.28,
+      "duration": 1.98,
+      "text": "There are cases in which the\nnormal force can be bigger"
+    },
+    {
+      "time": "09:41",
+      "start": 581.28,
+      "end": 583.47,
+      "duration": 2.19,
+      "text": "or smaller than the force of gravity."
+    },
+    {
+      "time": "09:43",
+      "start": 583.47,
+      "end": 585.39,
+      "duration": 1.92,
+      "text": "So to wrap this up,"
+    },
+    {
+      "time": "09:45",
+      "start": 585.39,
+      "end": 586.89,
+      "duration": 1.5,
+      "text": "what are the equal and opposite forces"
+    },
+    {
+      "time": "09:46",
+      "start": 586.89,
+      "end": 589.08,
+      "duration": 2.19,
+      "text": "of these two forces over here?"
+    },
+    {
+      "time": "09:49",
+      "start": 589.08,
+      "end": 590.58,
+      "duration": 1.5,
+      "text": "Well, if you think about gravity,"
+    },
+    {
+      "time": "09:50",
+      "start": 590.58,
+      "end": 591.57,
+      "duration": 0.99,
+      "text": "well, we can think about it."
+    },
+    {
+      "time": "09:51",
+      "start": 591.57,
+      "end": 594.09,
+      "duration": 2.52,
+      "text": "Earth pulls down on Batman,"
+    },
+    {
+      "time": "09:54",
+      "start": 594.09,
+      "end": 598.26,
+      "duration": 4.17,
+      "text": "therefore, Batman will pull up on earth."
+    },
+    {
+      "time": "09:58",
+      "start": 598.26,
+      "end": 600.9929999999999,
+      "duration": 2.733,
+      "text": "That is the equal and\nopposite force of this one."
+    },
+    {
+      "time": "10:01",
+      "start": 601.83,
+      "end": 604.0500000000001,
+      "duration": 2.22,
+      "text": "What is the equal and\nopposite force of this one?"
+    },
+    {
+      "time": "10:04",
+      "start": 604.05,
+      "end": 607.7099999999999,
+      "duration": 3.66,
+      "text": "Well, let's see, the\nground pushes up on Batman."
+    },
+    {
+      "time": "10:07",
+      "start": 607.71,
+      "end": 608.73,
+      "duration": 1.02,
+      "text": "That's how you do it,"
+    },
+    {
+      "time": "10:08",
+      "start": 608.73,
+      "end": 611.46,
+      "duration": 2.73,
+      "text": "you just state the sentence\nand then reverse it."
+    },
+    {
+      "time": "10:11",
+      "start": 611.46,
+      "end": 613.5600000000001,
+      "duration": 2.1,
+      "text": "So the ground pushes up on Batman,"
+    },
+    {
+      "time": "10:13",
+      "start": 613.56,
+      "end": 618.13,
+      "duration": 4.57,
+      "text": "therefore, the Batman will\npush back down on ground"
+    },
+    {
+      "time": "10:19",
+      "start": 619.32,
+      "end": 621.12,
+      "duration": 1.8,
+      "text": "with an equal and opposite force."
+    },
+    {
+      "time": "10:21",
+      "start": 621.12,
+      "end": 622.47,
+      "duration": 1.35,
+      "text": "So the equal and opposite\nforce of this one"
+    },
+    {
+      "time": "10:22",
+      "start": 622.47,
+      "end": 624.6030000000001,
+      "duration": 2.133,
+      "text": "will come on the ground."
+    }
+  ]
+}

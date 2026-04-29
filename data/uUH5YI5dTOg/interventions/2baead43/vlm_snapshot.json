@@ -1,0 +1,35 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "top left": "A drawing of a neuron with a blue nucleus and green axon",
+      "top middle": "A drawing of a muscle cell with a red nucleus",
+      "top right": "A drawing of a bone with a purple nucleus",
+      "middle left": "A drawing of a muscle cell with a red nucleus",
+      "middle right": "A drawing of a neuron with a blue nucleus and green axon",
+      "bottom left": "A drawing of a bone with a purple nucleus",
+      "bottom middle": "A drawing of a muscle cell with a red nucleus",
+      "bottom right": "A drawing of a neuron with a blue nucleus and green axon"
+    }
+  },
+  "structural_description": "The frame is divided into four quadrants, each containing a drawing of a different type of cell or tissue. The drawings are labeled with their respective cell types and nuclei colors.",
+  "reading_order": [
+    "top left",
+    "top middle",
+    "top right",
+    "middle left",
+    "middle right",
+    "bottom left",
+    "bottom middle",
+    "bottom right"
+  ],
+  "layout": "The frame is divided into four quadrants, each containing a drawing of a different type of cell or tissue. The drawings are labeled with their respective cell types and nuclei colors.",
+  "text_readout": "No text present",
+  "spatial_map": "The drawings are arranged in a 2x2 grid, with each quadrant containing a different type of cell or tissue drawing.",
+  "colors_styles": "The drawings are in black and white, with different colors used to label the cell types and nuclei.",
+  "missing_elements": null,
+  "detected_types": [
+    "unknown"
+  ],
+  "conceptual_hints": ""
+}

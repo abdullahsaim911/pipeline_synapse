@@ -1,0 +1,1333 @@
+{
+  "video_id": "d8EA5TxGzcY",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.4795497000004616,
+  "entry_count": 189,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.03,
+      "end": 4.62,
+      "duration": 4.59,
+      "text": "in this video we're gonna go over the"
+    },
+    {
+      "time": "00:02",
+      "start": 2.52,
+      "end": 6.898999999999999,
+      "duration": 4.379,
+      "text": "Pythagorean theorem and we're gonna talk"
+    },
+    {
+      "time": "00:04",
+      "start": 4.62,
+      "end": 9.139,
+      "duration": 4.519,
+      "text": "about how to use it to solve problems"
+    },
+    {
+      "time": "00:06",
+      "start": 6.899,
+      "end": 12.23,
+      "duration": 5.331,
+      "text": "associated with geometry"
+    },
+    {
+      "time": "00:09",
+      "start": 9.139,
+      "end": 16.46,
+      "duration": 7.321,
+      "text": "so let's go over the formula first"
+    },
+    {
+      "time": "00:12",
+      "start": 12.23,
+      "end": 19.77,
+      "duration": 7.54,
+      "text": "so if we have a right triangle and"
+    },
+    {
+      "time": "00:16",
+      "start": 16.46,
+      "end": 20.689,
+      "duration": 4.229,
+      "text": "this side is called a B and hypotenuse"
+    },
+    {
+      "time": "00:19",
+      "start": 19.77,
+      "end": 23.43,
+      "duration": 3.66,
+      "text": "to C"
+    },
+    {
+      "time": "00:20",
+      "start": 20.689,
+      "end": 26.0,
+      "duration": 5.311,
+      "text": "then the formula is C squared is equal"
+    },
+    {
+      "time": "00:23",
+      "start": 23.43,
+      "end": 28.92,
+      "duration": 5.49,
+      "text": "to a squared plus B squared"
+    },
+    {
+      "time": "00:26",
+      "start": 26.0,
+      "end": 30.65,
+      "duration": 4.65,
+      "text": "C is the hypotenuse it's the longest of"
+    },
+    {
+      "time": "00:28",
+      "start": 28.92,
+      "end": 34.86,
+      "duration": 5.94,
+      "text": "the three sides and"
+    },
+    {
+      "time": "00:30",
+      "start": 30.65,
+      "end": 37.43,
+      "duration": 6.78,
+      "text": "a and B are known as the legs of the"
+    },
+    {
+      "time": "00:34",
+      "start": 34.86,
+      "end": 40.29,
+      "duration": 5.43,
+      "text": "right triangle so"
+    },
+    {
+      "time": "00:37",
+      "start": 37.43,
+      "end": 42.8,
+      "duration": 5.37,
+      "text": "let's say if we have a triangle that"
+    },
+    {
+      "time": "00:40",
+      "start": 40.29,
+      "end": 42.8,
+      "duration": 2.51,
+      "text": "looks like this"
+    },
+    {
+      "time": "00:43",
+      "start": 43.789,
+      "end": 47.989000000000004,
+      "duration": 4.2,
+      "text": "and let's say this side is five and this"
+    },
+    {
+      "time": "00:46",
+      "start": 46.41,
+      "end": 51.66,
+      "duration": 5.25,
+      "text": "is 12"
+    },
+    {
+      "time": "00:47",
+      "start": 47.989,
+      "end": 53.69,
+      "duration": 5.701,
+      "text": "calculate the value of x now if you want"
+    },
+    {
+      "time": "00:51",
+      "start": 51.66,
+      "end": 56.309,
+      "duration": 4.649,
+      "text": "to try it feel free to pause the video"
+    },
+    {
+      "time": "00:53",
+      "start": 53.69,
+      "end": 59.809,
+      "duration": 6.119,
+      "text": "so let's use the formula C squared is"
+    },
+    {
+      "time": "00:56",
+      "start": 56.309,
+      "end": 63.0,
+      "duration": 6.691,
+      "text": "equal to a squared plus B squared"
+    },
+    {
+      "time": "00:59",
+      "start": 59.809,
+      "end": 65.39999999999999,
+      "duration": 5.591,
+      "text": "so a can be five or twelve it doesn't"
+    },
+    {
+      "time": "01:03",
+      "start": 63.0,
+      "end": 69.049,
+      "duration": 6.049,
+      "text": "matter so let's say if we choose a to be"
+    },
+    {
+      "time": "01:05",
+      "start": 65.4,
+      "end": 73.92,
+      "duration": 8.52,
+      "text": "twelve and B is five the hypotenuse C is"
+    },
+    {
+      "time": "01:09",
+      "start": 69.049,
+      "end": 77.4,
+      "duration": 8.351,
+      "text": "across the box which is X so we have x"
+    },
+    {
+      "time": "01:13",
+      "start": 73.92,
+      "end": 81.0,
+      "duration": 7.08,
+      "text": "squared is equal to twelve squared plus"
+    },
+    {
+      "time": "01:17",
+      "start": 77.4,
+      "end": 85.64,
+      "duration": 8.24,
+      "text": "five squared now twelve times 12 is 144"
+    },
+    {
+      "time": "01:21",
+      "start": 81.0,
+      "end": 85.64,
+      "duration": 4.64,
+      "text": "and five squared is 25"
+    },
+    {
+      "time": "01:25",
+      "start": 85.759,
+      "end": 92.729,
+      "duration": 6.97,
+      "text": "144 plus 25 is 169"
+    },
+    {
+      "time": "01:29",
+      "start": 89.24,
+      "end": 94.229,
+      "duration": 4.989,
+      "text": "now to calculate the value of x we need"
+    },
+    {
+      "time": "01:32",
+      "start": 92.729,
+      "end": 98.78999999999999,
+      "duration": 6.061,
+      "text": "to take the square root of both sides"
+    },
+    {
+      "time": "01:34",
+      "start": 94.229,
+      "end": 100.11,
+      "duration": 5.881,
+      "text": "the square root of 169 is 13 and so"
+    },
+    {
+      "time": "01:38",
+      "start": 98.79,
+      "end": 103.67,
+      "duration": 4.88,
+      "text": "that's how you can calculate the"
+    },
+    {
+      "time": "01:40",
+      "start": 100.11,
+      "end": 108.02,
+      "duration": 7.91,
+      "text": "hypotenuse of a right triangle"
+    },
+    {
+      "time": "01:43",
+      "start": 103.67,
+      "end": 108.02,
+      "duration": 4.35,
+      "text": "now let's work on another example"
+    },
+    {
+      "time": "01:51",
+      "start": 111.26,
+      "end": 115.60000000000001,
+      "duration": 4.34,
+      "text": "so let's say the hypotenuse is 10 this"
+    },
+    {
+      "time": "01:54",
+      "start": 114.23,
+      "end": 118.27000000000001,
+      "duration": 4.04,
+      "text": "is 5 and"
+    },
+    {
+      "time": "01:55",
+      "start": 115.6,
+      "end": 121.17999999999999,
+      "duration": 5.58,
+      "text": "our goal is to calculate why"
+    },
+    {
+      "time": "01:58",
+      "start": 118.27,
+      "end": 123.83,
+      "duration": 5.56,
+      "text": "go ahead and do this"
+    },
+    {
+      "time": "02:01",
+      "start": 121.18,
+      "end": 127.58000000000001,
+      "duration": 6.4,
+      "text": "so let's use the same formula C squared"
+    },
+    {
+      "time": "02:03",
+      "start": 123.83,
+      "end": 131.45,
+      "duration": 7.62,
+      "text": "is equal to a squared plus B squared so"
+    },
+    {
+      "time": "02:07",
+      "start": 127.58,
+      "end": 133.12,
+      "duration": 5.54,
+      "text": "C is the hypotenuse so in this problem C"
+    },
+    {
+      "time": "02:11",
+      "start": 131.45,
+      "end": 137.75,
+      "duration": 6.3,
+      "text": "is 10 a"
+    },
+    {
+      "time": "02:13",
+      "start": 133.12,
+      "end": 140.54,
+      "duration": 7.42,
+      "text": "we could say it's y and then B is 5 so"
+    },
+    {
+      "time": "02:17",
+      "start": 137.75,
+      "end": 144.5,
+      "duration": 6.75,
+      "text": "it's gonna be 10 squared is equal to Y"
+    },
+    {
+      "time": "02:20",
+      "start": 140.54,
+      "end": 148.89999999999998,
+      "duration": 8.36,
+      "text": "squared plus 5 squared 10 times 10 is a"
+    },
+    {
+      "time": "02:24",
+      "start": 144.5,
+      "end": 153.49,
+      "duration": 8.99,
+      "text": "hundred and 5 squared is 25"
+    },
+    {
+      "time": "02:28",
+      "start": 148.9,
+      "end": 159.25,
+      "duration": 10.35,
+      "text": "so we need to subtract both sides by 25"
+    },
+    {
+      "time": "02:33",
+      "start": 153.49,
+      "end": 159.25,
+      "duration": 5.76,
+      "text": "now 100 minus 25 is 75"
+    },
+    {
+      "time": "02:39",
+      "start": 159.82,
+      "end": 165.43,
+      "duration": 5.61,
+      "text": "so now our next step is take the square"
+    },
+    {
+      "time": "02:42",
+      "start": 162.2,
+      "end": 169.20999999999998,
+      "duration": 7.01,
+      "text": "root of both sides so"
+    },
+    {
+      "time": "02:45",
+      "start": 165.43,
+      "end": 173.81,
+      "duration": 8.38,
+      "text": "Y is equal to the square root of"
+    },
+    {
+      "time": "02:49",
+      "start": 169.21,
+      "end": 175.22,
+      "duration": 6.01,
+      "text": "75 now how can we simplify this value to"
+    },
+    {
+      "time": "02:53",
+      "start": 173.81,
+      "end": 177.59,
+      "duration": 3.78,
+      "text": "get the right answer once you get the"
+    },
+    {
+      "time": "02:55",
+      "start": 175.22,
+      "end": 179.38,
+      "duration": 4.16,
+      "text": "exact answer and it's fully simplified"
+    },
+    {
+      "time": "02:57",
+      "start": 177.59,
+      "end": 182.5,
+      "duration": 4.91,
+      "text": "for him"
+    },
+    {
+      "time": "02:59",
+      "start": 179.38,
+      "end": 185.38,
+      "duration": 6.0,
+      "text": "what perfect square goes into 75"
+    },
+    {
+      "time": "03:02",
+      "start": 182.5,
+      "end": 190.489,
+      "duration": 7.989,
+      "text": "25 is a perfect square that goes into it"
+    },
+    {
+      "time": "03:05",
+      "start": 185.38,
+      "end": 192.64,
+      "duration": 7.26,
+      "text": "25 times 3 is 75 and the square root of"
+    },
+    {
+      "time": "03:10",
+      "start": 190.489,
+      "end": 197.35,
+      "duration": 6.861,
+      "text": "25 is 5"
+    },
+    {
+      "time": "03:12",
+      "start": 192.64,
+      "end": 199.92999999999998,
+      "duration": 7.29,
+      "text": "so Y is equal to 5 square root of 3"
+    },
+    {
+      "time": "03:17",
+      "start": 197.35,
+      "end": 203.32999999999998,
+      "duration": 5.98,
+      "text": "now let's work on some word problems"
+    },
+    {
+      "time": "03:19",
+      "start": 199.93,
+      "end": 206.709,
+      "duration": 6.779,
+      "text": "what is the area of a square with a"
+    },
+    {
+      "time": "03:23",
+      "start": 203.33,
+      "end": 209.08,
+      "duration": 5.75,
+      "text": "diagonal length of 12 inches so"
+    },
+    {
+      "time": "03:26",
+      "start": 206.709,
+      "end": 212.57,
+      "duration": 5.861,
+      "text": "first let's draw a square"
+    },
+    {
+      "time": "03:29",
+      "start": 209.08,
+      "end": 215.42000000000002,
+      "duration": 6.34,
+      "text": "and so this is just a rough sketch of a"
+    },
+    {
+      "time": "03:32",
+      "start": 212.57,
+      "end": 219.37,
+      "duration": 6.8,
+      "text": "square and this is the diagonal of the"
+    },
+    {
+      "time": "03:35",
+      "start": 215.42,
+      "end": 219.36999999999998,
+      "duration": 3.95,
+      "text": "square so that's 12"
+    },
+    {
+      "time": "03:39",
+      "start": 219.7,
+      "end": 225.41,
+      "duration": 5.71,
+      "text": "now let's call this X all 4 sides of a"
+    },
+    {
+      "time": "03:43",
+      "start": 223.67,
+      "end": 228.13,
+      "duration": 4.46,
+      "text": "square are the same so this is X so"
+    },
+    {
+      "time": "03:45",
+      "start": 225.41,
+      "end": 231.53,
+      "duration": 6.12,
+      "text": "notice that we have a right triangle the"
+    },
+    {
+      "time": "03:48",
+      "start": 228.13,
+      "end": 234.17,
+      "duration": 6.04,
+      "text": "area of a square is the left times the"
+    },
+    {
+      "time": "03:51",
+      "start": 231.53,
+      "end": 237.23,
+      "duration": 5.7,
+      "text": "width both the length and the width is"
+    },
+    {
+      "time": "03:54",
+      "start": 234.17,
+      "end": 239.98899999999998,
+      "duration": 5.819,
+      "text": "equal to X so the area of a square is x"
+    },
+    {
+      "time": "03:57",
+      "start": 237.23,
+      "end": 241.48899999999998,
+      "duration": 4.259,
+      "text": "squared so we can calculate the value of"
+    },
+    {
+      "time": "03:59",
+      "start": 239.989,
+      "end": 242.709,
+      "duration": 2.72,
+      "text": "x we can calculate the area of the"
+    },
+    {
+      "time": "04:01",
+      "start": 241.489,
+      "end": 245.74,
+      "duration": 4.251,
+      "text": "square"
+    },
+    {
+      "time": "04:02",
+      "start": 242.709,
+      "end": 248.959,
+      "duration": 6.25,
+      "text": "so let's use the theorem to calculate X"
+    },
+    {
+      "time": "04:05",
+      "start": 245.74,
+      "end": 249.85000000000002,
+      "duration": 4.11,
+      "text": "so C squared is equal to a squared plus"
+    },
+    {
+      "time": "04:08",
+      "start": 248.959,
+      "end": 255.16,
+      "duration": 6.201,
+      "text": "B squared"
+    },
+    {
+      "time": "04:09",
+      "start": 249.85,
+      "end": 255.16,
+      "duration": 5.31,
+      "text": "C the hypotenuse is 12 a"
+    },
+    {
+      "time": "04:15",
+      "start": 255.19,
+      "end": 262.21999999999997,
+      "duration": 7.03,
+      "text": "is equal to X in this example and B is"
+    },
+    {
+      "time": "04:18",
+      "start": 258.59,
+      "end": 264.77,
+      "duration": 6.18,
+      "text": "equal to X so 12 squared is x squared"
+    },
+    {
+      "time": "04:22",
+      "start": 262.22,
+      "end": 267.34000000000003,
+      "duration": 5.12,
+      "text": "plus x squared 1 x squared plus 1 x"
+    },
+    {
+      "time": "04:24",
+      "start": 264.77,
+      "end": 270.34,
+      "duration": 5.57,
+      "text": "squared is 2x squared +"
+    },
+    {
+      "time": "04:27",
+      "start": 267.34,
+      "end": 272.81,
+      "duration": 5.47,
+      "text": "12 squared is 144"
+    },
+    {
+      "time": "04:30",
+      "start": 270.34,
+      "end": 274.96,
+      "duration": 4.62,
+      "text": "so first we need to divide both sides by"
+    },
+    {
+      "time": "04:32",
+      "start": 272.81,
+      "end": 274.96,
+      "duration": 2.15,
+      "text": "2"
+    },
+    {
+      "time": "04:38",
+      "start": 278.23,
+      "end": 285.35,
+      "duration": 7.12,
+      "text": "144 divided by 2 is 72 and so that's"
+    },
+    {
+      "time": "04:42",
+      "start": 282.68,
+      "end": 289.15000000000003,
+      "duration": 6.47,
+      "text": "equal to x squared now let's take the"
+    },
+    {
+      "time": "04:45",
+      "start": 285.35,
+      "end": 289.15000000000003,
+      "duration": 3.8,
+      "text": "square root of both sides so"
+    },
+    {
+      "time": "04:52",
+      "start": 292.84,
+      "end": 301.39,
+      "duration": 8.55,
+      "text": "X is equal to the square root of 72"
+    },
+    {
+      "time": "04:58",
+      "start": 298.36,
+      "end": 306.38,
+      "duration": 8.02,
+      "text": "now a is equal to x squared and"
+    },
+    {
+      "time": "05:01",
+      "start": 301.39,
+      "end": 309.38,
+      "duration": 7.99,
+      "text": "x squared is 72 so a is just 72 so"
+    },
+    {
+      "time": "05:06",
+      "start": 306.38,
+      "end": 311.29,
+      "duration": 4.91,
+      "text": "that's the area of the square by the way"
+    },
+    {
+      "time": "05:09",
+      "start": 309.38,
+      "end": 315.02,
+      "duration": 5.64,
+      "text": "if you want to simplify this radical"
+    },
+    {
+      "time": "05:11",
+      "start": 311.29,
+      "end": 319.55,
+      "duration": 8.26,
+      "text": "you can say that 72 is 36 times 2 and"
+    },
+    {
+      "time": "05:15",
+      "start": 315.02,
+      "end": 322.31,
+      "duration": 7.29,
+      "text": "the square root of 36 is 6 so X is 6"
+    },
+    {
+      "time": "05:19",
+      "start": 319.55,
+      "end": 324.38,
+      "duration": 4.83,
+      "text": "square root 2 but the area is x squared"
+    },
+    {
+      "time": "05:22",
+      "start": 322.31,
+      "end": 327.37,
+      "duration": 5.06,
+      "text": "and we can see that x squared is 72"
+    },
+    {
+      "time": "05:24",
+      "start": 324.38,
+      "end": 333.8,
+      "duration": 9.42,
+      "text": "which means a is 72 in this example"
+    },
+    {
+      "time": "05:27",
+      "start": 327.37,
+      "end": 337.37,
+      "duration": 10.0,
+      "text": "number four in rhombus ABCD b/e is seven"
+    },
+    {
+      "time": "05:33",
+      "start": 333.8,
+      "end": 339.7,
+      "duration": 5.9,
+      "text": "and C E is 24 calculate the perimeter of"
+    },
+    {
+      "time": "05:37",
+      "start": 337.37,
+      "end": 339.7,
+      "duration": 2.33,
+      "text": "the rhombus"
+    },
+    {
+      "time": "05:40",
+      "start": 340.75,
+      "end": 345.44,
+      "duration": 4.69,
+      "text": "so the first thing needs to know is that"
+    },
+    {
+      "time": "05:42",
+      "start": 342.95,
+      "end": 349.3,
+      "duration": 6.35,
+      "text": "the diagonals of a rhombus bisect each"
+    },
+    {
+      "time": "05:45",
+      "start": 345.44,
+      "end": 354.07,
+      "duration": 8.63,
+      "text": "other and 90 degrees"
+    },
+    {
+      "time": "05:49",
+      "start": 349.3,
+      "end": 356.87,
+      "duration": 7.57,
+      "text": "B E is 7 and C E is 24"
+    },
+    {
+      "time": "05:54",
+      "start": 354.07,
+      "end": 359.12,
+      "duration": 5.05,
+      "text": "because of rhombus the diagonals of a"
+    },
+    {
+      "time": "05:56",
+      "start": 356.87,
+      "end": 361.84000000000003,
+      "duration": 4.97,
+      "text": "rhombus bisect each other hey E and E C"
+    },
+    {
+      "time": "05:59",
+      "start": 359.12,
+      "end": 367.63,
+      "duration": 8.51,
+      "text": "are congruent be e and E D are congruent"
+    },
+    {
+      "time": "06:01",
+      "start": 361.84,
+      "end": 374.35999999999996,
+      "duration": 12.52,
+      "text": "so if B E is 7 e d is 7 and if"
+    },
+    {
+      "time": "06:07",
+      "start": 367.63,
+      "end": 377.24,
+      "duration": 9.61,
+      "text": "EC is 24 ie is 24 now all four sides of"
+    },
+    {
+      "time": "06:14",
+      "start": 374.36,
+      "end": 380.87,
+      "duration": 6.51,
+      "text": "a rhombus are congruent"
+    },
+    {
+      "time": "06:17",
+      "start": 377.24,
+      "end": 384.11,
+      "duration": 6.87,
+      "text": "so let's say if we call this s this is s"
+    },
+    {
+      "time": "06:20",
+      "start": 380.87,
+      "end": 386.259,
+      "duration": 5.389,
+      "text": "that's us that's s so the perimeter is 4"
+    },
+    {
+      "time": "06:24",
+      "start": 384.11,
+      "end": 386.259,
+      "duration": 2.149,
+      "text": "s"
+    },
+    {
+      "time": "06:26",
+      "start": 386.71,
+      "end": 392.38899999999995,
+      "duration": 5.679,
+      "text": "now notice that we have four congruent"
+    },
+    {
+      "time": "06:29",
+      "start": 389.12,
+      "end": 395.27,
+      "duration": 6.15,
+      "text": "right triangles this is 7 this is 24 and"
+    },
+    {
+      "time": "06:32",
+      "start": 392.389,
+      "end": 397.90000000000003,
+      "duration": 5.511,
+      "text": "this is s so let's use the Pythagorean"
+    },
+    {
+      "time": "06:35",
+      "start": 395.27,
+      "end": 401.56899999999996,
+      "duration": 6.299,
+      "text": "theorem to calculate s"
+    },
+    {
+      "time": "06:37",
+      "start": 397.9,
+      "end": 402.28,
+      "duration": 4.38,
+      "text": "C squared is equal to a squared plus B"
+    },
+    {
+      "time": "06:41",
+      "start": 401.569,
+      "end": 407.16900000000004,
+      "duration": 5.6,
+      "text": "squared"
+    },
+    {
+      "time": "06:42",
+      "start": 402.28,
+      "end": 412.15,
+      "duration": 9.87,
+      "text": "in this case C is the hypotenuse s a"
+    },
+    {
+      "time": "06:47",
+      "start": 407.169,
+      "end": 415.81,
+      "duration": 8.641,
+      "text": "we could say it's 24 and B is 7"
+    },
+    {
+      "time": "06:52",
+      "start": 412.15,
+      "end": 420.729,
+      "duration": 8.579,
+      "text": "24 times 24 that's"
+    },
+    {
+      "time": "06:55",
+      "start": 415.81,
+      "end": 424.87,
+      "duration": 9.06,
+      "text": "576 and 7 squared is 49"
+    },
+    {
+      "time": "07:00",
+      "start": 420.729,
+      "end": 427.57,
+      "duration": 6.841,
+      "text": "now 576 plus 49 is"
+    },
+    {
+      "time": "07:04",
+      "start": 424.87,
+      "end": 429.65,
+      "duration": 4.78,
+      "text": "625"
+    },
+    {
+      "time": "07:07",
+      "start": 427.57,
+      "end": 432.46,
+      "duration": 4.89,
+      "text": "so now let's take the square root of"
+    },
+    {
+      "time": "07:09",
+      "start": 429.65,
+      "end": 432.46,
+      "duration": 2.81,
+      "text": "both sides the"
+    },
+    {
+      "time": "07:13",
+      "start": 433.659,
+      "end": 442.009,
+      "duration": 8.35,
+      "text": "square root of 625 is 25"
+    },
+    {
+      "time": "07:18",
+      "start": 438.639,
+      "end": 446.3,
+      "duration": 7.661,
+      "text": "so now we can calculate the perimeter so"
+    },
+    {
+      "time": "07:22",
+      "start": 442.009,
+      "end": 448.909,
+      "duration": 6.9,
+      "text": "it's 4 s or 4 times 25 which is a"
+    },
+    {
+      "time": "07:26",
+      "start": 446.3,
+      "end": 453.46000000000004,
+      "duration": 7.16,
+      "text": "hundred so that's the perimeter for this"
+    },
+    {
+      "time": "07:28",
+      "start": 448.909,
+      "end": 453.46,
+      "duration": 4.551,
+      "text": "particular rhombus it's a hundred units"
+    },
+    {
+      "time": "07:33",
+      "start": 453.55,
+      "end": 460.3,
+      "duration": 6.75,
+      "text": "number five what is the area of the"
+    },
+    {
+      "time": "07:37",
+      "start": 457.28,
+      "end": 463.52,
+      "duration": 6.24,
+      "text": "isosceles trapezoid shown below"
+    },
+    {
+      "time": "07:40",
+      "start": 460.3,
+      "end": 465.25,
+      "duration": 4.95,
+      "text": "so first we'll need a formula the area"
+    },
+    {
+      "time": "07:43",
+      "start": 463.52,
+      "end": 467.83,
+      "duration": 4.31,
+      "text": "is 1/2"
+    },
+    {
+      "time": "07:45",
+      "start": 465.25,
+      "end": 472.789,
+      "duration": 7.539,
+      "text": "B 1 plus B 2"
+    },
+    {
+      "time": "07:47",
+      "start": 467.83,
+      "end": 477.44,
+      "duration": 9.61,
+      "text": "times H so B 1 is the first base that's"
+    },
+    {
+      "time": "07:52",
+      "start": 472.789,
+      "end": 481.87,
+      "duration": 9.081,
+      "text": "12 B 2 is the second base which is 20"
+    },
+    {
+      "time": "07:57",
+      "start": 477.44,
+      "end": 484.699,
+      "duration": 7.259,
+      "text": "and H is the height of the trapezoid"
+    },
+    {
+      "time": "08:01",
+      "start": 481.87,
+      "end": 486.669,
+      "duration": 4.799,
+      "text": "so somehow we need to calculate H in"
+    },
+    {
+      "time": "08:04",
+      "start": 484.699,
+      "end": 490.389,
+      "duration": 5.69,
+      "text": "order to calculate the area"
+    },
+    {
+      "time": "08:06",
+      "start": 486.669,
+      "end": 490.389,
+      "duration": 3.72,
+      "text": "so how can we do so"
+    },
+    {
+      "time": "08:16",
+      "start": 496.82,
+      "end": 500.48,
+      "duration": 3.66,
+      "text": "now the first thing we need to realize"
+    },
+    {
+      "time": "08:18",
+      "start": 498.87,
+      "end": 503.88,
+      "duration": 5.01,
+      "text": "is that for"
+    },
+    {
+      "time": "08:20",
+      "start": 500.48,
+      "end": 508.58000000000004,
+      "duration": 8.1,
+      "text": "an isosceles trapezoid a B is congruent"
+    },
+    {
+      "time": "08:23",
+      "start": 503.88,
+      "end": 512.87,
+      "duration": 8.99,
+      "text": "to C D so both sides are equal to 5 next"
+    },
+    {
+      "time": "08:28",
+      "start": 508.58,
+      "end": 512.87,
+      "duration": 4.29,
+      "text": "we need to draw two right triangles"
+    },
+    {
+      "time": "08:33",
+      "start": 513.38,
+      "end": 518.84,
+      "duration": 5.46,
+      "text": "now we know that ad is 20 that was given"
+    },
+    {
+      "time": "08:37",
+      "start": 517.32,
+      "end": 521.34,
+      "duration": 4.02,
+      "text": "to us in the beginning"
+    },
+    {
+      "time": "08:38",
+      "start": 518.84,
+      "end": 523.85,
+      "duration": 5.01,
+      "text": "now if we add two additional points"
+    },
+    {
+      "time": "08:41",
+      "start": 521.34,
+      "end": 528.23,
+      "duration": 6.89,
+      "text": "let's call this e and f"
+    },
+    {
+      "time": "08:43",
+      "start": 523.85,
+      "end": 532.47,
+      "duration": 8.62,
+      "text": "EF is the same as BC that's 12"
+    },
+    {
+      "time": "08:48",
+      "start": 528.23,
+      "end": 535.23,
+      "duration": 7.0,
+      "text": "now if these two sides are congruent and"
+    },
+    {
+      "time": "08:52",
+      "start": 532.47,
+      "end": 537.87,
+      "duration": 5.4,
+      "text": "this and that has to be congruent these"
+    },
+    {
+      "time": "08:55",
+      "start": 535.23,
+      "end": 540.1700000000001,
+      "duration": 4.94,
+      "text": "two a E and F D must be congruent to"
+    },
+    {
+      "time": "08:57",
+      "start": 537.87,
+      "end": 540.17,
+      "duration": 2.3,
+      "text": "each other"
+    },
+    {
+      "time": "09:00",
+      "start": 540.77,
+      "end": 549.84,
+      "duration": 9.07,
+      "text": "so if we call this X and X we could say"
+    },
+    {
+      "time": "09:04",
+      "start": 544.14,
+      "end": 553.67,
+      "duration": 9.53,
+      "text": "that X plus 12 plus X is equal to 20 or"
+    },
+    {
+      "time": "09:09",
+      "start": 549.84,
+      "end": 557.1800000000001,
+      "duration": 7.34,
+      "text": "2x plus 12 is equal to 20"
+    },
+    {
+      "time": "09:13",
+      "start": 553.67,
+      "end": 560.61,
+      "duration": 6.94,
+      "text": "so let's subtract both sides by 12"
+    },
+    {
+      "time": "09:17",
+      "start": 557.18,
+      "end": 564.8,
+      "duration": 7.62,
+      "text": "so 20 minus 12 is 8 and if we divide by"
+    },
+    {
+      "time": "09:20",
+      "start": 560.61,
+      "end": 564.8000000000001,
+      "duration": 4.19,
+      "text": "2 we can see that X is 4"
+    },
+    {
+      "time": "09:31",
+      "start": 571.45,
+      "end": 574.83,
+      "duration": 3.38,
+      "text": "so we could put a four here"
+    },
+    {
+      "time": "09:35",
+      "start": 575.25,
+      "end": 581.31,
+      "duration": 6.06,
+      "text": "so now we can find H the missing side"
+    },
+    {
+      "time": "09:39",
+      "start": 579.23,
+      "end": 583.5790000000001,
+      "duration": 4.349,
+      "text": "so now let's focus on this right"
+    },
+    {
+      "time": "09:41",
+      "start": 581.31,
+      "end": 583.579,
+      "duration": 2.269,
+      "text": "triangle"
+    },
+    {
+      "time": "09:43",
+      "start": 583.61,
+      "end": 590.87,
+      "duration": 7.26,
+      "text": "C squared is equal to a squared plus B"
+    },
+    {
+      "time": "09:46",
+      "start": 586.829,
+      "end": 595.3499999999999,
+      "duration": 8.521,
+      "text": "squared the hypotenuse is 5 a"
+    },
+    {
+      "time": "09:50",
+      "start": 590.87,
+      "end": 600.829,
+      "duration": 9.959,
+      "text": "we can say it's 4 and B is H 5 squared"
+    },
+    {
+      "time": "09:55",
+      "start": 595.35,
+      "end": 604.0790000000001,
+      "duration": 8.729,
+      "text": "is 25 4 times 4 16 and 25 minus 16 is 9"
+    },
+    {
+      "time": "10:00",
+      "start": 600.829,
+      "end": 606.3889999999999,
+      "duration": 5.56,
+      "text": "so H squared is 9 and if you take the"
+    },
+    {
+      "time": "10:04",
+      "start": 604.079,
+      "end": 609.1389999999999,
+      "duration": 5.06,
+      "text": "square root of both sides we can see"
+    },
+    {
+      "time": "10:06",
+      "start": 606.389,
+      "end": 612.36,
+      "duration": 5.971,
+      "text": "that H is equal to 3 so"
+    },
+    {
+      "time": "10:09",
+      "start": 609.139,
+      "end": 613.649,
+      "duration": 4.51,
+      "text": "now that we have the value of H we can"
+    },
+    {
+      "time": "10:12",
+      "start": 612.36,
+      "end": 616.5,
+      "duration": 4.14,
+      "text": "calculate the area of the trapezoid"
+    },
+    {
+      "time": "10:13",
+      "start": 613.649,
+      "end": 618.439,
+      "duration": 4.79,
+      "text": "using this formula that is this formula"
+    },
+    {
+      "time": "10:16",
+      "start": 616.5,
+      "end": 622.5,
+      "duration": 6.0,
+      "text": "here so"
+    },
+    {
+      "time": "10:18",
+      "start": 618.439,
+      "end": 626.87,
+      "duration": 8.431,
+      "text": "it's going to be 1/2 b1 which is 12 plus"
+    },
+    {
+      "time": "10:22",
+      "start": 622.5,
+      "end": 632.939,
+      "duration": 10.439,
+      "text": "B 2 which is 20 times the height of 3"
+    },
+    {
+      "time": "10:26",
+      "start": 626.87,
+      "end": 638.04,
+      "duration": 11.17,
+      "text": "now 12 plus 20 is 32 and half of 32 is"
+    },
+    {
+      "time": "10:32",
+      "start": 632.939,
+      "end": 639.199,
+      "duration": 6.26,
+      "text": "16 16 times 3 is 48 so this right here"
+    },
+    {
+      "time": "10:38",
+      "start": 638.04,
+      "end": 643.3389999999999,
+      "duration": 5.299,
+      "text": "is the answer"
+    },
+    {
+      "time": "10:39",
+      "start": 639.199,
+      "end": 643.3389999999999,
+      "duration": 4.14,
+      "text": "that's the area of the trapezoid"
+    }
+  ]
+}

@@ -162,7 +162,7 @@ async def get_video_metadata(video_id: str, db: Session = Depends(get_db)):
 
 def save_to_database_task(video_id: str, result: dict, video_dir: str):
     """
-    Background task to save video data to database.
+    Background task to save video data to database and JSON.
 
     Args:
         video_id: YouTube video ID
@@ -205,8 +205,10 @@ def save_to_database_task(video_id: str, result: dict, video_dir: str):
 
         # Save intervention points
         intervention_points = result.get("intervention_points", [])
+        intervention_responses = []
         for point in intervention_points:
-            intervention_id = str(uuid.uuid4())
+            # Use the pre-generated ID from the point object
+            intervention_id = getattr(point, 'id', str(uuid.uuid4()))
             intervention = Intervention(
                 id=intervention_id,
                 video_id=video_id,
@@ -222,8 +224,37 @@ def save_to_database_task(video_id: str, result: dict, video_dir: str):
             )
             db.add(intervention)
 
+            # Build response for JSON
+            intervention_responses.append({
+                "id": intervention_id,
+                "video_id": video_id,
+                "timestamp": point.timestamp,
+                "timestamp_formatted": f"{int(point.timestamp // 60):02d}:{int(point.timestamp % 60):02d}",
+                "frame_path": point.frame_path,
+                "content_type": point.content_type,
+                "complexity_score": point.complexity_score,
+                "clip_confidence": point.clip_confidence,
+                "trigger_reason": point.trigger_reason,
+                "confidence": point.confidence,
+                "transcript_context": point.transcript_context,
+                "is_bookmarked": False,
+                "created_at": datetime.now().isoformat()
+            })
+
         db.commit()
         print(f"[API] Saved video {video_id} with {len(intervention_points)} interventions to database")
+
+        # Save interventions to JSON file
+        interventions_json_path = os.path.join(video_dir, "interventions.json")
+        interventions_data = {
+            "video_id": video_id,
+            "total_interventions": len(intervention_responses),
+            "interventions": intervention_responses,
+            "created_at": datetime.now().isoformat()
+        }
+        with open(interventions_json_path, "w", encoding="utf-8") as f:
+            json.dump(interventions_data, f, indent=2, ensure_ascii=False)
+        print(f"[API] Saved interventions to JSON: {interventions_json_path}")
 
     except Exception as e:
         db.rollback()
@@ -279,13 +310,15 @@ def process_video(
         if "error" in result:
             raise HTTPException(status_code=500, detail=result["error"])
 
-        # Convert intervention points to response models
+        # Convert intervention points to response models and generate IDs
         intervention_responses = []
         for point in result.get("intervention_points", []):
-            # Generate temp ID (will be real UUID after DB save)
-            temp_id = str(uuid.uuid4())
+            # Generate UUID once - will be used in both response and database
+            intervention_id = str(uuid.uuid4())
+            # Store the ID on the point object so background task uses the same ID
+            point.id = intervention_id
             intervention_responses.append(InterventionResponse(
-                id=temp_id,
+                id=intervention_id,
                 video_id=video_id,
                 timestamp=point.timestamp,
                 timestamp_formatted=f"{int(point.timestamp // 60):02d}:{int(point.timestamp % 60):02d}",

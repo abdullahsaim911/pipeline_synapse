@@ -1,0 +1,18 @@
+Your teacher is showing this visual to explain Newton's third law, also known as the action-reaction principle. This law states that for every action, there is an equal and opposite reaction. Let's break down the visual for a better understanding.
+
+1. Complete Visual Description:
+   - In the top left zone, you can imagine an apple falling towards Earth. This represents an action, as gravity pulls the apple downwards.
+   - Moving to the top right zone, there is a soccer ball being kicked. When you kick the ball, it moves forward, and this force propels your foot backwards. The ball kicking your foot is the reaction.
+   - In the bottom left zone, a person doing pull-ups is shown. As the person lifts their body weight upwards using the bar, the bar pushes downwards with an equal force. This downward force on the bar is the reaction to the person's upward motion.
+   - Finally, in the bottom right zone, you see a person doing pull-ups with a bar. The situation here is similar to the previous one, but this time, there is a bar involved. When the person pulls upwards, the bar pushes downwards with an equal and opposite force.
+
+2. What the Teacher is Explaining:
+   Your teacher is using these familiar examples to illustrate Newton's third law. By showing how forces work in everyday situations like kicking a ball or doing pull-ups, your teacher aims to help you understand the principle better.
+
+3. The Concept Being Explained:
+   Newton's third law says that whenever an object exerts a force on another object, the second object will exert an equal and opposite force back on the first object. This means that for every action, there is always a reaction of equal magnitude but in the opposite direction.
+
+4. How the Visual Links to the Concept:
+   - In the visual, the apple falling shows the action (gravity pulling it downwards), and Earth exerting an equal and opposite force upwards (reaction). This represents the action-reaction principle.
+   - When you kick the soccer ball, the ball moving forward is the action, and your foot getting pushed backwards is the reaction. The ball kicking your foot demonstrates Newton's third law.
+   - For the pull-up examples, the person lifting their body weight upwards shows the action

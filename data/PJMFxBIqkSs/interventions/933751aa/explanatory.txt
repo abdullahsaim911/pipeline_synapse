@@ -1,0 +1,19 @@
+Your Teacher is showing this to explain the Principle of Conservation of Momentum, which states that the total momentum of an isolated system remains constant over time.
+
+In this visual, the scene is divided into four main zones. Each zone contains a drawing of a cannon with a ball being launched and equations involving forces and momentum.
+
+1. In the top-left section: A cannon with a ball is being launched, labeled 'F on B' and 'F on A'. This shows the force applied by the cannon on the ball (F on B) and the force applied by the ball on the cannon (F on A).
+
+2. In the top-center section: There are equations involving forces and momentum. These equations represent the forces acting on objects A and B over a specific period of time, delta T.
+
+3. In the top-right section: The same scene as the top-left is repeated, but with labels 'F on A' and 'F on B' reversed. This shows that the forces acting on the cannon and ball are equal and opposite.
+
+4. In the bottom sections (both left and right), we find the same equations involving forces and momentum as in the top center. However, due to the teacher's explanation, we understand that these equations represent the same time period over which the forces were acting on both objects A and B.
+
+5. The teacher explains that since the cannon is pushing the ball and the ball is pushing back on the cannon for the same time, these equal and opposite forces must be acting for exactly the same time. Therefore, we can cancel out the time factor from our equations.
+
+6. After canceling out the time, the teacher finds that the change in momentum of A should exactly equal but opposite to the change in momentum of B. This is boxed along with the condition 'cause this condition is going to be super important for us.'
+
+7. The teacher concludes that whatever momentum object A gains, object B will lose, and vice versa. In other words, the total momentum of both the cannon and the ball together does not change after firing it. This is called the principle of conservation of momentum.
+
+8. To understand this concept better, you can think of it like an exchange of money between two people. If there's a condition which says that they are only going to be exchanging money amongst themselves,

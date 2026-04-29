@@ -1,0 +1,67 @@
+# Synapse Frontend — Requirements
+# ─────────────────────────────────────────────────────────────────────────────
+# Runtime : Node.js >= 18.x  (https://nodejs.org)
+# Package  : npm (comes with Node)
+#
+# SETUP
+#   1. Install Node 18+ if you haven't already.
+#   2. In this folder, run:
+#        npm install
+#   3. Start the dev server:
+#        npm run dev          → opens http://localhost:5173
+#
+# OPTIONAL — Electron desktop app
+#   npm run electron:dev     → runs Vite + Electron together
+#
+# BUILD for production (web)
+#   npm run build            → output goes to /dist
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# All dependencies below are managed by package.json / node_modules.
+# You do NOT install these manually — npm install handles everything.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Runtime dependencies ──────────────────────────────────────────────────────
+react@^18.3.1              # UI framework
+react-dom@^18.3.1          # React DOM renderer
+jspdf@^4.2.1               # PDF export (used in Explanation screen)
+
+# ── Dev / build tooling ───────────────────────────────────────────────────────
+vite@^8.0.10               # Build tool & dev server
+@vitejs/plugin-react@^6.0.1  # Vite plugin for JSX/React Fast Refresh
+tailwindcss@^3.4.19        # Utility-first CSS framework
+postcss@^8.5.10            # CSS processing (required by Tailwind)
+autoprefixer@^10.5.0       # Vendor-prefix CSS (required by Tailwind)
+eslint@^10.2.1             # Linter
+eslint-plugin-react-hooks@^7.1.1
+eslint-plugin-react-refresh@^0.5.2
+
+# ── Electron (desktop packaging) ──────────────────────────────────────────────
+electron@^41.3.0           # Desktop shell
+electron-builder@^26.8.1   # Packaging/installer builder
+concurrently@^9.2.1        # Runs Vite + Electron in parallel during dev
+wait-on@^9.0.5             # Waits for Vite server before launching Electron
+cross-env@^10.1.0          # Cross-platform env vars in npm scripts
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EXTERNAL RESOURCES (loaded via CDN — no npm install needed)
+# ─────────────────────────────────────────────────────────────────────────────
+# JetBrains Mono font — Google Fonts, referenced in src/index.css
+#   https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BACKEND CONFIGURATION  (src/api.js)
+# ─────────────────────────────────────────────────────────────────────────────
+# Line 1  — USE_MOCK = true
+#   Change to false when connecting to the real backend.
+#
+# Line 3  — API_BASE_URL
+#   Set this to the backend server URL (Cloudflare tunnel or local address).
+#   Current value: "https://gorgeous-arms-day-relevance.trycloudflare.com"
+#
+# API endpoints the frontend calls:
+#   POST /video/process          → starts processing a YouTube video
+#   GET  /api/jobs/:jobId        → polls job progress
+#   POST /api/tts                → fetches TTS audio + text explanation
+#                                  body: { intervention_id, output_mode }
+#   GET  /api/explanation/:id    → fetches text explanation (mode as query param)

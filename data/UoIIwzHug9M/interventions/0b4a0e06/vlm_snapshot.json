@@ -1,0 +1,16 @@
+{
+  "content_type": "unknown",
+  "detected_types": [
+    "unknown"
+  ],
+  "visual_analysis": {},
+  "structural_description": "Error: exception: access violation reading 0x0000000000000000",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "exception: access violation reading 0x0000000000000000",
+  "text_readout": "exception: access violation reading 0x0000000000000000",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null,
+  "_error": "exception: access violation reading 0x0000000000000000"
+}

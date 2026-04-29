@@ -1,0 +1,138 @@
+[
+  {
+    "timestamp": "00:38",
+    "timestamp_seconds": 38.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0000_00_38.jpg",
+    "content_type": "diagram",
+    "complexity_score": 0.2926,
+    "clip_confidence": 0.2926
+  },
+  {
+    "timestamp": "02:32",
+    "timestamp_seconds": 152.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0001_02_32.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3162,
+    "clip_confidence": 0.3162
+  },
+  {
+    "timestamp": "05:44",
+    "timestamp_seconds": 344.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0002_05_44.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3378,
+    "clip_confidence": 0.3378
+  },
+  {
+    "timestamp": "05:48",
+    "timestamp_seconds": 348.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0003_05_48.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3376,
+    "clip_confidence": 0.3376
+  },
+  {
+    "timestamp": "05:50",
+    "timestamp_seconds": 350.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0004_05_50.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3379,
+    "clip_confidence": 0.3379
+  },
+  {
+    "timestamp": "05:58",
+    "timestamp_seconds": 358.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0005_05_58.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3384,
+    "clip_confidence": 0.3384
+  },
+  {
+    "timestamp": "06:00",
+    "timestamp_seconds": 360.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0006_06_00.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3383,
+    "clip_confidence": 0.3383
+  },
+  {
+    "timestamp": "06:02",
+    "timestamp_seconds": 362.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0007_06_02.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3392,
+    "clip_confidence": 0.3392
+  },
+  {
+    "timestamp": "06:04",
+    "timestamp_seconds": 364.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0008_06_04.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3395,
+    "clip_confidence": 0.3395
+  },
+  {
+    "timestamp": "06:08",
+    "timestamp_seconds": 368.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0009_06_08.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.339,
+    "clip_confidence": 0.339
+  },
+  {
+    "timestamp": "06:10",
+    "timestamp_seconds": 370.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0010_06_10.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3391,
+    "clip_confidence": 0.3391
+  },
+  {
+    "timestamp": "06:12",
+    "timestamp_seconds": 372.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0011_06_12.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3393,
+    "clip_confidence": 0.3393
+  },
+  {
+    "timestamp": "06:14",
+    "timestamp_seconds": 374.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0012_06_14.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3413,
+    "clip_confidence": 0.3413
+  },
+  {
+    "timestamp": "07:10",
+    "timestamp_seconds": 430.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0013_07_10.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3054,
+    "clip_confidence": 0.3054
+  },
+  {
+    "timestamp": "08:44",
+    "timestamp_seconds": 524.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0014_08_44.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3174,
+    "clip_confidence": 0.3174
+  },
+  {
+    "timestamp": "10:36",
+    "timestamp_seconds": 636.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0015_10_36.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3082,
+    "clip_confidence": 0.3082
+  },
+  {
+    "timestamp": "11:52",
+    "timestamp_seconds": 712.0,
+    "frame_path": "data\\uUH5YI5dTOg\\keyframes\\frame_0016_11_52.jpg",
+    "content_type": "biology",
+    "complexity_score": 0.3173,
+    "clip_confidence": 0.3173
+  }
+]

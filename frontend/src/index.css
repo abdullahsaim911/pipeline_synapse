@@ -1,0 +1,133 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Theme variables ─────────────────────────────────────────────────────── */
+/* All values are space-separated RGB triplets (no rgb() wrapper)             */
+
+/* Paper — warm parchment (default) */
+:root,
+[data-theme="paper"] {
+  --paper:       247 244 236;
+  --paper-soft:  253 251 245;
+  --paper-warm:  239 234 224;
+  --paper-edge:  229 223 208;
+  --paper-rule:  221 213 194;
+  --ink:         30 26 21;
+  --ink-soft:    42 37 32;
+  --ink-muted:   74 66 56;
+  --ink-quiet:   92 82 71;
+  --ink-faded:   107 95 80;
+  --ink-ghost:   138 128 112;
+  --ink-whisper: 168 155 134;
+  --accent:      74 91 140;
+  --accent-soft: 107 123 170;
+  --btn-hover:   15 12 8;      /* near-black for primary button hover */
+  --btn-border-hover: 196 186 165;
+}
+
+/* Night — dark charcoal */
+[data-theme="night"] {
+  --paper:       28 26 23;
+  --paper-soft:  38 35 30;
+  --paper-warm:  22 20 17;
+  --paper-edge:  50 46 40;
+  --paper-rule:  64 58 50;
+  --ink:         240 235 224;
+  --ink-soft:    228 220 208;
+  --ink-muted:   200 190 176;
+  --ink-quiet:   174 165 152;
+  --ink-faded:   148 140 128;
+  --ink-ghost:   120 112 102;
+  --ink-whisper: 92 86 78;
+  --accent:      107 123 170;
+  --accent-soft: 130 146 192;
+  --btn-hover:   220 212 198;  /* lighter ink for hover in dark mode */
+  --btn-border-hover: 80 74 66;
+}
+
+/* Sepia — warm amber, like a read book */
+[data-theme="sepia"] {
+  --paper:       242 232 212;
+  --paper-soft:  250 244 230;
+  --paper-warm:  232 220 200;
+  --paper-edge:  212 198 174;
+  --paper-rule:  196 182 158;
+  --ink:         48 30 14;
+  --ink-soft:    62 44 22;
+  --ink-muted:   90 68 40;
+  --ink-quiet:   110 84 54;
+  --ink-faded:   132 104 72;
+  --ink-ghost:   158 128 94;
+  --ink-whisper: 180 152 116;
+  --accent:      139 94 60;
+  --accent-soft: 168 118 78;
+  --btn-hover:   32 18 6;
+  --btn-border-hover: 172 152 122;
+}
+
+/* ── Base ────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-paper text-ink-soft font-serif antialiased;
+    font-feature-settings: "kern" 1, "liga" 1, "onum" 1;
+  }
+
+  h1, h2, h3 {
+    font-feature-settings: "kern" 1, "liga" 1, "onum" 1, "dlig" 1;
+  }
+}
+
+/* ── Components ──────────────────────────────────────────────────────────── */
+
+@layer components {
+  .eyebrow {
+    @apply font-sans text-eyebrow uppercase text-ink-ghost;
+  }
+
+  .headline {
+    @apply font-serif text-ink tracking-editorial;
+    font-weight: 400;
+    line-height: 1.15;
+  }
+
+  .subtitle {
+    @apply font-serif text-ink-quiet;
+    line-height: 1.5;
+  }
+
+  .section-marker {
+    @apply font-serif text-ink pb-2.5 border-b border-ink;
+    font-weight: 500;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center gap-2.5 px-7 py-3 bg-ink text-paper rounded-editorial font-sans text-[13px];
+    letter-spacing: 0.02em;
+    transition: background-color 150ms ease, transform 120ms ease;
+  }
+  .btn-primary:hover {
+    background-color: rgb(var(--btn-hover));
+  }
+  .btn-primary:active {
+    transform: translateY(1px);
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-paper-soft border border-paper-edge rounded-editorial font-sans text-xs text-ink;
+    transition: border-color 150ms ease, background-color 150ms ease;
+  }
+  .btn-secondary:hover {
+    border-color: rgb(var(--btn-border-hover));
+    background-color: rgb(var(--paper-soft));
+  }
+}

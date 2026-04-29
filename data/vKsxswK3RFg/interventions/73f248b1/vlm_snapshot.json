@@ -1,0 +1,90 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "zone_mapping": {
+        "top_left": "Physical drawing of an airplane",
+        "top_right": "Physical drawing of a car",
+        "bottom_left": "Equation and text explaining momentum",
+        "bottom_right": "Physical drawing of a train"
+      },
+      "isolated_extraction": {
+        "top_left": {
+          "shape": "Airplane",
+          "dimensions": "Width: 200px, Height: 200px",
+          "orientation": "Horizontal",
+          "color": "White",
+          "text": "50,000kg 1m/s"
+        },
+        "top_right": {
+          "shape": "Car",
+          "dimensions": "Width: 200px, Height: 200px",
+          "orientation": "Horizontal",
+          "color": "Red",
+          "text": "2000kg 30m/s"
+        },
+        "bottom_left": {
+          "shape": "Equation",
+          "dimensions": "Width: 200px, Height: 200px",
+          "orientation": "Vertical",
+          "color": "White",
+          "text": "Momentum = MV",
+          "label": "How hard to stop something"
+        },
+        "bottom_right": {
+          "shape": "Train",
+          "dimensions": "Width: 200px, Height: 200px",
+          "orientation": "Vertical",
+          "color": "Yellow",
+          "text": "Physical drawing of a train"
+        }
+      },
+      "zoned_ocr": {
+        "top_left": "50,000kg 1m/s",
+        "top_right": "2000kg 30m/s",
+        "bottom_left": "Momentum = MV",
+        "bottom_right": "Physical drawing of a train"
+      },
+      "cross_connections": {
+        "top_left": {
+          "arrow": "Left",
+          "text": "50,000kg 1m/s",
+          "zone": "bottom_left"
+        },
+        "top_right": {
+          "arrow": "Right",
+          "text": "2000kg 30m/s",
+          "zone": "bottom_left"
+        },
+        "bottom_left": {
+          "arrow": "Down",
+          "text": "Momentum = MV",
+          "zone": "bottom_right"
+        }
+      }
+    },
+    "structural_description": "The frame is divided into four zones: top left, top right, bottom left, and bottom right. The top left and top right zones contain physical drawings of an airplane and a car, respectively. The bottom left zone features an equation and text explaining momentum. The bottom right zone contains a physical drawing of a train.",
+    "reading_order": [
+      "top_left",
+      "top_right",
+      "bottom_left",
+      "bottom_right"
+    ],
+    "layout": "The frame is arranged in a 2x2 grid, with each zone containing a distinct STEM element.",
+    "text_readout": "50,000kg 1m/s, 2000kg 30m/s, Momentum = MV, Physical drawing of a train",
+    "spatial_map": "The top left zone is to the left of the top right zone, and the bottom left zone is below the top left zone. The bottom right zone is to the right of the bottom left zone.",
+    "colors_styles": "The colors used are white for the text and equations, red for the car, and yellow for the train. The lines are thin and the shapes are simple.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}
