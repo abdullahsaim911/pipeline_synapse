@@ -1,0 +1,38 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "left top": "Equation",
+      "left middle": "Physical drawing",
+      "left bottom": "Physical drawing",
+      "right top": "Physical drawing",
+      "right middle": "Physical drawing",
+      "right bottom": "Physical drawing"
+    },
+    "structural_description": "The frame is divided into six zones, each containing a different STEM element. The left side features two physical drawings, one at the top and one at the bottom, while the right side also has two physical drawings, one at the top and one at the bottom. There is an equation at the top center of the frame.",
+    "reading_order": [
+      "left top",
+      "left middle",
+      "left bottom",
+      "right top",
+      "right middle",
+      "right bottom"
+    ],
+    "layout": "The frame is divided into a 2x3 grid, with each zone containing a different STEM element.",
+    "text_readout": "CH4 + 2O2 → CO2 + 2H2O",
+    "spatial_map": "The equation is at the top center, the left top zone contains a physical drawing, the left middle zone contains a physical drawing, the left bottom zone contains a physical drawing, the right top zone contains a physical drawing, the right middle zone contains a physical drawing, and the right bottom zone contains a physical drawing.",
+    "colors_styles": "The physical drawings are in black and white, with the equation in black text on a white background. The physical drawings have a green glow around them.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

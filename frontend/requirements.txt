@@ -20,7 +20,6 @@
 # All dependencies below are managed by package.json / node_modules.
 # You do NOT install these manually — npm install handles everything.
 # ─────────────────────────────────────────────────────────────────────────────
-
 # ── Runtime dependencies ──────────────────────────────────────────────────────
 react@^18.3.1              # UI framework
 react-dom@^18.3.1          # React DOM renderer

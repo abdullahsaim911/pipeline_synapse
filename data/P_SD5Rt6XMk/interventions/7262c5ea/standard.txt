@@ -1,0 +1,13 @@
+Your teacher is showing this visual to explain radioactive decay, a process that occurs when an unstable nucleus changes into a more stable one and releases high energy, ionizing radiation.
+
+To begin with, let's describe the visual elements: The top left zone contains a physical drawing of the nucleus of Carbon-14 (14C). The top center zone shows an arrow indicating spontaneous decay and an equation representing the transformation of Carbon-14 into Nitrogen-14 (14N + \u03b2). The top right zone contains another physical drawing of a nucleus, this time of Nitrogen-14.
+
+Moving to the bottom left zone, there's a text block explaining that Carbon-14 is the parent nucleus and it decays all by itself. The bottom center zone repeats the equation for spontaneous decay (14N + \u03b2), while the bottom right zone displays another physical drawing of Nitrogen-14.
+
+The arrows connecting each visual element illustrate the cause-and-effect relationships: The nucleus of Carbon-14 decays spontaneously, releasing energy and transforming into a nucleus of Nitrogen-14 (as shown by the top left arrow and the top center equation). This process is then repeated in the bottom half of the visual (bottom center arrow and bottom right physical drawing).
+
+Now that we've described the visual elements, let's connect them to the concept being explained: Radioactive decay refers to the spontaneous transformation of an unstable atomic nucleus into a more stable one. This process releases energy in the form of high-energy particles called ionizing radiation. The visual shows this process happening with Carbon-14 (14C), which decays and turns into Nitrogen-14 (14N).
+
+It's important to note that radioactive decay can have dangerous consequences, as these high-energy particles can potentially mutate DNA. However, the same property can be harnessed for beneficial purposes like radiation therapy, where these particles are used to target and destroy cancer cells.
+
+To summarize, your teacher is using this visual to illustrate radioactive decay, a process where an unstable atomic nucleus transforms into a more stable one while releasing high-energy radiation. This visual shows the transformation of Carbon-14 into Nit

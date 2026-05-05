@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from "react";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 import Sidebar from "./Sidebar";
 import {
   getExplanation,
   getInterventionPoints,
   getTTSExplanation,
+  getFullUrl,
 } from "../api";
 import {
   saveBookmark,
@@ -88,15 +89,22 @@ export default function Explanation({
 
     // TTS audio — runs in parallel (shares the same HTTP request via cache)
     getTTSExplanation(activePointId, mode, videoId)
-      .then((tts) => setAudioUrl(tts.audio_file_path))
+      .then((tts) => {
+        console.log("[Explanation] TTS response received:", tts);
+        setAudioUrl(tts.audio_file_path);
+      })
       .catch((err) => console.error("TTS fetch failed:", err))
       .finally(() => setAudioLoading(false));
   }, [activePointId, mode, videoId]);
 
   // Wire up the HTML5 Audio element whenever the URL changes
   useEffect(() => {
-    if (!audioUrl) return;
+    if (!audioUrl) {
+      console.log("[Explanation] No audio URL available");
+      return;
+    }
 
+    console.log("[Explanation] Creating Audio with URL:", audioUrl);
     const audio = new Audio(audioUrl);
     audioRef.current = audio;
 
@@ -106,17 +114,22 @@ export default function Explanation({
       setIsPlaying(false);
       setCurrentTime(0);
     };
+    const onError = (e) => {
+      console.error("[Explanation] Audio error:", e);
+      console.error("[Explanation] Audio error details:", audio.error);
+    };
 
     audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("loadedmetadata", onLoaded);
     audio.addEventListener("ended", onEnded);
+    audio.addEventListener("error", onError);
 
     // Auto-play when coming from the Library "Play audio" button
     if (autoPlay) {
       audio
         .play()
         .then(() => setIsPlaying(true))
-        .catch(() => {});
+        .catch((err) => console.error("[Explanation] Auto-play failed:", err));
     }
 
     return () => {
@@ -124,9 +137,10 @@ export default function Explanation({
       audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("loadedmetadata", onLoaded);
       audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("error", onError);
       audioRef.current = null;
     };
-  }, [audioUrl]);
+  }, [audioUrl, autoPlay]);
 
   // ---- Actions -------------------------------------------------------------
 
@@ -193,9 +207,7 @@ export default function Explanation({
     timestamp: "",
   };
 
-  const frameUrl = activePoint?._frame_path
-    ? `http://127.0.0.1:8000/${activePoint._frame_path.replace(/^\.\//, "")}`
-    : null;
+  const frameUrl = getFullUrl(activePoint?._frame_path);
 
   // Save to library once both explanation AND point metadata are ready.
   // eslint-disable-next-line react-hooks/exhaustive-deps

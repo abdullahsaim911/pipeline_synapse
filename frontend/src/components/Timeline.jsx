@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import { getInterventionPoints } from "../api";
+import { getInterventionPoints, getFullUrl } from "../api";
 
 export default function Timeline({
   jobId,
@@ -59,9 +59,7 @@ export default function Timeline({
   const thumbnailUrl  = videoId
     ? `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`
     : null;
-  const frameUrl = selectedPoint?._frame_path
-    ? `http://127.0.0.1:8000/${selectedPoint._frame_path.replace(/^\.\//, "")}`
-    : null;
+  const frameUrl = getFullUrl(selectedPoint?._frame_path);
 
   return (
     <div className="flex h-full w-full bg-paper overflow-hidden">
@@ -356,6 +354,11 @@ function LaneTimeline({ totalSeconds, pointsByCategory, selectedId, onSelect }) 
 
   const timeToX = (s) => PADDING_LEFT + (s / totalSeconds) * TIMELINE_WIDTH;
 
+  // Debug: log points
+  console.log("[LaneTimeline] pointsByCategory:", pointsByCategory);
+  console.log("[LaneTimeline] totalSeconds:", totalSeconds);
+  console.log("[LaneTimeline] selectedId:", selectedId);
+
   // Ruler labels — every minute up to 6 labels
   const numLabels  = Math.min(6, Math.ceil(totalSeconds / 60) + 1);
   const labelStep  = totalSeconds / (numLabels - 1);
@@ -369,11 +372,16 @@ function LaneTimeline({ totalSeconds, pointsByCategory, selectedId, onSelect }) 
     ...pointsByCategory.equation,
     ...pointsByCategory.diagram,
     ...pointsByCategory.chart,
+    ...pointsByCategory.graph,  // Fixed: missing graph category
   ];
   const selectedPoint = allPoints.find((p) => p.id === selectedId);
   const playheadX     = selectedPoint
     ? timeToX(parseTimeToSeconds(selectedPoint.timestamp))
     : null;
+
+  console.log("[LaneTimeline] allPoints length:", allPoints.length);
+  console.log("[LaneTimeline] selectedPoint:", selectedPoint);
+  console.log("[LaneTimeline] playheadX:", playheadX);
 
   const LANES_LIST = [
     { key: "equation", label: "Equations", color: CATEGORY_COLORS.equation },

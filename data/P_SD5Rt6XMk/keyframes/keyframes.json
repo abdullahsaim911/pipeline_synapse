@@ -1,0 +1,98 @@
+[
+  {
+    "timestamp": "00:24",
+    "timestamp_seconds": 24.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0000_00_24.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.2819,
+    "clip_confidence": 0.2819
+  },
+  {
+    "timestamp": "05:02",
+    "timestamp_seconds": 302.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0001_05_02.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3148,
+    "clip_confidence": 0.3148
+  },
+  {
+    "timestamp": "05:06",
+    "timestamp_seconds": 306.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0002_05_06.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3148,
+    "clip_confidence": 0.3148
+  },
+  {
+    "timestamp": "05:08",
+    "timestamp_seconds": 308.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0003_05_08.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.315,
+    "clip_confidence": 0.315
+  },
+  {
+    "timestamp": "05:20",
+    "timestamp_seconds": 320.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0004_05_20.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3148,
+    "clip_confidence": 0.3148
+  },
+  {
+    "timestamp": "05:30",
+    "timestamp_seconds": 330.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0005_05_30.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3159,
+    "clip_confidence": 0.3159
+  },
+  {
+    "timestamp": "05:32",
+    "timestamp_seconds": 332.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0006_05_32.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3189,
+    "clip_confidence": 0.3189
+  },
+  {
+    "timestamp": "05:34",
+    "timestamp_seconds": 334.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0007_05_34.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.319,
+    "clip_confidence": 0.319
+  },
+  {
+    "timestamp": "05:36",
+    "timestamp_seconds": 336.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0008_05_36.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3191,
+    "clip_confidence": 0.3191
+  },
+  {
+    "timestamp": "06:12",
+    "timestamp_seconds": 372.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0009_06_12.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.2888,
+    "clip_confidence": 0.2888
+  },
+  {
+    "timestamp": "06:24",
+    "timestamp_seconds": 384.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0010_06_24.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.2894,
+    "clip_confidence": 0.2894
+  },
+  {
+    "timestamp": "07:40",
+    "timestamp_seconds": 460.0,
+    "frame_path": "data\\P_SD5Rt6XMk\\keyframes\\frame_0011_07_40.jpg",
+    "content_type": "chemistry",
+    "complexity_score": 0.3146,
+    "clip_confidence": 0.3146
+  }
+]

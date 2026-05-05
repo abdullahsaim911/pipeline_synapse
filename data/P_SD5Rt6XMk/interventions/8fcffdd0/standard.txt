@@ -1,0 +1,13 @@
+Your teacher is showing this to explain the stability of nuclei and how certain ratios of protons to neutrons can make a nucleus stable or unstable, regardless of its weight.
+
+To visualize this, let's break down the four distinct zones in the frame:
+
+1. Top Left: This corner contains an equation representing a chemical reaction between carbon-14 (CH_2^14) and oxygen (O_2), which produces carbon dioxide (CO_2) and water (H_2O). The equation reads as CH_2^14 + 2O_2 -> CO_2 + 2H_2O.
+
+2. Top Right: Here, you find a chemical structure for a molecule of carbon-16 (C_8H_8O_4), which is a stable form of carbon with more neutrons than carbon-14 to help balance the positive charges of its protons.
+
+3. Bottom Left: The nucleus diagram in this corner represents the atomic structure of an atom, containing protons and neutrons. Protons carry positive charge, while neutrons are neutral. The number of protons determines the element, while the number of neutrons helps determine the isotope's stability.
+
+4. Bottom Right: The isotopes diagram shows various forms of carbon with different numbers of neutrons. For example, C-12 has six protons and six neutrons, making it stable, while C-14 has eight protons and six neutrons, making it unstable.
+
+Your teacher is emphasizing that the stability of a nucleus isn't always intuitive because it depends on the ratio of protons to neutrons. In general, very heavy and light nuclei can be unstable, but certain ratios are more stable than others. Understanding this will help us better grasp why some nuclei behave as they do.

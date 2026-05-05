@@ -1,0 +1,36 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "top_left": "Equation: ΣF/m = a",
+      "top_center": "Equation: ΣF = ma",
+      "top_right": "Equation: ΣF = mΔV/Δt",
+      "middle_left": "Equation: ΣF = Δ(mv)/Δt",
+      "middle_center": "Equation: ΣF = ΔP/Δt",
+      "bottom_left": "Equation: m(v_f - v_i)/Δt",
+      "bottom_center": "Equation: (mv_f - mv_i)/Δt",
+      "bottom_right": "Equation: m(v_f - v_i)/Δt"
+    }
+  },
+  "structural_description": "The frame is divided into multiple zones, each containing a different equation related to force, mass, velocity, and acceleration. The equations are connected by lines and arrows, indicating their relationships.",
+  "reading_order": [
+    "top_left",
+    "top_center",
+    "top_right",
+    "middle_left",
+    "middle_center",
+    "middle_right",
+    "bottom_left",
+    "bottom_center",
+    "bottom_right"
+  ],
+  "layout": "The frame is organized into a grid of nine zones, each containing a different equation. The equations are connected by lines and arrows, indicating their relationships.",
+  "text_readout": "ΣF/m = a\nΣF = ma\nΣF = mΔV/Δt\nΣF = Δ(mv)/Δt\nΣF = ΔP/Δt\nm(v_f - v_i)/Δt\n(mv_f - mv_i)/Δt\nm(v_f - v_i)/Δt",
+  "spatial_map": "The top left zone contains the equation ΣF/m = a, the top center zone contains ΣF = ma, the top right zone contains ΣF = mΔV/Δt, the middle left zone contains ΣF = Δ(mv)/Δt, the middle center zone contains ΣF = ΔP/Δt, the middle right zone contains ΣF = ΔP/Δt, the bottom left zone contains m(v_f - v_i)/Δt, the bottom center zone contains (mv_f - mv_i)/Δt, and the bottom right zone contains m(v_f - v_i)/Δt.",
+  "colors_styles": "The equations are written in different colors: ΣF/m = a in yellow, ΣF = ma in blue, ΣF = mΔV/Δt in green, ΣF = Δ(mv)/Δt in white, ΣF = ΔP/Δt in red, m(v_f - v_i)/Δt in blue, (mv_f - mv_i)/Δt in green, and m(v_f - v_i)/Δt in blue. The lines and arrows are black.",
+  "missing_elements": null,
+  "detected_types": [
+    "unknown"
+  ],
+  "conceptual_hints": ""
+}

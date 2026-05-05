@@ -182,9 +182,16 @@ export async function getInterventionPoints(jobId, videoId) {
 /* -------------------------------------------------------------------------- */
 
 // Convert local file path to full URL
-function getFullUrl(path) {
+export function getFullUrl(path) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
+  // Use custom protocol for local files in the data directory
+  if (path.startsWith("data") || path.startsWith("data\\")) {
+    const url = window.synapseProtocol?.getDataUrl(path) || "";
+    console.log("[api.js] getFullUrl:", path, "->", url);
+    console.log("[api.js] synapseProtocol available:", !!window.synapseProtocol);
+    return url;
+  }
   return `http://127.0.0.1:8000/${path.replace(/^\.\//, "")}`;
 }
 
@@ -241,27 +248,13 @@ async function getInterventionExplanation(videoId, interventionId, mode) {
         throw new Error(`Explain failed: ${res.status} — ${errBody}`);
       }
       const data = await res.json();
-      let audioBlobUrl = null;
+      let audioUrl = null;
       if (data.audio_file_path) {
-        // Construct full URL from local path
-        const audioUrl = getFullUrl(data.audio_file_path);
-        // Fetch audio as blob and hand a local blob URL to the Audio element.
-        try {
-          const audioRes = await fetch(audioUrl);
-          if (audioRes.ok) {
-            const blob = await audioRes.blob();
-            audioBlobUrl = URL.createObjectURL(blob);
-          } else {
-            console.warn(
-              "[Synapse] Audio file not served by backend:",
-              audioRes.status,
-            );
-          }
-        } catch (e) {
-          console.warn("[Synapse] Could not fetch audio file:", e.message);
-        }
+        // Construct full URL from local path using custom protocol
+        audioUrl = getFullUrl(data.audio_file_path);
+        console.log("[api.js] Audio URL constructed:", data.audio_file_path, "->", audioUrl);
       }
-      return { ...data, audio_file_path: audioBlobUrl };
+      return { ...data, audio_file_path: audioUrl };
     })
     .catch((err) => {
       // Don't cache failures — allow retry on next call

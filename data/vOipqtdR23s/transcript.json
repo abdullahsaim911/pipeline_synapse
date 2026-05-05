@@ -1,0 +1,1928 @@
+{
+  "video_id": "vOipqtdR23s",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.148503699999992,
+  "entry_count": 274,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.33,
+      "end": 1.8900000000000001,
+      "duration": 1.56,
+      "text": "- [Instructor] Let's explore\nthe ideas of position,"
+    },
+    {
+      "time": "00:01",
+      "start": 1.89,
+      "end": 4.2299999999999995,
+      "duration": 2.34,
+      "text": "speed, and velocity."
+    },
+    {
+      "time": "00:04",
+      "start": 4.23,
+      "end": 5.3100000000000005,
+      "duration": 1.08,
+      "text": "So let's start with an example."
+    },
+    {
+      "time": "00:05",
+      "start": 5.31,
+      "end": 7.77,
+      "duration": 2.46,
+      "text": "We have a car parked here\nsomewhere on the road."
+    },
+    {
+      "time": "00:07",
+      "start": 7.77,
+      "end": 9.149999999999999,
+      "duration": 1.38,
+      "text": "What is its position?"
+    },
+    {
+      "time": "00:09",
+      "start": 9.15,
+      "end": 9.983,
+      "duration": 0.833,
+      "text": "So let's start with that."
+    },
+    {
+      "time": "00:09",
+      "start": 9.983,
+      "end": 12.63,
+      "duration": 2.647,
+      "text": "So what is its position?"
+    },
+    {
+      "time": "00:12",
+      "start": 12.63,
+      "end": 16.53,
+      "duration": 3.9,
+      "text": "Well, the meaning of position\nis basically location."
+    },
+    {
+      "time": "00:16",
+      "start": 16.53,
+      "end": 17.46,
+      "duration": 0.93,
+      "text": "That's it."
+    },
+    {
+      "time": "00:17",
+      "start": 17.46,
+      "end": 19.17,
+      "duration": 1.71,
+      "text": "That's what position is."
+    },
+    {
+      "time": "00:19",
+      "start": 19.17,
+      "end": 20.400000000000002,
+      "duration": 1.23,
+      "text": "But how do I measure that?"
+    },
+    {
+      "time": "00:20",
+      "start": 20.4,
+      "end": 22.229999999999997,
+      "duration": 1.83,
+      "text": "Well, for that, we need a reference point."
+    },
+    {
+      "time": "00:22",
+      "start": 22.23,
+      "end": 24.45,
+      "duration": 2.22,
+      "text": "You always measure the location"
+    },
+    {
+      "time": "00:24",
+      "start": 24.45,
+      "end": 26.82,
+      "duration": 2.37,
+      "text": "by measuring how far it\nis from some reference."
+    },
+    {
+      "time": "00:26",
+      "start": 26.82,
+      "end": 29.91,
+      "duration": 3.09,
+      "text": "So for example, let's\nchoose this as a reference."
+    },
+    {
+      "time": "00:29",
+      "start": 29.91,
+      "end": 32.25,
+      "duration": 2.34,
+      "text": "We usually call the reference as a zero,"
+    },
+    {
+      "time": "00:32",
+      "start": 32.25,
+      "end": 34.98,
+      "duration": 2.73,
+      "text": "or you can call that as an\norigin, whatever you want."
+    },
+    {
+      "time": "00:34",
+      "start": 34.98,
+      "end": 37.556999999999995,
+      "duration": 2.577,
+      "text": "It's not necessary, but\nit's convenient to do that."
+    },
+    {
+      "time": "00:37",
+      "start": 37.557,
+      "end": 39.99,
+      "duration": 2.433,
+      "text": "And now we can measure this."
+    },
+    {
+      "time": "00:39",
+      "start": 39.99,
+      "end": 41.49,
+      "duration": 1.5,
+      "text": "So if you measure this,"
+    },
+    {
+      "time": "00:41",
+      "start": 41.49,
+      "end": 44.197,
+      "duration": 2.707,
+      "text": "let's say it turns out to be\n10 meters, we can now say,"
+    },
+    {
+      "time": "00:44",
+      "start": 44.197,
+      "end": 47.52,
+      "duration": 3.323,
+      "text": "\"Hey, the position of\nthat car is 10 meters.\""
+    },
+    {
+      "time": "00:47",
+      "start": 47.52,
+      "end": 50.010000000000005,
+      "duration": 2.49,
+      "text": "But you can immediately\nsee one problem with this."
+    },
+    {
+      "time": "00:50",
+      "start": 50.01,
+      "end": 52.62,
+      "duration": 2.61,
+      "text": "If I just said the position is 10 meters,"
+    },
+    {
+      "time": "00:52",
+      "start": 52.62,
+      "end": 53.61,
+      "duration": 0.99,
+      "text": "we wouldn't know whether you were talking"
+    },
+    {
+      "time": "00:53",
+      "start": 53.61,
+      "end": 57.48,
+      "duration": 3.87,
+      "text": "about 10 meters to the right\nor 10 meters to the left."
+    },
+    {
+      "time": "00:57",
+      "start": 57.48,
+      "end": 59.81999999999999,
+      "duration": 2.34,
+      "text": "And therefore, one way to resolve this"
+    },
+    {
+      "time": "00:59",
+      "start": 59.82,
+      "end": 64.35,
+      "duration": 4.53,
+      "text": "is to say, \"The position is\n10 meters to the right,\" okay?"
+    },
+    {
+      "time": "01:04",
+      "start": 64.35,
+      "end": 67.32,
+      "duration": 2.97,
+      "text": "But another way to say\nthat, to say the same thing"
+    },
+    {
+      "time": "01:07",
+      "start": 67.32,
+      "end": 68.52,
+      "duration": 1.2,
+      "text": "that the position is\n10 meters to the right,"
+    },
+    {
+      "time": "01:08",
+      "start": 68.52,
+      "end": 71.03999999999999,
+      "duration": 2.52,
+      "text": "another way to say this is we could choose"
+    },
+    {
+      "time": "01:11",
+      "start": 71.04,
+      "end": 73.92,
+      "duration": 2.88,
+      "text": "all the markings on the\nright side of that origin"
+    },
+    {
+      "time": "01:13",
+      "start": 73.92,
+      "end": 75.60000000000001,
+      "duration": 1.68,
+      "text": "to be positive, and everything else"
+    },
+    {
+      "time": "01:15",
+      "start": 75.6,
+      "end": 78.44999999999999,
+      "duration": 2.85,
+      "text": "on the left side to be negative."
+    },
+    {
+      "time": "01:18",
+      "start": 78.45,
+      "end": 80.76,
+      "duration": 2.31,
+      "text": "And so now, we could say\nthe position of that car"
+    },
+    {
+      "time": "01:20",
+      "start": 80.76,
+      "end": 83.67,
+      "duration": 2.91,
+      "text": "is plus 10 meters."
+    },
+    {
+      "time": "01:23",
+      "start": 83.67,
+      "end": 86.25,
+      "duration": 2.58,
+      "text": "That automatically means\nit's 10 meters to the right."
+    },
+    {
+      "time": "01:26",
+      "start": 86.25,
+      "end": 88.08,
+      "duration": 1.83,
+      "text": "Now, again, it's not necessary to choose"
+    },
+    {
+      "time": "01:28",
+      "start": 88.08,
+      "end": 89.7,
+      "duration": 1.62,
+      "text": "a right side to be positive."
+    },
+    {
+      "time": "01:29",
+      "start": 89.7,
+      "end": 91.65,
+      "duration": 1.95,
+      "text": "You can choose left side\nto be positive as well."
+    },
+    {
+      "time": "01:31",
+      "start": 91.65,
+      "end": 94.08000000000001,
+      "duration": 2.43,
+      "text": "You're completely free to decide that."
+    },
+    {
+      "time": "01:34",
+      "start": 94.08,
+      "end": 96.81,
+      "duration": 2.73,
+      "text": "It's just that it's more of a convention"
+    },
+    {
+      "time": "01:36",
+      "start": 96.81,
+      "end": 98.88,
+      "duration": 2.07,
+      "text": "to choose right side to be positive."
+    },
+    {
+      "time": "01:38",
+      "start": 98.88,
+      "end": 101.22,
+      "duration": 2.34,
+      "text": "And similarly, if the car was parked,"
+    },
+    {
+      "time": "01:41",
+      "start": 101.22,
+      "end": 103.17,
+      "duration": 1.95,
+      "text": "say, on a vertical track,"
+    },
+    {
+      "time": "01:43",
+      "start": 103.17,
+      "end": 107.55,
+      "duration": 4.38,
+      "text": "then we would usually choose\nupwards to be positive."
+    },
+    {
+      "time": "01:47",
+      "start": 107.55,
+      "end": 110.46,
+      "duration": 2.91,
+      "text": "Again, that's a convention,\nbut we usually do that."
+    },
+    {
+      "time": "01:50",
+      "start": 110.46,
+      "end": 112.5,
+      "duration": 2.04,
+      "text": "And now as a result of that, look,"
+    },
+    {
+      "time": "01:52",
+      "start": 112.5,
+      "end": 115.8,
+      "duration": 3.3,
+      "text": "the position of this car\nbecame minus 15 meter."
+    },
+    {
+      "time": "01:55",
+      "start": 115.8,
+      "end": 119.22,
+      "duration": 3.42,
+      "text": "The minus represents it's\nbelow our reference point."
+    },
+    {
+      "time": "01:59",
+      "start": 119.22,
+      "end": 121.67999999999999,
+      "duration": 2.46,
+      "text": "Anyways, we can go ahead\nand write down the position."
+    },
+    {
+      "time": "02:01",
+      "start": 121.68,
+      "end": 125.16000000000001,
+      "duration": 3.48,
+      "text": "We usually use the letter\nX to denote the position."
+    },
+    {
+      "time": "02:05",
+      "start": 125.16,
+      "end": 127.08,
+      "duration": 1.92,
+      "text": "But again, you can\nchoose whatever you want."
+    },
+    {
+      "time": "02:07",
+      "start": 127.08,
+      "end": 128.91,
+      "duration": 1.83,
+      "text": "It's more of a convention to do that."
+    },
+    {
+      "time": "02:08",
+      "start": 128.91,
+      "end": 132.63,
+      "duration": 3.72,
+      "text": "So in our case, X equals 10 meters."
+    },
+    {
+      "time": "02:12",
+      "start": 132.63,
+      "end": 133.65,
+      "duration": 1.02,
+      "text": "You could write plus 10"
+    },
+    {
+      "time": "02:13",
+      "start": 133.65,
+      "end": 135.72,
+      "duration": 2.07,
+      "text": "to represent that plus\non the positive side."
+    },
+    {
+      "time": "02:15",
+      "start": 135.72,
+      "end": 139.035,
+      "duration": 3.315,
+      "text": "But even if you don't write\nplus, it's understood."
+    },
+    {
+      "time": "02:19",
+      "start": 139.035,
+      "end": 140.35999999999999,
+      "duration": 1.325,
+      "text": "So if you don't have\nany sign in front of it,"
+    },
+    {
+      "time": "02:20",
+      "start": 140.36,
+      "end": 142.26000000000002,
+      "duration": 1.9,
+      "text": "it already means it's positive."
+    },
+    {
+      "time": "02:22",
+      "start": 142.26,
+      "end": 145.2,
+      "duration": 2.94,
+      "text": "But I could have also written\n10 meters to the right."
+    },
+    {
+      "time": "02:25",
+      "start": 145.2,
+      "end": 147.153,
+      "duration": 1.953,
+      "text": "I could have written 10 meters."
+    },
+    {
+      "time": "02:28",
+      "start": 148.68,
+      "end": 150.3,
+      "duration": 1.62,
+      "text": "I would've drawn arrow mark like this."
+    },
+    {
+      "time": "02:30",
+      "start": 150.3,
+      "end": 152.13000000000002,
+      "duration": 1.83,
+      "text": "All of them represent the same thing."
+    },
+    {
+      "time": "02:32",
+      "start": 152.13,
+      "end": 153.24,
+      "duration": 1.11,
+      "text": "But you can see what's important"
+    },
+    {
+      "time": "02:33",
+      "start": 153.24,
+      "end": 154.35000000000002,
+      "duration": 1.11,
+      "text": "is that to represent position,"
+    },
+    {
+      "time": "02:34",
+      "start": 154.35,
+      "end": 157.23,
+      "duration": 2.88,
+      "text": "you need both the magnitude, 10 meters,"
+    },
+    {
+      "time": "02:37",
+      "start": 157.23,
+      "end": 160.82999999999998,
+      "duration": 3.6,
+      "text": "and the direction as\na sign or you write it"
+    },
+    {
+      "time": "02:40",
+      "start": 160.83,
+      "end": 162.45000000000002,
+      "duration": 1.62,
+      "text": "or you use an arrow mark,"
+    },
+    {
+      "time": "02:42",
+      "start": 162.45,
+      "end": 164.88,
+      "duration": 2.43,
+      "text": "but you have both magnitude and direction."
+    },
+    {
+      "time": "02:44",
+      "start": 164.88,
+      "end": 167.25,
+      "duration": 2.37,
+      "text": "So quantities that have\nboth magnitude and direction"
+    },
+    {
+      "time": "02:47",
+      "start": 167.25,
+      "end": 169.77,
+      "duration": 2.52,
+      "text": "are called vector quantities."
+    },
+    {
+      "time": "02:49",
+      "start": 169.77,
+      "end": 171.42000000000002,
+      "duration": 1.65,
+      "text": "So position is a vector quantity,"
+    },
+    {
+      "time": "02:51",
+      "start": 171.42,
+      "end": 172.98,
+      "duration": 1.56,
+      "text": "because it requires a direction."
+    },
+    {
+      "time": "02:52",
+      "start": 172.98,
+      "end": 177.09,
+      "duration": 4.11,
+      "text": "And we represent that\nby using an arrow mark."
+    },
+    {
+      "time": "02:57",
+      "start": 177.09,
+      "end": 180.21,
+      "duration": 3.12,
+      "text": "And what's important about\nthe value of the position is,"
+    },
+    {
+      "time": "03:00",
+      "start": 180.21,
+      "end": 182.61,
+      "duration": 2.4,
+      "text": "if we had chosen a completely\ndifferent reference point,"
+    },
+    {
+      "time": "03:02",
+      "start": 182.61,
+      "end": 184.05,
+      "duration": 1.44,
+      "text": "let's say we had chosen\nour reference point"
+    },
+    {
+      "time": "03:04",
+      "start": 184.05,
+      "end": 186.66000000000003,
+      "duration": 2.61,
+      "text": "to be somewhere over here,\nlet's say somewhere over here."
+    },
+    {
+      "time": "03:06",
+      "start": 186.66,
+      "end": 188.94,
+      "duration": 2.28,
+      "text": "Now look, the position\nof that car has changed."
+    },
+    {
+      "time": "03:08",
+      "start": 188.94,
+      "end": 190.47,
+      "duration": 1.53,
+      "text": "Even though the car has not moved,"
+    },
+    {
+      "time": "03:10",
+      "start": 190.47,
+      "end": 194.58,
+      "duration": 4.11,
+      "text": "its new position is minus five meters."
+    },
+    {
+      "time": "03:14",
+      "start": 194.58,
+      "end": 196.65,
+      "duration": 2.07,
+      "text": "That's because the\nreference point changed."
+    },
+    {
+      "time": "03:16",
+      "start": 196.65,
+      "end": 198.6,
+      "duration": 1.95,
+      "text": "So the value, this position value"
+    },
+    {
+      "time": "03:18",
+      "start": 198.6,
+      "end": 201.18,
+      "duration": 2.58,
+      "text": "depends on where you choose\nyour reference point."
+    },
+    {
+      "time": "03:21",
+      "start": 201.18,
+      "end": 202.11,
+      "duration": 0.93,
+      "text": "Another way of saying this"
+    },
+    {
+      "time": "03:22",
+      "start": 202.11,
+      "end": 205.89000000000001,
+      "duration": 3.78,
+      "text": "is saying that the position\ndepends on reference frame."
+    },
+    {
+      "time": "03:25",
+      "start": 205.89,
+      "end": 207.23999999999998,
+      "duration": 1.35,
+      "text": "So it's always important to know"
+    },
+    {
+      "time": "03:27",
+      "start": 207.24,
+      "end": 209.43,
+      "duration": 2.19,
+      "text": "where you're reference point is,"
+    },
+    {
+      "time": "03:29",
+      "start": 209.43,
+      "end": 211.89000000000001,
+      "duration": 2.46,
+      "text": "which direction you've chosen,\npositives and negatives."
+    },
+    {
+      "time": "03:31",
+      "start": 211.89,
+      "end": 214.26,
+      "duration": 2.37,
+      "text": "Anyways, coming back now,"
+    },
+    {
+      "time": "03:34",
+      "start": 214.26,
+      "end": 217.5,
+      "duration": 3.24,
+      "text": "let's make that car actually move."
+    },
+    {
+      "time": "03:37",
+      "start": 217.5,
+      "end": 222.5,
+      "duration": 5.0,
+      "text": "Let's say that car moves from\nhere to here in three seconds."
+    },
+    {
+      "time": "03:42",
+      "start": 222.99,
+      "end": 227.99,
+      "duration": 5.0,
+      "text": "Now, we can define a new\nquantity called a velocity."
+    },
+    {
+      "time": "03:48",
+      "start": 228.72,
+      "end": 232.10999999999999,
+      "duration": 3.39,
+      "text": "Velocity is a measure of how quickly"
+    },
+    {
+      "time": "03:52",
+      "start": 232.11,
+      "end": 234.48000000000002,
+      "duration": 2.37,
+      "text": "the position of the car changed."
+    },
+    {
+      "time": "03:54",
+      "start": 234.48,
+      "end": 237.69,
+      "duration": 3.21,
+      "text": "And we calculate it as change in position."
+    },
+    {
+      "time": "03:57",
+      "start": 237.69,
+      "end": 239.07,
+      "duration": 1.38,
+      "text": "The triangle means delta,"
+    },
+    {
+      "time": "03:59",
+      "start": 239.07,
+      "end": 241.04999999999998,
+      "duration": 1.98,
+      "text": "it means change in position,"
+    },
+    {
+      "time": "04:01",
+      "start": 241.05,
+      "end": 245.79000000000002,
+      "duration": 4.74,
+      "text": "divided by the time taken\nfor that change in position."
+    },
+    {
+      "time": "04:05",
+      "start": 245.79,
+      "end": 248.88,
+      "duration": 3.09,
+      "text": "So in our example, in our example,"
+    },
+    {
+      "time": "04:08",
+      "start": 248.88,
+      "end": 251.16,
+      "duration": 2.28,
+      "text": "what is the change in position?"
+    },
+    {
+      "time": "04:11",
+      "start": 251.16,
+      "end": 252.75,
+      "duration": 1.59,
+      "text": "Well, it was here to begin with."
+    },
+    {
+      "time": "04:12",
+      "start": 252.75,
+      "end": 253.83,
+      "duration": 1.08,
+      "text": "It went here."
+    },
+    {
+      "time": "04:13",
+      "start": 253.83,
+      "end": 256.02000000000004,
+      "duration": 2.19,
+      "text": "So from 10 to 25,"
+    },
+    {
+      "time": "04:16",
+      "start": 256.02,
+      "end": 259.14,
+      "duration": 3.12,
+      "text": "the position has changed by 15 meters."
+    },
+    {
+      "time": "04:19",
+      "start": 259.14,
+      "end": 260.28,
+      "duration": 1.14,
+      "text": "How did I get that 15?"
+    },
+    {
+      "time": "04:20",
+      "start": 260.28,
+      "end": 262.91999999999996,
+      "duration": 2.64,
+      "text": "Well, I just did 25 minus 10, right?"
+    },
+    {
+      "time": "04:22",
+      "start": 262.92,
+      "end": 266.64000000000004,
+      "duration": 3.72,
+      "text": "So I did 25 meters minus 10 meters."
+    },
+    {
+      "time": "04:26",
+      "start": 266.64,
+      "end": 268.77,
+      "duration": 2.13,
+      "text": "That's the change in position."
+    },
+    {
+      "time": "04:28",
+      "start": 268.77,
+      "end": 271.923,
+      "duration": 3.153,
+      "text": "Divided by time taken,\nwhich is three seconds."
+    },
+    {
+      "time": "04:32",
+      "start": 272.76,
+      "end": 277.76,
+      "duration": 5.0,
+      "text": "So 25 minus 10 is 15, 15 by\n3 is 5 meters per second."
+    },
+    {
+      "time": "04:38",
+      "start": 278.58,
+      "end": 281.07,
+      "duration": 2.49,
+      "text": "So what does this number mean?"
+    },
+    {
+      "time": "04:41",
+      "start": 281.07,
+      "end": 283.5,
+      "duration": 2.43,
+      "text": "Well, first of all, we see\na positive sign over here."
+    },
+    {
+      "time": "04:43",
+      "start": 283.5,
+      "end": 285.99,
+      "duration": 2.49,
+      "text": "That means that velocity is to the right,"
+    },
+    {
+      "time": "04:45",
+      "start": 285.99,
+      "end": 286.92,
+      "duration": 0.93,
+      "text": "and that makes sense."
+    },
+    {
+      "time": "04:46",
+      "start": 286.92,
+      "end": 289.44,
+      "duration": 2.52,
+      "text": "The position has changed\nto the right side."
+    },
+    {
+      "time": "04:49",
+      "start": 289.44,
+      "end": 292.68,
+      "duration": 3.24,
+      "text": "Velocity is also a vector quantity, okay?"
+    },
+    {
+      "time": "04:52",
+      "start": 292.68,
+      "end": 294.51,
+      "duration": 1.83,
+      "text": "Because position is a vector quantity,"
+    },
+    {
+      "time": "04:54",
+      "start": 294.51,
+      "end": 296.21999999999997,
+      "duration": 1.71,
+      "text": "so velocity becomes a vector quantity."
+    },
+    {
+      "time": "04:56",
+      "start": 296.22,
+      "end": 297.05300000000005,
+      "duration": 0.833,
+      "text": "So the sign tells you"
+    },
+    {
+      "time": "04:57",
+      "start": 297.053,
+      "end": 298.383,
+      "duration": 1.33,
+      "text": "which direction the position has changed,"
+    },
+    {
+      "time": "04:58",
+      "start": 298.383,
+      "end": 301.04999999999995,
+      "duration": 2.667,
+      "text": "that the new position is to the right side"
+    },
+    {
+      "time": "05:01",
+      "start": 301.05,
+      "end": 303.33,
+      "duration": 2.28,
+      "text": "of my initial position."
+    },
+    {
+      "time": "05:03",
+      "start": 303.33,
+      "end": 304.5,
+      "duration": 1.17,
+      "text": "And what does the number say?"
+    },
+    {
+      "time": "05:04",
+      "start": 304.5,
+      "end": 306.03,
+      "duration": 1.53,
+      "text": "Five meters per second."
+    },
+    {
+      "time": "05:06",
+      "start": 306.03,
+      "end": 308.94,
+      "duration": 2.91,
+      "text": "It says that if the car was\ntraveling at a constant rate,"
+    },
+    {
+      "time": "05:08",
+      "start": 308.94,
+      "end": 311.16,
+      "duration": 2.22,
+      "text": "it would change its position five meters"
+    },
+    {
+      "time": "05:11",
+      "start": 311.16,
+      "end": 313.95000000000005,
+      "duration": 2.79,
+      "text": "to the right every second."
+    },
+    {
+      "time": "05:13",
+      "start": 313.95,
+      "end": 315.143,
+      "duration": 1.193,
+      "text": "So if I could see an animation of it,"
+    },
+    {
+      "time": "05:15",
+      "start": 315.143,
+      "end": 316.71,
+      "duration": 1.567,
+      "text": "this is what it would look like."
+    },
+    {
+      "time": "05:16",
+      "start": 316.71,
+      "end": 319.22999999999996,
+      "duration": 2.52,
+      "text": "So in the first second,\nlook, it changed by five."
+    },
+    {
+      "time": "05:19",
+      "start": 319.23,
+      "end": 321.87,
+      "duration": 2.64,
+      "text": "And the next second, it changed\nagain by five to the right."
+    },
+    {
+      "time": "05:21",
+      "start": 321.87,
+      "end": 323.19,
+      "duration": 1.32,
+      "text": "And the last second, again,"
+    },
+    {
+      "time": "05:23",
+      "start": 323.19,
+      "end": 326.37,
+      "duration": 3.18,
+      "text": "it changed by five meters to the right."
+    },
+    {
+      "time": "05:26",
+      "start": 326.37,
+      "end": 327.81,
+      "duration": 1.44,
+      "text": "Now, of course you could ask,"
+    },
+    {
+      "time": "05:27",
+      "start": 327.81,
+      "end": 331.05,
+      "duration": 3.24,
+      "text": "what if the car was not\nmoving at a constant rate?"
+    },
+    {
+      "time": "05:31",
+      "start": 331.05,
+      "end": 333.39,
+      "duration": 2.34,
+      "text": "What if it was traveling\na little faster earlier,"
+    },
+    {
+      "time": "05:33",
+      "start": 333.39,
+      "end": 335.55,
+      "duration": 2.16,
+      "text": "and then it became slower a little later?"
+    },
+    {
+      "time": "05:35",
+      "start": 335.55,
+      "end": 337.74,
+      "duration": 2.19,
+      "text": "Well, then, this no longer means"
+    },
+    {
+      "time": "05:37",
+      "start": 337.74,
+      "end": 339.87,
+      "duration": 2.13,
+      "text": "it's traveling exactly\nfive meters per second."
+    },
+    {
+      "time": "05:39",
+      "start": 339.87,
+      "end": 343.23,
+      "duration": 3.36,
+      "text": "Then this would represent\nan average value."
+    },
+    {
+      "time": "05:43",
+      "start": 343.23,
+      "end": 345.6,
+      "duration": 2.37,
+      "text": "But let's not worry too much about it."
+    },
+    {
+      "time": "05:45",
+      "start": 345.6,
+      "end": 347.85,
+      "duration": 2.25,
+      "text": "Okay, let's take one more example."
+    },
+    {
+      "time": "05:47",
+      "start": 347.85,
+      "end": 349.5,
+      "duration": 1.65,
+      "text": "Let's say this time, our car goes"
+    },
+    {
+      "time": "05:49",
+      "start": 349.5,
+      "end": 351.81,
+      "duration": 2.31,
+      "text": "from here to here in five seconds."
+    },
+    {
+      "time": "05:51",
+      "start": 351.81,
+      "end": 354.72,
+      "duration": 2.91,
+      "text": "Why don't you figure out\nwhat the velocity is?"
+    },
+    {
+      "time": "05:54",
+      "start": 354.72,
+      "end": 356.25,
+      "duration": 1.53,
+      "text": "All right, let's see."
+    },
+    {
+      "time": "05:56",
+      "start": 356.25,
+      "end": 358.68,
+      "duration": 2.43,
+      "text": "So velocity is, we need to figure out"
+    },
+    {
+      "time": "05:58",
+      "start": 358.68,
+      "end": 359.76,
+      "duration": 1.08,
+      "text": "the change in position."
+    },
+    {
+      "time": "05:59",
+      "start": 359.76,
+      "end": 360.99,
+      "duration": 1.23,
+      "text": "How do we figure out\nthe change in position?"
+    },
+    {
+      "time": "06:00",
+      "start": 360.99,
+      "end": 362.34000000000003,
+      "duration": 1.35,
+      "text": "Well, it was initially here."
+    },
+    {
+      "time": "06:02",
+      "start": 362.34,
+      "end": 363.51,
+      "duration": 1.17,
+      "text": "It finally came over here."
+    },
+    {
+      "time": "06:03",
+      "start": 363.51,
+      "end": 366.33,
+      "duration": 2.82,
+      "text": "So changing position is\nalways final minus initial."
+    },
+    {
+      "time": "06:06",
+      "start": 366.33,
+      "end": 368.34,
+      "duration": 2.01,
+      "text": "That's exactly what we\ndid earlier as well."
+    },
+    {
+      "time": "06:08",
+      "start": 368.34,
+      "end": 369.9,
+      "duration": 1.56,
+      "text": "So final velocity."
+    },
+    {
+      "time": "06:09",
+      "start": 369.9,
+      "end": 371.31,
+      "duration": 1.41,
+      "text": "Oops, let's use the same color."
+    },
+    {
+      "time": "06:11",
+      "start": 371.31,
+      "end": 373.32,
+      "duration": 2.01,
+      "text": "Final position, sorry."
+    },
+    {
+      "time": "06:13",
+      "start": 373.32,
+      "end": 376.98,
+      "duration": 3.66,
+      "text": "Final position minus the initial position,"
+    },
+    {
+      "time": "06:16",
+      "start": 376.98,
+      "end": 380.07300000000004,
+      "duration": 3.093,
+      "text": "divided by the time taken for that change."
+    },
+    {
+      "time": "06:21",
+      "start": 381.3,
+      "end": 383.22,
+      "duration": 1.92,
+      "text": "And so what will we get?"
+    },
+    {
+      "time": "06:23",
+      "start": 383.22,
+      "end": 385.98,
+      "duration": 2.76,
+      "text": "Well, this is 5 minus 25 is minus 20."
+    },
+    {
+      "time": "06:25",
+      "start": 385.98,
+      "end": 388.92,
+      "duration": 2.94,
+      "text": "Minus 20 by 5 is minus 4."
+    },
+    {
+      "time": "06:28",
+      "start": 388.92,
+      "end": 393.81,
+      "duration": 4.89,
+      "text": "So this time, I would get\nminus 4 meters per second."
+    },
+    {
+      "time": "06:33",
+      "start": 393.81,
+      "end": 395.19,
+      "duration": 1.38,
+      "text": "Again, what does this mean?"
+    },
+    {
+      "time": "06:35",
+      "start": 395.19,
+      "end": 396.57,
+      "duration": 1.38,
+      "text": "Well, again, the minus sign is saying"
+    },
+    {
+      "time": "06:36",
+      "start": 396.57,
+      "end": 398.79,
+      "duration": 2.22,
+      "text": "that the velocity of the the position"
+    },
+    {
+      "time": "06:38",
+      "start": 398.79,
+      "end": 401.58000000000004,
+      "duration": 2.79,
+      "text": "has changed to the left over here."
+    },
+    {
+      "time": "06:41",
+      "start": 401.58,
+      "end": 402.413,
+      "duration": 0.833,
+      "text": "And that makes sense."
+    },
+    {
+      "time": "06:42",
+      "start": 402.413,
+      "end": 404.49,
+      "duration": 2.077,
+      "text": "So we see that, we literally\nsee the position has changed."
+    },
+    {
+      "time": "06:44",
+      "start": 404.49,
+      "end": 405.93,
+      "duration": 1.44,
+      "text": "The new position is to the left side"
+    },
+    {
+      "time": "06:45",
+      "start": 405.93,
+      "end": 406.86,
+      "duration": 0.93,
+      "text": "of the initial position."
+    },
+    {
+      "time": "06:46",
+      "start": 406.86,
+      "end": 408.45,
+      "duration": 1.59,
+      "text": "So that's what the negative sign says."
+    },
+    {
+      "time": "06:48",
+      "start": 408.45,
+      "end": 410.13,
+      "duration": 1.68,
+      "text": "But what does four meter per second say?"
+    },
+    {
+      "time": "06:50",
+      "start": 410.13,
+      "end": 412.02,
+      "duration": 1.89,
+      "text": "Ooh, it's now saying that if the car"
+    },
+    {
+      "time": "06:52",
+      "start": 412.02,
+      "end": 413.49,
+      "duration": 1.47,
+      "text": "is going at a constant rate,"
+    },
+    {
+      "time": "06:53",
+      "start": 413.49,
+      "end": 415.77,
+      "duration": 2.28,
+      "text": "the car would now be covering four meters."
+    },
+    {
+      "time": "06:55",
+      "start": 415.77,
+      "end": 416.60999999999996,
+      "duration": 0.84,
+      "text": "It's changing its position"
+    },
+    {
+      "time": "06:56",
+      "start": 416.61,
+      "end": 419.40000000000003,
+      "duration": 2.79,
+      "text": "four meters to the left every second."
+    },
+    {
+      "time": "06:59",
+      "start": 419.4,
+      "end": 422.46,
+      "duration": 3.06,
+      "text": "It's a little slower\nthan what we got earlier."
+    },
+    {
+      "time": "07:02",
+      "start": 422.46,
+      "end": 424.44,
+      "duration": 1.98,
+      "text": "Now, speaking about faster and slower,"
+    },
+    {
+      "time": "07:04",
+      "start": 424.44,
+      "end": 426.93,
+      "duration": 2.49,
+      "text": "that brings another quantity in our mind"
+    },
+    {
+      "time": "07:06",
+      "start": 426.93,
+      "end": 428.85,
+      "duration": 1.92,
+      "text": "something that we are\nprobably familiar with."
+    },
+    {
+      "time": "07:08",
+      "start": 428.85,
+      "end": 430.98,
+      "duration": 2.13,
+      "text": "That is speed."
+    },
+    {
+      "time": "07:10",
+      "start": 430.98,
+      "end": 432.96000000000004,
+      "duration": 1.98,
+      "text": "Well, think of speed as how quickly"
+    },
+    {
+      "time": "07:12",
+      "start": 432.96,
+      "end": 435.03,
+      "duration": 2.07,
+      "text": "you travel some distance."
+    },
+    {
+      "time": "07:15",
+      "start": 435.03,
+      "end": 438.65999999999997,
+      "duration": 3.63,
+      "text": "And we calculate speed\nas distance over time."
+    },
+    {
+      "time": "07:18",
+      "start": 438.66,
+      "end": 440.64000000000004,
+      "duration": 1.98,
+      "text": "And again, this would be true if the car"
+    },
+    {
+      "time": "07:20",
+      "start": 440.64,
+      "end": 443.37,
+      "duration": 2.73,
+      "text": "was going at a constant\nspeed, but if it was not,"
+    },
+    {
+      "time": "07:23",
+      "start": 443.37,
+      "end": 446.34000000000003,
+      "duration": 2.97,
+      "text": "this would represent the\naverage speed, just like before."
+    },
+    {
+      "time": "07:26",
+      "start": 446.34,
+      "end": 449.587,
+      "duration": 3.247,
+      "text": "But anyways, we can now ask,"
+    },
+    {
+      "time": "07:29",
+      "start": 449.587,
+      "end": 451.22999999999996,
+      "duration": 1.643,
+      "text": "\"Well, what's the difference\nbetween speed and velocity?\""
+    },
+    {
+      "time": "07:31",
+      "start": 451.23,
+      "end": 454.14000000000004,
+      "duration": 2.91,
+      "text": "They sound very similar, right?"
+    },
+    {
+      "time": "07:34",
+      "start": 454.14,
+      "end": 455.34,
+      "duration": 1.2,
+      "text": "Well, let's look at our examples"
+    },
+    {
+      "time": "07:35",
+      "start": 455.34,
+      "end": 457.10999999999996,
+      "duration": 1.77,
+      "text": "one more time and calculate speed."
+    },
+    {
+      "time": "07:37",
+      "start": 457.11,
+      "end": 459.24,
+      "duration": 2.13,
+      "text": "Well, in the first case, what's the speed?"
+    },
+    {
+      "time": "07:39",
+      "start": 459.24,
+      "end": 461.343,
+      "duration": 2.103,
+      "text": "Well, the speed over here was,"
+    },
+    {
+      "time": "07:42",
+      "start": 462.24,
+      "end": 464.13,
+      "duration": 1.89,
+      "text": "or the average speed, I should say."
+    },
+    {
+      "time": "07:44",
+      "start": 464.13,
+      "end": 465.48,
+      "duration": 1.35,
+      "text": "What is the distance traveled?"
+    },
+    {
+      "time": "07:45",
+      "start": 465.48,
+      "end": 468.3,
+      "duration": 2.82,
+      "text": "Well, the distance\ntravel is from 10 to 25."
+    },
+    {
+      "time": "07:48",
+      "start": 468.3,
+      "end": 472.65000000000003,
+      "duration": 4.35,
+      "text": "That is 15 meters\ndivided by the time taken"
+    },
+    {
+      "time": "07:52",
+      "start": 472.65,
+      "end": 476.01,
+      "duration": 3.36,
+      "text": "for that distance to be\ntraveled, that is three seconds."
+    },
+    {
+      "time": "07:56",
+      "start": 476.01,
+      "end": 477.84,
+      "duration": 1.83,
+      "text": "And so 15 by 3 is 5."
+    },
+    {
+      "time": "07:57",
+      "start": 477.84,
+      "end": 479.25,
+      "duration": 1.41,
+      "text": "I'm getting the same answer as before,"
+    },
+    {
+      "time": "07:59",
+      "start": 479.25,
+      "end": 481.44,
+      "duration": 2.19,
+      "text": "five meters per second."
+    },
+    {
+      "time": "08:01",
+      "start": 481.44,
+      "end": 482.73,
+      "duration": 1.29,
+      "text": "Again, what does this mean?"
+    },
+    {
+      "time": "08:02",
+      "start": 482.73,
+      "end": 483.90000000000003,
+      "duration": 1.17,
+      "text": "This means now the car travels"
+    },
+    {
+      "time": "08:03",
+      "start": 483.9,
+      "end": 485.54999999999995,
+      "duration": 1.65,
+      "text": "the distance of five meters every second,"
+    },
+    {
+      "time": "08:05",
+      "start": 485.55,
+      "end": 487.23,
+      "duration": 1.68,
+      "text": "that if it was going at a constant rate."
+    },
+    {
+      "time": "08:07",
+      "start": 487.23,
+      "end": 488.97,
+      "duration": 1.74,
+      "text": "But if it was not, then\nthis would represent"
+    },
+    {
+      "time": "08:08",
+      "start": 488.97,
+      "end": 490.59000000000003,
+      "duration": 1.62,
+      "text": "the average value just like before."
+    },
+    {
+      "time": "08:10",
+      "start": 490.59,
+      "end": 492.15,
+      "duration": 1.56,
+      "text": "So in general, we just usually call this"
+    },
+    {
+      "time": "08:12",
+      "start": 492.15,
+      "end": 493.383,
+      "duration": 1.233,
+      "text": "the average speed, okay?"
+    },
+    {
+      "time": "08:14",
+      "start": 494.85,
+      "end": 496.47,
+      "duration": 1.62,
+      "text": "But this is the same as before."
+    },
+    {
+      "time": "08:16",
+      "start": 496.47,
+      "end": 499.02000000000004,
+      "duration": 2.55,
+      "text": "So what's the difference\nbetween the speed and velocity?"
+    },
+    {
+      "time": "08:19",
+      "start": 499.02,
+      "end": 500.7,
+      "duration": 1.68,
+      "text": "Ah, let's look at the second example."
+    },
+    {
+      "time": "08:20",
+      "start": 500.7,
+      "end": 502.26,
+      "duration": 1.56,
+      "text": "That will clear things for us."
+    },
+    {
+      "time": "08:22",
+      "start": 502.26,
+      "end": 503.88,
+      "duration": 1.62,
+      "text": "So if you go back to our second example"
+    },
+    {
+      "time": "08:23",
+      "start": 503.88,
+      "end": 506.19,
+      "duration": 2.31,
+      "text": "where the card moved back,\nwhat is the speed now?"
+    },
+    {
+      "time": "08:26",
+      "start": 506.19,
+      "end": 507.66,
+      "duration": 1.47,
+      "text": "Or what is the average?"
+    },
+    {
+      "time": "08:27",
+      "start": 507.66,
+      "end": 511.47,
+      "duration": 3.81,
+      "text": "Oops, okay, what is the average speed now?"
+    },
+    {
+      "time": "08:31",
+      "start": 511.47,
+      "end": 512.9100000000001,
+      "duration": 1.44,
+      "text": "Well, the average speed would be"
+    },
+    {
+      "time": "08:32",
+      "start": 512.91,
+      "end": 514.86,
+      "duration": 1.95,
+      "text": "distance divide by time."
+    },
+    {
+      "time": "08:34",
+      "start": 514.86,
+      "end": 516.6,
+      "duration": 1.74,
+      "text": "Again, what is the distance traveled?"
+    },
+    {
+      "time": "08:36",
+      "start": 516.6,
+      "end": 518.07,
+      "duration": 1.47,
+      "text": "This time, the distance traveled,"
+    },
+    {
+      "time": "08:38",
+      "start": 518.07,
+      "end": 519.69,
+      "duration": 1.62,
+      "text": "a car came from here to here,"
+    },
+    {
+      "time": "08:39",
+      "start": 519.69,
+      "end": 522.2700000000001,
+      "duration": 2.58,
+      "text": "so the distance traveled is 20."
+    },
+    {
+      "time": "08:42",
+      "start": 522.27,
+      "end": 523.71,
+      "duration": 1.44,
+      "text": "Or is it minus 20?"
+    },
+    {
+      "time": "08:43",
+      "start": 523.71,
+      "end": 524.76,
+      "duration": 1.05,
+      "text": "Well, when it comes to distance,"
+    },
+    {
+      "time": "08:44",
+      "start": 524.76,
+      "end": 526.98,
+      "duration": 2.22,
+      "text": "I don't care about whether\nit's traveling to the left"
+    },
+    {
+      "time": "08:46",
+      "start": 526.98,
+      "end": 528.33,
+      "duration": 1.35,
+      "text": "or it's traveling to the right."
+    },
+    {
+      "time": "08:48",
+      "start": 528.33,
+      "end": 531.87,
+      "duration": 3.54,
+      "text": "All I care about is the\ndistance, and the distance is 20."
+    },
+    {
+      "time": "08:51",
+      "start": 531.87,
+      "end": 533.4,
+      "duration": 1.53,
+      "text": "And that's the key difference."
+    },
+    {
+      "time": "08:53",
+      "start": 533.4,
+      "end": 535.4399999999999,
+      "duration": 2.04,
+      "text": "So over here, there will\nbe no negative signs,"
+    },
+    {
+      "time": "08:55",
+      "start": 535.44,
+      "end": 540.36,
+      "duration": 4.92,
+      "text": "so it'll be just 20 meters\ndivided by 5 seconds."
+    },
+    {
+      "time": "09:00",
+      "start": 540.36,
+      "end": 542.28,
+      "duration": 1.92,
+      "text": "So I get 20 by 5."
+    },
+    {
+      "time": "09:02",
+      "start": 542.28,
+      "end": 545.793,
+      "duration": 3.513,
+      "text": "That is just 4 meters per second."
+    },
+    {
+      "time": "09:07",
+      "start": 547.05,
+      "end": 549.51,
+      "duration": 2.46,
+      "text": "And you can see there\nis no sign over here."
+    },
+    {
+      "time": "09:09",
+      "start": 549.51,
+      "end": 551.73,
+      "duration": 2.22,
+      "text": "This means the big difference\nbetween speed and velocity"
+    },
+    {
+      "time": "09:11",
+      "start": 551.73,
+      "end": 555.0,
+      "duration": 3.27,
+      "text": "is speed only has a magnitude."
+    },
+    {
+      "time": "09:15",
+      "start": 555.0,
+      "end": 556.86,
+      "duration": 1.86,
+      "text": "It does not have a direction,"
+    },
+    {
+      "time": "09:16",
+      "start": 556.86,
+      "end": 558.8100000000001,
+      "duration": 1.95,
+      "text": "because distance does\nnot have a direction."
+    },
+    {
+      "time": "09:18",
+      "start": 558.81,
+      "end": 561.06,
+      "duration": 2.25,
+      "text": "I don't care about which\ndirection it is moving."
+    },
+    {
+      "time": "09:21",
+      "start": 561.06,
+      "end": 562.8599999999999,
+      "duration": 1.8,
+      "text": "And since speed does not have a direction,"
+    },
+    {
+      "time": "09:22",
+      "start": 562.86,
+      "end": 564.99,
+      "duration": 2.13,
+      "text": "it is a scalar quantity."
+    },
+    {
+      "time": "09:24",
+      "start": 564.99,
+      "end": 566.04,
+      "duration": 1.05,
+      "text": "That's the big difference."
+    },
+    {
+      "time": "09:26",
+      "start": 566.04,
+      "end": 569.8499999999999,
+      "duration": 3.81,
+      "text": "You can think of speed as\nvelocity without the direction."
+    },
+    {
+      "time": "09:29",
+      "start": 569.85,
+      "end": 571.26,
+      "duration": 1.41,
+      "text": "They both have the same units,"
+    },
+    {
+      "time": "09:31",
+      "start": 571.26,
+      "end": 572.91,
+      "duration": 1.65,
+      "text": "meters per second as a standard unit,"
+    },
+    {
+      "time": "09:32",
+      "start": 572.91,
+      "end": 574.53,
+      "duration": 1.62,
+      "text": "or in a more day-to-day life,"
+    },
+    {
+      "time": "09:34",
+      "start": 574.53,
+      "end": 576.39,
+      "duration": 1.86,
+      "text": "unit would be miles per hour."
+    },
+    {
+      "time": "09:36",
+      "start": 576.39,
+      "end": 579.15,
+      "duration": 2.76,
+      "text": "So in short, the big difference\nbetween velocity and speed"
+    },
+    {
+      "time": "09:39",
+      "start": 579.15,
+      "end": 580.56,
+      "duration": 1.41,
+      "text": "is that when it comes to velocity,"
+    },
+    {
+      "time": "09:40",
+      "start": 580.56,
+      "end": 582.8399999999999,
+      "duration": 2.28,
+      "text": "we care about how much\nthe position has changed."
+    },
+    {
+      "time": "09:42",
+      "start": 582.84,
+      "end": 585.33,
+      "duration": 2.49,
+      "text": "So for example, if the\ncar started from here,"
+    },
+    {
+      "time": "09:45",
+      "start": 585.33,
+      "end": 587.4000000000001,
+      "duration": 2.07,
+      "text": "went over here, and then\nlet's say it came back"
+    },
+    {
+      "time": "09:47",
+      "start": 587.4,
+      "end": 590.43,
+      "duration": 3.03,
+      "text": "to that same position, the\nchanging position is zero,"
+    },
+    {
+      "time": "09:50",
+      "start": 590.43,
+      "end": 593.64,
+      "duration": 3.21,
+      "text": "because the car has come back\nto the same position, right?"
+    },
+    {
+      "time": "09:53",
+      "start": 593.64,
+      "end": 594.96,
+      "duration": 1.32,
+      "text": "So as far as velocity is considered,"
+    },
+    {
+      "time": "09:54",
+      "start": 594.96,
+      "end": 596.58,
+      "duration": 1.62,
+      "text": "there is no change in position."
+    },
+    {
+      "time": "09:56",
+      "start": 596.58,
+      "end": 598.7470000000001,
+      "duration": 2.167,
+      "text": "But when it comes to speed, speed says,"
+    },
+    {
+      "time": "09:58",
+      "start": 598.747,
+      "end": 600.5999999999999,
+      "duration": 1.853,
+      "text": "\"Well, I don't care about"
+    },
+    {
+      "time": "10:00",
+      "start": 600.6,
+      "end": 602.3100000000001,
+      "duration": 1.71,
+      "text": "where your initial and final position is."
+    },
+    {
+      "time": "10:02",
+      "start": 602.31,
+      "end": 604.0799999999999,
+      "duration": 1.77,
+      "text": "All I care about is how much\ndistance you've traveled,"
+    },
+    {
+      "time": "10:04",
+      "start": 604.08,
+      "end": 606.1500000000001,
+      "duration": 2.07,
+      "text": "and you have traveled\nsome distance, right?\""
+    },
+    {
+      "time": "10:06",
+      "start": 606.15,
+      "end": 607.05,
+      "duration": 0.9,
+      "text": "Distance represents,"
+    },
+    {
+      "time": "10:07",
+      "start": 607.05,
+      "end": 609.51,
+      "duration": 2.46,
+      "text": "you can think of it as the\nodometer reading in your car."
+    },
+    {
+      "time": "10:09",
+      "start": 609.51,
+      "end": 611.79,
+      "duration": 2.28,
+      "text": "That number will keep going up, right?"
+    },
+    {
+      "time": "10:11",
+      "start": 611.79,
+      "end": 613.56,
+      "duration": 1.77,
+      "text": "So you would have traveled some distance,"
+    },
+    {
+      "time": "10:13",
+      "start": 613.56,
+      "end": 614.52,
+      "duration": 0.96,
+      "text": "and so the distance traveled"
+    },
+    {
+      "time": "10:14",
+      "start": 614.52,
+      "end": 617.1899999999999,
+      "duration": 2.67,
+      "text": "in this round trip would not be zero."
+    },
+    {
+      "time": "10:17",
+      "start": 617.19,
+      "end": 619.5600000000001,
+      "duration": 2.37,
+      "text": "So you see, velocity is a vector quantity."
+    },
+    {
+      "time": "10:19",
+      "start": 619.56,
+      "end": 621.15,
+      "duration": 1.59,
+      "text": "Direction matters."
+    },
+    {
+      "time": "10:21",
+      "start": 621.15,
+      "end": 624.0,
+      "duration": 2.85,
+      "text": "But when it comes to speed,\nthe direction doesn't matter."
+    }
+  ]
+}

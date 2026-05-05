@@ -1,0 +1,105 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "zone_mapping": {
+        "top_left": "Physical drawing of a nucleus",
+        "top_center": "Equation with a nucleus and a beta particle",
+        "top_right": "Physical drawing of a nucleus",
+        "bottom_left": "Text block with a description of the process",
+        "bottom_center": "Equation with a nucleus and a beta particle",
+        "bottom_right": "Physical drawing of a nucleus"
+      },
+      "isolated_extraction": {
+        "top_left": {
+          "shape": "Circle with a nucleus",
+          "color": "Red and blue",
+          "description": "Nucleus of Carbon-14"
+        },
+        "top_center": {
+          "shape": "Arrow",
+          "color": "Blue",
+          "description": "Spontaneous decay"
+        },
+        "top_right": {
+          "shape": "Circle with a nucleus",
+          "color": "Red and blue",
+          "description": "Nucleus of Nitrogen-14"
+        },
+        "bottom_left": {
+          "shape": "Text block",
+          "color": "Black",
+          "description": "Parent (Unstable) all by itself"
+        },
+        "bottom_center": {
+          "shape": "Arrow",
+          "color": "Blue",
+          "description": "Spontaneous decay"
+        },
+        "bottom_right": {
+          "shape": "Circle with a nucleus",
+          "color": "Red and blue",
+          "description": "Nucleus of Nitrogen-14"
+        }
+      },
+      "zoned_ocr": {
+        "top_left": "14C",
+        "top_center": "14N + β",
+        "top_right": "14N",
+        "bottom_left": "Parent (Unstable) all by itself",
+        "bottom_center": "14N + β",
+        "bottom_right": "14N"
+      },
+      "cross_connections": {
+        "top_left": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        },
+        "top_center": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        },
+        "top_right": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        },
+        "bottom_left": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        },
+        "bottom_center": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        },
+        "bottom_right": {
+          "connection": "Spontaneous decay",
+          "description": "Nucleus of Carbon-14 decays spontaneously"
+        }
+      }
+    },
+    "structural_description": "The frame contains a series of physical drawings and equations related to the decay of Carbon-14 into Nitrogen-14. The drawings depict the nuclei of Carbon-14 and Nitrogen-14, with arrows indicating the decay process. Text blocks provide descriptions of the process and the resulting stable daughter nucleus.",
+    "reading_order": [
+      "top_left",
+      "top_center",
+      "top_right",
+      "bottom_left",
+      "bottom_center",
+      "bottom_right"
+    ],
+    "layout": "The frame is divided into six zones, each containing a physical drawing, an equation, or a text block. The drawings and equations are connected by arrows indicating the decay process.",
+    "text_readout": "14C\n14N + β\n14N\nParent (Unstable) all by itself\n14N + β\n14N",
+    "spatial_map": "The top left, top center, and top right zones contain physical drawings of the nuclei. The bottom left, bottom center, and bottom right zones contain text blocks and equations.",
+    "colors_styles": "The drawings are in red and blue, with arrows in blue. The text is in black."
+  },
+  "missing_elements": null,
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": ""
+}

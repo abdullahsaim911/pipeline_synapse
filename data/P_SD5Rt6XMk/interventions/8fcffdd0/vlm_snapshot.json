@@ -1,0 +1,39 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "top_left": "Equation",
+      "top_right": "Chemical structure",
+      "bottom_left": "Nucleus diagram",
+      "bottom_right": "Isotopes diagram"
+    },
+    "structural_description": "The frame is divided into four distinct zones. The top left corner contains an equation, the top right corner shows a chemical structure, the bottom left corner displays a nucleus diagram, and the bottom right corner illustrates isotopes.",
+    "reading_order": [
+      "top_left",
+      "top_right",
+      "bottom_left",
+      "bottom_right"
+    ],
+    "layout": "The frame is divided into four quadrants, each containing a different STEM element.",
+    "text_readout": {
+      "top_left": "CH₄ + 2O₂ → CO₂ + 2H₂O",
+      "top_right": "C₂H₆O",
+      "bottom_left": "Nucleus",
+      "bottom_right": "Isotopes"
+    },
+    "spatial_map": "The equation is in the top left corner, the chemical structure is in the top right corner, the nucleus diagram is in the bottom left corner, and the isotopes diagram is in the bottom right corner.",
+    "colors_styles": "The frame uses a black background with colorful elements for the STEM visuals. The text is in white, and the diagrams are in red and blue.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}
