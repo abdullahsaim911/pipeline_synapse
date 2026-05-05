@@ -1,0 +1,103 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "zone_mapping": {
+        "top left": "Equation",
+        "top right": "Equation",
+        "bottom left": "Physical drawing",
+        "bottom right": "Physical drawing"
+      },
+      "isolated_extraction": {
+        "top left": {
+          "equation": "ΣF/m = a",
+          "vector": "ΣF",
+          "arrow": "→",
+          "label": "ΣF",
+          "text": "ΣF = Δ(mV)/Δt"
+        },
+        "top right": {
+          "equation": "Momentum",
+          "vector": "ΣF",
+          "arrow": "→",
+          "label": "ΣF",
+          "text": "P = mV (kg·m/s)"
+        },
+        "bottom left": {
+          "physical drawing": "Baseball",
+          "hand": "Hand",
+          "vector": "→",
+          "label": "ΣF",
+          "text": "Δ(mVf - mVi)/Δt"
+        },
+        "bottom right": {
+          "physical drawing": "Baseball",
+          "hand": "Hand",
+          "vector": "→",
+          "label": "ΣF",
+          "text": "Δ(mVf - mVi)/Δt"
+        }
+      },
+      "zoned_ocr": {
+        "top left": {
+          "equation": "ΣF/m = a",
+          "vector": "ΣF",
+          "arrow": "→",
+          "label": "ΣF",
+          "text": "ΣF = Δ(mV)/Δt"
+        },
+        "top right": {
+          "equation": "Momentum",
+          "vector": "ΣF",
+          "arrow": "→",
+          "label": "ΣF",
+          "text": "P = mV (kg·m/s)"
+        },
+        "bottom left": {
+          "physical drawing": "Baseball",
+          "hand": "Hand",
+          "vector": "→",
+          "label": "ΣF",
+          "text": "Δ(mVf - mVi)/Δt"
+        },
+        "bottom right": {
+          "physical drawing": "Baseball",
+          "hand": "Hand",
+          "vector": "→",
+          "label": "ΣF",
+          "text": "Δ(mVf - mVi)/Δt"
+        }
+      },
+      "cross_connections": {
+        "top left to top right": "Equation",
+        "top left to bottom left": "Equation",
+        "top left to bottom right": "Equation",
+        "top right to bottom left": "Equation",
+        "top right to bottom right": "Equation"
+      }
+    },
+    "structural_description": "The frame is divided into four zones: top left, top right, bottom left, and bottom right. Each zone contains a different STEM element, including equations, physical drawings of baseballs, and hand gestures. The zones are connected by lines and arrows, indicating relationships between the elements.",
+    "reading_order": [
+      "top left",
+      "top right",
+      "bottom left",
+      "bottom right"
+    ],
+    "layout": "The frame is arranged in a 2x2 grid, with each zone occupying a quadrant.",
+    "text_readout": "ΣF/m = a, ΣF = m a, ΣF = m ΔV/Δt, ΣF = Δ(mV)/Δt, Momentum, ΣF = ΔP/Δt, How quickly momentum is changing, P = mV (kg·m/s), m(Vf - Vi), Δ(mVf - mVi), Δ(mVf - mVi)/Δt, Hand, Hand, Hand, Hand, Baseball, Baseball, Baseball, Baseball, Vector, Vector, Vector, Vector, Label, Label, Label, Label",
+    "spatial_map": "The top left zone contains equations, the top right zone contains equations and a label, the bottom left zone contains a physical drawing and equations, and the bottom right zone contains a physical drawing and equations.",
+    "colors_styles": "The frame uses black text on a black background, with white arrows and vectors. The physical drawings are in white, and the labels are in black.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

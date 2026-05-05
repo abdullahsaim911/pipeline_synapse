@@ -111,6 +111,20 @@ def stop_ollama(process):
             process.kill()
             process.wait()
             print("[Ollama] Server killed")
+            
+        if os.name == 'nt':
+            print("[Ollama] Sweeping for orphaned VRAM child processes...")
+            subprocess.run(
+                ["taskkill", "/F", "/IM", "ollama_llama_server.exe"], 
+                stdout=subprocess.DEVNULL, 
+                stderr=subprocess.DEVNULL
+            )
+            subprocess.run(
+                ["taskkill", "/F", "/IM", "ollama.exe"], 
+                stdout=subprocess.DEVNULL, 
+                stderr=subprocess.DEVNULL
+            )
+
     except Exception as e:
         print(f"[Ollama] Error stopping server: {e}")
 

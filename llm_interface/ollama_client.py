@@ -155,7 +155,8 @@ class OllamaClient:
         payload = {
             "model": self.model,
             "prompt": prompt,
-            "stream": stream
+            "stream": stream,
+            "keep_alive": 0
         }
 
         # Merge with default options
