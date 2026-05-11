@@ -58,6 +58,8 @@ export default function Explanation({
   const [audioDuration, setAudioDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState(null);
   const [audioLoading, setAudioLoading] = useState(false);
+  const trackRef = useRef(null);
+  const dragging = useRef(false);
 
   // Load all points (for the left sidebar contents list)
   useEffect(() => {
@@ -143,6 +145,12 @@ export default function Explanation({
   }, [audioUrl, autoPlay]);
 
   // ---- Actions -------------------------------------------------------------
+
+  const seekTo = (fraction) => {
+    const audio = audioRef.current;
+    if (!audio || !audioDuration) return;
+    audio.currentTime = Math.max(0, Math.min(1, fraction)) * audioDuration;
+  };
 
   const togglePlay = () => {
     const audio = audioRef.current;
@@ -442,22 +450,44 @@ export default function Explanation({
 
             <div className="flex-1">
               {/* Progress track */}
-              <div className="h-0.5 bg-paper-edge rounded-sm relative">
-                <div
-                  className="h-full bg-ink rounded-sm transition-all duration-100"
-                  style={{
-                    width:
-                      audioDuration > 0
-                        ? `${(currentTime / audioDuration) * 100}%`
-                        : "0%",
-                  }}
-                />
+              <div
+                ref={trackRef}
+                className="h-2 -my-[7px] cursor-pointer group relative"
+                onPointerDown={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const fraction = (e.clientX - rect.left) / rect.width;
+                  seekTo(fraction);
+                  dragging.current = true;
+                  e.currentTarget.setPointerCapture(e.pointerId);
+                }}
+                onPointerMove={(e) => {
+                  if (!dragging.current) return;
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const fraction = (e.clientX - rect.left) / rect.width;
+                  seekTo(fraction);
+                }}
+                onPointerUp={() => {
+                  dragging.current = false;
+                }}
+              >
+                {/* Visible thin track line */}
+                <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-0.5 bg-paper-edge rounded-sm">
+                  <div
+                    className="h-full bg-ink rounded-sm"
+                    style={{
+                      width:
+                        audioDuration > 0
+                          ? `${(currentTime / audioDuration) * 100}%`
+                          : "0%",
+                    }}
+                  />
+                </div>
+                {/* Thumb */}
                 {audioDuration > 0 && (
                   <div
-                    className="absolute top-1/2 w-2.5 h-2.5 bg-ink rounded-full transition-all duration-100"
+                    className="absolute top-1/2 w-2.5 h-2.5 bg-ink rounded-full -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
                     style={{
                       left: `${(currentTime / audioDuration) * 100}%`,
-                      transform: "translate(-50%, -50%)",
                     }}
                   />
                 )}
