@@ -1,0 +1,1592 @@
+{
+  "video_id": "R0XFqHBZfHc",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 2.022711400000844,
+  "entry_count": 226,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.15,
+      "end": 1.5299999999999998,
+      "duration": 1.38,
+      "text": "- [Instructor] You probably\nknow that Earth's gravity"
+    },
+    {
+      "time": "00:01",
+      "start": 1.53,
+      "end": 3.8099999999999996,
+      "duration": 2.28,
+      "text": "keeps you and everything\naround you stuck to Earth,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.81,
+      "end": 5.37,
+      "duration": 1.56,
+      "text": "and similarly, the Sun's gravity"
+    },
+    {
+      "time": "00:05",
+      "start": 5.37,
+      "end": 8.25,
+      "duration": 2.88,
+      "text": "keeps all the planets closed\ntogether in our Solar System."
+    },
+    {
+      "time": "00:08",
+      "start": 8.25,
+      "end": 11.879999999999999,
+      "duration": 3.63,
+      "text": "This, by the way, picture\nis not to scale, okay?"
+    },
+    {
+      "time": "00:11",
+      "start": 11.88,
+      "end": 13.290000000000001,
+      "duration": 1.41,
+      "text": "But the big question is,"
+    },
+    {
+      "time": "00:13",
+      "start": 13.29,
+      "end": 15.569999999999999,
+      "duration": 2.28,
+      "text": "what exactly is gravity,"
+    },
+    {
+      "time": "00:15",
+      "start": 15.57,
+      "end": 17.31,
+      "duration": 1.74,
+      "text": "and what exactly produces gravity?"
+    },
+    {
+      "time": "00:17",
+      "start": 17.31,
+      "end": 19.169999999999998,
+      "duration": 1.86,
+      "text": "Is it just the planets and stars"
+    },
+    {
+      "time": "00:19",
+      "start": 19.17,
+      "end": 21.450000000000003,
+      "duration": 2.28,
+      "text": "or other things can produce it too?"
+    },
+    {
+      "time": "00:21",
+      "start": 21.45,
+      "end": 22.68,
+      "duration": 1.23,
+      "text": "And we could have even more questions,"
+    },
+    {
+      "time": "00:22",
+      "start": 22.68,
+      "end": 23.512999999999998,
+      "duration": 0.833,
+      "text": "like for example,"
+    },
+    {
+      "time": "00:23",
+      "start": 23.513,
+      "end": 25.32,
+      "duration": 1.807,
+      "text": "the astronauts inside the\nspace station are floating."
+    },
+    {
+      "time": "00:25",
+      "start": 25.32,
+      "end": 27.33,
+      "duration": 2.01,
+      "text": "So is there gravity over there?"
+    },
+    {
+      "time": "00:27",
+      "start": 27.33,
+      "end": 28.95,
+      "duration": 1.62,
+      "text": "Well, let's find out."
+    },
+    {
+      "time": "00:28",
+      "start": 28.95,
+      "end": 30.689999999999998,
+      "duration": 1.74,
+      "text": "We experience a lot of force\nin our day-to-day life,"
+    },
+    {
+      "time": "00:30",
+      "start": 30.69,
+      "end": 33.24,
+      "duration": 2.55,
+      "text": "like friction, tension."
+    },
+    {
+      "time": "00:33",
+      "start": 33.24,
+      "end": 35.07,
+      "duration": 1.83,
+      "text": "There are other forces like normal forces,"
+    },
+    {
+      "time": "00:35",
+      "start": 35.07,
+      "end": 37.83,
+      "duration": 2.76,
+      "text": "and of course, one of\nthem is also gravity."
+    },
+    {
+      "time": "00:37",
+      "start": 37.83,
+      "end": 38.663,
+      "duration": 0.833,
+      "text": "But guess what?"
+    },
+    {
+      "time": "00:38",
+      "start": 38.663,
+      "end": 40.949999999999996,
+      "duration": 2.287,
+      "text": "Not all these forces are fundamental."
+    },
+    {
+      "time": "00:40",
+      "start": 40.95,
+      "end": 42.78,
+      "duration": 1.83,
+      "text": "In fact, most of these forces"
+    },
+    {
+      "time": "00:42",
+      "start": 42.78,
+      "end": 44.1,
+      "duration": 1.32,
+      "text": "are not fundamental forces at all."
+    },
+    {
+      "time": "00:44",
+      "start": 44.1,
+      "end": 45.72,
+      "duration": 1.62,
+      "text": "All these forces are actually"
+    },
+    {
+      "time": "00:45",
+      "start": 45.72,
+      "end": 49.379999999999995,
+      "duration": 3.66,
+      "text": "fundamentally electromagnetic force."
+    },
+    {
+      "time": "00:49",
+      "start": 49.38,
+      "end": 50.61,
+      "duration": 1.23,
+      "text": "What about gravity?"
+    },
+    {
+      "time": "00:50",
+      "start": 50.61,
+      "end": 55.35,
+      "duration": 4.74,
+      "text": "Gravity is another\nfundamental force of nature."
+    },
+    {
+      "time": "00:55",
+      "start": 55.35,
+      "end": 57.24,
+      "duration": 1.89,
+      "text": "But what exactly is it?"
+    },
+    {
+      "time": "00:57",
+      "start": 57.24,
+      "end": 60.63,
+      "duration": 3.39,
+      "text": "Well, you can think of gravity\nas a force of attraction."
+    },
+    {
+      "time": "01:00",
+      "start": 60.63,
+      "end": 62.730000000000004,
+      "duration": 2.1,
+      "text": "It's a fundamental force of attraction"
+    },
+    {
+      "time": "01:02",
+      "start": 62.73,
+      "end": 66.47999999999999,
+      "duration": 3.75,
+      "text": "between any two masses."
+    },
+    {
+      "time": "01:06",
+      "start": 66.48,
+      "end": 68.55,
+      "duration": 2.07,
+      "text": "For example, there's a force\nof attraction between Earth"
+    },
+    {
+      "time": "01:08",
+      "start": 68.55,
+      "end": 70.59,
+      "duration": 2.04,
+      "text": "and everything else that is on Earth,"
+    },
+    {
+      "time": "01:10",
+      "start": 70.59,
+      "end": 72.93,
+      "duration": 2.34,
+      "text": "like you, your friend, the house."
+    },
+    {
+      "time": "01:12",
+      "start": 72.93,
+      "end": 74.16000000000001,
+      "duration": 1.23,
+      "text": "Anything else that you can consider,"
+    },
+    {
+      "time": "01:14",
+      "start": 74.16,
+      "end": 75.96,
+      "duration": 1.8,
+      "text": "every single thing is\nattracted towards the Earth."
+    },
+    {
+      "time": "01:15",
+      "start": 75.96,
+      "end": 77.14999999999999,
+      "duration": 1.19,
+      "text": "And the reason they're\nattracted towards the Earth"
+    },
+    {
+      "time": "01:17",
+      "start": 77.15,
+      "end": 78.63000000000001,
+      "duration": 1.48,
+      "text": "is because the Earth has mass,"
+    },
+    {
+      "time": "01:18",
+      "start": 78.63,
+      "end": 81.96,
+      "duration": 3.33,
+      "text": "and you and your friend and\neverything else, they have mass."
+    },
+    {
+      "time": "01:21",
+      "start": 81.96,
+      "end": 83.78999999999999,
+      "duration": 1.83,
+      "text": "So any two masses will attract each other"
+    },
+    {
+      "time": "01:23",
+      "start": 83.79,
+      "end": 85.14,
+      "duration": 1.35,
+      "text": "with the force of gravity."
+    },
+    {
+      "time": "01:25",
+      "start": 85.14,
+      "end": 87.3,
+      "duration": 2.16,
+      "text": "Another example, the Earth and the Moon,"
+    },
+    {
+      "time": "01:27",
+      "start": 87.3,
+      "end": 88.47,
+      "duration": 1.17,
+      "text": "they both have mass,"
+    },
+    {
+      "time": "01:28",
+      "start": 88.47,
+      "end": 90.57,
+      "duration": 2.1,
+      "text": "and therefore the Earth attracts the Moon"
+    },
+    {
+      "time": "01:30",
+      "start": 90.57,
+      "end": 92.1,
+      "duration": 1.53,
+      "text": "with the force of gravity."
+    },
+    {
+      "time": "01:32",
+      "start": 92.1,
+      "end": 95.82,
+      "duration": 3.72,
+      "text": "Similarly, the Sun and all the\nother planets also have mass,"
+    },
+    {
+      "time": "01:35",
+      "start": 95.82,
+      "end": 97.22999999999999,
+      "duration": 1.41,
+      "text": "and therefore they attract each other,"
+    },
+    {
+      "time": "01:37",
+      "start": 97.23,
+      "end": 99.45,
+      "duration": 2.22,
+      "text": "again due to a force of gravity."
+    },
+    {
+      "time": "01:39",
+      "start": 99.45,
+      "end": 100.41,
+      "duration": 0.96,
+      "text": "But wait a second,"
+    },
+    {
+      "time": "01:40",
+      "start": 100.41,
+      "end": 102.17999999999999,
+      "duration": 1.77,
+      "text": "we might have some questions over here."
+    },
+    {
+      "time": "01:42",
+      "start": 102.18,
+      "end": 105.9,
+      "duration": 3.72,
+      "text": "The force of attraction can\nhappen at a distance, right?"
+    },
+    {
+      "time": "01:45",
+      "start": 105.9,
+      "end": 109.17,
+      "duration": 3.27,
+      "text": "That means gravity is a non-contact force."
+    },
+    {
+      "time": "01:49",
+      "start": 109.17,
+      "end": 113.16,
+      "duration": 3.99,
+      "text": "You don't need to be in contact\nfor gravity to be exerted."
+    },
+    {
+      "time": "01:53",
+      "start": 113.16,
+      "end": 114.75,
+      "duration": 1.59,
+      "text": "But how does it work?"
+    },
+    {
+      "time": "01:54",
+      "start": 114.75,
+      "end": 117.75,
+      "duration": 3.0,
+      "text": "For example, how does the\nEarth exert a force on the Moon"
+    },
+    {
+      "time": "01:57",
+      "start": 117.75,
+      "end": 120.27,
+      "duration": 2.52,
+      "text": "without ever being in contact with it?"
+    },
+    {
+      "time": "02:00",
+      "start": 120.27,
+      "end": 122.91,
+      "duration": 2.64,
+      "text": "Well, here's how we like\nto think about it, okay?"
+    },
+    {
+      "time": "02:02",
+      "start": 122.91,
+      "end": 125.34,
+      "duration": 2.43,
+      "text": "We like to imagine that Earth produces"
+    },
+    {
+      "time": "02:05",
+      "start": 125.34,
+      "end": 128.88,
+      "duration": 3.54,
+      "text": "what we call a gravitational\nfield everywhere."
+    },
+    {
+      "time": "02:08",
+      "start": 128.88,
+      "end": 130.17,
+      "duration": 1.29,
+      "text": "This is a field."
+    },
+    {
+      "time": "02:10",
+      "start": 130.17,
+      "end": 133.95,
+      "duration": 3.78,
+      "text": "A field exists in the space around it."
+    },
+    {
+      "time": "02:13",
+      "start": 133.95,
+      "end": 137.64,
+      "duration": 3.69,
+      "text": "And when any other mass comes in contact"
+    },
+    {
+      "time": "02:17",
+      "start": 137.64,
+      "end": 138.48,
+      "duration": 0.84,
+      "text": "with the gravitational field,"
+    },
+    {
+      "time": "02:18",
+      "start": 138.48,
+      "end": 140.94,
+      "duration": 2.46,
+      "text": "like for example, say the Moon,"
+    },
+    {
+      "time": "02:20",
+      "start": 140.94,
+      "end": 145.94,
+      "duration": 5.0,
+      "text": "it now, because of that\nfield, experiences a force."
+    },
+    {
+      "time": "02:26",
+      "start": 146.13,
+      "end": 150.84,
+      "duration": 4.71,
+      "text": "So the force is mediated\nvia the gravitational field."
+    },
+    {
+      "time": "02:30",
+      "start": 150.84,
+      "end": 152.73,
+      "duration": 1.89,
+      "text": "And I'm sure you might\nhave even more questions"
+    },
+    {
+      "time": "02:32",
+      "start": 152.73,
+      "end": 155.16,
+      "duration": 2.43,
+      "text": "about what exactly is a field and stuff,"
+    },
+    {
+      "time": "02:35",
+      "start": 155.16,
+      "end": 157.65,
+      "duration": 2.49,
+      "text": "but we'll not delve too deep into it."
+    },
+    {
+      "time": "02:37",
+      "start": 157.65,
+      "end": 158.82,
+      "duration": 1.17,
+      "text": "But anyways, because of this force,"
+    },
+    {
+      "time": "02:38",
+      "start": 158.82,
+      "end": 160.95,
+      "duration": 2.13,
+      "text": "the Moon is literally\nfalling towards the Earth,"
+    },
+    {
+      "time": "02:40",
+      "start": 160.95,
+      "end": 162.51,
+      "duration": 1.56,
+      "text": "but it doesn't crash into the Earth"
+    },
+    {
+      "time": "02:42",
+      "start": 162.51,
+      "end": 165.09,
+      "duration": 2.58,
+      "text": "because the Moon is also moving sidewards,"
+    },
+    {
+      "time": "02:45",
+      "start": 165.09,
+      "end": 168.51,
+      "duration": 3.42,
+      "text": "and as a result, it ends\nup orbiting the Earth."
+    },
+    {
+      "time": "02:48",
+      "start": 168.51,
+      "end": 169.85999999999999,
+      "duration": 1.35,
+      "text": "Okay, but what about the Moon?"
+    },
+    {
+      "time": "02:49",
+      "start": 169.86,
+      "end": 171.81,
+      "duration": 1.95,
+      "text": "Does it also produce\na gravitational field?"
+    },
+    {
+      "time": "02:51",
+      "start": 171.81,
+      "end": 172.92000000000002,
+      "duration": 1.11,
+      "text": "The answer is yes."
+    },
+    {
+      "time": "02:52",
+      "start": 172.92,
+      "end": 174.72,
+      "duration": 1.8,
+      "text": "The same thing applies over here."
+    },
+    {
+      "time": "02:54",
+      "start": 174.72,
+      "end": 177.0,
+      "duration": 2.28,
+      "text": "Moon produces also its\nown gravitational field,"
+    },
+    {
+      "time": "02:57",
+      "start": 177.0,
+      "end": 178.89,
+      "duration": 1.89,
+      "text": "and when the Earth, which is another mass,"
+    },
+    {
+      "time": "02:58",
+      "start": 178.89,
+      "end": 180.6,
+      "duration": 1.71,
+      "text": "comes in contact with\nthat gravitational field,"
+    },
+    {
+      "time": "03:00",
+      "start": 180.6,
+      "end": 183.0,
+      "duration": 2.4,
+      "text": "it also experiences a force."
+    },
+    {
+      "time": "03:03",
+      "start": 183.0,
+      "end": 184.2,
+      "duration": 1.2,
+      "text": "And that should make sense"
+    },
+    {
+      "time": "03:04",
+      "start": 184.2,
+      "end": 187.04999999999998,
+      "duration": 2.85,
+      "text": "because we know that forces come in pairs."
+    },
+    {
+      "time": "03:07",
+      "start": 187.05,
+      "end": 188.88000000000002,
+      "duration": 1.83,
+      "text": "So both the Earth and Moon"
+    },
+    {
+      "time": "03:08",
+      "start": 188.88,
+      "end": 190.44,
+      "duration": 1.56,
+      "text": "are gravitationally attracting each other"
+    },
+    {
+      "time": "03:10",
+      "start": 190.44,
+      "end": 194.13,
+      "duration": 3.69,
+      "text": "with exactly equal but opposite forces."
+    },
+    {
+      "time": "03:14",
+      "start": 194.13,
+      "end": 196.2,
+      "duration": 2.07,
+      "text": "But the next big question could be,"
+    },
+    {
+      "time": "03:16",
+      "start": 196.2,
+      "end": 200.01,
+      "duration": 3.81,
+      "text": "what does the strength\nof this force depend on?"
+    },
+    {
+      "time": "03:20",
+      "start": 200.01,
+      "end": 203.64,
+      "duration": 3.63,
+      "text": "Well, since gravity is\na force due to masses,"
+    },
+    {
+      "time": "03:23",
+      "start": 203.64,
+      "end": 206.51999999999998,
+      "duration": 2.88,
+      "text": "well, the strength depends on the mass."
+    },
+    {
+      "time": "03:26",
+      "start": 206.52,
+      "end": 209.37,
+      "duration": 2.85,
+      "text": "In fact, if both the\nmasses are pretty large,"
+    },
+    {
+      "time": "03:29",
+      "start": 209.37,
+      "end": 211.74,
+      "duration": 2.37,
+      "text": "like in the case of\nthe Earth and the Moon,"
+    },
+    {
+      "time": "03:31",
+      "start": 211.74,
+      "end": 214.47,
+      "duration": 2.73,
+      "text": "then the force is pretty large."
+    },
+    {
+      "time": "03:34",
+      "start": 214.47,
+      "end": 217.23,
+      "duration": 2.76,
+      "text": "Even if one of the objects\nhas a very small mass"
+    },
+    {
+      "time": "03:37",
+      "start": 217.23,
+      "end": 219.06,
+      "duration": 1.83,
+      "text": "but the other object has a big mass,"
+    },
+    {
+      "time": "03:39",
+      "start": 219.06,
+      "end": 220.92000000000002,
+      "duration": 1.86,
+      "text": "like for example, if\nyou consider the Earth"
+    },
+    {
+      "time": "03:40",
+      "start": 220.92,
+      "end": 222.03,
+      "duration": 1.11,
+      "text": "and say a tennis ball."
+    },
+    {
+      "time": "03:42",
+      "start": 222.03,
+      "end": 223.29,
+      "duration": 1.26,
+      "text": "In this case, the tennis ball"
+    },
+    {
+      "time": "03:43",
+      "start": 223.29,
+      "end": 225.6,
+      "duration": 2.31,
+      "text": "has a very tiny mass compared to Earth,"
+    },
+    {
+      "time": "03:45",
+      "start": 225.6,
+      "end": 227.34,
+      "duration": 1.74,
+      "text": "but the Earth has a such a huge mass."
+    },
+    {
+      "time": "03:47",
+      "start": 227.34,
+      "end": 230.43,
+      "duration": 3.09,
+      "text": "Even then you get a\ncomparable force of gravity,"
+    },
+    {
+      "time": "03:50",
+      "start": 230.43,
+      "end": 234.33,
+      "duration": 3.9,
+      "text": "and that's why you do see\nthe ball falling down."
+    },
+    {
+      "time": "03:54",
+      "start": 234.33,
+      "end": 237.42000000000002,
+      "duration": 3.09,
+      "text": "But what about the gravitational\nforce of attraction"
+    },
+    {
+      "time": "03:57",
+      "start": 237.42,
+      "end": 240.08999999999997,
+      "duration": 2.67,
+      "text": "between say two tennis balls?"
+    },
+    {
+      "time": "04:00",
+      "start": 240.09,
+      "end": 242.52,
+      "duration": 2.43,
+      "text": "Remember, gravity acts\nbetween any two masses,"
+    },
+    {
+      "time": "04:02",
+      "start": 242.52,
+      "end": 244.11,
+      "duration": 1.59,
+      "text": "so there must be a force of, you know,"
+    },
+    {
+      "time": "04:04",
+      "start": 244.11,
+      "end": 245.28,
+      "duration": 1.17,
+      "text": "attraction between them."
+    },
+    {
+      "time": "04:05",
+      "start": 245.28,
+      "end": 246.21,
+      "duration": 0.93,
+      "text": "But we don't see it."
+    },
+    {
+      "time": "04:06",
+      "start": 246.21,
+      "end": 247.47,
+      "duration": 1.26,
+      "text": "We don't see two tennis balls"
+    },
+    {
+      "time": "04:07",
+      "start": 247.47,
+      "end": 248.60999999999999,
+      "duration": 1.14,
+      "text": "getting attracted to each other."
+    },
+    {
+      "time": "04:08",
+      "start": 248.61,
+      "end": 249.69000000000003,
+      "duration": 1.08,
+      "text": "Why is that?"
+    },
+    {
+      "time": "04:09",
+      "start": 249.69,
+      "end": 251.19,
+      "duration": 1.5,
+      "text": "Well, that's because both of these masses"
+    },
+    {
+      "time": "04:11",
+      "start": 251.19,
+      "end": 252.69,
+      "duration": 1.5,
+      "text": "are incredibly tiny,"
+    },
+    {
+      "time": "04:12",
+      "start": 252.69,
+      "end": 255.6,
+      "duration": 2.91,
+      "text": "and therefore the force of\nattraction between them,"
+    },
+    {
+      "time": "04:15",
+      "start": 255.6,
+      "end": 257.46,
+      "duration": 1.86,
+      "text": "the gravitational force is so, so weak"
+    },
+    {
+      "time": "04:17",
+      "start": 257.46,
+      "end": 260.07,
+      "duration": 2.61,
+      "text": "that there are other forces\nthat can easily balance them."
+    },
+    {
+      "time": "04:20",
+      "start": 260.07,
+      "end": 262.05,
+      "duration": 1.98,
+      "text": "For example, air resistance."
+    },
+    {
+      "time": "04:22",
+      "start": 262.05,
+      "end": 263.58,
+      "duration": 1.53,
+      "text": "And that's why we usually do not see"
+    },
+    {
+      "time": "04:23",
+      "start": 263.58,
+      "end": 265.5,
+      "duration": 1.92,
+      "text": "the effects of gravity on, you know,"
+    },
+    {
+      "time": "04:25",
+      "start": 265.5,
+      "end": 267.81,
+      "duration": 2.31,
+      "text": "everyday objects, like two tennis balls."
+    },
+    {
+      "time": "04:27",
+      "start": 267.81,
+      "end": 269.04,
+      "duration": 1.23,
+      "text": "Or maybe, you know,"
+    },
+    {
+      "time": "04:29",
+      "start": 269.04,
+      "end": 270.6,
+      "duration": 1.56,
+      "text": "gravitational force between\nyou and your friend."
+    },
+    {
+      "time": "04:30",
+      "start": 270.6,
+      "end": 271.8,
+      "duration": 1.2,
+      "text": "It's the same story."
+    },
+    {
+      "time": "04:31",
+      "start": 271.8,
+      "end": 274.77000000000004,
+      "duration": 2.97,
+      "text": "There is gravitational attraction\nbetween you two for sure."
+    },
+    {
+      "time": "04:34",
+      "start": 274.77,
+      "end": 276.93,
+      "duration": 2.16,
+      "text": "But since the masses are so small,"
+    },
+    {
+      "time": "04:36",
+      "start": 276.93,
+      "end": 278.07,
+      "duration": 1.14,
+      "text": "the forces are so tiny,"
+    },
+    {
+      "time": "04:38",
+      "start": 278.07,
+      "end": 280.65,
+      "duration": 2.58,
+      "text": "again, forces like friction\ncan easily balance them"
+    },
+    {
+      "time": "04:40",
+      "start": 280.65,
+      "end": 282.23999999999995,
+      "duration": 1.59,
+      "text": "and you don't see their effects."
+    },
+    {
+      "time": "04:42",
+      "start": 282.24,
+      "end": 283.07300000000004,
+      "duration": 0.833,
+      "text": "But on the other hand,"
+    },
+    {
+      "time": "04:43",
+      "start": 283.073,
+      "end": 284.07,
+      "duration": 0.997,
+      "text": "if you consider the force of attraction"
+    },
+    {
+      "time": "04:44",
+      "start": 284.07,
+      "end": 285.69,
+      "duration": 1.62,
+      "text": "between you and the Earth,"
+    },
+    {
+      "time": "04:45",
+      "start": 285.69,
+      "end": 288.99,
+      "duration": 3.3,
+      "text": "that's pretty large because\nthe Earth is very massive."
+    },
+    {
+      "time": "04:48",
+      "start": 288.99,
+      "end": 291.45,
+      "duration": 2.46,
+      "text": "Okay, so the strength of\ngravity depends upon the masses."
+    },
+    {
+      "time": "04:51",
+      "start": 291.45,
+      "end": 293.94,
+      "duration": 2.49,
+      "text": "At least one of the objects\nmust have a very high mass"
+    },
+    {
+      "time": "04:53",
+      "start": 293.94,
+      "end": 295.8,
+      "duration": 1.86,
+      "text": "for conceivable amount of gravity."
+    },
+    {
+      "time": "04:55",
+      "start": 295.8,
+      "end": 296.63300000000004,
+      "duration": 0.833,
+      "text": "Got it."
+    },
+    {
+      "time": "04:56",
+      "start": 296.633,
+      "end": 298.77,
+      "duration": 2.137,
+      "text": "What else does the strength\nof the force depend on?"
+    },
+    {
+      "time": "04:58",
+      "start": 298.77,
+      "end": 301.46999999999997,
+      "duration": 2.7,
+      "text": "Well, again, if we go back\nto the Earth and the Moon,"
+    },
+    {
+      "time": "05:01",
+      "start": 301.47,
+      "end": 303.09000000000003,
+      "duration": 1.62,
+      "text": "another thing that the force depends on"
+    },
+    {
+      "time": "05:03",
+      "start": 303.09,
+      "end": 304.34999999999997,
+      "duration": 1.26,
+      "text": "is the distance between them,"
+    },
+    {
+      "time": "05:04",
+      "start": 304.35,
+      "end": 305.55,
+      "duration": 1.2,
+      "text": "or to be more precise,"
+    },
+    {
+      "time": "05:05",
+      "start": 305.55,
+      "end": 307.92,
+      "duration": 2.37,
+      "text": "the distance between the centers of masses"
+    },
+    {
+      "time": "05:07",
+      "start": 307.92,
+      "end": 309.39000000000004,
+      "duration": 1.47,
+      "text": "of the two objects, okay?"
+    },
+    {
+      "time": "05:09",
+      "start": 309.39,
+      "end": 311.90999999999997,
+      "duration": 2.52,
+      "text": "What happens as the distance increases?"
+    },
+    {
+      "time": "05:11",
+      "start": 311.91,
+      "end": 313.05,
+      "duration": 1.14,
+      "text": "Well, as the distance increases,"
+    },
+    {
+      "time": "05:13",
+      "start": 313.05,
+      "end": 315.27000000000004,
+      "duration": 2.22,
+      "text": "the force actually becomes weaker."
+    },
+    {
+      "time": "05:15",
+      "start": 315.27,
+      "end": 317.09999999999997,
+      "duration": 1.83,
+      "text": "The force becomes smaller."
+    },
+    {
+      "time": "05:17",
+      "start": 317.1,
+      "end": 318.63,
+      "duration": 1.53,
+      "text": "Gravity becomes weaker"
+    },
+    {
+      "time": "05:18",
+      "start": 318.63,
+      "end": 320.85,
+      "duration": 2.22,
+      "text": "as the distance between objects increases."
+    },
+    {
+      "time": "05:20",
+      "start": 320.85,
+      "end": 322.86,
+      "duration": 2.01,
+      "text": "The bigger the distance between them,"
+    },
+    {
+      "time": "05:22",
+      "start": 322.86,
+      "end": 325.74,
+      "duration": 2.88,
+      "text": "the weaker the force of gravity."
+    },
+    {
+      "time": "05:25",
+      "start": 325.74,
+      "end": 327.93,
+      "duration": 2.19,
+      "text": "So here's now a quick question."
+    },
+    {
+      "time": "05:27",
+      "start": 327.93,
+      "end": 329.7,
+      "duration": 1.77,
+      "text": "What do you think happens\nto the force of gravity"
+    },
+    {
+      "time": "05:29",
+      "start": 329.7,
+      "end": 333.69,
+      "duration": 3.99,
+      "text": "between Earth and say you\nwhen you climb the mountain,"
+    },
+    {
+      "time": "05:33",
+      "start": 333.69,
+      "end": 335.4,
+      "duration": 1.71,
+      "text": "when you go to the top of the mountain?"
+    },
+    {
+      "time": "05:35",
+      "start": 335.4,
+      "end": 336.233,
+      "duration": 0.833,
+      "text": "What do you think will happen"
+    },
+    {
+      "time": "05:36",
+      "start": 336.233,
+      "end": 338.1,
+      "duration": 1.867,
+      "text": "to the force of gravity\nbetween you and Earth?"
+    },
+    {
+      "time": "05:38",
+      "start": 338.1,
+      "end": 340.26000000000005,
+      "duration": 2.16,
+      "text": "Why don't you pause and think about this?"
+    },
+    {
+      "time": "05:40",
+      "start": 340.26,
+      "end": 343.5,
+      "duration": 3.24,
+      "text": "All right, we might think\nthat as we climb the mountain,"
+    },
+    {
+      "time": "05:43",
+      "start": 343.5,
+      "end": 344.73,
+      "duration": 1.23,
+      "text": "the distance between us"
+    },
+    {
+      "time": "05:44",
+      "start": 344.73,
+      "end": 346.71000000000004,
+      "duration": 1.98,
+      "text": "and the center of the Earth has increased."
+    },
+    {
+      "time": "05:46",
+      "start": 346.71,
+      "end": 348.63,
+      "duration": 1.92,
+      "text": "We have gone farther away from the center,"
+    },
+    {
+      "time": "05:48",
+      "start": 348.63,
+      "end": 351.33,
+      "duration": 2.7,
+      "text": "so the gravity must get weaker, right?"
+    },
+    {
+      "time": "05:51",
+      "start": 351.33,
+      "end": 353.25,
+      "duration": 1.92,
+      "text": "Now, technically that's true,"
+    },
+    {
+      "time": "05:53",
+      "start": 353.25,
+      "end": 355.77,
+      "duration": 2.52,
+      "text": "but look at the size of the Earth"
+    },
+    {
+      "time": "05:55",
+      "start": 355.77,
+      "end": 357.93,
+      "duration": 2.16,
+      "text": "and compare that to the\nsize of the mountain."
+    },
+    {
+      "time": "05:57",
+      "start": 357.93,
+      "end": 360.09000000000003,
+      "duration": 2.16,
+      "text": "The size of the mountain is negligible."
+    },
+    {
+      "time": "06:00",
+      "start": 360.09,
+      "end": 361.79999999999995,
+      "duration": 1.71,
+      "text": "It just looks like a dot."
+    },
+    {
+      "time": "06:01",
+      "start": 361.8,
+      "end": 365.19,
+      "duration": 3.39,
+      "text": "And therefore, for all practical purposes,"
+    },
+    {
+      "time": "06:05",
+      "start": 365.19,
+      "end": 368.04,
+      "duration": 2.85,
+      "text": "climbing the mountain has\nnot changed the distance"
+    },
+    {
+      "time": "06:08",
+      "start": 368.04,
+      "end": 369.99,
+      "duration": 1.95,
+      "text": "between you and the center of the Earth,"
+    },
+    {
+      "time": "06:09",
+      "start": 369.99,
+      "end": 372.51,
+      "duration": 2.52,
+      "text": "and therefore it pretty\nmuch stays the same."
+    },
+    {
+      "time": "06:12",
+      "start": 372.51,
+      "end": 375.0,
+      "duration": 2.49,
+      "text": "And that's why the force\nof gravity in, again,"
+    },
+    {
+      "time": "06:15",
+      "start": 375.0,
+      "end": 377.49,
+      "duration": 2.49,
+      "text": "everyday life stays pretty much the same."
+    },
+    {
+      "time": "06:17",
+      "start": 377.49,
+      "end": 380.22,
+      "duration": 2.73,
+      "text": "It does not change with height or altitude"
+    },
+    {
+      "time": "06:20",
+      "start": 380.22,
+      "end": 384.42,
+      "duration": 4.2,
+      "text": "because it's very tiny compared\nto the radius of the Earth."
+    },
+    {
+      "time": "06:24",
+      "start": 384.42,
+      "end": 386.88,
+      "duration": 2.46,
+      "text": "But what if you go very far away?"
+    },
+    {
+      "time": "06:26",
+      "start": 386.88,
+      "end": 388.89,
+      "duration": 2.01,
+      "text": "For example, what if you go as far"
+    },
+    {
+      "time": "06:28",
+      "start": 388.89,
+      "end": 391.44,
+      "duration": 2.55,
+      "text": "as the International Space Station?"
+    },
+    {
+      "time": "06:31",
+      "start": 391.44,
+      "end": 395.07,
+      "duration": 3.63,
+      "text": "Ooh, now you're so far away\nfrom the surface of the Earth"
+    },
+    {
+      "time": "06:35",
+      "start": 395.07,
+      "end": 396.33,
+      "duration": 1.26,
+      "text": "that the distance between you"
+    },
+    {
+      "time": "06:36",
+      "start": 396.33,
+      "end": 397.2,
+      "duration": 0.87,
+      "text": "and the center of the Earth"
+    },
+    {
+      "time": "06:37",
+      "start": 397.2,
+      "end": 399.57,
+      "duration": 2.37,
+      "text": "has become considerably bigger,"
+    },
+    {
+      "time": "06:39",
+      "start": 399.57,
+      "end": 403.59,
+      "duration": 4.02,
+      "text": "and so the force of\ngravity does become weaker."
+    },
+    {
+      "time": "06:43",
+      "start": 403.59,
+      "end": 404.54999999999995,
+      "duration": 0.96,
+      "text": "But guess what?"
+    },
+    {
+      "time": "06:44",
+      "start": 404.55,
+      "end": 408.63,
+      "duration": 4.08,
+      "text": "People over there still\nfeel about 80 to 90%"
+    },
+    {
+      "time": "06:48",
+      "start": 408.63,
+      "end": 410.96999999999997,
+      "duration": 2.34,
+      "text": "of the gravity they would feel\non the surface of the planet."
+    },
+    {
+      "time": "06:50",
+      "start": 410.97,
+      "end": 413.01000000000005,
+      "duration": 2.04,
+      "text": "So it's become weaker, but not that weak."
+    },
+    {
+      "time": "06:53",
+      "start": 413.01,
+      "end": 415.95,
+      "duration": 2.94,
+      "text": "So the folks inside the\nISS will definitely feel"
+    },
+    {
+      "time": "06:55",
+      "start": 415.95,
+      "end": 418.89,
+      "duration": 2.94,
+      "text": "a significant amount of\ngravitational force from the Earth."
+    },
+    {
+      "time": "06:58",
+      "start": 418.89,
+      "end": 420.41999999999996,
+      "duration": 1.53,
+      "text": "But wait a second."
+    },
+    {
+      "time": "07:00",
+      "start": 420.42,
+      "end": 423.51,
+      "duration": 3.09,
+      "text": "Why are the astronauts inside\nthe space station floating?"
+    },
+    {
+      "time": "07:03",
+      "start": 423.51,
+      "end": 424.74,
+      "duration": 1.23,
+      "text": "If they feel the force of gravity,"
+    },
+    {
+      "time": "07:04",
+      "start": 424.74,
+      "end": 426.15000000000003,
+      "duration": 1.41,
+      "text": "why are they floating?"
+    },
+    {
+      "time": "07:06",
+      "start": 426.15,
+      "end": 428.94,
+      "duration": 2.79,
+      "text": "Well, the short answer\nis they're not floating."
+    },
+    {
+      "time": "07:08",
+      "start": 428.94,
+      "end": 429.96,
+      "duration": 1.02,
+      "text": "They are falling."
+    },
+    {
+      "time": "07:09",
+      "start": 429.96,
+      "end": 431.19,
+      "duration": 1.23,
+      "text": "The whole space station"
+    },
+    {
+      "time": "07:11",
+      "start": 431.19,
+      "end": 433.56,
+      "duration": 2.37,
+      "text": "is actually falling towards the Earth,"
+    },
+    {
+      "time": "07:13",
+      "start": 433.56,
+      "end": 435.99,
+      "duration": 2.43,
+      "text": "giving them the illusion of floating."
+    },
+    {
+      "time": "07:15",
+      "start": 435.99,
+      "end": 438.12,
+      "duration": 2.13,
+      "text": "But again, the reason\nwhy the space station"
+    },
+    {
+      "time": "07:18",
+      "start": 438.12,
+      "end": 439.59000000000003,
+      "duration": 1.47,
+      "text": "will not crash into the Earth"
+    },
+    {
+      "time": "07:19",
+      "start": 439.59,
+      "end": 441.35999999999996,
+      "duration": 1.77,
+      "text": "is because just like the Moon,"
+    },
+    {
+      "time": "07:21",
+      "start": 441.36,
+      "end": 444.0,
+      "duration": 2.64,
+      "text": "it is moving sidewards\nwith a very high velocity."
+    },
+    {
+      "time": "07:24",
+      "start": 444.0,
+      "end": 446.1,
+      "duration": 2.1,
+      "text": "So it's continuously\nfalling towards the Earth,"
+    },
+    {
+      "time": "07:26",
+      "start": 446.1,
+      "end": 450.72,
+      "duration": 4.62,
+      "text": "but keeps missing the Earth\nbecause of the sideward motion,"
+    },
+    {
+      "time": "07:30",
+      "start": 450.72,
+      "end": 451.83000000000004,
+      "duration": 1.11,
+      "text": "because of the sideward velocity."
+    },
+    {
+      "time": "07:31",
+      "start": 451.83,
+      "end": 453.3,
+      "duration": 1.47,
+      "text": "In fact, if there was no gravity,"
+    },
+    {
+      "time": "07:33",
+      "start": 453.3,
+      "end": 454.89,
+      "duration": 1.59,
+      "text": "it wouldn't be orbiting the Earth."
+    },
+    {
+      "time": "07:34",
+      "start": 454.89,
+      "end": 456.59999999999997,
+      "duration": 1.71,
+      "text": "So the fact that it's orbiting the Earth"
+    },
+    {
+      "time": "07:36",
+      "start": 456.6,
+      "end": 459.42,
+      "duration": 2.82,
+      "text": "is actually showing us that\nthere is gravity over there."
+    },
+    {
+      "time": "07:39",
+      "start": 459.42,
+      "end": 462.06,
+      "duration": 2.64,
+      "text": "So, long story short,\nwhat exactly is gravity?"
+    },
+    {
+      "time": "07:42",
+      "start": 462.06,
+      "end": 463.83,
+      "duration": 1.77,
+      "text": "It's a fundamental force of attraction"
+    },
+    {
+      "time": "07:43",
+      "start": 463.83,
+      "end": 465.41999999999996,
+      "duration": 1.59,
+      "text": "between any two masses."
+    },
+    {
+      "time": "07:45",
+      "start": 465.42,
+      "end": 466.77000000000004,
+      "duration": 1.35,
+      "text": "Remember, it's always attractive"
+    },
+    {
+      "time": "07:46",
+      "start": 466.77,
+      "end": 469.62,
+      "duration": 2.85,
+      "text": "and its feature is that\nit's a non-contact force."
+    },
+    {
+      "time": "07:49",
+      "start": 469.62,
+      "end": 471.21,
+      "duration": 1.59,
+      "text": "You don't need to be in contact for that."
+    },
+    {
+      "time": "07:51",
+      "start": 471.21,
+      "end": 472.46999999999997,
+      "duration": 1.26,
+      "text": "And how does it get mediated?"
+    },
+    {
+      "time": "07:52",
+      "start": 472.47,
+      "end": 474.57000000000005,
+      "duration": 2.1,
+      "text": "It gets mediated via gravitational fields."
+    },
+    {
+      "time": "07:54",
+      "start": 474.57,
+      "end": 476.37,
+      "duration": 1.8,
+      "text": "And what does the strength\nof the force depend on?"
+    },
+    {
+      "time": "07:56",
+      "start": 476.37,
+      "end": 477.69,
+      "duration": 1.32,
+      "text": "Well, it depends on the masses,"
+    },
+    {
+      "time": "07:57",
+      "start": 477.69,
+      "end": 479.49,
+      "duration": 1.8,
+      "text": "more the mass, more the force,"
+    },
+    {
+      "time": "07:59",
+      "start": 479.49,
+      "end": 481.41,
+      "duration": 1.92,
+      "text": "and it gets weaker with the distance."
+    },
+    {
+      "time": "08:01",
+      "start": 481.41,
+      "end": 483.57000000000005,
+      "duration": 2.16,
+      "text": "Well, more the distance\nbetween the two objects,"
+    },
+    {
+      "time": "08:03",
+      "start": 483.57,
+      "end": 485.37,
+      "duration": 1.8,
+      "text": "between the centers of the objects,"
+    },
+    {
+      "time": "08:05",
+      "start": 485.37,
+      "end": 487.473,
+      "duration": 2.103,
+      "text": "smaller is the force of gravity."
+    }
+  ]
+}

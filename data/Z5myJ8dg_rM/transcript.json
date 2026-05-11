@@ -1,0 +1,696 @@
+{
+  "video_id": "Z5myJ8dg_rM",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 1.9696219000034034,
+  "entry_count": 98,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.422,
+      "end": 2.512,
+      "duration": 2.09,
+      "text": "Let's learn a little bit about the wonderful"
+    },
+    {
+      "time": "00:02",
+      "start": 2.512,
+      "end": 6.209,
+      "duration": 3.697,
+      "text": "world of logarithms."
+    },
+    {
+      "time": "00:06",
+      "start": 6.209,
+      "end": 9.519,
+      "duration": 3.31,
+      "text": "So we already know how to take exponents."
+    },
+    {
+      "time": "00:09",
+      "start": 9.519,
+      "end": 13.871,
+      "duration": 4.352,
+      "text": "If I were to say 2 to the fourth power, what does that mean?"
+    },
+    {
+      "time": "00:13",
+      "start": 13.871,
+      "end": 18.846,
+      "duration": 4.975,
+      "text": "Well that means 2 times 2 times 2 times 2."
+    },
+    {
+      "time": "00:18",
+      "start": 18.846,
+      "end": 24.349,
+      "duration": 5.503,
+      "text": "2 multiplied or repeatedly multiplied 4 times, and so"
+    },
+    {
+      "time": "00:24",
+      "start": 24.349,
+      "end": 26.499,
+      "duration": 2.15,
+      "text": "this is going to be"
+    },
+    {
+      "time": "00:26",
+      "start": 26.499,
+      "end": 27.63,
+      "duration": 1.131,
+      "text": "2 times 2 is 4"
+    },
+    {
+      "time": "00:27",
+      "start": 27.63,
+      "end": 32.887,
+      "duration": 5.257,
+      "text": "times 2 is 8, times 2 is 16."
+    },
+    {
+      "time": "00:32",
+      "start": 32.887,
+      "end": 35.346000000000004,
+      "duration": 2.459,
+      "text": "But what if we think about things in another way."
+    },
+    {
+      "time": "00:35",
+      "start": 35.346,
+      "end": 40.495999999999995,
+      "duration": 5.15,
+      "text": "We know that we get to 16 when we raise 2 to some power"
+    },
+    {
+      "time": "00:40",
+      "start": 40.496,
+      "end": 42.908,
+      "duration": 2.412,
+      "text": "but we want to know what that power is."
+    },
+    {
+      "time": "00:42",
+      "start": 42.908,
+      "end": 46.651,
+      "duration": 3.743,
+      "text": "So for example, let's say that I start with 2, and I say"
+    },
+    {
+      "time": "00:46",
+      "start": 46.651,
+      "end": 52.832,
+      "duration": 6.181,
+      "text": "I'm raising it to some power, what does that power have to be to get 16?"
+    },
+    {
+      "time": "00:52",
+      "start": 52.832,
+      "end": 60.369,
+      "duration": 7.537,
+      "text": "Well we just figured that out. 'X' would have to be 4."
+    },
+    {
+      "time": "01:00",
+      "start": 60.369,
+      "end": 64.762,
+      "duration": 4.393,
+      "text": "And this is what logarithms are fundamentally about, figuring out what power"
+    },
+    {
+      "time": "01:04",
+      "start": 64.762,
+      "end": 68.514,
+      "duration": 3.752,
+      "text": "you have to raise to, to get another number."
+    },
+    {
+      "time": "01:08",
+      "start": 68.514,
+      "end": 72.288,
+      "duration": 3.774,
+      "text": "Now the way that we would denote this with logarithm notation"
+    },
+    {
+      "time": "01:12",
+      "start": 72.288,
+      "end": 75.26899999999999,
+      "duration": 2.981,
+      "text": "is we would say, log, base--"
+    },
+    {
+      "time": "01:15",
+      "start": 75.269,
+      "end": 78.182,
+      "duration": 2.913,
+      "text": "actually let me make it a little bit more colourful."
+    },
+    {
+      "time": "01:18",
+      "start": 78.182,
+      "end": 81.656,
+      "duration": 3.474,
+      "text": "Log, base 2--"
+    },
+    {
+      "time": "01:21",
+      "start": 81.656,
+      "end": 83.59200000000001,
+      "duration": 1.936,
+      "text": "I'll do this 2 in blue..."
+    },
+    {
+      "time": "01:23",
+      "start": 83.592,
+      "end": 91.777,
+      "duration": 8.185,
+      "text": "Log, base 2, of 16"
+    },
+    {
+      "time": "01:31",
+      "start": 91.777,
+      "end": 96.118,
+      "duration": 4.341,
+      "text": "is equal to what, or is equal in this case since we have the 'x' there,"
+    },
+    {
+      "time": "01:36",
+      "start": 96.118,
+      "end": 99.975,
+      "duration": 3.857,
+      "text": "is equal to 'x'?"
+    },
+    {
+      "time": "01:39",
+      "start": 99.975,
+      "end": 105.06299999999999,
+      "duration": 5.088,
+      "text": "This and this are completely equivalent statements."
+    },
+    {
+      "time": "01:45",
+      "start": 105.063,
+      "end": 109.078,
+      "duration": 4.015,
+      "text": "This is saying \"hey well if I take 2 to some 'x' power I get 16'.\""
+    },
+    {
+      "time": "01:49",
+      "start": 109.078,
+      "end": 117.388,
+      "duration": 8.31,
+      "text": "This is saying, \"what power do I need to raise 2 to, to get 16 and I'm going to set that to be equal to 'x'.\""
+    },
+    {
+      "time": "01:57",
+      "start": 117.388,
+      "end": 119.927,
+      "duration": 2.539,
+      "text": "And you'll say, \"well you have to raise it to the fourth power and once again"
+    },
+    {
+      "time": "01:59",
+      "start": 119.927,
+      "end": 121.58300000000001,
+      "duration": 1.656,
+      "text": "'x' is equal to 4."
+    },
+    {
+      "time": "02:01",
+      "start": 121.583,
+      "end": 127.67,
+      "duration": 6.087,
+      "text": "So with that out of the way let's try more examples of evaluating logarithmic expressions."
+    },
+    {
+      "time": "02:07",
+      "start": 127.67,
+      "end": 132.051,
+      "duration": 4.381,
+      "text": "Let's say you had..."
+    },
+    {
+      "time": "02:12",
+      "start": 132.051,
+      "end": 145.12699999999998,
+      "duration": 13.076,
+      "text": "log, base 3, of 81. What would this evaluate to?"
+    },
+    {
+      "time": "02:25",
+      "start": 145.127,
+      "end": 151.31900000000002,
+      "duration": 6.192,
+      "text": "Well this is a reminder, this evaluates to the power we have to raise 3 to, to get"
+    },
+    {
+      "time": "02:31",
+      "start": 151.319,
+      "end": 153.053,
+      "duration": 1.734,
+      "text": "to 81."
+    },
+    {
+      "time": "02:33",
+      "start": 153.053,
+      "end": 157.764,
+      "duration": 4.711,
+      "text": "So if you want to, you can set this to be equal to an 'x', and you can"
+    },
+    {
+      "time": "02:37",
+      "start": 157.764,
+      "end": 168.779,
+      "duration": 11.015,
+      "text": "restate this equation as, 3 to the 'x' power, is equal to 81."
+    },
+    {
+      "time": "02:48",
+      "start": 168.779,
+      "end": 172.287,
+      "duration": 3.508,
+      "text": "Why is a logarithm useful? And you'll see that it has very interesting properties"
+    },
+    {
+      "time": "02:52",
+      "start": 172.287,
+      "end": 173.112,
+      "duration": 0.825,
+      "text": "later on."
+    },
+    {
+      "time": "02:53",
+      "start": 173.112,
+      "end": 177.797,
+      "duration": 4.685,
+      "text": "But you didn't necessarily have to use algebra. To do it this way, to say that 'x' is the power"
+    },
+    {
+      "time": "02:57",
+      "start": 177.797,
+      "end": 182.151,
+      "duration": 4.354,
+      "text": "you raise 3 to to get to 81, you had to use algebra here, while with just"
+    },
+    {
+      "time": "03:02",
+      "start": 182.151,
+      "end": 186.257,
+      "duration": 4.106,
+      "text": "a straight up logarithmic expression, you didn't really have to use any algebra, we didn't have to"
+    },
+    {
+      "time": "03:06",
+      "start": 186.257,
+      "end": 189.24800000000002,
+      "duration": 2.991,
+      "text": "say that it was equal to 'x', we could just say that this evaluates to"
+    },
+    {
+      "time": "03:09",
+      "start": 189.248,
+      "end": 192.614,
+      "duration": 3.366,
+      "text": "the power I need to raise 3 to to get to 81."
+    },
+    {
+      "time": "03:12",
+      "start": 192.614,
+      "end": 195.895,
+      "duration": 3.281,
+      "text": "The power I need to raise 3 to to get to 81."
+    },
+    {
+      "time": "03:15",
+      "start": 195.895,
+      "end": 199.39800000000002,
+      "duration": 3.503,
+      "text": "Well what power do you have to raise 3 to to get to 81?"
+    },
+    {
+      "time": "03:19",
+      "start": 199.398,
+      "end": 201.244,
+      "duration": 1.846,
+      "text": "Well let's experiment a little bit,"
+    },
+    {
+      "time": "03:21",
+      "start": 201.244,
+      "end": 205.799,
+      "duration": 4.555,
+      "text": "so 3 to the first power is just 3, 3 to the second power is 9,"
+    },
+    {
+      "time": "03:25",
+      "start": 205.799,
+      "end": 214.383,
+      "duration": 8.584,
+      "text": "3 to the third power is 27, 3 to the fourth power, 27 times 3 is equal to 81."
+    },
+    {
+      "time": "03:34",
+      "start": 214.383,
+      "end": 216.967,
+      "duration": 2.584,
+      "text": "3 to the fourth power is equal to 81."
+    },
+    {
+      "time": "03:36",
+      "start": 216.967,
+      "end": 219.388,
+      "duration": 2.421,
+      "text": "'X' is equal to four."
+    },
+    {
+      "time": "03:39",
+      "start": 219.388,
+      "end": 221.169,
+      "duration": 1.781,
+      "text": "So we could say..."
+    },
+    {
+      "time": "03:41",
+      "start": 221.169,
+      "end": 230.953,
+      "duration": 9.784,
+      "text": "Log, base 3, of 81, is equal to--"
+    },
+    {
+      "time": "03:50",
+      "start": 230.953,
+      "end": 233.993,
+      "duration": 3.04,
+      "text": "I'll do this in a different colour."
+    },
+    {
+      "time": "03:53",
+      "start": 233.993,
+      "end": 237.453,
+      "duration": 3.46,
+      "text": "Is equal to 4."
+    },
+    {
+      "time": "03:57",
+      "start": 237.453,
+      "end": 240.73,
+      "duration": 3.277,
+      "text": "Let's do several more of these examples and I really encourage you to give a shot"
+    },
+    {
+      "time": "04:00",
+      "start": 240.73,
+      "end": 244.548,
+      "duration": 3.818,
+      "text": "on your own and hopefully you'll get the hang of it."
+    },
+    {
+      "time": "04:04",
+      "start": 244.548,
+      "end": 249.647,
+      "duration": 5.099,
+      "text": "So let's try a larger number, let's say we want to take"
+    },
+    {
+      "time": "04:09",
+      "start": 249.647,
+      "end": 257.51099999999997,
+      "duration": 7.864,
+      "text": "log, base 6, of 216. What will this evaluate to?"
+    },
+    {
+      "time": "04:17",
+      "start": 257.511,
+      "end": 262.76800000000003,
+      "duration": 5.257,
+      "text": "Well we're asking ourselves, \"what power do we have to raise 6 to, to get 216?\""
+    },
+    {
+      "time": "04:22",
+      "start": 262.768,
+      "end": 267.23699999999997,
+      "duration": 4.469,
+      "text": "6 to the first power is 6, 6 to the second power is 36,"
+    },
+    {
+      "time": "04:27",
+      "start": 267.237,
+      "end": 271.411,
+      "duration": 4.174,
+      "text": "36 times 6 is 216."
+    },
+    {
+      "time": "04:31",
+      "start": 271.411,
+      "end": 274.33,
+      "duration": 2.919,
+      "text": "This is equal to 216."
+    },
+    {
+      "time": "04:34",
+      "start": 274.33,
+      "end": 277.45099999999996,
+      "duration": 3.121,
+      "text": "So this is 6 to the third power is equal to 216."
+    },
+    {
+      "time": "04:37",
+      "start": 277.451,
+      "end": 280.637,
+      "duration": 3.186,
+      "text": "So if someone says \"what power do I have to raise 6 to--"
+    },
+    {
+      "time": "04:40",
+      "start": 280.637,
+      "end": 281.851,
+      "duration": 1.214,
+      "text": "this base here,"
+    },
+    {
+      "time": "04:41",
+      "start": 281.851,
+      "end": 284.328,
+      "duration": 2.477,
+      "text": "to get to 216?\""
+    },
+    {
+      "time": "04:44",
+      "start": 284.328,
+      "end": 288.09599999999995,
+      "duration": 3.768,
+      "text": "Well that's just going to be equal to 3."
+    },
+    {
+      "time": "04:48",
+      "start": 288.096,
+      "end": 292.063,
+      "duration": 3.967,
+      "text": "6 to the third power is equal to 216."
+    },
+    {
+      "time": "04:52",
+      "start": 292.063,
+      "end": 296.89099999999996,
+      "duration": 4.828,
+      "text": "Let's try another one. Let's say I had, I dunno,"
+    },
+    {
+      "time": "04:56",
+      "start": 296.891,
+      "end": 302.59900000000005,
+      "duration": 5.708,
+      "text": "log, base 2, of 64."
+    },
+    {
+      "time": "05:02",
+      "start": 302.599,
+      "end": 306.056,
+      "duration": 3.457,
+      "text": "So what does this evaluate to?"
+    },
+    {
+      "time": "05:06",
+      "start": 306.056,
+      "end": 311.74899999999997,
+      "duration": 5.693,
+      "text": "Well once again we're asking ourselves, \"well this will evaluate to the exponent that I have to raise this"
+    },
+    {
+      "time": "05:11",
+      "start": 311.749,
+      "end": 314.545,
+      "duration": 2.796,
+      "text": "base 2, and you do this as a little subscript right here."
+    },
+    {
+      "time": "05:14",
+      "start": 314.545,
+      "end": 318.748,
+      "duration": 4.203,
+      "text": "The exponent that I have to raise 2 to, to get to 64.\""
+    },
+    {
+      "time": "05:18",
+      "start": 318.748,
+      "end": 322.217,
+      "duration": 3.469,
+      "text": "So 2 to the first power is 2, 2 to the second power is 4,"
+    },
+    {
+      "time": "05:22",
+      "start": 322.217,
+      "end": 327.36899999999997,
+      "duration": 5.152,
+      "text": "8, 16, 32, 64."
+    },
+    {
+      "time": "05:27",
+      "start": 327.369,
+      "end": 334.663,
+      "duration": 7.294,
+      "text": "So this right over here is 2 to the sixth power, is equal to 64. So when you evaluate this expression"
+    },
+    {
+      "time": "05:34",
+      "start": 334.663,
+      "end": 338.51800000000003,
+      "duration": 3.855,
+      "text": "you say \"what power do I have to raise 2 to, to get to 64?\""
+    },
+    {
+      "time": "05:38",
+      "start": 338.518,
+      "end": 343.81199999999995,
+      "duration": 5.294,
+      "text": "Well I have to raise to the sixth power."
+    },
+    {
+      "time": "05:43",
+      "start": 343.812,
+      "end": 349.09700000000004,
+      "duration": 5.285,
+      "text": "Let's do a slightly more straightforward one, or maybe this will be less"
+    },
+    {
+      "time": "05:49",
+      "start": 349.097,
+      "end": 351.349,
+      "duration": 2.252,
+      "text": "straightforward depending on how you view it."
+    },
+    {
+      "time": "05:51",
+      "start": 351.349,
+      "end": 358.245,
+      "duration": 6.896,
+      "text": "What is log, base 100, of 1?"
+    },
+    {
+      "time": "05:58",
+      "start": 358.245,
+      "end": 360.626,
+      "duration": 2.381,
+      "text": "I'll let you think about that for a second."
+    },
+    {
+      "time": "06:00",
+      "start": 360.626,
+      "end": 365.101,
+      "duration": 4.475,
+      "text": "100 is a subscript so it's, log, base 100, of 1."
+    },
+    {
+      "time": "06:05",
+      "start": 365.101,
+      "end": 368.091,
+      "duration": 2.99,
+      "text": "That's one way to think about it, I'll put parentheses around the 1."
+    },
+    {
+      "time": "06:08",
+      "start": 368.091,
+      "end": 370.991,
+      "duration": 2.9,
+      "text": "What does this evaluate to?"
+    },
+    {
+      "time": "06:10",
+      "start": 370.991,
+      "end": 375.044,
+      "duration": 4.053,
+      "text": "Well this is asking ourselves, or we would evaluate this as,"
+    },
+    {
+      "time": "06:15",
+      "start": 375.044,
+      "end": 382.197,
+      "duration": 7.153,
+      "text": "\"what power do I have to raise 100 to, to get to 1?\""
+    },
+    {
+      "time": "06:22",
+      "start": 382.197,
+      "end": 384.241,
+      "duration": 2.044,
+      "text": "So let me write this down as an equation."
+    },
+    {
+      "time": "06:24",
+      "start": 384.241,
+      "end": 386.909,
+      "duration": 2.668,
+      "text": "If I set this to be equal to 'x', this is literally saying"
+    },
+    {
+      "time": "06:26",
+      "start": 386.909,
+      "end": 391.598,
+      "duration": 4.689,
+      "text": "100, to what power, is equal to 1?"
+    },
+    {
+      "time": "06:31",
+      "start": 391.598,
+      "end": 394.42400000000004,
+      "duration": 2.826,
+      "text": "Well anything that a 0 power is equal to 1."
+    },
+    {
+      "time": "06:34",
+      "start": 394.424,
+      "end": 396.707,
+      "duration": 2.283,
+      "text": "So in this case 'x' is equal to 0."
+    },
+    {
+      "time": "06:36",
+      "start": 396.707,
+      "end": 404.114,
+      "duration": 7.407,
+      "text": "So log, base 100, of 1, is going to be equal to 0."
+    },
+    {
+      "time": "06:44",
+      "start": 404.114,
+      "end": 410.933,
+      "duration": 6.819,
+      "text": "Log base anything of 1, is going to be equal to 0 because anything to the 0"
+    },
+    {
+      "time": "06:50",
+      "start": 410.933,
+      "end": 415.905,
+      "duration": 4.972,
+      "text": "power and we're not talking about 0 here. Anything that is to the power of 0"
+    },
+    {
+      "time": "06:55",
+      "start": 415.905,
+      "end": 421.328,
+      "duration": 5.423,
+      "text": "that is not 0, is going to be equal to 1."
+    }
+  ]
+}

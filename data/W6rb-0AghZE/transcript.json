@@ -1,0 +1,2411 @@
+{
+  "video_id": "W6rb-0AghZE",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 1.6766896999906749,
+  "entry_count": 343,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.3,
+      "end": 1.5,
+      "duration": 1.2,
+      "text": "- [Instructor] Let's solve few numerical"
+    },
+    {
+      "time": "00:01",
+      "start": 1.5,
+      "end": 3.6,
+      "duration": 2.1,
+      "text": "on free body diagrams and Newton's laws,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.6,
+      "end": 4.92,
+      "duration": 1.32,
+      "text": "here's the first one."
+    },
+    {
+      "time": "00:04",
+      "start": 4.92,
+      "end": 7.140000000000001,
+      "duration": 2.22,
+      "text": "A 10 kilogram box is\nbeing pulled by a rope"
+    },
+    {
+      "time": "00:07",
+      "start": 7.14,
+      "end": 10.23,
+      "duration": 3.09,
+      "text": "that makes a 30 degree\nangle above the horizontal."
+    },
+    {
+      "time": "00:10",
+      "start": 10.23,
+      "end": 13.89,
+      "duration": 3.66,
+      "text": "The gravitational tension\nnormal and frictional forces"
+    },
+    {
+      "time": "00:13",
+      "start": 13.89,
+      "end": 16.47,
+      "duration": 2.58,
+      "text": "on the boxes are as given."
+    },
+    {
+      "time": "00:16",
+      "start": 16.47,
+      "end": 20.22,
+      "duration": 3.75,
+      "text": "Find the acceleration of the box."
+    },
+    {
+      "time": "00:20",
+      "start": 20.22,
+      "end": 21.689999999999998,
+      "duration": 1.47,
+      "text": "Okay, so how do we do this?"
+    },
+    {
+      "time": "00:21",
+      "start": 21.69,
+      "end": 25.62,
+      "duration": 3.93,
+      "text": "Well, our first step is to\ndraw a free body diagram of,"
+    },
+    {
+      "time": "00:25",
+      "start": 25.62,
+      "end": 26.79,
+      "duration": 1.17,
+      "text": "on the object of interest."
+    },
+    {
+      "time": "00:26",
+      "start": 26.79,
+      "end": 29.22,
+      "duration": 2.43,
+      "text": "Our object of interest\nover here is this box"
+    },
+    {
+      "time": "00:29",
+      "start": 29.22,
+      "end": 31.89,
+      "duration": 2.67,
+      "text": "because we want to calculate\nthe acceleration of the box."
+    },
+    {
+      "time": "00:31",
+      "start": 31.89,
+      "end": 34.02,
+      "duration": 2.13,
+      "text": "So let's consider its center of mass"
+    },
+    {
+      "time": "00:34",
+      "start": 34.02,
+      "end": 36.36,
+      "duration": 2.34,
+      "text": "and let's try to draw all\nthe forces acting on it"
+    },
+    {
+      "time": "00:36",
+      "start": 36.36,
+      "end": 38.04,
+      "duration": 1.68,
+      "text": "originating from this point."
+    },
+    {
+      "time": "00:38",
+      "start": 38.04,
+      "end": 39.42,
+      "duration": 1.38,
+      "text": "Okay, so what are the forces?"
+    },
+    {
+      "time": "00:39",
+      "start": 39.42,
+      "end": 41.190000000000005,
+      "duration": 1.77,
+      "text": "Well, there is a gravitational force"
+    },
+    {
+      "time": "00:41",
+      "start": 41.19,
+      "end": 43.949999999999996,
+      "duration": 2.76,
+      "text": "that's acting downwards,\nwe'll call that FG"
+    },
+    {
+      "time": "00:43",
+      "start": 43.95,
+      "end": 45.63,
+      "duration": 1.68,
+      "text": "and it's 100 Newtons."
+    },
+    {
+      "time": "00:45",
+      "start": 45.63,
+      "end": 46.463,
+      "duration": 0.833,
+      "text": "What else?"
+    },
+    {
+      "time": "00:46",
+      "start": 46.463,
+      "end": 48.51,
+      "duration": 2.047,
+      "text": "There is a tension force due to the rope"
+    },
+    {
+      "time": "00:48",
+      "start": 48.51,
+      "end": 50.79,
+      "duration": 2.28,
+      "text": "and that is at an angle of 30 degrees"
+    },
+    {
+      "time": "00:50",
+      "start": 50.79,
+      "end": 52.589999999999996,
+      "duration": 1.8,
+      "text": "and that's 120 Newtons."
+    },
+    {
+      "time": "00:52",
+      "start": 52.59,
+      "end": 54.18000000000001,
+      "duration": 1.59,
+      "text": "We also have the normal force"
+    },
+    {
+      "time": "00:54",
+      "start": 54.18,
+      "end": 56.16,
+      "duration": 1.98,
+      "text": "which is going to be\nperpendicular to the surface,"
+    },
+    {
+      "time": "00:56",
+      "start": 56.16,
+      "end": 57.18,
+      "duration": 1.02,
+      "text": "to the ground."
+    },
+    {
+      "time": "00:57",
+      "start": 57.18,
+      "end": 60.54,
+      "duration": 3.36,
+      "text": "So that's over here and that's 40 Newtons."
+    },
+    {
+      "time": "01:00",
+      "start": 60.54,
+      "end": 63.15,
+      "duration": 2.61,
+      "text": "Remember that the length of the vector"
+    },
+    {
+      "time": "01:03",
+      "start": 63.15,
+      "end": 65.76,
+      "duration": 2.61,
+      "text": "is proportional to the magnitudes, okay?"
+    },
+    {
+      "time": "01:05",
+      "start": 65.76,
+      "end": 68.22,
+      "duration": 2.46,
+      "text": "And finally, we have the frictional force."
+    },
+    {
+      "time": "01:08",
+      "start": 68.22,
+      "end": 70.44,
+      "duration": 2.22,
+      "text": "If the block tends to\naccelerate to the right"
+    },
+    {
+      "time": "01:10",
+      "start": 70.44,
+      "end": 71.73,
+      "duration": 1.29,
+      "text": "slide to the right,"
+    },
+    {
+      "time": "01:11",
+      "start": 71.73,
+      "end": 73.53,
+      "duration": 1.8,
+      "text": "then the frictional force will oppose it,"
+    },
+    {
+      "time": "01:13",
+      "start": 73.53,
+      "end": 76.53,
+      "duration": 3.0,
+      "text": "so the frictional force\nwill be towards the left."
+    },
+    {
+      "time": "01:16",
+      "start": 76.53,
+      "end": 79.47,
+      "duration": 2.94,
+      "text": "So there will be a frictional\nforce towards the left"
+    },
+    {
+      "time": "01:19",
+      "start": 79.47,
+      "end": 81.03,
+      "duration": 1.56,
+      "text": "and that's going to be 80 Newtons."
+    },
+    {
+      "time": "01:21",
+      "start": 81.03,
+      "end": 85.53,
+      "duration": 4.5,
+      "text": "And our goal is to find the\nacceleration of the box."
+    },
+    {
+      "time": "01:25",
+      "start": 85.53,
+      "end": 87.48,
+      "duration": 1.95,
+      "text": "How do we do this now?"
+    },
+    {
+      "time": "01:27",
+      "start": 87.48,
+      "end": 89.22,
+      "duration": 1.74,
+      "text": "Now one big problem I see"
+    },
+    {
+      "time": "01:29",
+      "start": 89.22,
+      "end": 91.41,
+      "duration": 2.19,
+      "text": "is that there's a force\nat an angle of 30 degrees."
+    },
+    {
+      "time": "01:31",
+      "start": 91.41,
+      "end": 95.19,
+      "duration": 3.78,
+      "text": "That's a problem because our\nstrategy is to sum up for,"
+    },
+    {
+      "time": "01:35",
+      "start": 95.19,
+      "end": 98.39999999999999,
+      "duration": 3.21,
+      "text": "calculate the net force in\nthe X direction separately,"
+    },
+    {
+      "time": "01:38",
+      "start": 98.4,
+      "end": 99.51,
+      "duration": 1.11,
+      "text": "in the horizontal separately,"
+    },
+    {
+      "time": "01:39",
+      "start": 99.51,
+      "end": 101.91000000000001,
+      "duration": 2.4,
+      "text": "and the net force in\nthe vertical separately,"
+    },
+    {
+      "time": "01:41",
+      "start": 101.91,
+      "end": 104.75999999999999,
+      "duration": 2.85,
+      "text": "we consider them separately\nand analyze them separately."
+    },
+    {
+      "time": "01:44",
+      "start": 104.76,
+      "end": 107.7,
+      "duration": 2.94,
+      "text": "But now we have a force that's\nneither in the horizontal"
+    },
+    {
+      "time": "01:47",
+      "start": 107.7,
+      "end": 109.23,
+      "duration": 1.53,
+      "text": "nor in the vertical."
+    },
+    {
+      "time": "01:49",
+      "start": 109.23,
+      "end": 112.41000000000001,
+      "duration": 3.18,
+      "text": "It's making an angle,\nwhat do we do about that?"
+    },
+    {
+      "time": "01:52",
+      "start": 112.41,
+      "end": 116.75999999999999,
+      "duration": 4.35,
+      "text": "Well, what we can do is we\ncan write this force as a sum"
+    },
+    {
+      "time": "01:56",
+      "start": 116.76,
+      "end": 120.99000000000001,
+      "duration": 4.23,
+      "text": "of this horizontal and\nthis vertical force."
+    },
+    {
+      "time": "02:00",
+      "start": 120.99,
+      "end": 125.25,
+      "duration": 4.26,
+      "text": "So this force can be written\nas a sum of these two forces."
+    },
+    {
+      "time": "02:05",
+      "start": 125.25,
+      "end": 129.15,
+      "duration": 3.9,
+      "text": "So I can replace this force\nwith these two forces."
+    },
+    {
+      "time": "02:09",
+      "start": 129.15,
+      "end": 132.06,
+      "duration": 2.91,
+      "text": "But the question is, I know\nthe magnitude of this force"
+    },
+    {
+      "time": "02:12",
+      "start": 132.06,
+      "end": 134.55,
+      "duration": 2.49,
+      "text": "that's given to me, that's\ntension force, 120 Newtons."
+    },
+    {
+      "time": "02:14",
+      "start": 134.55,
+      "end": 138.0,
+      "duration": 3.45,
+      "text": "What will be the magnitude\nof these two forces?"
+    },
+    {
+      "time": "02:18",
+      "start": 138.0,
+      "end": 139.05,
+      "duration": 1.05,
+      "text": "Well, to answer that question,"
+    },
+    {
+      "time": "02:19",
+      "start": 139.05,
+      "end": 141.33,
+      "duration": 2.28,
+      "text": "we need to use some trigonometry."
+    },
+    {
+      "time": "02:21",
+      "start": 141.33,
+      "end": 143.49,
+      "duration": 2.16,
+      "text": "Now remember in a right angle triangle,"
+    },
+    {
+      "time": "02:23",
+      "start": 143.49,
+      "end": 148.49,
+      "duration": 5.0,
+      "text": "you can remember SOHCAHTOA,\nwhich says sine of theta"
+    },
+    {
+      "time": "02:29",
+      "start": 149.73,
+      "end": 152.57999999999998,
+      "duration": 2.85,
+      "text": "is the opposite side\ndivided by the hypotenuse."
+    },
+    {
+      "time": "02:32",
+      "start": 152.58,
+      "end": 155.70000000000002,
+      "duration": 3.12,
+      "text": "Cos of theta is the adjacent\nside divided by the hypotenuse"
+    },
+    {
+      "time": "02:35",
+      "start": 155.7,
+      "end": 158.01,
+      "duration": 2.31,
+      "text": "and tan theta is the opposite side"
+    },
+    {
+      "time": "02:38",
+      "start": 158.01,
+      "end": 160.64999999999998,
+      "duration": 2.64,
+      "text": "divided by the adjacent side, okay?"
+    },
+    {
+      "time": "02:40",
+      "start": 160.65,
+      "end": 164.46,
+      "duration": 3.81,
+      "text": "Now if you have a vector\nalong the hypotenuse,"
+    },
+    {
+      "time": "02:44",
+      "start": 164.46,
+      "end": 169.46,
+      "duration": 5.0,
+      "text": "that can be written as a\nsum of these two vectors."
+    },
+    {
+      "time": "02:49",
+      "start": 169.86,
+      "end": 172.29000000000002,
+      "duration": 2.43,
+      "text": "So if I know what the hypotenuse value is,"
+    },
+    {
+      "time": "02:52",
+      "start": 172.29,
+      "end": 175.2,
+      "duration": 2.91,
+      "text": "that is the magnitude of this\nvector, I can use trigonometry"
+    },
+    {
+      "time": "02:55",
+      "start": 175.2,
+      "end": 178.10999999999999,
+      "duration": 2.91,
+      "text": "to figure out these two values, right?"
+    },
+    {
+      "time": "02:58",
+      "start": 178.11,
+      "end": 179.07000000000002,
+      "duration": 0.96,
+      "text": "So from this,"
+    },
+    {
+      "time": "02:59",
+      "start": 179.07,
+      "end": 181.82999999999998,
+      "duration": 2.76,
+      "text": "look, the opposite side\nbecomes h times sine theta,"
+    },
+    {
+      "time": "03:01",
+      "start": 181.83,
+      "end": 186.27,
+      "duration": 4.44,
+      "text": "and the adjacent side\nbecomes h times cos theta."
+    },
+    {
+      "time": "03:06",
+      "start": 186.27,
+      "end": 189.0,
+      "duration": 2.73,
+      "text": "Again, I can use opposite\nside as a times tan theta,"
+    },
+    {
+      "time": "03:09",
+      "start": 189.0,
+      "end": 191.43,
+      "duration": 2.43,
+      "text": "but we're not gonna use this,\nwe're gonna use these two."
+    },
+    {
+      "time": "03:11",
+      "start": 191.43,
+      "end": 194.04000000000002,
+      "duration": 2.61,
+      "text": "So the opposite side\nbecomes h times sine theta,"
+    },
+    {
+      "time": "03:14",
+      "start": 194.04,
+      "end": 195.63,
+      "duration": 1.59,
+      "text": "and the opposite, the adjacent side"
+    },
+    {
+      "time": "03:15",
+      "start": 195.63,
+      "end": 197.91,
+      "duration": 2.28,
+      "text": "becomes h times cos theta."
+    },
+    {
+      "time": "03:17",
+      "start": 197.91,
+      "end": 201.69,
+      "duration": 3.78,
+      "text": "So we now have everything\nneeded to figure this out."
+    },
+    {
+      "time": "03:21",
+      "start": 201.69,
+      "end": 204.21,
+      "duration": 2.52,
+      "text": "So look, this is our hypotenuse,"
+    },
+    {
+      "time": "03:24",
+      "start": 204.21,
+      "end": 207.06,
+      "duration": 2.85,
+      "text": "that is the tension\nforce, 120 Newtons, okay?"
+    },
+    {
+      "time": "03:27",
+      "start": 207.06,
+      "end": 210.09,
+      "duration": 3.03,
+      "text": "So from this, this now\nbecomes the adjacent side,"
+    },
+    {
+      "time": "03:30",
+      "start": 210.09,
+      "end": 212.61,
+      "duration": 2.52,
+      "text": "which is going to be\nhypotenuse times cos theta,"
+    },
+    {
+      "time": "03:32",
+      "start": 212.61,
+      "end": 217.59,
+      "duration": 4.98,
+      "text": "so it's going to be FT cos 30 degrees."
+    },
+    {
+      "time": "03:37",
+      "start": 217.59,
+      "end": 219.09,
+      "duration": 1.5,
+      "text": "And what will this be?"
+    },
+    {
+      "time": "03:39",
+      "start": 219.09,
+      "end": 221.70000000000002,
+      "duration": 2.61,
+      "text": "Well, it's going to be\nFT, the force of tension"
+    },
+    {
+      "time": "03:41",
+      "start": 221.7,
+      "end": 225.42,
+      "duration": 3.72,
+      "text": "times sines of 30 degrees."
+    },
+    {
+      "time": "03:45",
+      "start": 225.42,
+      "end": 229.35,
+      "duration": 3.93,
+      "text": "These two vectors are called\nthe components of this vector."
+    },
+    {
+      "time": "03:49",
+      "start": 229.35,
+      "end": 232.23,
+      "duration": 2.88,
+      "text": "And since these two vectors add\nup to gimme the same vector,"
+    },
+    {
+      "time": "03:52",
+      "start": 232.23,
+      "end": 233.60999999999999,
+      "duration": 1.38,
+      "text": "I can now get rid of this."
+    },
+    {
+      "time": "03:53",
+      "start": 233.61,
+      "end": 236.10000000000002,
+      "duration": 2.49,
+      "text": "This is replaced by these two vectors."
+    },
+    {
+      "time": "03:56",
+      "start": 236.1,
+      "end": 237.51,
+      "duration": 1.41,
+      "text": "Let me get rid of this as well."
+    },
+    {
+      "time": "03:57",
+      "start": 237.51,
+      "end": 238.92,
+      "duration": 1.41,
+      "text": "And we now have all the vectors"
+    },
+    {
+      "time": "03:58",
+      "start": 238.92,
+      "end": 240.35999999999999,
+      "duration": 1.44,
+      "text": "in the horizontal and vertical."
+    },
+    {
+      "time": "04:00",
+      "start": 240.36,
+      "end": 242.94000000000003,
+      "duration": 2.58,
+      "text": "Now just to clarify,\nwhen somebody asks you"
+    },
+    {
+      "time": "04:02",
+      "start": 242.94,
+      "end": 244.10999999999999,
+      "duration": 1.17,
+      "text": "to draw a free body diagram,"
+    },
+    {
+      "time": "04:04",
+      "start": 244.11,
+      "end": 246.72000000000003,
+      "duration": 2.61,
+      "text": "this is the actual free body diagram."
+    },
+    {
+      "time": "04:06",
+      "start": 246.72,
+      "end": 249.27,
+      "duration": 2.55,
+      "text": "It's just that, that\nsometimes we resolve forces"
+    },
+    {
+      "time": "04:09",
+      "start": 249.27,
+      "end": 250.62,
+      "duration": 1.35,
+      "text": "into the horizontal and verticals,"
+    },
+    {
+      "time": "04:10",
+      "start": 250.62,
+      "end": 253.53,
+      "duration": 2.91,
+      "text": "and in doing so, we\ndraw a separate diagram."
+    },
+    {
+      "time": "04:13",
+      "start": 253.53,
+      "end": 255.69,
+      "duration": 2.16,
+      "text": "But this is the original\nfree diagram, okay?"
+    },
+    {
+      "time": "04:15",
+      "start": 255.69,
+      "end": 257.91,
+      "duration": 2.22,
+      "text": "So we will never start with\nthe resolved components,"
+    },
+    {
+      "time": "04:17",
+      "start": 257.91,
+      "end": 259.14000000000004,
+      "duration": 1.23,
+      "text": "we'll always start like this"
+    },
+    {
+      "time": "04:19",
+      "start": 259.14,
+      "end": 262.08,
+      "duration": 2.94,
+      "text": "and if necessary, we'll draw\nseparate diagrams this way."
+    },
+    {
+      "time": "04:22",
+      "start": 262.08,
+      "end": 263.96999999999997,
+      "duration": 1.89,
+      "text": "And remember, since these two components"
+    },
+    {
+      "time": "04:23",
+      "start": 263.97,
+      "end": 265.98,
+      "duration": 2.01,
+      "text": "add up to give me this force,"
+    },
+    {
+      "time": "04:25",
+      "start": 265.98,
+      "end": 267.81,
+      "duration": 1.83,
+      "text": "I've already accounted for that force."
+    },
+    {
+      "time": "04:27",
+      "start": 267.81,
+      "end": 269.55,
+      "duration": 1.74,
+      "text": "And so we shouldn't make the mistake of"
+    },
+    {
+      "time": "04:29",
+      "start": 269.55,
+      "end": 272.1,
+      "duration": 2.55,
+      "text": "redrawing that force over here."
+    },
+    {
+      "time": "04:32",
+      "start": 272.1,
+      "end": 273.557,
+      "duration": 1.457,
+      "text": "Anyways, now we can\ncalculate the net force"
+    },
+    {
+      "time": "04:33",
+      "start": 273.557,
+      "end": 275.58000000000004,
+      "duration": 2.023,
+      "text": "in the horizontal and vertical,"
+    },
+    {
+      "time": "04:35",
+      "start": 275.58,
+      "end": 278.01,
+      "duration": 2.43,
+      "text": "but our goal is to find the\nacceleration of the box,"
+    },
+    {
+      "time": "04:38",
+      "start": 278.01,
+      "end": 279.59999999999997,
+      "duration": 1.59,
+      "text": "not the net force."
+    },
+    {
+      "time": "04:39",
+      "start": 279.6,
+      "end": 281.91,
+      "duration": 2.31,
+      "text": "But hey, we know from Newton's second law,"
+    },
+    {
+      "time": "04:41",
+      "start": 281.91,
+      "end": 285.03000000000003,
+      "duration": 3.12,
+      "text": "acceleration is the net\nforce divided by mass."
+    },
+    {
+      "time": "04:45",
+      "start": 285.03,
+      "end": 287.82,
+      "duration": 2.79,
+      "text": "So what we can do now\nis find the acceleration"
+    },
+    {
+      "time": "04:47",
+      "start": 287.82,
+      "end": 290.64,
+      "duration": 2.82,
+      "text": "in the horizontal by using the\nnet force in the horizontal"
+    },
+    {
+      "time": "04:50",
+      "start": 290.64,
+      "end": 292.68,
+      "duration": 2.04,
+      "text": "and then find the\nacceleration in the vertical"
+    },
+    {
+      "time": "04:52",
+      "start": 292.68,
+      "end": 295.02,
+      "duration": 2.34,
+      "text": "by using the net force in the vertical."
+    },
+    {
+      "time": "04:55",
+      "start": 295.02,
+      "end": 296.49,
+      "duration": 1.47,
+      "text": "It'll be a great idea to pause the video"
+    },
+    {
+      "time": "04:56",
+      "start": 296.49,
+      "end": 298.413,
+      "duration": 1.923,
+      "text": "and see if you can continue yourself."
+    },
+    {
+      "time": "04:59",
+      "start": 299.25,
+      "end": 301.615,
+      "duration": 2.365,
+      "text": "All right, let's start\nwith the horizontal."
+    },
+    {
+      "time": "05:01",
+      "start": 301.615,
+      "end": 303.51,
+      "duration": 1.895,
+      "text": "The acceleration in the\nhorizontal is gonna be"
+    },
+    {
+      "time": "05:03",
+      "start": 303.51,
+      "end": 306.3,
+      "duration": 2.79,
+      "text": "net force in the horizontal\ndivide by mass, okay?"
+    },
+    {
+      "time": "05:06",
+      "start": 306.3,
+      "end": 308.01,
+      "duration": 1.71,
+      "text": "So what's the net force in the horizontal?"
+    },
+    {
+      "time": "05:08",
+      "start": 308.01,
+      "end": 309.51,
+      "duration": 1.5,
+      "text": "I just have to look at the horizontal."
+    },
+    {
+      "time": "05:09",
+      "start": 309.51,
+      "end": 312.09,
+      "duration": 2.58,
+      "text": "Well, I have to add up these\ntwo forces, but with sines"
+    },
+    {
+      "time": "05:12",
+      "start": 312.09,
+      "end": 314.82,
+      "duration": 2.73,
+      "text": "and how do I decide which of the forces"
+    },
+    {
+      "time": "05:14",
+      "start": 314.82,
+      "end": 315.99,
+      "duration": 1.17,
+      "text": "will be positive and negative?"
+    },
+    {
+      "time": "05:15",
+      "start": 315.99,
+      "end": 318.12,
+      "duration": 2.13,
+      "text": "For that, I have to choose\none direction positive."
+    },
+    {
+      "time": "05:18",
+      "start": 318.12,
+      "end": 320.25,
+      "duration": 2.13,
+      "text": "Let's choose right side to be positive."
+    },
+    {
+      "time": "05:20",
+      "start": 320.25,
+      "end": 321.65,
+      "duration": 1.4,
+      "text": "It's completely your choice,"
+    },
+    {
+      "time": "05:22",
+      "start": 322.68,
+      "end": 323.51300000000003,
+      "duration": 0.833,
+      "text": "you're free to choose"
+    },
+    {
+      "time": "05:23",
+      "start": 323.513,
+      "end": 324.78,
+      "duration": 1.267,
+      "text": "whichever direction you\nwant to be positive,"
+    },
+    {
+      "time": "05:24",
+      "start": 324.78,
+      "end": 326.72999999999996,
+      "duration": 1.95,
+      "text": "I'm just gonna choose the\nright side to be positive."
+    },
+    {
+      "time": "05:26",
+      "start": 326.73,
+      "end": 329.31,
+      "duration": 2.58,
+      "text": "Then this is going to\nbe a positive number."
+    },
+    {
+      "time": "05:29",
+      "start": 329.31,
+      "end": 333.24,
+      "duration": 3.93,
+      "text": "So I'll get FT cos theta\nminus the force of friction."
+    },
+    {
+      "time": "05:33",
+      "start": 333.24,
+      "end": 334.29,
+      "duration": 1.05,
+      "text": "That will be a negative number."
+    },
+    {
+      "time": "05:34",
+      "start": 334.29,
+      "end": 339.29,
+      "duration": 5.0,
+      "text": "So I'll get this to be my\nnet force in the horizontal"
+    },
+    {
+      "time": "05:39",
+      "start": 339.48,
+      "end": 341.25,
+      "duration": 1.77,
+      "text": "divided by the mass."
+    },
+    {
+      "time": "05:41",
+      "start": 341.25,
+      "end": 345.42,
+      "duration": 4.17,
+      "text": "And now we can plug in, we know FT is 120,"
+    },
+    {
+      "time": "05:45",
+      "start": 345.42,
+      "end": 347.16,
+      "duration": 1.74,
+      "text": "the force of friction is 80"
+    },
+    {
+      "time": "05:47",
+      "start": 347.16,
+      "end": 349.20000000000005,
+      "duration": 2.04,
+      "text": "and we know the mass is 10 kilograms."
+    },
+    {
+      "time": "05:49",
+      "start": 349.2,
+      "end": 350.4,
+      "duration": 1.2,
+      "text": "We also know cos 30,"
+    },
+    {
+      "time": "05:50",
+      "start": 350.4,
+      "end": 352.53,
+      "duration": 2.13,
+      "text": "it's a known value, it's\nroot three divided by two."
+    },
+    {
+      "time": "05:52",
+      "start": 352.53,
+      "end": 354.59999999999997,
+      "duration": 2.07,
+      "text": "If we didn't know it, you\ncould just calculate it"
+    },
+    {
+      "time": "05:54",
+      "start": 354.6,
+      "end": 357.75,
+      "duration": 3.15,
+      "text": "using a calculator or maybe we\ncan just leave it at cos 30."
+    },
+    {
+      "time": "05:57",
+      "start": 357.75,
+      "end": 359.76,
+      "duration": 2.01,
+      "text": "Anyways, let's plug it all in"
+    },
+    {
+      "time": "05:59",
+      "start": 359.76,
+      "end": 361.46999999999997,
+      "duration": 1.71,
+      "text": "so you get the acceleration\nin the X direction"
+    },
+    {
+      "time": "06:01",
+      "start": 361.47,
+      "end": 362.49,
+      "duration": 1.02,
+      "text": "to be this much."
+    },
+    {
+      "time": "06:02",
+      "start": 362.49,
+      "end": 364.53000000000003,
+      "duration": 2.04,
+      "text": "And if we put it all in our calculators,"
+    },
+    {
+      "time": "06:04",
+      "start": 364.53,
+      "end": 366.27,
+      "duration": 1.74,
+      "text": "this is what we'll end up with."
+    },
+    {
+      "time": "06:06",
+      "start": 366.27,
+      "end": 367.65,
+      "duration": 1.38,
+      "text": "So the acceleration in the X direction"
+    },
+    {
+      "time": "06:07",
+      "start": 367.65,
+      "end": 372.41999999999996,
+      "duration": 4.77,
+      "text": "is 2.4 meters per second squared,\nbut which direction is it?"
+    },
+    {
+      "time": "06:12",
+      "start": 372.42,
+      "end": 373.71000000000004,
+      "duration": 1.29,
+      "text": "Well, it's positive,"
+    },
+    {
+      "time": "06:13",
+      "start": 373.71,
+      "end": 376.26,
+      "duration": 2.55,
+      "text": "remember we chose right\nside to be positive."
+    },
+    {
+      "time": "06:16",
+      "start": 376.26,
+      "end": 379.83,
+      "duration": 3.57,
+      "text": "So this means the\nacceleration is to the right."
+    },
+    {
+      "time": "06:19",
+      "start": 379.83,
+      "end": 381.9,
+      "duration": 2.07,
+      "text": "If we had gotten the\nacceleration to be negative,"
+    },
+    {
+      "time": "06:21",
+      "start": 381.9,
+      "end": 383.01,
+      "duration": 1.11,
+      "text": "that would've meant"
+    },
+    {
+      "time": "06:23",
+      "start": 383.01,
+      "end": 385.44,
+      "duration": 2.43,
+      "text": "that the acceleration\nwould be towards the left."
+    },
+    {
+      "time": "06:25",
+      "start": 385.44,
+      "end": 387.78,
+      "duration": 2.34,
+      "text": "Similarly, we can now\ncalculate the acceleration"
+    },
+    {
+      "time": "06:27",
+      "start": 387.78,
+      "end": 389.13,
+      "duration": 1.35,
+      "text": "in the Y direction."
+    },
+    {
+      "time": "06:29",
+      "start": 389.13,
+      "end": 390.03,
+      "duration": 0.9,
+      "text": "We calculate the net force"
+    },
+    {
+      "time": "06:30",
+      "start": 390.03,
+      "end": 391.73999999999995,
+      "duration": 1.71,
+      "text": "in the Y direction, divide by mass."
+    },
+    {
+      "time": "06:31",
+      "start": 391.74,
+      "end": 393.33,
+      "duration": 1.59,
+      "text": "What's the net force in the Y direction?"
+    },
+    {
+      "time": "06:33",
+      "start": 393.33,
+      "end": 395.52,
+      "duration": 2.19,
+      "text": "Again, let's choose\nupwards to be positive,"
+    },
+    {
+      "time": "06:35",
+      "start": 395.52,
+      "end": 396.75,
+      "duration": 1.23,
+      "text": "completely your choice."
+    },
+    {
+      "time": "06:36",
+      "start": 396.75,
+      "end": 399.75,
+      "duration": 3.0,
+      "text": "Then I get this plus this minus this."
+    },
+    {
+      "time": "06:39",
+      "start": 399.75,
+      "end": 402.21,
+      "duration": 2.46,
+      "text": "That's the net force, okay?"
+    },
+    {
+      "time": "06:42",
+      "start": 402.21,
+      "end": 404.58,
+      "duration": 2.37,
+      "text": "Divided by mass, that's 10 kilograms."
+    },
+    {
+      "time": "06:44",
+      "start": 404.58,
+      "end": 407.60999999999996,
+      "duration": 3.03,
+      "text": "So if you plug all of\nthat in now, we get this."
+    },
+    {
+      "time": "06:47",
+      "start": 407.61,
+      "end": 409.08000000000004,
+      "duration": 1.47,
+      "text": "And if you plug this\nvalues in the calculator,"
+    },
+    {
+      "time": "06:49",
+      "start": 409.08,
+      "end": 410.78999999999996,
+      "duration": 1.71,
+      "text": "you'll get the answer to be zero."
+    },
+    {
+      "time": "06:50",
+      "start": 410.79,
+      "end": 413.25,
+      "duration": 2.46,
+      "text": "This means acceleration in\nthe Y direction is zero,"
+    },
+    {
+      "time": "06:53",
+      "start": 413.25,
+      "end": 415.2,
+      "duration": 1.95,
+      "text": "there is no net force in the Y direction,"
+    },
+    {
+      "time": "06:55",
+      "start": 415.2,
+      "end": 417.59999999999997,
+      "duration": 2.4,
+      "text": "it all cancels out, the\nacceleration is zero."
+    },
+    {
+      "time": "06:57",
+      "start": 417.6,
+      "end": 420.12,
+      "duration": 2.52,
+      "text": "That means there's only the\nacceleration in the X direction."
+    },
+    {
+      "time": "07:00",
+      "start": 420.12,
+      "end": 423.9,
+      "duration": 3.78,
+      "text": "This represents the total\nacceleration of the box."
+    },
+    {
+      "time": "07:03",
+      "start": 423.9,
+      "end": 425.4,
+      "duration": 1.5,
+      "text": "So that is our final answer"
+    },
+    {
+      "time": "07:05",
+      "start": 425.4,
+      "end": 427.34999999999997,
+      "duration": 1.95,
+      "text": "and that kind of makes intuitive sense."
+    },
+    {
+      "time": "07:07",
+      "start": 427.35,
+      "end": 429.84000000000003,
+      "duration": 2.49,
+      "text": "If you were to pull a box like\nthis, you would expect it to"
+    },
+    {
+      "time": "07:09",
+      "start": 429.84,
+      "end": 432.39,
+      "duration": 2.55,
+      "text": "slide and accelerate along the horizontal."
+    },
+    {
+      "time": "07:12",
+      "start": 432.39,
+      "end": 433.26,
+      "duration": 0.87,
+      "text": "And that's what it's saying,"
+    },
+    {
+      "time": "07:13",
+      "start": 433.26,
+      "end": 436.46999999999997,
+      "duration": 3.21,
+      "text": "the total acceleration\nis along the horizontal."
+    },
+    {
+      "time": "07:16",
+      "start": 436.47,
+      "end": 437.52000000000004,
+      "duration": 1.05,
+      "text": "Let's try another one."
+    },
+    {
+      "time": "07:17",
+      "start": 437.52,
+      "end": 439.71,
+      "duration": 2.19,
+      "text": "A flower pot of mass 25 kilograms"
+    },
+    {
+      "time": "07:19",
+      "start": 439.71,
+      "end": 441.87,
+      "duration": 2.16,
+      "text": "is supported by two\nidentical cables as shown."
+    },
+    {
+      "time": "07:21",
+      "start": 441.87,
+      "end": 444.93,
+      "duration": 3.06,
+      "text": "Each cable makes an angle of\n30 degrees with the vertical."
+    },
+    {
+      "time": "07:24",
+      "start": 444.93,
+      "end": 447.51,
+      "duration": 2.58,
+      "text": "Find the tension magnitude in each wire,"
+    },
+    {
+      "time": "07:27",
+      "start": 447.51,
+      "end": 451.05,
+      "duration": 3.54,
+      "text": "Assume G to be 9.8\nmeters per second square."
+    },
+    {
+      "time": "07:31",
+      "start": 451.05,
+      "end": 453.42,
+      "duration": 2.37,
+      "text": "So just like before, let's\ndraw a free body diagram"
+    },
+    {
+      "time": "07:33",
+      "start": 453.42,
+      "end": 455.94,
+      "duration": 2.52,
+      "text": "for our object of interest,\nwhich is the flower pot."
+    },
+    {
+      "time": "07:35",
+      "start": 455.94,
+      "end": 458.49,
+      "duration": 2.55,
+      "text": "The first force that I usually\ndraw is the force of gravity."
+    },
+    {
+      "time": "07:38",
+      "start": 458.49,
+      "end": 461.07,
+      "duration": 2.58,
+      "text": "Then we have the tension\nforces acting at an angle,"
+    },
+    {
+      "time": "07:41",
+      "start": 461.07,
+      "end": 463.83,
+      "duration": 2.76,
+      "text": "30 degrees with the vertical."
+    },
+    {
+      "time": "07:43",
+      "start": 463.83,
+      "end": 465.75,
+      "duration": 1.92,
+      "text": "And again, I see force is at an angle."
+    },
+    {
+      "time": "07:45",
+      "start": 465.75,
+      "end": 468.18,
+      "duration": 2.43,
+      "text": "So my first step would be\nto resolve these forces"
+    },
+    {
+      "time": "07:48",
+      "start": 468.18,
+      "end": 469.92,
+      "duration": 1.74,
+      "text": "into horizontal and vertical."
+    },
+    {
+      "time": "07:49",
+      "start": 469.92,
+      "end": 472.32,
+      "duration": 2.4,
+      "text": "Let's do one of them first,\nthe other would be similar,"
+    },
+    {
+      "time": "07:52",
+      "start": 472.32,
+      "end": 473.94,
+      "duration": 1.62,
+      "text": "so let's concentrate on this one."
+    },
+    {
+      "time": "07:53",
+      "start": 473.94,
+      "end": 477.66,
+      "duration": 3.72,
+      "text": "I can write this force as a\nsum of this vertical component"
+    },
+    {
+      "time": "07:57",
+      "start": 477.66,
+      "end": 480.21000000000004,
+      "duration": 2.55,
+      "text": "and the horizontal component."
+    },
+    {
+      "time": "08:00",
+      "start": 480.21,
+      "end": 483.84,
+      "duration": 3.63,
+      "text": "And to find the values, well\nagain, I can use my triangle,"
+    },
+    {
+      "time": "08:03",
+      "start": 483.84,
+      "end": 485.82,
+      "duration": 1.98,
+      "text": "I just have to rotate it"
+    },
+    {
+      "time": "08:05",
+      "start": 485.82,
+      "end": 489.12,
+      "duration": 3.3,
+      "text": "and look, this will be h sine theta,"
+    },
+    {
+      "time": "08:09",
+      "start": 489.12,
+      "end": 491.76,
+      "duration": 2.64,
+      "text": "so this is going to be\nthe force of tension"
+    },
+    {
+      "time": "08:11",
+      "start": 491.76,
+      "end": 493.56,
+      "duration": 1.8,
+      "text": "times sine 30 degrees"
+    },
+    {
+      "time": "08:13",
+      "start": 493.56,
+      "end": 498.56,
+      "duration": 5.0,
+      "text": "and this will be the force of\ntension times cos 30 degrees."
+    },
+    {
+      "time": "08:19",
+      "start": 499.02,
+      "end": 501.59999999999997,
+      "duration": 2.58,
+      "text": "So let's get rid of this vector"
+    },
+    {
+      "time": "08:21",
+      "start": 501.6,
+      "end": 502.92,
+      "duration": 1.32,
+      "text": "and I can do the same thing over here."
+    },
+    {
+      "time": "08:22",
+      "start": 502.92,
+      "end": 504.18,
+      "duration": 1.26,
+      "text": "In fact, it's gonna be very similar."
+    },
+    {
+      "time": "08:24",
+      "start": 504.18,
+      "end": 506.31,
+      "duration": 2.13,
+      "text": "The horizontal component\nwill be FT sine 30"
+    },
+    {
+      "time": "08:26",
+      "start": 506.31,
+      "end": 509.88,
+      "duration": 3.57,
+      "text": "and the vertical component\nwill be FT cos 30."
+    },
+    {
+      "time": "08:29",
+      "start": 509.88,
+      "end": 512.49,
+      "duration": 2.61,
+      "text": "All right, so I have my free body diagram"
+    },
+    {
+      "time": "08:32",
+      "start": 512.49,
+      "end": 514.5600000000001,
+      "duration": 2.07,
+      "text": "with only horizontal and vertical forces."
+    },
+    {
+      "time": "08:34",
+      "start": 514.56,
+      "end": 516.75,
+      "duration": 2.19,
+      "text": "Okay, now I look at what is asked."
+    },
+    {
+      "time": "08:36",
+      "start": 516.75,
+      "end": 520.41,
+      "duration": 3.66,
+      "text": "We are asked to find the\nvalue of the tension force."
+    },
+    {
+      "time": "08:40",
+      "start": 520.41,
+      "end": 521.4,
+      "duration": 0.99,
+      "text": "How do we do that?"
+    },
+    {
+      "time": "08:41",
+      "start": 521.4,
+      "end": 522.3299999999999,
+      "duration": 0.93,
+      "text": "Well, the idea is the same,"
+    },
+    {
+      "time": "08:42",
+      "start": 522.33,
+      "end": 523.2900000000001,
+      "duration": 0.96,
+      "text": "we're gonna use Newton's laws:"
+    },
+    {
+      "time": "08:43",
+      "start": 523.29,
+      "end": 525.81,
+      "duration": 2.52,
+      "text": "net force equals mass times acceleration."
+    },
+    {
+      "time": "08:45",
+      "start": 525.81,
+      "end": 529.6199999999999,
+      "duration": 3.81,
+      "text": "This time, we know the\nacceleration of the flower pot."
+    },
+    {
+      "time": "08:49",
+      "start": 529.62,
+      "end": 531.69,
+      "duration": 2.07,
+      "text": "It's supported by two\nidentical cables as shown,"
+    },
+    {
+      "time": "08:51",
+      "start": 531.69,
+      "end": 534.0,
+      "duration": 2.31,
+      "text": "it's at rest, it's not moving at all,"
+    },
+    {
+      "time": "08:54",
+      "start": 534.0,
+      "end": 535.92,
+      "duration": 1.92,
+      "text": "which means its velocity\nis zero all the time,"
+    },
+    {
+      "time": "08:55",
+      "start": 535.92,
+      "end": 538.86,
+      "duration": 2.94,
+      "text": "its acceleration stays zero."
+    },
+    {
+      "time": "08:58",
+      "start": 538.86,
+      "end": 541.32,
+      "duration": 2.46,
+      "text": "So we know the acceleration is zero,"
+    },
+    {
+      "time": "09:01",
+      "start": 541.32,
+      "end": 546.0600000000001,
+      "duration": 4.74,
+      "text": "that means the net force\non that pot must be zero,"
+    },
+    {
+      "time": "09:07",
+      "start": 547.23,
+      "end": 548.3100000000001,
+      "duration": 1.08,
+      "text": "which automatically means"
+    },
+    {
+      "time": "09:08",
+      "start": 548.31,
+      "end": 550.56,
+      "duration": 2.25,
+      "text": "the net force in the horizontal is zero,"
+    },
+    {
+      "time": "09:10",
+      "start": 550.56,
+      "end": 554.2199999999999,
+      "duration": 3.66,
+      "text": "the net force in the\nvertical must also be zero."
+    },
+    {
+      "time": "09:14",
+      "start": 554.22,
+      "end": 556.35,
+      "duration": 2.13,
+      "text": "So all I have to do is\nuse the free body diagrams"
+    },
+    {
+      "time": "09:16",
+      "start": 556.35,
+      "end": 558.66,
+      "duration": 2.31,
+      "text": "to set up equations for X and Y directions"
+    },
+    {
+      "time": "09:18",
+      "start": 558.66,
+      "end": 560.0699999999999,
+      "duration": 1.41,
+      "text": "and set them to zero"
+    },
+    {
+      "time": "09:20",
+      "start": 560.07,
+      "end": 562.6500000000001,
+      "duration": 2.58,
+      "text": "and see if I can use them to\ncalculate the value of FT."
+    },
+    {
+      "time": "09:22",
+      "start": 562.65,
+      "end": 564.3,
+      "duration": 1.65,
+      "text": "Great idea to pause the video"
+    },
+    {
+      "time": "09:24",
+      "start": 564.3,
+      "end": 566.1899999999999,
+      "duration": 1.89,
+      "text": "and see if you can try this yourself."
+    },
+    {
+      "time": "09:26",
+      "start": 566.19,
+      "end": 567.36,
+      "duration": 1.17,
+      "text": "Okay, let's do it,"
+    },
+    {
+      "time": "09:27",
+      "start": 567.36,
+      "end": 570.09,
+      "duration": 2.73,
+      "text": "let's start with the\nforces in the X direction."
+    },
+    {
+      "time": "09:30",
+      "start": 570.09,
+      "end": 571.77,
+      "duration": 1.68,
+      "text": "Again, choose one\ndirection to be positive."
+    },
+    {
+      "time": "09:31",
+      "start": 571.77,
+      "end": 573.21,
+      "duration": 1.44,
+      "text": "Let me choose right side to be positive."
+    },
+    {
+      "time": "09:33",
+      "start": 573.21,
+      "end": 575.88,
+      "duration": 2.67,
+      "text": "If I do that, this will\nbe a positive number."
+    },
+    {
+      "time": "09:35",
+      "start": 575.88,
+      "end": 577.05,
+      "duration": 1.17,
+      "text": "This will be negative number,"
+    },
+    {
+      "time": "09:37",
+      "start": 577.05,
+      "end": 580.41,
+      "duration": 3.36,
+      "text": "and so that'll get FT\nsine 30 minus FT sine 30,"
+    },
+    {
+      "time": "09:40",
+      "start": 580.41,
+      "end": 581.5799999999999,
+      "duration": 1.17,
+      "text": "which is zero."
+    },
+    {
+      "time": "09:41",
+      "start": 581.58,
+      "end": 583.95,
+      "duration": 2.37,
+      "text": "So look, the net force in the X direction"
+    },
+    {
+      "time": "09:43",
+      "start": 583.95,
+      "end": 585.84,
+      "duration": 1.89,
+      "text": "is independent of the values of FT."
+    },
+    {
+      "time": "09:45",
+      "start": 585.84,
+      "end": 587.9100000000001,
+      "duration": 2.07,
+      "text": "Whatever is the value\nof the tension force,"
+    },
+    {
+      "time": "09:47",
+      "start": 587.91,
+      "end": 589.26,
+      "duration": 1.35,
+      "text": "this number will always be zero."
+    },
+    {
+      "time": "09:49",
+      "start": 589.26,
+      "end": 591.9,
+      "duration": 2.64,
+      "text": "So this is not gonna help me."
+    },
+    {
+      "time": "09:51",
+      "start": 591.9,
+      "end": 594.6899999999999,
+      "duration": 2.79,
+      "text": "So let's try the net\nforce in the Y direction."
+    },
+    {
+      "time": "09:54",
+      "start": 594.69,
+      "end": 596.37,
+      "duration": 1.68,
+      "text": "What's net force in the Y direction?"
+    },
+    {
+      "time": "09:56",
+      "start": 596.37,
+      "end": 597.48,
+      "duration": 1.11,
+      "text": "Well, we have these two forces."
+    },
+    {
+      "time": "09:57",
+      "start": 597.48,
+      "end": 599.07,
+      "duration": 1.59,
+      "text": "Let's consider upwards positive."
+    },
+    {
+      "time": "09:59",
+      "start": 599.07,
+      "end": 601.35,
+      "duration": 2.28,
+      "text": "So then these two will be\npositive, this will be negative."
+    },
+    {
+      "time": "10:01",
+      "start": 601.35,
+      "end": 605.13,
+      "duration": 3.78,
+      "text": "So I'll get FT cos 30 plus\nFT cos 30 positive values"
+    },
+    {
+      "time": "10:05",
+      "start": 605.13,
+      "end": 610.13,
+      "duration": 5.0,
+      "text": "minus FG and that should\nalso be equal to zero."
+    },
+    {
+      "time": "10:10",
+      "start": 610.89,
+      "end": 614.31,
+      "duration": 3.42,
+      "text": "This gives me 2FT cos\n30 minus Fg equals zero."
+    },
+    {
+      "time": "10:14",
+      "start": 614.31,
+      "end": 616.4699999999999,
+      "duration": 2.16,
+      "text": "From this, I can calculate\nwhat the force of tension is."
+    },
+    {
+      "time": "10:16",
+      "start": 616.47,
+      "end": 618.1800000000001,
+      "duration": 1.71,
+      "text": "I can just rearrange this equation"
+    },
+    {
+      "time": "10:18",
+      "start": 618.18,
+      "end": 620.04,
+      "duration": 1.86,
+      "text": "and I get force of tension as Fg"
+    },
+    {
+      "time": "10:20",
+      "start": 620.04,
+      "end": 622.14,
+      "duration": 2.1,
+      "text": "divided by 2 cos 30."
+    },
+    {
+      "time": "10:22",
+      "start": 622.14,
+      "end": 624.4499999999999,
+      "duration": 2.31,
+      "text": "Force of gravity is just mg."
+    },
+    {
+      "time": "10:24",
+      "start": 624.45,
+      "end": 626.76,
+      "duration": 2.31,
+      "text": "And so now I have all\nthe values necessary,"
+    },
+    {
+      "time": "10:26",
+      "start": 626.76,
+      "end": 628.02,
+      "duration": 1.26,
+      "text": "I can just plug them in."
+    },
+    {
+      "time": "10:28",
+      "start": 628.02,
+      "end": 632.64,
+      "duration": 4.62,
+      "text": "So mass is 25 kilograms,\nG is 9.8 and this is two."
+    },
+    {
+      "time": "10:32",
+      "start": 632.64,
+      "end": 634.83,
+      "duration": 2.19,
+      "text": "And cos 30 is also a known value."
+    },
+    {
+      "time": "10:34",
+      "start": 634.83,
+      "end": 636.9000000000001,
+      "duration": 2.07,
+      "text": "So if I put this all in my calculator,"
+    },
+    {
+      "time": "10:36",
+      "start": 636.9,
+      "end": 638.97,
+      "duration": 2.07,
+      "text": "this is what I would end up with."
+    },
+    {
+      "time": "10:38",
+      "start": 638.97,
+      "end": 640.6800000000001,
+      "duration": 1.71,
+      "text": "And depending on the question,"
+    },
+    {
+      "time": "10:40",
+      "start": 640.68,
+      "end": 642.03,
+      "duration": 1.35,
+      "text": "we might be asked to round this off."
+    },
+    {
+      "time": "10:42",
+      "start": 642.03,
+      "end": 643.0799999999999,
+      "duration": 1.05,
+      "text": "Let's say we are asked"
+    },
+    {
+      "time": "10:43",
+      "start": 643.08,
+      "end": 644.9100000000001,
+      "duration": 1.83,
+      "text": "to round this off two significant figures,"
+    },
+    {
+      "time": "10:44",
+      "start": 644.91,
+      "end": 647.73,
+      "duration": 2.82,
+      "text": "then this would be 140 Newtons."
+    },
+    {
+      "time": "10:47",
+      "start": 647.73,
+      "end": 652.73,
+      "duration": 5.0,
+      "text": "So that is the tension force in each wire."
+    },
+    {
+      "time": "10:54",
+      "start": 654.03,
+      "end": 655.5,
+      "duration": 1.47,
+      "text": "All right, last problem."
+    },
+    {
+      "time": "10:55",
+      "start": 655.5,
+      "end": 657.27,
+      "duration": 1.77,
+      "text": "Great idea to see if you can try"
+    },
+    {
+      "time": "10:57",
+      "start": 657.27,
+      "end": 659.2529999999999,
+      "duration": 1.983,
+      "text": "to do the whole thing all by yourself."
+    },
+    {
+      "time": "11:00",
+      "start": 660.18,
+      "end": 663.5699999999999,
+      "duration": 3.39,
+      "text": "All right, so we have a child\nthat's pushing on the box"
+    },
+    {
+      "time": "11:03",
+      "start": 663.57,
+      "end": 665.34,
+      "duration": 1.77,
+      "text": "and there are a bunch of\nforces acting on the box."
+    },
+    {
+      "time": "11:05",
+      "start": 665.34,
+      "end": 668.22,
+      "duration": 2.88,
+      "text": "So let's draw the free body\ndiagram and draw the forces."
+    },
+    {
+      "time": "11:08",
+      "start": 668.22,
+      "end": 670.23,
+      "duration": 2.01,
+      "text": "Well, we have the force of gravity,"
+    },
+    {
+      "time": "11:10",
+      "start": 670.23,
+      "end": 672.33,
+      "duration": 2.1,
+      "text": "we'll also have a normal\nforce acting on it"
+    },
+    {
+      "time": "11:12",
+      "start": 672.33,
+      "end": 674.5500000000001,
+      "duration": 2.22,
+      "text": "because of the floor pushing on it."
+    },
+    {
+      "time": "11:14",
+      "start": 674.55,
+      "end": 677.31,
+      "duration": 2.76,
+      "text": "Then there's the force\nthat the child is putting,"
+    },
+    {
+      "time": "11:17",
+      "start": 677.31,
+      "end": 681.03,
+      "duration": 3.72,
+      "text": "the child is exerting at an\nangle of 45 degrees downwards"
+    },
+    {
+      "time": "11:21",
+      "start": 681.03,
+      "end": 683.337,
+      "duration": 2.307,
+      "text": "to the right and there\nwill be a friction force."
+    },
+    {
+      "time": "11:23",
+      "start": 683.337,
+      "end": 686.04,
+      "duration": 2.703,
+      "text": "Now the box will end up\nsliding to the right, isn't it?"
+    },
+    {
+      "time": "11:26",
+      "start": 686.04,
+      "end": 689.0699999999999,
+      "duration": 3.03,
+      "text": "And therefore the frictional\nforce will be towards the left."
+    },
+    {
+      "time": "11:29",
+      "start": 689.07,
+      "end": 690.45,
+      "duration": 1.38,
+      "text": "We are also given the acceleration"
+    },
+    {
+      "time": "11:30",
+      "start": 690.45,
+      "end": 692.1,
+      "duration": 1.65,
+      "text": "is one meters per second square"
+    },
+    {
+      "time": "11:32",
+      "start": 692.1,
+      "end": 693.78,
+      "duration": 1.68,
+      "text": "and what direction would\nthe acceleration be?"
+    },
+    {
+      "time": "11:33",
+      "start": 693.78,
+      "end": 696.2099999999999,
+      "duration": 2.43,
+      "text": "Well, if you push the\nbox towards the right,"
+    },
+    {
+      "time": "11:36",
+      "start": 696.21,
+      "end": 698.4300000000001,
+      "duration": 2.22,
+      "text": "it will accelerate to the right."
+    },
+    {
+      "time": "11:38",
+      "start": 698.43,
+      "end": 700.38,
+      "duration": 1.95,
+      "text": "So the box is also accelerating"
+    },
+    {
+      "time": "11:40",
+      "start": 700.38,
+      "end": 702.6899999999999,
+      "duration": 2.31,
+      "text": "at one meters per second\nsquare to the right."
+    },
+    {
+      "time": "11:42",
+      "start": 702.69,
+      "end": 703.86,
+      "duration": 1.17,
+      "text": "Again, our first step would be"
+    },
+    {
+      "time": "11:43",
+      "start": 703.86,
+      "end": 706.11,
+      "duration": 2.25,
+      "text": "to resolve this force into\nhorizontal and vertical,"
+    },
+    {
+      "time": "11:46",
+      "start": 706.11,
+      "end": 708.48,
+      "duration": 2.37,
+      "text": "and these will be the two values."
+    },
+    {
+      "time": "11:48",
+      "start": 708.48,
+      "end": 711.3000000000001,
+      "duration": 2.82,
+      "text": "And since acceleration is given to us"
+    },
+    {
+      "time": "11:51",
+      "start": 711.3,
+      "end": 713.9399999999999,
+      "duration": 2.64,
+      "text": "and we are asked to find\none of the force vectors,"
+    },
+    {
+      "time": "11:53",
+      "start": 713.94,
+      "end": 715.83,
+      "duration": 1.89,
+      "text": "we'll again use Newton's second law"
+    },
+    {
+      "time": "11:55",
+      "start": 715.83,
+      "end": 719.4300000000001,
+      "duration": 3.6,
+      "text": "acceleration equals net\nforce divide by mass."
+    },
+    {
+      "time": "11:59",
+      "start": 719.43,
+      "end": 723.0,
+      "duration": 3.57,
+      "text": "But the acceleration is purely\nin the X direction, right?"
+    },
+    {
+      "time": "12:03",
+      "start": 723.0,
+      "end": 724.11,
+      "duration": 1.11,
+      "text": "It accelerates forward,"
+    },
+    {
+      "time": "12:04",
+      "start": 724.11,
+      "end": 726.48,
+      "duration": 2.37,
+      "text": "if the box accelerates at\none meters per second square,"
+    },
+    {
+      "time": "12:06",
+      "start": 726.48,
+      "end": 728.79,
+      "duration": 2.31,
+      "text": "it's going to accelerate\nforward in this direction."
+    },
+    {
+      "time": "12:08",
+      "start": 728.79,
+      "end": 730.62,
+      "duration": 1.83,
+      "text": "So since acceleration is\nonly in the X direction,"
+    },
+    {
+      "time": "12:10",
+      "start": 730.62,
+      "end": 734.46,
+      "duration": 3.84,
+      "text": "I only need to look at the\nnet force in the X direction."
+    },
+    {
+      "time": "12:14",
+      "start": 734.46,
+      "end": 735.7800000000001,
+      "duration": 1.32,
+      "text": "So let's do that."
+    },
+    {
+      "time": "12:15",
+      "start": 735.78,
+      "end": 739.8,
+      "duration": 4.02,
+      "text": "So net force in the X direction,\nwhat's that going to be?"
+    },
+    {
+      "time": "12:19",
+      "start": 739.8,
+      "end": 741.27,
+      "duration": 1.47,
+      "text": "Well that's going to be,"
+    },
+    {
+      "time": "12:21",
+      "start": 741.27,
+      "end": 742.8,
+      "duration": 1.53,
+      "text": "if I choose right side to be positive,"
+    },
+    {
+      "time": "12:22",
+      "start": 742.8,
+      "end": 744.81,
+      "duration": 2.01,
+      "text": "this number minus this,"
+    },
+    {
+      "time": "12:24",
+      "start": 744.81,
+      "end": 746.9399999999999,
+      "duration": 2.13,
+      "text": "so it's going to be Fc cos 45 degrees."
+    },
+    {
+      "time": "12:26",
+      "start": 746.94,
+      "end": 749.61,
+      "duration": 2.67,
+      "text": "Remember, Fc is the\nforce of the child, okay?"
+    },
+    {
+      "time": "12:29",
+      "start": 749.61,
+      "end": 752.34,
+      "duration": 2.73,
+      "text": "Minus the force of the friction."
+    },
+    {
+      "time": "12:32",
+      "start": 752.34,
+      "end": 753.9300000000001,
+      "duration": 1.59,
+      "text": "This is the net force in the X direction."
+    },
+    {
+      "time": "12:33",
+      "start": 753.93,
+      "end": 757.4399999999999,
+      "duration": 3.51,
+      "text": "And I know that equals\nmass times the acceleration"
+    },
+    {
+      "time": "12:37",
+      "start": 757.44,
+      "end": 759.1800000000001,
+      "duration": 1.74,
+      "text": "in the X direction."
+    },
+    {
+      "time": "12:39",
+      "start": 759.18,
+      "end": 761.3399999999999,
+      "duration": 2.16,
+      "text": "And so from this, I can calculate what,"
+    },
+    {
+      "time": "12:41",
+      "start": 761.34,
+      "end": 762.48,
+      "duration": 1.14,
+      "text": "I can rearrange to get"
+    },
+    {
+      "time": "12:42",
+      "start": 762.48,
+      "end": 764.3100000000001,
+      "duration": 1.83,
+      "text": "what the force of friction is going to be."
+    },
+    {
+      "time": "12:44",
+      "start": 764.31,
+      "end": 765.8599999999999,
+      "duration": 1.55,
+      "text": "So that's gonna look like that."
+    },
+    {
+      "time": "12:46",
+      "start": 766.8,
+      "end": 768.42,
+      "duration": 1.62,
+      "text": "And now we can plug in all the values."
+    },
+    {
+      "time": "12:48",
+      "start": 768.42,
+      "end": 771.3,
+      "duration": 2.88,
+      "text": "The force of the child is 160 Newtons."
+    },
+    {
+      "time": "12:51",
+      "start": 771.3,
+      "end": 775.4399999999999,
+      "duration": 4.14,
+      "text": "Cos 45 is a known value, mass\nis given to be 12 kilograms,"
+    },
+    {
+      "time": "12:55",
+      "start": 775.44,
+      "end": 777.3000000000001,
+      "duration": 1.86,
+      "text": "and we know the acceleration\nin the forward direction"
+    },
+    {
+      "time": "12:57",
+      "start": 777.3,
+      "end": 779.4599999999999,
+      "duration": 2.16,
+      "text": "is one meters per second square."
+    },
+    {
+      "time": "12:59",
+      "start": 779.46,
+      "end": 782.3100000000001,
+      "duration": 2.85,
+      "text": "So if I plug this into my calculator,"
+    },
+    {
+      "time": "13:02",
+      "start": 782.31,
+      "end": 783.78,
+      "duration": 1.47,
+      "text": "this is what I'll end up with."
+    },
+    {
+      "time": "13:03",
+      "start": 783.78,
+      "end": 786.03,
+      "duration": 2.25,
+      "text": "Again, we may be asked to round it off."
+    },
+    {
+      "time": "13:06",
+      "start": 786.03,
+      "end": 787.53,
+      "duration": 1.5,
+      "text": "So let's say let's round it off"
+    },
+    {
+      "time": "13:07",
+      "start": 787.53,
+      "end": 791.73,
+      "duration": 4.2,
+      "text": "to three significant figures,\nI'll end up with 101 Newtons."
+    },
+    {
+      "time": "13:11",
+      "start": 791.73,
+      "end": 795.87,
+      "duration": 4.14,
+      "text": "So that is the frictional\nforce acting on the box."
+    },
+    {
+      "time": "13:15",
+      "start": 795.87,
+      "end": 798.21,
+      "duration": 2.34,
+      "text": "And if you're wondering\nwhat about the vertical?"
+    },
+    {
+      "time": "13:18",
+      "start": 798.21,
+      "end": 801.39,
+      "duration": 3.18,
+      "text": "Well, in the vertical direction\nthe net force has to be zero"
+    },
+    {
+      "time": "13:21",
+      "start": 801.39,
+      "end": 803.6999999999999,
+      "duration": 2.31,
+      "text": "because there is no acceleration\nin the vertical direction."
+    },
+    {
+      "time": "13:23",
+      "start": 803.7,
+      "end": 805.71,
+      "duration": 2.01,
+      "text": "And we know these two values,"
+    },
+    {
+      "time": "13:25",
+      "start": 805.71,
+      "end": 808.8000000000001,
+      "duration": 3.09,
+      "text": "the values of these two\nforces, which means I can use"
+    },
+    {
+      "time": "13:28",
+      "start": 808.8,
+      "end": 812.1899999999999,
+      "duration": 3.39,
+      "text": "the same thing in the vertical\nto figure out the magnitude"
+    },
+    {
+      "time": "13:32",
+      "start": 812.19,
+      "end": 814.6800000000001,
+      "duration": 2.49,
+      "text": "of the normal force."
+    },
+    {
+      "time": "13:34",
+      "start": 814.68,
+      "end": 815.8499999999999,
+      "duration": 1.17,
+      "text": "So yeah, for extra practice,"
+    },
+    {
+      "time": "13:35",
+      "start": 815.85,
+      "end": 817.65,
+      "duration": 1.8,
+      "text": "you can try figuring it out as well."
+    }
+  ]
+}

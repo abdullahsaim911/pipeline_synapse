@@ -1,0 +1,2236 @@
+{
+  "video_id": "pY1rwEsdCRo",
+  "method": "api",
+  "language": null,
+  "duration_seconds": 1.9700805000029504,
+  "entry_count": 318,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.553,
+      "end": 3.03,
+      "duration": 2.477,
+      "text": "- [Lecturer] A solid\nsphere, a hollow sphere,"
+    },
+    {
+      "time": "00:03",
+      "start": 3.03,
+      "end": 8.03,
+      "duration": 5.0,
+      "text": "and a ring or a hoop are placed\nat the top of an incline."
+    },
+    {
+      "time": "00:08",
+      "start": 8.73,
+      "end": 12.48,
+      "duration": 3.75,
+      "text": "They have the same mass and\nthey have the same radius."
+    },
+    {
+      "time": "00:12",
+      "start": 12.48,
+      "end": 15.09,
+      "duration": 2.61,
+      "text": "The question is if we release\nthem from the same height"
+    },
+    {
+      "time": "00:15",
+      "start": 15.09,
+      "end": 17.34,
+      "duration": 2.25,
+      "text": "and at the same time, which of them"
+    },
+    {
+      "time": "00:17",
+      "start": 17.34,
+      "end": 19.95,
+      "duration": 2.61,
+      "text": "will reach the bottom first?"
+    },
+    {
+      "time": "00:19",
+      "start": 19.95,
+      "end": 21.599999999999998,
+      "duration": 1.65,
+      "text": "What do you think?"
+    },
+    {
+      "time": "00:21",
+      "start": 21.6,
+      "end": 23.28,
+      "duration": 1.68,
+      "text": "Well, when I first look at this problem,"
+    },
+    {
+      "time": "00:23",
+      "start": 23.28,
+      "end": 24.84,
+      "duration": 1.56,
+      "text": "here's how I was thinking."
+    },
+    {
+      "time": "00:24",
+      "start": 24.84,
+      "end": 26.55,
+      "duration": 1.71,
+      "text": "Since they're released\nfrom the same height"
+    },
+    {
+      "time": "00:26",
+      "start": 26.55,
+      "end": 27.57,
+      "duration": 1.02,
+      "text": "and they have the same mass,"
+    },
+    {
+      "time": "00:27",
+      "start": 27.57,
+      "end": 29.55,
+      "duration": 1.98,
+      "text": "they have the same\ngravitational potential energy"
+    },
+    {
+      "time": "00:29",
+      "start": 29.55,
+      "end": 31.8,
+      "duration": 2.25,
+      "text": "to begin with, and when\nthey reach the bottom,"
+    },
+    {
+      "time": "00:31",
+      "start": 31.8,
+      "end": 33.03,
+      "duration": 1.23,
+      "text": "all of that potential energy"
+    },
+    {
+      "time": "00:33",
+      "start": 33.03,
+      "end": 34.35,
+      "duration": 1.32,
+      "text": "gets connected to kinetic energy,"
+    },
+    {
+      "time": "00:34",
+      "start": 34.35,
+      "end": 37.2,
+      "duration": 2.85,
+      "text": "which means they should\nall have the same speed"
+    },
+    {
+      "time": "00:37",
+      "start": 37.2,
+      "end": 38.34,
+      "duration": 1.14,
+      "text": "as they're moving down."
+    },
+    {
+      "time": "00:38",
+      "start": 38.34,
+      "end": 40.830000000000005,
+      "duration": 2.49,
+      "text": "So, they should all reach the bottom"
+    },
+    {
+      "time": "00:40",
+      "start": 40.83,
+      "end": 42.123,
+      "duration": 1.293,
+      "text": "at exactly the same time,"
+    },
+    {
+      "time": "00:43",
+      "start": 43.02,
+      "end": 45.09,
+      "duration": 2.07,
+      "text": "but that is wrong."
+    },
+    {
+      "time": "00:45",
+      "start": 45.09,
+      "end": 46.650000000000006,
+      "duration": 1.56,
+      "text": "Why?"
+    },
+    {
+      "time": "00:46",
+      "start": 46.65,
+      "end": 48.96,
+      "duration": 2.31,
+      "text": "Because they're not just moving forward."
+    },
+    {
+      "time": "00:48",
+      "start": 48.96,
+      "end": 50.94,
+      "duration": 1.98,
+      "text": "It's not just a translatory motion."
+    },
+    {
+      "time": "00:50",
+      "start": 50.94,
+      "end": 54.03,
+      "duration": 3.09,
+      "text": "They're also spinning as they go forward,"
+    },
+    {
+      "time": "00:54",
+      "start": 54.03,
+      "end": 57.36,
+      "duration": 3.33,
+      "text": "and that makes things a\nlittle bit more interesting."
+    },
+    {
+      "time": "00:57",
+      "start": 57.36,
+      "end": 59.04,
+      "duration": 1.68,
+      "text": "So, let's see how to tackle this problem"
+    },
+    {
+      "time": "00:59",
+      "start": 59.04,
+      "end": 62.67,
+      "duration": 3.63,
+      "text": "and which of the three actually\nreaches the ground first."
+    },
+    {
+      "time": "01:02",
+      "start": 62.67,
+      "end": 64.26,
+      "duration": 1.59,
+      "text": "Suppose a basketball moves"
+    },
+    {
+      "time": "01:04",
+      "start": 64.26,
+      "end": 68.01,
+      "duration": 3.75,
+      "text": "such that at any given\nmoment all the points"
+    },
+    {
+      "time": "01:08",
+      "start": 68.01,
+      "end": 72.66000000000001,
+      "duration": 4.65,
+      "text": "on that basketball has\nexactly the same velocity,"
+    },
+    {
+      "time": "01:12",
+      "start": 72.66,
+      "end": 76.74,
+      "duration": 4.08,
+      "text": "then we call such a motion,\ntranslational motion."
+    },
+    {
+      "time": "01:16",
+      "start": 76.74,
+      "end": 79.38,
+      "duration": 2.64,
+      "text": "And if the basketball has mass m,"
+    },
+    {
+      "time": "01:19",
+      "start": 79.38,
+      "end": 82.25999999999999,
+      "duration": 2.88,
+      "text": "then the kinetic energy of the ball"
+    },
+    {
+      "time": "01:22",
+      "start": 82.26,
+      "end": 83.76,
+      "duration": 1.5,
+      "text": "would be just half mv square."
+    },
+    {
+      "time": "01:23",
+      "start": 83.76,
+      "end": 87.9,
+      "duration": 4.14,
+      "text": "We call this the\ntranslational kinetic energy."
+    },
+    {
+      "time": "01:27",
+      "start": 87.9,
+      "end": 90.39,
+      "duration": 2.49,
+      "text": "In contrast, if you have a basketball"
+    },
+    {
+      "time": "01:30",
+      "start": 90.39,
+      "end": 93.24,
+      "duration": 2.85,
+      "text": "that is spinning like this,"
+    },
+    {
+      "time": "01:33",
+      "start": 93.24,
+      "end": 95.88,
+      "duration": 2.64,
+      "text": "then look, all particles\nare going in a circular path"
+    },
+    {
+      "time": "01:35",
+      "start": 95.88,
+      "end": 100.53,
+      "duration": 4.65,
+      "text": "about a common axis, we call such a motion"
+    },
+    {
+      "time": "01:40",
+      "start": 100.53,
+      "end": 103.32000000000001,
+      "duration": 2.79,
+      "text": "rotational motion or just rotation."
+    },
+    {
+      "time": "01:43",
+      "start": 103.32,
+      "end": 105.80999999999999,
+      "duration": 2.49,
+      "text": "Now, in this particular\ncase, different particles"
+    },
+    {
+      "time": "01:45",
+      "start": 105.81,
+      "end": 108.87,
+      "duration": 3.06,
+      "text": "don't have the same speed\nat any given moment."
+    },
+    {
+      "time": "01:48",
+      "start": 108.87,
+      "end": 110.52000000000001,
+      "duration": 1.65,
+      "text": "Particles that are far\naway from the center"
+    },
+    {
+      "time": "01:50",
+      "start": 110.52,
+      "end": 113.33999999999999,
+      "duration": 2.82,
+      "text": "are covering a lot of distance per second."
+    },
+    {
+      "time": "01:53",
+      "start": 113.34,
+      "end": 115.8,
+      "duration": 2.46,
+      "text": "So, they are traveling\nwith a very high speed"
+    },
+    {
+      "time": "01:55",
+      "start": 115.8,
+      "end": 117.78,
+      "duration": 1.98,
+      "text": "compared to the particles that are closer."
+    },
+    {
+      "time": "01:57",
+      "start": 117.78,
+      "end": 120.63,
+      "duration": 2.85,
+      "text": "And the particles which are\nnear the axis or on the axis,"
+    },
+    {
+      "time": "02:00",
+      "start": 120.63,
+      "end": 121.94999999999999,
+      "duration": 1.32,
+      "text": "they're not moving at all."
+    },
+    {
+      "time": "02:01",
+      "start": 121.95,
+      "end": 124.32000000000001,
+      "duration": 2.37,
+      "text": "So, they have very different speeds,"
+    },
+    {
+      "time": "02:04",
+      "start": 124.32,
+      "end": 127.67999999999999,
+      "duration": 3.36,
+      "text": "but they're all covering\nequal angles per second."
+    },
+    {
+      "time": "02:07",
+      "start": 127.68,
+      "end": 131.04000000000002,
+      "duration": 3.36,
+      "text": "So, they have the same angular speed."
+    },
+    {
+      "time": "02:11",
+      "start": 131.04,
+      "end": 133.29,
+      "duration": 2.25,
+      "text": "And just like in translational motion,"
+    },
+    {
+      "time": "02:13",
+      "start": 133.29,
+      "end": 135.87,
+      "duration": 2.58,
+      "text": "the mass represents inertia."
+    },
+    {
+      "time": "02:15",
+      "start": 135.87,
+      "end": 140.61,
+      "duration": 4.74,
+      "text": "It tells how hard it is to\nlinearly accelerate this object."
+    },
+    {
+      "time": "02:20",
+      "start": 140.61,
+      "end": 141.57000000000002,
+      "duration": 0.96,
+      "text": "When it comes to rotation,"
+    },
+    {
+      "time": "02:21",
+      "start": 141.57,
+      "end": 145.10999999999999,
+      "duration": 3.54,
+      "text": "we have an analogous quantity\ncalled rotational inertia."
+    },
+    {
+      "time": "02:25",
+      "start": 145.11,
+      "end": 147.69000000000003,
+      "duration": 2.58,
+      "text": "That is a quantity that\ntells us how hard it is"
+    },
+    {
+      "time": "02:27",
+      "start": 147.69,
+      "end": 151.35,
+      "duration": 3.66,
+      "text": "to angularly accelerate the object,"
+    },
+    {
+      "time": "02:31",
+      "start": 151.35,
+      "end": 152.31,
+      "duration": 0.96,
+      "text": "which means how hard is it"
+    },
+    {
+      "time": "02:32",
+      "start": 152.31,
+      "end": 154.11,
+      "duration": 1.8,
+      "text": "to get an object to start spinning"
+    },
+    {
+      "time": "02:34",
+      "start": 154.11,
+      "end": 156.0,
+      "duration": 1.89,
+      "text": "or to stop spinning, for example."
+    },
+    {
+      "time": "02:36",
+      "start": 156.0,
+      "end": 158.43,
+      "duration": 2.43,
+      "text": "So, rotational inertia\nhere is analogous to mass."
+    },
+    {
+      "time": "02:38",
+      "start": 158.43,
+      "end": 159.99,
+      "duration": 1.56,
+      "text": "And by the way, earlier we used to call"
+    },
+    {
+      "time": "02:39",
+      "start": 159.99,
+      "end": 162.0,
+      "duration": 2.01,
+      "text": "this quantity moment of inertia,"
+    },
+    {
+      "time": "02:42",
+      "start": 162.0,
+      "end": 163.71,
+      "duration": 1.71,
+      "text": "but it's now more typically referred to"
+    },
+    {
+      "time": "02:43",
+      "start": 163.71,
+      "end": 165.57000000000002,
+      "duration": 1.86,
+      "text": "as just rotational inertia,"
+    },
+    {
+      "time": "02:45",
+      "start": 165.57,
+      "end": 167.64,
+      "duration": 2.07,
+      "text": "because that sounds much more intuitive."
+    },
+    {
+      "time": "02:47",
+      "start": 167.64,
+      "end": 170.16,
+      "duration": 2.52,
+      "text": "So, can you now guess what\nwill be the expression"
+    },
+    {
+      "time": "02:50",
+      "start": 170.16,
+      "end": 172.5,
+      "duration": 2.34,
+      "text": "for rotational kinetic energy?"
+    },
+    {
+      "time": "02:52",
+      "start": 172.5,
+      "end": 174.87,
+      "duration": 2.37,
+      "text": "Pause and think about this."
+    },
+    {
+      "time": "02:54",
+      "start": 174.87,
+      "end": 176.79,
+      "duration": 1.92,
+      "text": "All right, it's gonna be\npretty analogous to this."
+    },
+    {
+      "time": "02:56",
+      "start": 176.79,
+      "end": 181.79,
+      "duration": 5.0,
+      "text": "It's gonna be half times not\nM, but rotational inertia, so I"
+    },
+    {
+      "time": "03:01",
+      "start": 181.89,
+      "end": 185.16,
+      "duration": 3.27,
+      "text": "times, not we, but angular\nspeed, omega squared."
+    },
+    {
+      "time": "03:05",
+      "start": 185.16,
+      "end": 187.62,
+      "duration": 2.46,
+      "text": "So, half I omega squared."
+    },
+    {
+      "time": "03:07",
+      "start": 187.62,
+      "end": 189.0,
+      "duration": 1.38,
+      "text": "So, an object is spinning."
+    },
+    {
+      "time": "03:09",
+      "start": 189.0,
+      "end": 191.1,
+      "duration": 2.1,
+      "text": "This is how you calculate kinetic energy."
+    },
+    {
+      "time": "03:11",
+      "start": 191.1,
+      "end": 192.57,
+      "duration": 1.47,
+      "text": "So look, rotational kinetic energy"
+    },
+    {
+      "time": "03:12",
+      "start": 192.57,
+      "end": 194.13,
+      "duration": 1.56,
+      "text": "depends on rotational inertia,"
+    },
+    {
+      "time": "03:14",
+      "start": 194.13,
+      "end": 197.04,
+      "duration": 2.91,
+      "text": "and that's what makes\nrotation so interesting."
+    },
+    {
+      "time": "03:17",
+      "start": 197.04,
+      "end": 198.35999999999999,
+      "duration": 1.32,
+      "text": "Lemme take an example."
+    },
+    {
+      "time": "03:18",
+      "start": 198.36,
+      "end": 199.5,
+      "duration": 1.14,
+      "text": "Imagine you had two objects,"
+    },
+    {
+      "time": "03:19",
+      "start": 199.5,
+      "end": 202.56,
+      "duration": 3.06,
+      "text": "one disc and another one like a disc,"
+    },
+    {
+      "time": "03:22",
+      "start": 202.56,
+      "end": 204.78,
+      "duration": 2.22,
+      "text": "but it is hollow in the center, okay?"
+    },
+    {
+      "time": "03:24",
+      "start": 204.78,
+      "end": 209.64000000000001,
+      "duration": 4.86,
+      "text": "But more importantly, they both\nhave exactly the same mass."
+    },
+    {
+      "time": "03:29",
+      "start": 209.64,
+      "end": 210.63,
+      "duration": 0.99,
+      "text": "Now, if these two objects"
+    },
+    {
+      "time": "03:30",
+      "start": 210.63,
+      "end": 212.43,
+      "duration": 1.8,
+      "text": "were undergoing translational motion"
+    },
+    {
+      "time": "03:32",
+      "start": 212.43,
+      "end": 213.93,
+      "duration": 1.5,
+      "text": "with exactly the same speed,"
+    },
+    {
+      "time": "03:33",
+      "start": 213.93,
+      "end": 215.97,
+      "duration": 2.04,
+      "text": "would they have the same kinetic energy?"
+    },
+    {
+      "time": "03:35",
+      "start": 215.97,
+      "end": 217.05,
+      "duration": 1.08,
+      "text": "The answer is yes."
+    },
+    {
+      "time": "03:37",
+      "start": 217.05,
+      "end": 218.67000000000002,
+      "duration": 1.62,
+      "text": "Now they're undergoing translation,"
+    },
+    {
+      "time": "03:38",
+      "start": 218.67,
+      "end": 219.92999999999998,
+      "duration": 1.26,
+      "text": "so they have the same mass."
+    },
+    {
+      "time": "03:39",
+      "start": 219.93,
+      "end": 221.1,
+      "duration": 1.17,
+      "text": "They have the same speed."
+    },
+    {
+      "time": "03:41",
+      "start": 221.1,
+      "end": 223.95,
+      "duration": 2.85,
+      "text": "They should have the\nexact same kinetic energy."
+    },
+    {
+      "time": "03:43",
+      "start": 223.95,
+      "end": 225.39,
+      "duration": 1.44,
+      "text": "So look in translational motion,"
+    },
+    {
+      "time": "03:45",
+      "start": 225.39,
+      "end": 228.29999999999998,
+      "duration": 2.91,
+      "text": "I don't care about, you\nknow, whether I'm dealing"
+    },
+    {
+      "time": "03:48",
+      "start": 228.3,
+      "end": 229.8,
+      "duration": 1.5,
+      "text": "with a solid disc or a hollow disc."
+    },
+    {
+      "time": "03:49",
+      "start": 229.8,
+      "end": 231.18,
+      "duration": 1.38,
+      "text": "I don't care about all of that."
+    },
+    {
+      "time": "03:51",
+      "start": 231.18,
+      "end": 232.59,
+      "duration": 1.41,
+      "text": "Mass is all that matters to me."
+    },
+    {
+      "time": "03:52",
+      "start": 232.59,
+      "end": 234.12,
+      "duration": 1.53,
+      "text": "And the speed, of course."
+    },
+    {
+      "time": "03:54",
+      "start": 234.12,
+      "end": 237.36,
+      "duration": 3.24,
+      "text": "But now, let's say they're\nundergoing rotational motion."
+    },
+    {
+      "time": "03:57",
+      "start": 237.36,
+      "end": 238.98000000000002,
+      "duration": 1.62,
+      "text": "In fact, let's assume they're spinning"
+    },
+    {
+      "time": "03:58",
+      "start": 238.98,
+      "end": 242.48999999999998,
+      "duration": 3.51,
+      "text": "with the exact same angular speeds, okay?"
+    },
+    {
+      "time": "04:02",
+      "start": 242.49,
+      "end": 243.48000000000002,
+      "duration": 0.99,
+      "text": "So, they have the same mass."
+    },
+    {
+      "time": "04:03",
+      "start": 243.48,
+      "end": 245.04,
+      "duration": 1.56,
+      "text": "They have the same angular speed."
+    },
+    {
+      "time": "04:05",
+      "start": 245.04,
+      "end": 247.32,
+      "duration": 2.28,
+      "text": "Would they have the\nsame kinetic energy now?"
+    },
+    {
+      "time": "04:07",
+      "start": 247.32,
+      "end": 249.81,
+      "duration": 2.49,
+      "text": "No, because when it comes to rotation,"
+    },
+    {
+      "time": "04:09",
+      "start": 249.81,
+      "end": 251.31,
+      "duration": 1.5,
+      "text": "it's not the mass that matters."
+    },
+    {
+      "time": "04:11",
+      "start": 251.31,
+      "end": 253.23,
+      "duration": 1.92,
+      "text": "It's the rotational inertia that matters."
+    },
+    {
+      "time": "04:13",
+      "start": 253.23,
+      "end": 254.45999999999998,
+      "duration": 1.23,
+      "text": "And rotational inertia"
+    },
+    {
+      "time": "04:14",
+      "start": 254.46,
+      "end": 257.16,
+      "duration": 2.7,
+      "text": "depends on the distribution\nof the particle,"
+    },
+    {
+      "time": "04:17",
+      "start": 257.16,
+      "end": 258.18,
+      "duration": 1.02,
+      "text": "about the center."
+    },
+    {
+      "time": "04:18",
+      "start": 258.18,
+      "end": 260.28000000000003,
+      "duration": 2.1,
+      "text": "If particles are, if\nthere are more particles"
+    },
+    {
+      "time": "04:20",
+      "start": 260.28,
+      "end": 262.22999999999996,
+      "duration": 1.95,
+      "text": "away from the center of rotation,"
+    },
+    {
+      "time": "04:22",
+      "start": 262.23,
+      "end": 264.39000000000004,
+      "duration": 2.16,
+      "text": "you get a higher rotational inertia."
+    },
+    {
+      "time": "04:24",
+      "start": 264.39,
+      "end": 267.3,
+      "duration": 2.91,
+      "text": "So over here, because\nthere's a hole punched out,"
+    },
+    {
+      "time": "04:27",
+      "start": 267.3,
+      "end": 269.73,
+      "duration": 2.43,
+      "text": "a lot of particles are\naway from the center,"
+    },
+    {
+      "time": "04:29",
+      "start": 269.73,
+      "end": 272.97,
+      "duration": 3.24,
+      "text": "the farther away from the\ncenter compared to over here."
+    },
+    {
+      "time": "04:32",
+      "start": 272.97,
+      "end": 276.33000000000004,
+      "duration": 3.36,
+      "text": "So, this one has a\nhigher rotational inertia"
+    },
+    {
+      "time": "04:36",
+      "start": 276.33,
+      "end": 280.02,
+      "duration": 3.69,
+      "text": "compared to this one, but\nthey have the same omega,"
+    },
+    {
+      "time": "04:40",
+      "start": 280.02,
+      "end": 282.21,
+      "duration": 2.19,
+      "text": "and therefore this one ends up having"
+    },
+    {
+      "time": "04:42",
+      "start": 282.21,
+      "end": 283.38,
+      "duration": 1.17,
+      "text": "more kinetic energy now."
+    },
+    {
+      "time": "04:43",
+      "start": 283.38,
+      "end": 285.36,
+      "duration": 1.98,
+      "text": "So when it comes to rotation,"
+    },
+    {
+      "time": "04:45",
+      "start": 285.36,
+      "end": 288.45,
+      "duration": 3.09,
+      "text": "it's not just the mass that\nmatters, you also have to think"
+    },
+    {
+      "time": "04:48",
+      "start": 288.45,
+      "end": 290.7,
+      "duration": 2.25,
+      "text": "about the distribution of the particles,"
+    },
+    {
+      "time": "04:50",
+      "start": 290.7,
+      "end": 294.15,
+      "duration": 3.45,
+      "text": "and that's what makes\nrotation so interesting."
+    },
+    {
+      "time": "04:54",
+      "start": 294.15,
+      "end": 295.83,
+      "duration": 1.68,
+      "text": "All right, what if you had an object"
+    },
+    {
+      "time": "04:55",
+      "start": 295.83,
+      "end": 299.37,
+      "duration": 3.54,
+      "text": "that's doing both translation\nand rotation at the same time?"
+    },
+    {
+      "time": "04:59",
+      "start": 299.37,
+      "end": 301.95,
+      "duration": 2.58,
+      "text": "For example, a ball that's\nrolling on the floor."
+    },
+    {
+      "time": "05:01",
+      "start": 301.95,
+      "end": 303.27,
+      "duration": 1.32,
+      "text": "Look, it's moving forward."
+    },
+    {
+      "time": "05:03",
+      "start": 303.27,
+      "end": 305.96999999999997,
+      "duration": 2.7,
+      "text": "It's translating, and it's spinning."
+    },
+    {
+      "time": "05:05",
+      "start": 305.97,
+      "end": 307.8,
+      "duration": 1.83,
+      "text": "It's rotating as well."
+    },
+    {
+      "time": "05:07",
+      "start": 307.8,
+      "end": 310.56,
+      "duration": 2.76,
+      "text": "How do you calibrate kinetic\nenergy of such an object?"
+    },
+    {
+      "time": "05:10",
+      "start": 310.56,
+      "end": 312.24,
+      "duration": 1.68,
+      "text": "Well, now you have to add"
+    },
+    {
+      "time": "05:12",
+      "start": 312.24,
+      "end": 314.49,
+      "duration": 2.25,
+      "text": "both its translational kinetic energy"
+    },
+    {
+      "time": "05:14",
+      "start": 314.49,
+      "end": 316.23,
+      "duration": 1.74,
+      "text": "and the rotational kinetic energy."
+    },
+    {
+      "time": "05:16",
+      "start": 316.23,
+      "end": 320.373,
+      "duration": 4.143,
+      "text": "That'll be the total kinetic\nenergy of such motion."
+    },
+    {
+      "time": "05:21",
+      "start": 321.48,
+      "end": 324.03000000000003,
+      "duration": 2.55,
+      "text": "All right, now before we can\ntackle our original problem,"
+    },
+    {
+      "time": "05:24",
+      "start": 324.03,
+      "end": 326.01,
+      "duration": 1.98,
+      "text": "we can solve our original question."
+    },
+    {
+      "time": "05:26",
+      "start": 326.01,
+      "end": 328.59,
+      "duration": 2.58,
+      "text": "We need one more concept, one more idea."
+    },
+    {
+      "time": "05:28",
+      "start": 328.59,
+      "end": 330.21,
+      "duration": 1.62,
+      "text": "In translational motion,"
+    },
+    {
+      "time": "05:30",
+      "start": 330.21,
+      "end": 332.96999999999997,
+      "duration": 2.76,
+      "text": "if you have a force that's\nacting on an object,"
+    },
+    {
+      "time": "05:32",
+      "start": 332.97,
+      "end": 337.97,
+      "duration": 5.0,
+      "text": "and let's say it displaces the\nobject about some direction,"
+    },
+    {
+      "time": "05:38",
+      "start": 338.04,
+      "end": 339.06,
+      "duration": 1.02,
+      "text": "the discussion of the object"
+    },
+    {
+      "time": "05:39",
+      "start": 339.06,
+      "end": 340.59,
+      "duration": 1.53,
+      "text": "need not be in the direction of this force"
+    },
+    {
+      "time": "05:40",
+      "start": 340.59,
+      "end": 342.81,
+      "duration": 2.22,
+      "text": "if there are multiple\nforces acting on it, okay?"
+    },
+    {
+      "time": "05:42",
+      "start": 342.81,
+      "end": 344.49,
+      "duration": 1.68,
+      "text": "And let's say it does so in such a way"
+    },
+    {
+      "time": "05:44",
+      "start": 344.49,
+      "end": 347.61,
+      "duration": 3.12,
+      "text": "that it's only translating,\nit's not rotating at all."
+    },
+    {
+      "time": "05:47",
+      "start": 347.61,
+      "end": 351.48,
+      "duration": 3.87,
+      "text": "Then we can define work done by this force"
+    },
+    {
+      "time": "05:51",
+      "start": 351.48,
+      "end": 355.5,
+      "duration": 4.02,
+      "text": "as the product of the\ncomponent of the force"
+    },
+    {
+      "time": "05:55",
+      "start": 355.5,
+      "end": 357.12,
+      "duration": 1.62,
+      "text": "in the direction of the displacement."
+    },
+    {
+      "time": "05:57",
+      "start": 357.12,
+      "end": 358.89,
+      "duration": 1.77,
+      "text": "That's what this F parallel stands for."
+    },
+    {
+      "time": "05:58",
+      "start": 358.89,
+      "end": 360.12,
+      "duration": 1.23,
+      "text": "You don't just multiply the force,"
+    },
+    {
+      "time": "06:00",
+      "start": 360.12,
+      "end": 361.47,
+      "duration": 1.35,
+      "text": "but you take the component of the force"
+    },
+    {
+      "time": "06:01",
+      "start": 361.47,
+      "end": 363.12,
+      "duration": 1.65,
+      "text": "in the direction of the displacement"
+    },
+    {
+      "time": "06:03",
+      "start": 363.12,
+      "end": 365.13,
+      "duration": 2.01,
+      "text": "times the displacement, right?"
+    },
+    {
+      "time": "06:05",
+      "start": 365.13,
+      "end": 367.59,
+      "duration": 2.46,
+      "text": "So, you take this product and\nwe call that as the work done."
+    },
+    {
+      "time": "06:07",
+      "start": 367.59,
+      "end": 371.34,
+      "duration": 3.75,
+      "text": "Its units becomes joules\nor Newton meters, okay?"
+    },
+    {
+      "time": "06:11",
+      "start": 371.34,
+      "end": 373.32,
+      "duration": 1.98,
+      "text": "Why do we care about work done?"
+    },
+    {
+      "time": "06:13",
+      "start": 373.32,
+      "end": 375.42,
+      "duration": 2.1,
+      "text": "Well, because if there's\nmore than one force"
+    },
+    {
+      "time": "06:15",
+      "start": 375.42,
+      "end": 376.83000000000004,
+      "duration": 1.41,
+      "text": "acting on an object,"
+    },
+    {
+      "time": "06:16",
+      "start": 376.83,
+      "end": 381.83,
+      "duration": 5.0,
+      "text": "then the total work done on\nthe object by all the forces,"
+    },
+    {
+      "time": "06:22",
+      "start": 382.05,
+      "end": 386.04,
+      "duration": 3.99,
+      "text": "that equals the change\nin the kinetic energy."
+    },
+    {
+      "time": "06:26",
+      "start": 386.04,
+      "end": 387.51000000000005,
+      "duration": 1.47,
+      "text": "So, it'll be equal to the change"
+    },
+    {
+      "time": "06:27",
+      "start": 387.51,
+      "end": 390.48,
+      "duration": 2.97,
+      "text": "in the translational kinetic energy."
+    },
+    {
+      "time": "06:30",
+      "start": 390.48,
+      "end": 393.33000000000004,
+      "duration": 2.85,
+      "text": "We call this the work-energy theorem."
+    },
+    {
+      "time": "06:33",
+      "start": 393.33,
+      "end": 395.90999999999997,
+      "duration": 2.58,
+      "text": "And this is super useful in\nmaking certain predictions"
+    },
+    {
+      "time": "06:35",
+      "start": 395.91,
+      "end": 396.75300000000004,
+      "duration": 0.843,
+      "text": "as we will see."
+    },
+    {
+      "time": "06:37",
+      "start": 397.74,
+      "end": 400.833,
+      "duration": 3.093,
+      "text": "Now, the same thing can\nbe applied over here"
+    },
+    {
+      "time": "06:40",
+      "start": 400.833,
+      "end": 402.69000000000005,
+      "duration": 1.857,
+      "text": "when it comes to rotation."
+    },
+    {
+      "time": "06:42",
+      "start": 402.69,
+      "end": 405.21,
+      "duration": 2.52,
+      "text": "If you have an object on\nwhere there's a force acting,"
+    },
+    {
+      "time": "06:45",
+      "start": 405.21,
+      "end": 408.63,
+      "duration": 3.42,
+      "text": "which puts a torque on this object"
+    },
+    {
+      "time": "06:48",
+      "start": 408.63,
+      "end": 411.54,
+      "duration": 2.91,
+      "text": "and makes it spin through some angle,"
+    },
+    {
+      "time": "06:51",
+      "start": 411.54,
+      "end": 415.682,
+      "duration": 4.142,
+      "text": "delta theta for example, then\nwe can define the work done"
+    },
+    {
+      "time": "06:55",
+      "start": 415.682,
+      "end": 419.79,
+      "duration": 4.108,
+      "text": "by the torque in a very analogous manner."
+    },
+    {
+      "time": "06:59",
+      "start": 419.79,
+      "end": 420.87,
+      "duration": 1.08,
+      "text": "We would say the work done"
+    },
+    {
+      "time": "07:00",
+      "start": 420.87,
+      "end": 424.56,
+      "duration": 3.69,
+      "text": "equals the torque acting on that object"
+    },
+    {
+      "time": "07:04",
+      "start": 424.56,
+      "end": 428.46,
+      "duration": 3.9,
+      "text": "times the angular displacement."
+    },
+    {
+      "time": "07:08",
+      "start": 428.46,
+      "end": 429.57,
+      "duration": 1.11,
+      "text": "Again, that makes sense, right?"
+    },
+    {
+      "time": "07:09",
+      "start": 429.57,
+      "end": 432.39,
+      "duration": 2.82,
+      "text": "Torque is like the rotational\nversion of the force,"
+    },
+    {
+      "time": "07:12",
+      "start": 432.39,
+      "end": 434.96999999999997,
+      "duration": 2.58,
+      "text": "and angular displacement is\nlike the rotational version"
+    },
+    {
+      "time": "07:14",
+      "start": 434.97,
+      "end": 436.5,
+      "duration": 1.53,
+      "text": "of the linear displacement."
+    },
+    {
+      "time": "07:16",
+      "start": 436.5,
+      "end": 439.65,
+      "duration": 3.15,
+      "text": "So you get very, very analogous expression"
+    },
+    {
+      "time": "07:19",
+      "start": 439.65,
+      "end": 440.60999999999996,
+      "duration": 0.96,
+      "text": "for the work done."
+    },
+    {
+      "time": "07:20",
+      "start": 440.61,
+      "end": 441.517,
+      "duration": 0.907,
+      "text": "And again, we could ask,"
+    },
+    {
+      "time": "07:21",
+      "start": 441.517,
+      "end": 443.67,
+      "duration": 2.153,
+      "text": "\"Why do we care about\nwork done over here?\""
+    },
+    {
+      "time": "07:23",
+      "start": 443.67,
+      "end": 444.54,
+      "duration": 0.87,
+      "text": "Same idea."
+    },
+    {
+      "time": "07:24",
+      "start": 444.54,
+      "end": 447.03000000000003,
+      "duration": 2.49,
+      "text": "If there are multiple\nforces acting on an object"
+    },
+    {
+      "time": "07:27",
+      "start": 447.03,
+      "end": 450.21,
+      "duration": 3.18,
+      "text": "producing multiple torques,\nthen the total work done"
+    },
+    {
+      "time": "07:30",
+      "start": 450.21,
+      "end": 454.02,
+      "duration": 3.81,
+      "text": "by all the torque equals the change"
+    },
+    {
+      "time": "07:34",
+      "start": 454.02,
+      "end": 459.02,
+      "duration": 5.0,
+      "text": "in the rotational kinetic\nenergy of that object."
+    },
+    {
+      "time": "07:39",
+      "start": 459.57,
+      "end": 460.71,
+      "duration": 1.14,
+      "text": "Of course, one small caveat"
+    },
+    {
+      "time": "07:40",
+      "start": 460.71,
+      "end": 462.51,
+      "duration": 1.8,
+      "text": "is that we can apply this expression"
+    },
+    {
+      "time": "07:42",
+      "start": 462.51,
+      "end": 464.64,
+      "duration": 2.13,
+      "text": "when the net torque is 0."
+    },
+    {
+      "time": "07:44",
+      "start": 464.64,
+      "end": 466.14,
+      "duration": 1.5,
+      "text": "So there is an unbalanced force,"
+    },
+    {
+      "time": "07:46",
+      "start": 466.14,
+      "end": 468.21,
+      "duration": 2.07,
+      "text": "but there are no unbalanced torques."
+    },
+    {
+      "time": "07:48",
+      "start": 468.21,
+      "end": 471.53999999999996,
+      "duration": 3.33,
+      "text": "So that's why you know there's\nonly translational motion."
+    },
+    {
+      "time": "07:51",
+      "start": 471.54,
+      "end": 475.32,
+      "duration": 3.78,
+      "text": "And we apply this expression\nwhen the net force is 0,"
+    },
+    {
+      "time": "07:55",
+      "start": 475.32,
+      "end": 477.48,
+      "duration": 2.16,
+      "text": "but there is some unbalanced torque."
+    },
+    {
+      "time": "07:57",
+      "start": 477.48,
+      "end": 480.78000000000003,
+      "duration": 3.3,
+      "text": "That's why it's only affecting\nits spin, for example."
+    },
+    {
+      "time": "08:00",
+      "start": 480.78,
+      "end": 484.77,
+      "duration": 3.99,
+      "text": "But what if you have both,\nyou know, unbalanced force"
+    },
+    {
+      "time": "08:04",
+      "start": 484.77,
+      "end": 486.81,
+      "duration": 2.04,
+      "text": "and an unbalanced torque?"
+    },
+    {
+      "time": "08:06",
+      "start": 486.81,
+      "end": 488.85,
+      "duration": 2.04,
+      "text": "Well then again, we have\nto treat them separately."
+    },
+    {
+      "time": "08:08",
+      "start": 488.85,
+      "end": 489.99,
+      "duration": 1.14,
+      "text": "We have to calculate the work done"
+    },
+    {
+      "time": "08:09",
+      "start": 489.99,
+      "end": 491.55,
+      "duration": 1.56,
+      "text": "by the unbalanced forces separately"
+    },
+    {
+      "time": "08:11",
+      "start": 491.55,
+      "end": 494.04,
+      "duration": 2.49,
+      "text": "equate it to change in\ntranslational kinetic energy."
+    },
+    {
+      "time": "08:14",
+      "start": 494.04,
+      "end": 496.32,
+      "duration": 2.28,
+      "text": "And we have to calculate the work done by,"
+    },
+    {
+      "time": "08:16",
+      "start": 496.32,
+      "end": 499.44,
+      "duration": 3.12,
+      "text": "the total work done by the\nunbalanced torque separately"
+    },
+    {
+      "time": "08:19",
+      "start": 499.44,
+      "end": 503.403,
+      "duration": 3.963,
+      "text": "and equate that to change in\nrotational kinetic energy."
+    },
+    {
+      "time": "08:24",
+      "start": 504.57,
+      "end": 505.92,
+      "duration": 1.35,
+      "text": "Okay, one final thing,"
+    },
+    {
+      "time": "08:25",
+      "start": 505.92,
+      "end": 507.96000000000004,
+      "duration": 2.04,
+      "text": "when it comes to translational motion,"
+    },
+    {
+      "time": "08:27",
+      "start": 507.96,
+      "end": 510.47999999999996,
+      "duration": 2.52,
+      "text": "work done equals a product of\nforce and displacement, right?"
+    },
+    {
+      "time": "08:30",
+      "start": 510.48,
+      "end": 513.21,
+      "duration": 2.73,
+      "text": "So, we can calculate it as the signed area"
+    },
+    {
+      "time": "08:33",
+      "start": 513.21,
+      "end": 515.19,
+      "duration": 1.98,
+      "text": "under the graph of the force"
+    },
+    {
+      "time": "08:35",
+      "start": 515.19,
+      "end": 517.5,
+      "duration": 2.31,
+      "text": "as a function of position, right?"
+    },
+    {
+      "time": "08:37",
+      "start": 517.5,
+      "end": 521.25,
+      "duration": 3.75,
+      "text": "Similarly, when it comes\nto rotational work done,"
+    },
+    {
+      "time": "08:41",
+      "start": 521.25,
+      "end": 523.14,
+      "duration": 1.89,
+      "text": "we can calculate it,"
+    },
+    {
+      "time": "08:43",
+      "start": 523.14,
+      "end": 524.85,
+      "duration": 1.71,
+      "text": "you can calculate the,\nthis particular work done"
+    },
+    {
+      "time": "08:44",
+      "start": 524.85,
+      "end": 528.78,
+      "duration": 3.93,
+      "text": "as the signed area under\nthe graph of torque"
+    },
+    {
+      "time": "08:48",
+      "start": 528.78,
+      "end": 531.03,
+      "duration": 2.25,
+      "text": "as a function of angle theta."
+    },
+    {
+      "time": "08:51",
+      "start": 531.03,
+      "end": 534.66,
+      "duration": 3.63,
+      "text": "Again, the situation is\nsuper duper analogous."
+    },
+    {
+      "time": "08:54",
+      "start": 534.66,
+      "end": 536.1,
+      "duration": 1.44,
+      "text": "So if we come back to this example,"
+    },
+    {
+      "time": "08:56",
+      "start": 536.1,
+      "end": 538.11,
+      "duration": 2.01,
+      "text": "let's say initially both\nthese objects are at rest,"
+    },
+    {
+      "time": "08:58",
+      "start": 538.11,
+      "end": 540.525,
+      "duration": 2.415,
+      "text": "they're not spinning, and\nthen we put a torque on them"
+    },
+    {
+      "time": "09:00",
+      "start": 540.525,
+      "end": 542.0699999999999,
+      "duration": 1.545,
+      "text": "and we make them spin,"
+    },
+    {
+      "time": "09:02",
+      "start": 542.07,
+      "end": 544.5300000000001,
+      "duration": 2.46,
+      "text": "and we get them to the same angular speed."
+    },
+    {
+      "time": "09:04",
+      "start": 544.53,
+      "end": 548.01,
+      "duration": 3.48,
+      "text": "In which case, would we\nhave to do more work?"
+    },
+    {
+      "time": "09:08",
+      "start": 548.01,
+      "end": 550.053,
+      "duration": 2.043,
+      "text": "Can you pause and think about this?"
+    },
+    {
+      "time": "09:12",
+      "start": 552.21,
+      "end": 554.76,
+      "duration": 2.55,
+      "text": "All right, well, we already know"
+    },
+    {
+      "time": "09:14",
+      "start": 554.76,
+      "end": 557.79,
+      "duration": 3.03,
+      "text": "that this one ends up\nhaving more kinetic energy"
+    },
+    {
+      "time": "09:17",
+      "start": 557.79,
+      "end": 560.49,
+      "duration": 2.7,
+      "text": "compared to this one because\nit has more rotational inertia."
+    },
+    {
+      "time": "09:20",
+      "start": 560.49,
+      "end": 562.38,
+      "duration": 1.89,
+      "text": "So when we made it spin,"
+    },
+    {
+      "time": "09:22",
+      "start": 562.38,
+      "end": 566.4,
+      "duration": 4.02,
+      "text": "this one ended up with more\nchange in kinetic energy"
+    },
+    {
+      "time": "09:26",
+      "start": 566.4,
+      "end": 567.72,
+      "duration": 1.32,
+      "text": "compared to this one."
+    },
+    {
+      "time": "09:27",
+      "start": 567.72,
+      "end": 571.95,
+      "duration": 4.23,
+      "text": "Therefore, more work has\nto be done on this one"
+    },
+    {
+      "time": "09:31",
+      "start": 571.95,
+      "end": 573.0,
+      "duration": 1.05,
+      "text": "compared to this one."
+    },
+    {
+      "time": "09:33",
+      "start": 573.0,
+      "end": 577.14,
+      "duration": 4.14,
+      "text": "So if we rotated them to\nthe same angle, for example,"
+    },
+    {
+      "time": "09:37",
+      "start": 577.14,
+      "end": 578.97,
+      "duration": 1.83,
+      "text": "then the net torque on this one"
+    },
+    {
+      "time": "09:38",
+      "start": 578.97,
+      "end": 581.13,
+      "duration": 2.16,
+      "text": "must have been greater\ncompared to this one."
+    },
+    {
+      "time": "09:41",
+      "start": 581.13,
+      "end": 583.83,
+      "duration": 2.7,
+      "text": "So, these are the kind of\nanalysis that we can do"
+    },
+    {
+      "time": "09:43",
+      "start": 583.83,
+      "end": 585.33,
+      "duration": 1.5,
+      "text": "using the work-energy theorem."
+    },
+    {
+      "time": "09:46",
+      "start": 586.44,
+      "end": 588.75,
+      "duration": 2.31,
+      "text": "All right, now let's go back\nto our original problem."
+    },
+    {
+      "time": "09:48",
+      "start": 588.75,
+      "end": 590.16,
+      "duration": 1.41,
+      "text": "We know initially they all have"
+    },
+    {
+      "time": "09:50",
+      "start": 590.16,
+      "end": 593.4,
+      "duration": 3.24,
+      "text": "the exact same gravitational\npotential energy to begin with"
+    },
+    {
+      "time": "09:53",
+      "start": 593.4,
+      "end": 594.75,
+      "duration": 1.35,
+      "text": "because they have the same mass,"
+    },
+    {
+      "time": "09:54",
+      "start": 594.75,
+      "end": 596.97,
+      "duration": 2.22,
+      "text": "they're the same height, all right?"
+    },
+    {
+      "time": "09:56",
+      "start": 596.97,
+      "end": 599.82,
+      "duration": 2.85,
+      "text": "And when they reach the bottom,\nall of that potential energy"
+    },
+    {
+      "time": "09:59",
+      "start": 599.82,
+      "end": 602.85,
+      "duration": 3.03,
+      "text": "would've been converted to kinetic energy."
+    },
+    {
+      "time": "10:02",
+      "start": 602.85,
+      "end": 606.87,
+      "duration": 4.02,
+      "text": "Now, if these were not spinning at all,"
+    },
+    {
+      "time": "10:06",
+      "start": 606.87,
+      "end": 609.21,
+      "duration": 2.34,
+      "text": "okay, assume that they were just sliding"
+    },
+    {
+      "time": "10:09",
+      "start": 609.21,
+      "end": 612.4200000000001,
+      "duration": 3.21,
+      "text": "only translator motion, then\nall of that potential energy"
+    },
+    {
+      "time": "10:12",
+      "start": 612.42,
+      "end": 614.9699999999999,
+      "duration": 2.55,
+      "text": "would get converted to\ntranslational kinetic energy."
+    },
+    {
+      "time": "10:14",
+      "start": 614.97,
+      "end": 616.0500000000001,
+      "duration": 1.08,
+      "text": "And so, all of them would end up"
+    },
+    {
+      "time": "10:16",
+      "start": 616.05,
+      "end": 618.4499999999999,
+      "duration": 2.4,
+      "text": "having the same amount of\ntranslational kinetic energy."
+    },
+    {
+      "time": "10:18",
+      "start": 618.45,
+      "end": 619.7700000000001,
+      "duration": 1.32,
+      "text": "And since they have the same mass,"
+    },
+    {
+      "time": "10:19",
+      "start": 619.77,
+      "end": 621.48,
+      "duration": 1.71,
+      "text": "they would have the same speed."
+    },
+    {
+      "time": "10:21",
+      "start": 621.48,
+      "end": 624.12,
+      "duration": 2.64,
+      "text": "And then our in, you know, in\nmy instinct would be right,"
+    },
+    {
+      "time": "10:24",
+      "start": 624.12,
+      "end": 625.71,
+      "duration": 1.59,
+      "text": "they would all reach the ground,"
+    },
+    {
+      "time": "10:25",
+      "start": 625.71,
+      "end": 627.6600000000001,
+      "duration": 1.95,
+      "text": "they would all reach\nbottom at the same time."
+    },
+    {
+      "time": "10:27",
+      "start": 627.66,
+      "end": 630.78,
+      "duration": 3.12,
+      "text": "But they're not just gonna\ngo in translating motion,"
+    },
+    {
+      "time": "10:30",
+      "start": 630.78,
+      "end": 633.3299999999999,
+      "duration": 2.55,
+      "text": "they're also spinning,"
+    },
+    {
+      "time": "10:33",
+      "start": 633.33,
+      "end": 635.3100000000001,
+      "duration": 1.98,
+      "text": "which means when they reach the bottom,"
+    },
+    {
+      "time": "10:35",
+      "start": 635.31,
+      "end": 637.3499999999999,
+      "duration": 2.04,
+      "text": "they not only have\ntranslational kinetic energy,"
+    },
+    {
+      "time": "10:37",
+      "start": 637.35,
+      "end": 638.85,
+      "duration": 1.5,
+      "text": "but along with that they also have"
+    },
+    {
+      "time": "10:38",
+      "start": 638.85,
+      "end": 642.0600000000001,
+      "duration": 3.21,
+      "text": "rotational kinetic energy."
+    },
+    {
+      "time": "10:42",
+      "start": 642.06,
+      "end": 643.6199999999999,
+      "duration": 1.56,
+      "text": "So, some of that potential energy"
+    },
+    {
+      "time": "10:43",
+      "start": 643.62,
+      "end": 645.93,
+      "duration": 2.31,
+      "text": "is converted into\nrotational kinetic energy"
+    },
+    {
+      "time": "10:45",
+      "start": 645.93,
+      "end": 647.88,
+      "duration": 1.95,
+      "text": "and only the remaining"
+    },
+    {
+      "time": "10:47",
+      "start": 647.88,
+      "end": 650.76,
+      "duration": 2.88,
+      "text": "will be the translational kinetic energy."
+    },
+    {
+      "time": "10:50",
+      "start": 650.76,
+      "end": 653.25,
+      "duration": 2.49,
+      "text": "And now, the question is\nhow does it get distributed"
+    },
+    {
+      "time": "10:53",
+      "start": 653.25,
+      "end": 654.87,
+      "duration": 1.62,
+      "text": "for different objects?"
+    },
+    {
+      "time": "10:54",
+      "start": 654.87,
+      "end": 656.7,
+      "duration": 1.83,
+      "text": "Well, we already know objects"
+    },
+    {
+      "time": "10:56",
+      "start": 656.7,
+      "end": 659.22,
+      "duration": 2.52,
+      "text": "that have higher rotational inertia,"
+    },
+    {
+      "time": "10:59",
+      "start": 659.22,
+      "end": 662.64,
+      "duration": 3.42,
+      "text": "well, they end up having higher\nrotational kinetic energy,"
+    },
+    {
+      "time": "11:02",
+      "start": 662.64,
+      "end": 664.68,
+      "duration": 2.04,
+      "text": "you know, for a given speed."
+    },
+    {
+      "time": "11:04",
+      "start": 664.68,
+      "end": 667.4399999999999,
+      "duration": 2.76,
+      "text": "Now, of the three which has\nthe highest rotational inertia?"
+    },
+    {
+      "time": "11:07",
+      "start": 667.44,
+      "end": 669.3900000000001,
+      "duration": 1.95,
+      "text": "Well, they all have the same radius"
+    },
+    {
+      "time": "11:09",
+      "start": 669.39,
+      "end": 672.63,
+      "duration": 3.24,
+      "text": "but when it comes to this\nhoop, all the particles,"
+    },
+    {
+      "time": "11:12",
+      "start": 672.63,
+      "end": 674.13,
+      "duration": 1.5,
+      "text": "pretty much all the particles"
+    },
+    {
+      "time": "11:14",
+      "start": 674.13,
+      "end": 676.38,
+      "duration": 2.25,
+      "text": "are at the maximum\ndistance from the center."
+    },
+    {
+      "time": "11:16",
+      "start": 676.38,
+      "end": 677.64,
+      "duration": 1.26,
+      "text": "So they have the highest,"
+    },
+    {
+      "time": "11:17",
+      "start": 677.64,
+      "end": 680.67,
+      "duration": 3.03,
+      "text": "this hoop has the highest\nrotational inertia."
+    },
+    {
+      "time": "11:20",
+      "start": 680.67,
+      "end": 681.93,
+      "duration": 1.26,
+      "text": "Then comes the whole sphere."
+    },
+    {
+      "time": "11:21",
+      "start": 681.93,
+      "end": 683.79,
+      "duration": 1.86,
+      "text": "It has lesser rotational inertia,"
+    },
+    {
+      "time": "11:23",
+      "start": 683.79,
+      "end": 684.9599999999999,
+      "duration": 1.17,
+      "text": "because there are certain particles"
+    },
+    {
+      "time": "11:24",
+      "start": 684.96,
+      "end": 687.87,
+      "duration": 2.91,
+      "text": "closer to the axis of rotation,\nbecause it's a sphere."
+    },
+    {
+      "time": "11:27",
+      "start": 687.87,
+      "end": 689.49,
+      "duration": 1.62,
+      "text": "But then comes the solid sphere"
+    },
+    {
+      "time": "11:29",
+      "start": 689.49,
+      "end": 691.62,
+      "duration": 2.13,
+      "text": "because it's solid on the inside,"
+    },
+    {
+      "time": "11:31",
+      "start": 691.62,
+      "end": 694.41,
+      "duration": 2.79,
+      "text": "a lot of particles are\ncloser to the center,"
+    },
+    {
+      "time": "11:34",
+      "start": 694.41,
+      "end": 697.68,
+      "duration": 3.27,
+      "text": "and so it has the least\nrotational inertia."
+    },
+    {
+      "time": "11:37",
+      "start": 697.68,
+      "end": 698.9699999999999,
+      "duration": 1.29,
+      "text": "So if I were to only look"
+    },
+    {
+      "time": "11:38",
+      "start": 698.97,
+      "end": 700.5,
+      "duration": 1.53,
+      "text": "at their rotational kinetic energy,"
+    },
+    {
+      "time": "11:40",
+      "start": 700.5,
+      "end": 702.15,
+      "duration": 1.65,
+      "text": "I would expect this one to have"
+    },
+    {
+      "time": "11:42",
+      "start": 702.15,
+      "end": 704.22,
+      "duration": 2.07,
+      "text": "the maximum rotational kinetic energy"
+    },
+    {
+      "time": "11:44",
+      "start": 704.22,
+      "end": 707.37,
+      "duration": 3.15,
+      "text": "and this one to have the minimum\nrotational kinetic energy."
+    },
+    {
+      "time": "11:47",
+      "start": 707.37,
+      "end": 709.41,
+      "duration": 2.04,
+      "text": "But since the total kinetic energy"
+    },
+    {
+      "time": "11:49",
+      "start": 709.41,
+      "end": 710.6129999999999,
+      "duration": 1.203,
+      "text": "must be the same for all three of them"
+    },
+    {
+      "time": "11:50",
+      "start": 710.613,
+      "end": 712.23,
+      "duration": 1.617,
+      "text": "when they reach the bottom,"
+    },
+    {
+      "time": "11:52",
+      "start": 712.23,
+      "end": 714.15,
+      "duration": 1.92,
+      "text": "that means this will end up having"
+    },
+    {
+      "time": "11:54",
+      "start": 714.15,
+      "end": 716.28,
+      "duration": 2.13,
+      "text": "the maximum translational kinetic energy"
+    },
+    {
+      "time": "11:56",
+      "start": 716.28,
+      "end": 718.29,
+      "duration": 2.01,
+      "text": "and this will end up having"
+    },
+    {
+      "time": "11:58",
+      "start": 718.29,
+      "end": 721.0799999999999,
+      "duration": 2.79,
+      "text": "the minimum translational kinetic energy."
+    },
+    {
+      "time": "12:01",
+      "start": 721.08,
+      "end": 722.253,
+      "duration": 1.173,
+      "text": "Does that make sense?"
+    },
+    {
+      "time": "12:03",
+      "start": 723.24,
+      "end": 727.2,
+      "duration": 3.96,
+      "text": "Therefore, this one will\nhave the least speed"
+    },
+    {
+      "time": "12:07",
+      "start": 727.2,
+      "end": 728.4300000000001,
+      "duration": 1.23,
+      "text": "when it reaches the bottom,"
+    },
+    {
+      "time": "12:08",
+      "start": 728.43,
+      "end": 730.56,
+      "duration": 2.13,
+      "text": "and this one will have the maximum speed"
+    },
+    {
+      "time": "12:10",
+      "start": 730.56,
+      "end": 732.4499999999999,
+      "duration": 1.89,
+      "text": "when it reaches the bottom."
+    },
+    {
+      "time": "12:12",
+      "start": 732.45,
+      "end": 734.46,
+      "duration": 2.01,
+      "text": "That's why we can now predict"
+    },
+    {
+      "time": "12:14",
+      "start": 734.46,
+      "end": 736.23,
+      "duration": 1.77,
+      "text": "that this one should\nreach the bottom first,"
+    },
+    {
+      "time": "12:16",
+      "start": 736.23,
+      "end": 737.7,
+      "duration": 1.47,
+      "text": "because it speeds up."
+    },
+    {
+      "time": "12:17",
+      "start": 737.7,
+      "end": 739.8000000000001,
+      "duration": 2.1,
+      "text": "It's linear speed\nincreases much more quickly"
+    },
+    {
+      "time": "12:19",
+      "start": 739.8,
+      "end": 741.06,
+      "duration": 1.26,
+      "text": "compared to this one."
+    },
+    {
+      "time": "12:21",
+      "start": 741.06,
+      "end": 742.56,
+      "duration": 1.5,
+      "text": "It achieves a higher linear speed"
+    },
+    {
+      "time": "12:22",
+      "start": 742.56,
+      "end": 743.4899999999999,
+      "duration": 0.93,
+      "text": "by the time it reaches the bottom."
+    },
+    {
+      "time": "12:23",
+      "start": 743.49,
+      "end": 746.16,
+      "duration": 2.67,
+      "text": "So, this one must have reached first."
+    },
+    {
+      "time": "12:26",
+      "start": 746.16,
+      "end": 747.4499999999999,
+      "duration": 1.29,
+      "text": "Then, comes this one."
+    },
+    {
+      "time": "12:27",
+      "start": 747.45,
+      "end": 750.45,
+      "duration": 3.0,
+      "text": "And this one reaches the bottom the last."
+    },
+    {
+      "time": "12:30",
+      "start": 750.45,
+      "end": 752.76,
+      "duration": 2.31,
+      "text": "So if you were to look at the animation,"
+    },
+    {
+      "time": "12:32",
+      "start": 752.76,
+      "end": 754.773,
+      "duration": 2.013,
+      "text": "this is kind of what it would look like."
+    }
+  ]
+}

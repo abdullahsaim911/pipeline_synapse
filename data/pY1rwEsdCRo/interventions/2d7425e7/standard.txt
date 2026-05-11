@@ -1,0 +1,15 @@
+Your Teacher is showing this to explain the work-energy theorem and how it can be used for analysis of physical problems involving objects with different masses and rotational motion.
+
+1. COMPLETE VISUAL DESCRIPTION:
+The visual consists of two ramps, each holding three objects at their respective ends. The ramp on the left side has a blue sphere, a red sphere, and a gold ring from top to bottom, while the ramp on the right side mirrors this arrangement. There is also a yellow dot located on the ramp on the bottom-left side.
+
+2. WHAT THE TEACHER IS EXPLAINING:
+Your teacher is explaining how the work-energy theorem can help analyze situations where objects have different masses and rotational motion. Specifically, they are discussing how this theorem can be used to compare the change in kinetic energy between two objects with different masses, as well as to determine the net torque acting on them.
+
+3. THE CONCEPT BEING EXPLAINED:
+The work-energy theorem states that the amount of work done on an object equals the change in its kinetic energy. In other words, if an object undergoes a certain amount of work, its kinetic energy will increase or decrease by that same amount. This can be useful for analyzing situations where multiple forces are acting on an object and determining which forces contribute to its overall motion.
+
+4. HOW THE VISUAL LINKS TO THE CONCEPT:
+The ramps represent the situation being analyzed, with each ramp representing a different object. The objects on the ramps represent the initial configuration of the objects before any work is done, and their positions correspond to their masses (with the top object having the greatest mass and the bottom object having the least). The yellow dot on the ramp represents a force acting on the object, which can be used to determine the amount of work done on the object.
+
+To visualize this, think of the ramps as representing the objects in question, with each object's position on the ramp corresponding to its mass. The work done on the objects can be thought of as moving the objects up or down the ramp, and the change in their kinetic energy can be determined by comparing their final positions on the ramp to their initial positions. The yellow dot represents a force acting on the object that moves it up or down the ramp, causing a corresponding increase or decrease in its kinet

@@ -394,32 +394,34 @@ Provide in visual_analysis.text object:
                     print("[Snapshot Engine] GGUF files not found, falling back to transformers")
                     raise FileNotFoundError("GGUF files not found")
             except Exception as e:
-                print(f"[Snapshot Engine] GGUF initialization failed: {e}")
-                print("[Snapshot Engine] Falling back to transformers backend")
-                use_gguf = False
+                print(f"[Snapshot Engine] 7B GGUF initialization failed: {e}")
+                print("[Snapshot Engine] Falling back to 2B GGUF backend")
 
-        # Use existing transformers backend
-        self.model_name = model_path
+                # Fallback: 2B GGUF model
+                fallback_dir = os.path.normpath(os.path.join(
+                    os.path.dirname(model_path), "Qwen2-VL-2B-Instruct-GGUF"
+                ))
+                fallback_model = os.path.join(fallback_dir, "Qwen2-VL-2B-Instruct-Q4_K_M.gguf")
+                fallback_mmproj = os.path.join(fallback_dir, "mmproj-Qwen2-VL-2B-Instruct-f16.gguf")
 
-        # Force GPU usage for 7B model with memory management
-        import torch
+                try:
+                    if os.path.exists(fallback_model) and os.path.exists(fallback_mmproj):
+                        self.vlm_interface = GGUFVLMEngine(
+                            model_path=fallback_model,
+                            mmproj_path=fallback_mmproj,
+                            n_gpu_layers=n_gpu_layers,
+                            n_ctx=n_ctx,
+                            n_threads=n_threads
+                        )
+                        self.model_name = fallback_dir
+                        print("[Snapshot Engine] VLM Engine initialized (2B GGUF fallback)")
+                        return
+                    else:
+                        print(f"[Snapshot Engine] 2B GGUF files not found at {fallback_dir}")
+                except Exception as fallback_e:
+                    print(f"[Snapshot Engine] 2B GGUF fallback also failed: {fallback_e}")
 
-        # Use aggressive CPU offloading for 7B on 6GB GPU
-        effective_device_map = device_map if torch.cuda.is_available() else "cpu"
-        effective_use_4bit = use_4bit
-
-        self.vlm_interface = Qwen2VLInterface(
-            model_name=model_path,
-            device_map=effective_device_map,
-            use_4bit=effective_use_4bit,
-            use_flash_attention=use_flash_attention,
-            min_pixels=min_pixels,
-            max_pixels=max_pixels,
-        )
-
-        print("[Snapshot Engine] VLM Engine initialized (Transformers)")
-        print(f"[Snapshot Engine] Model: {self.model_name}")
-        print(f"[Snapshot Engine] Device map: {device_map}")
+                raise RuntimeError("Both 7B and 2B GGUF backends failed to initialize")
         print(f"[Snapshot Engine] 4-bit quantization: {use_4bit}")
         print(f"[Snapshot Engine] Flash Attention 2: {use_flash_attention}")
 

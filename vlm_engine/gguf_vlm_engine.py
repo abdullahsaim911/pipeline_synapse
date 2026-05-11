@@ -170,18 +170,6 @@ PERIPHERAL CAPTURE: The spatial boundaries and connections between these differe
     ):
         """
         Initialize GGUF VLM Engine with 6GB VRAM optimizations.
-
-        Args:
-            model_path: Path to Qwen2-VL GGUF model file (.gguf)
-            mmproj_path: Path to vision projector mmproj file (.gguf)
-            n_gpu_layers: Number of layers to offload to GPU (15 for 6GB VRAM)
-            n_ctx: Context window size (4096 to fit image tokens)
-            n_threads: Number of CPU threads (6 for i5 P-cores)
-            flash_attn: Enable Flash Attention 2 (disabled for stability)
-            verbose: Enable verbose logging
-
-        Raises:
-            GGUFVLMDetectionError: If llama-cpp-python is not installed
         """
         if not LLAMA_CPP_AVAILABLE:
             raise GGUFVLMDetectionError(
@@ -198,12 +186,6 @@ PERIPHERAL CAPTURE: The spatial boundaries and connections between these differe
         self.flash_attn = flash_attn
         self.verbose = verbose
 
-        # ADDED: Initialize the specialized Qwen Vision Chat Handler
-        self.chat_handler = Qwen25VLChatHandler(
-            clip_model_path=self.mmproj_path,
-            verbose=self.verbose
-        )
-
         print(f"[GGUF VLM Engine] Initializing...")
         print(f"  Model: {os.path.basename(model_path)}")
         print(f"  MMProj: {os.path.basename(mmproj_path)}")
@@ -212,20 +194,41 @@ PERIPHERAL CAPTURE: The spatial boundaries and connections between these differe
         print(f"  n_threads: {n_threads}")
         print(f"  flash_attn: {flash_attn}")
 
+        # ==========================================
+        # ADDED 1: The VRAM Sweeper (Kill Ollama)
+        # ==========================================
+        
+        if os.name == 'nt':
+            print("[GGUF VLM Engine] Sweeping VRAM to evict Mistral...")
+            import subprocess
+            import time
+            subprocess.run(["taskkill", "/F", "/IM", "ollama_llama_server.exe"], 
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Give Windows exactly 1.5 seconds to flush the physical memory
+            time.sleep(1.5)
+        # ==========================================
+
+        # Initialize the specialized Qwen Vision Chat Handler
+        self.chat_handler = Qwen25VLChatHandler(
+            clip_model_path=self.mmproj_path,
+            verbose=self.verbose
+        )
+
         # Load model with optimizations and the chat handler
         self.model = Llama(
             model_path=model_path,
-            chat_handler=self.chat_handler,  # ADDED: This routes the image correctly
+            chat_handler=self.chat_handler,  # This routes the image correctly
             n_gpu_layers=n_gpu_layers,
             n_ctx=n_ctx,
             n_threads=n_threads,
             n_threads_batch=n_threads,
             flash_attn=flash_attn,
             verbose=verbose,
-            use_mmap=True,
+            use_mmap=False,
             use_mlock=False,
             embedding=False,
             n_batch=512,
+            split_mode=2,  # ADDED 2: Forces strict loading to prevent "0 MiB Free" crashes
         )
 
         print(f"[GGUF VLM Engine] Model loaded successfully")
@@ -413,39 +416,42 @@ OUTPUT REQUIREMENTS:
             "_error": error_msg
         }
 
+
     def cleanup(self):
-        """Release resources and free GPU memory."""
-        # Step 1: Reset model context if available (llama-cpp-python method)
+        """Release resources and free GPU memory completely."""
+        print("[GGUF VLM Engine] Commencing aggressive cleanup...")
+        
+        # Step 1: Patch the llama-cpp-python library bug before closing
         if hasattr(self, 'model') and self.model is not None:
             try:
-                if hasattr(self.model, 'reset'):
-                    self.model.reset()
+                # THE FIX: Inject the missing 'sampler' attribute to prevent the C++ crash
+                if hasattr(self.model, '_model') and not hasattr(self.model._model, 'sampler'):
+                    self.model._model.sampler = None
+                    
+                # Now it is safe to close the C++ model and dump the weights
+                if hasattr(self.model, 'close'):
+                    self.model.close()
             except Exception as e:
-                print(f"[GGUF VLM Engine] Warning during model reset: {e}")
+                print(f"[GGUF VLM Engine] Warning during model close: {e}")
+                
+            self.model = None
 
-            # Step 2: Delete chat handler if it exists
-            if hasattr(self, 'chat_handler') and self.chat_handler is not None:
-                try:
-                    del self.chat_handler
-                except Exception as e:
-                    print(f"[GGUF VLM Engine] Warning deleting chat_handler: {e}")
+        # Step 2: Sever the Vision Handler to drop the 1.3 GB Vision Encoder
+        if hasattr(self, 'chat_handler') and self.chat_handler is not None:
+            self.chat_handler = None
 
-            # Step 3: Delete the model reference
-            del self.model
-
-        # Step 4: Force garbage collection to release Python object references
+        # Step 3: Double-Tap Garbage Collection
         import gc
         gc.collect()
+        gc.collect()
 
-        # Step 5: Clear CUDA cache if torch is available (releases VRAM blocks)
+        # Step 4: Clear CUDA cache
         try:
             import torch
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
                 torch.cuda.synchronize()
-        except ImportError:
+        except Exception:
             pass
-        except Exception as e:
-            print(f"[GGUF VLM Engine] Warning during CUDA cleanup: {e}")
 
         print("[GGUF VLM Engine] Cleanup complete")

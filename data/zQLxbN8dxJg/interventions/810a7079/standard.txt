@@ -1,0 +1,9 @@
+Your Teacher is showing this to explain the concept of Conservation of Linear Momentum, one of the cornerstones in physics. This principle states that the total momentum of a closed system remains constant over time, even during collisions, as long as there are no external forces acting on the system.
+
+To visualize this, imagine two crates (or any objects) coming together and sticking to each other after a collision. During this collision, they exert forces upon one another, but these are internal forces because there is no net external force acting on any of them.
+
+In our mental model, let's consider the first crate moving to the right with a certain speed (momentum) and the second one moving to the left with an opposite speed. After they collide and stick together, their individual speeds will change, but if there is no net external force, the total momentum of the system (which is the sum of the momentums of both crates) will remain constant.
+
+The teacher's words connect to this visual scenario: "If these two crates were to come and hit each other and let's say after hitting each other, they will stick to each other... There is no net external force on any of them..." This demonstrates how the conservation of linear momentum applies in such a situation.
+
+Furthermore, this principle allows us to predict the direction and speed of the combined objects (or system) after a collision based on their initial speeds and masses. It is related to concepts mentioned before like force and linear motion. Understanding this concept will help you grasp various physical phenomena involving collisions more profoundly.

@@ -1,0 +1,15 @@
+Your Teacher is showing this to explain the conservation of linear momentum, a principle that states that the total momentum of a closed system remains constant if there is no net external force acting on it. This is particularly important in collision scenarios where two objects interact and stick together, as we will explore.
+
+1. Complete Visual Description:
+   - To visualize this, imagine a two-dimensional plane with a positive direction (right side) and a negative direction (left side).
+   - There are initially two objects, m1 and m2, each moving at their own velocity, v1 and v2 respectively, in the positive direction.
+   - After the collision, the two objects stick together, forming a single object with a combined mass of (m1 + m2) and a new velocity (v_final).
+   - The teacher's goal is to find an expression for v_final using the initial masses (m1, m2), velocities (v1, v2), and the principle of conservation of linear momentum.
+
+2. What the Teacher is Explaining:
+   - Your teacher is using this visual representation to demonstrate how the total momentum remains constant before and after a collision, provided there is no net external force acting on the system.
+
+3. The Concept Being Explained:
+   - The conservation of linear momentum states that for a closed system (in this case, the two objects), the sum of the momenta before the interaction is equal to the sum of the momenta after the interaction, as long as there's no net external force acting on the system.
+   - Momentum (p) is a vector quantity and can be calculated by multiplying an object's mass (m) by its velocity (v). In this case, we have initial momentum for m1 (p1 = m1 * v1) and initial momentum for m2 (p2 = m2 * v2), summing them up to find the total initial momentum (p_total_init = p1 + p2). After the collision, there's only one object with a new velocity (v_final), so we have final momentum (p_final = (m1 + m2) * v_final).
+   - According to the conservation of linear momentum, p_total_init should be equal to p_final. This equality can be used to solve for v_final in terms of m1, v1

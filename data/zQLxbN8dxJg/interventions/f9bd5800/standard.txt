@@ -1,0 +1,15 @@
+Your Teacher is showing this to explain the concept of conservation of momentum. This concept states that when the net force on an object (or a system of objects) is zero, the momentum of the object or system remains constant.
+
+To visualize this, imagine:
+- A box moving with some velocity on a perfectly frictionless surface and in the absence of any air resistance. If the net force acting on the box is zero for a certain time period, then over that time, the change in momentum will also be zero. In other words, the momentum of the box should be constant. This means that the box would continue to move with that constant velocity as long as the net force acting on it remains zero.
+
+In this scenario, the teacher is using a single box as an example. However, the same concept can apply to multiple objects, like two crates moving towards each other. In such a case, when they collide and their velocities change, the total momentum of the system (the sum of momentum of both crates) remains constant because the net force acting on the system is zero during the collision.
+
+Now, let's make it clear how this visual links to the concept:
+- The box in the diagram represents an object with some mass and initial velocity. The perfectly frictionless surface and absence of air resistance represent a situation where the net force acting on the box is zero.
+- The constant velocity that the box maintains after moving for some time shows the conservation of momentum, as the change in momentum over that time period is zero because the net force acting on the box is zero.
+
+In terms of previous concepts mentioned:
+- Rate refers to how quickly something happens or changes, like the initial velocity of the box.
+- Force is an influence that causes an object to undergo a certain motion or change in motion. In this case, we are considering situations where the net force acting on an object (or system) is zero.
+- Surface represents the environment or context in which the object moves, and its properties can affect the net force acting on the object.

@@ -1,0 +1,9 @@
+Your teacher is showing this visual to explain the work-energy theorem and how it can be used to analyze situations involving both translation (motion along a straight line) and rotation (motion around a point).
+
+1. Complete Visual Description:
+   - The frame is divided into two main sections, each containing drawings, equations, and vectors. The Translation section is on the left side, while the Rotation section is on the right side (spatial map).
+   - In the Translation section, there's a basketball with two forces (F_1 and F_2) acting upon it (diagram element). The equation given is K_trans = 1/2 m v^2, where m is mass and v is velocity (equation structure). Work is represented as W = F_|| \u0394x, meaning the work done is equal to the magnitude of the force multiplied by the displacement in the direction of the force (vector-work relationship). The total work done is given by ∫W = ∫F_|| dxi = dK_trans (integral of work equals change in kinetic energy, K_trans) (equation structure).
+   - In the Rotation section, there's another basketball with a torque (\u03c4) acting upon it and an angular displacement (\u0394\u03b8) (diagram element). The equation given is K_rot = 1/2 I \u03c9^2, where I is the moment of inertia and \u03c9 is the angle (equation structure). Work is represented as W = \u03c4 \u0394\u03b8, meaning the work done is equal to the torque multiplied by the angular displacement (vector-work relationship). The total work done is given by ∫W = ∫\u03c4 d\u03b8 = dK_rot (integral of work equals change in rotational kinetic energy, K_rot) (equation structure).
+
+2. What the Teacher is Explaining:
+   - Your teacher is demonstrating how to apply the work-energy theorem to determine which object requires more work when they are made to spin at the same angular speed, given that one has a higher rotational

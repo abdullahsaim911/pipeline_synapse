@@ -1,0 +1,40 @@
+{
+  "content_type": "STEM lecture frame",
+  "visual_analysis": {
+    "details": {
+      "Translation": {
+        "equation": "K_trans = 1/2 m v^2",
+        "vector": "F_1 and F_2",
+        "work": "W = F_|| Δx",
+        "total_work": "ΣW = ΣF_|| Δx = ΔK_trans"
+      },
+      "Rotation": {
+        "equation": "K_rot = 1/2 I ω^2",
+        "torque": "τ",
+        "work": "W = τ Δθ",
+        "total_work": "ΣW = ΣτΔθ = ΔK_rot"
+      }
+    },
+    "structural_description": "The frame is divided into two main sections: Translation and Rotation. Each section contains physical drawings, equations, and vectors. The Translation section shows a basketball with forces F_1 and F_2, while the Rotation section shows a basketball with torque τ and angular displacement Δθ.",
+    "reading_order": [
+      "Translation",
+      "Rotation"
+    ],
+    "layout": "The frame is organized into two main sections, with each section containing physical drawings, equations, and vectors. The Translation section is on the left side, and the Rotation section is on the right side.",
+    "text_readout": "Translation: K_trans = 1/2 m v^2, F_1 and F_2, W = F_|| Δx, ΣW = ΣF_|| Δx = ΔK_trans. Rotation: K_rot = 1/2 I ω^2, τ, W = τ Δθ, ΣW = ΣτΔθ = ΔK_rot.",
+    "spatial_map": "Translation section is on the left side, Rotation section is on the right side.",
+    "colors_styles": "The frame uses a black background with red and orange basketballs, green arrows, and blue and green text.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

@@ -1,0 +1,62 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "zone_mapping": {
+      "top_left": "Physical drawing of a ramp with three objects on it",
+      "top_right": "Text label 'Ug'",
+      "bottom_left": "Yellow dot on the ramp",
+      "bottom_right": "Physical drawing of a ramp with three objects on it"
+    },
+    "isolated_extraction": {
+      "top_left": {
+        "physical_shape": "Ramp with three objects on it",
+        "objects": [
+          {
+            "color": "blue",
+            "shape": "sphere"
+          },
+          {
+            "color": "red",
+            "shape": "sphere"
+          },
+          {
+            "color": "gold",
+            "shape": "ring"
+          }
+        ]
+      },
+      "top_right": {
+        "text": "Ug"
+      },
+      "bottom_left": {
+        "physical_shape": "Yellow dot on the ramp"
+      },
+      "bottom_right": {
+        "physical_shape": "Ramp with three objects on it"
+      }
+    },
+    "structural_description": "A ramp with three objects on it, a yellow dot on the ramp, and a text label 'Ug' on the top right",
+    "reading_order": [
+      "top_left",
+      "top_right",
+      "bottom_left",
+      "bottom_right"
+    ],
+    "layout": "Ramp with three objects on it, yellow dot on the ramp, and text label 'Ug' on the top right",
+    "text_readout": "Ug",
+    "spatial_map": "Ramp with three objects on it is on the left side, yellow dot on the ramp is on the bottom left, and text label 'Ug' is on the top right",
+    "colors_styles": "The ramp is gray, the objects are blue, red, and gold, and the text is black",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

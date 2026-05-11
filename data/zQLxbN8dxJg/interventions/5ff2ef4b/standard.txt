@@ -1,0 +1,15 @@
+Your Teacher is showing this to explain the Conservation of Linear Momentum principle. This principle states that the total momentum of a closed system remains constant, even after a collision, as long as there's no net external force acting on it.
+
+To understand this better:
+
+1. Consider a system consisting of two objects with masses m1 and m2, initially moving with velocities v1 and v2 respectively. Before the collision, the momentum of each object is given by its mass multiplied by its velocity (m1*v1 for object 1 and m2*v2 for object 2).
+
+2. After the collision, the objects stick together forming a single system with a combined mass (m1 + m2). The velocity after the collision (v) is what we aim to find.
+
+3. According to the principle of Conservation of Linear Momentum, the total momentum before and after the collision should be equal. So, we can write: (m1*v1) + (m2*v2) = (m1+m2)*v
+
+4. Solving for v, we get v = ((m1*v1) + (m2*v2)) / (m1+m2). This equation shows the relationship between the masses and initial velocities of the objects, and their resulting velocity after they stick together.
+
+5. In this visual content, the teacher is trying to help you understand how to use the Conservation of Linear Momentum principle to predict the final velocity of a system once it sticks together after a collision. It demonstrates the importance of understanding momentum conservation in physics, especially when dealing with complex interactions between objects.
+
+To visualize this, think of two billiard balls colliding on a frictionless table. When they stick together, their momentums combine, and their combined mass determines their new velocity. This represents the principle of Conservation of Linear Momentum in action.

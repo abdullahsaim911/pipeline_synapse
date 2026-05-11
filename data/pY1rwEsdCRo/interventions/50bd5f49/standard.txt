@@ -1,0 +1,15 @@
+Your Teacher is showing this to explain a problem related to the motion of three spinning spheres, each with different masses and different densities (solid and hollow), falling from a height under gravity.
+
+1. COMPLETE VISUAL DESCRIPTION:
+- Imagine a frame containing four distinct physical drawings of spheres arranged in a linear sequence from top left to bottom right. The 'Solid' spheres are on the left side of the frame, while the 'Hollow' spheres are on the right side.
+- In the top left corner, there is a solid blue sphere labeled as 'Solid'. In the top right corner, there is a hollow red sphere also labeled as 'Hollow'. In the bottom left corner, another solid blue sphere is depicted, and in the bottom right corner, a hollow red sphere is present.
+- All spheres are spherical in shape. The solid spheres are of the same color (blue), while the hollow ones are of a different color (red).
+
+2. WHAT THE TEACHER IS EXPLAINING:
+- Your teacher is explaining that even though all three spheres have the same gravitational potential energy to start with, they do not reach the ground at the same time due to their spinning motion as they fall.
+
+3. THE CONCEPT BEING EXPLAINED:
+- This problem involves understanding the effect of rotational motion on an object's motion under gravity. When an object spins while it is falling, its center of mass follows a curved path rather than a straight line, which affects the time it takes to reach the ground compared to an object without rotation.
+
+4. HOW THE VISUAL LINKS TO THE CONCEPT:
+- The visual shows three spheres with different masses and shapes (solid vs hollow), representing objects with different properties that can spin while falling under gravity. The spinning motion affects the time taken for each sphere to reach the ground, demonstrating the concept being explained.

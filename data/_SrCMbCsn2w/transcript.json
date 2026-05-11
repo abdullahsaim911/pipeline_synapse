@@ -1,0 +1,1368 @@
+{
+  "video_id": "_SrCMbCsn2w",
+  "method": "whisper",
+  "language": null,
+  "duration_seconds": 43.92209210002329,
+  "entry_count": 194,
+  "error": null,
+  "entries": [
+    {
+      "time": "00:00",
+      "start": 0.0,
+      "end": 1.74,
+      "duration": 1.74,
+      "text": " D.S. students, welcome to goodsmashers."
+    },
+    {
+      "time": "00:01",
+      "start": 1.74,
+      "end": 5.3,
+      "duration": 3.5599999999999996,
+      "text": " Today's video is explaining what is operator overloading"
+    },
+    {
+      "time": "00:05",
+      "start": 5.3,
+      "end": 7.9,
+      "duration": 2.6000000000000005,
+      "text": " and I will explain this in real life."
+    },
+    {
+      "time": "00:07",
+      "start": 7.9,
+      "end": 10.86,
+      "duration": 2.959999999999999,
+      "text": " I will explain this to the code, so please listen to it."
+    },
+    {
+      "time": "00:10",
+      "start": 10.86,
+      "end": 15.8,
+      "duration": 4.940000000000001,
+      "text": " Because this interview has a lot of questions in it."
+    },
+    {
+      "time": "00:15",
+      "start": 15.8,
+      "end": 20.900000000000002,
+      "duration": 5.100000000000001,
+      "text": " Look, operator overloading is an example of polymorphism."
+    },
+    {
+      "time": "00:20",
+      "start": 20.900000000000002,
+      "end": 26.5,
+      "duration": 5.599999999999998,
+      "text": " Polymorphism may be a compiled time polymorphism is an example."
+    },
+    {
+      "time": "00:26",
+      "start": 26.5,
+      "end": 29.5,
+      "duration": 3.0,
+      "text": " Polymorphism is a simple thing."
+    },
+    {
+      "time": "00:29",
+      "start": 29.5,
+      "end": 33.0,
+      "duration": 3.5,
+      "text": " Many forms of polymorphism are used in one way."
+    },
+    {
+      "time": "00:33",
+      "start": 33.0,
+      "end": 37.0,
+      "duration": 4.0,
+      "text": " Example is, if I write 5 plus 3."
+    },
+    {
+      "time": "00:37",
+      "start": 37.0,
+      "end": 38.5,
+      "duration": 1.5,
+      "text": " What will I do?"
+    },
+    {
+      "time": "00:38",
+      "start": 38.5,
+      "end": 40.5,
+      "duration": 2.0,
+      "text": " I will add both these two integers."
+    },
+    {
+      "time": "00:40",
+      "start": 40.5,
+      "end": 44.5,
+      "duration": 4.0,
+      "text": " If I write, I will add gate plus smashers."
+    },
+    {
+      "time": "00:44",
+      "start": 44.5,
+      "end": 45.5,
+      "duration": 1.0,
+      "text": " So what will I do?"
+    },
+    {
+      "time": "00:45",
+      "start": 45.5,
+      "end": 47.5,
+      "duration": 2.0,
+      "text": " I will concatenate both the strings."
+    },
+    {
+      "time": "00:47",
+      "start": 47.5,
+      "end": 50.5,
+      "duration": 3.0,
+      "text": " What is the concatenate here?"
+    },
+    {
+      "time": "00:50",
+      "start": 50.5,
+      "end": 55.5,
+      "duration": 5.0,
+      "text": " Actually, one operator is used in multiple ways."
+    },
+    {
+      "time": "00:55",
+      "start": 55.5,
+      "end": 57.5,
+      "duration": 2.0,
+      "text": " This is a simple polymorphism example."
+    },
+    {
+      "time": "00:57",
+      "start": 57.5,
+      "end": 60.5,
+      "duration": 3.0,
+      "text": " We have already done the function overloading."
+    },
+    {
+      "time": "01:00",
+      "start": 60.5,
+      "end": 64.5,
+      "duration": 4.0,
+      "text": " But we should know that compiled time polymorphism"
+    },
+    {
+      "time": "01:04",
+      "start": 64.5,
+      "end": 66.5,
+      "duration": 2.0,
+      "text": " or the static polymorphism is called."
+    },
+    {
+      "time": "01:06",
+      "start": 66.5,
+      "end": 68.5,
+      "duration": 2.0,
+      "text": " There are two things in it."
+    },
+    {
+      "time": "01:08",
+      "start": 68.5,
+      "end": 69.5,
+      "duration": 1.0,
+      "text": " One is operator overloading."
+    },
+    {
+      "time": "01:09",
+      "start": 69.5,
+      "end": 70.5,
+      "duration": 1.0,
+      "text": " One is function overloading."
+    },
+    {
+      "time": "01:10",
+      "start": 70.5,
+      "end": 72.5,
+      "duration": 2.0,
+      "text": " We have already done the function overloading."
+    },
+    {
+      "time": "01:12",
+      "start": 72.5,
+      "end": 75.5,
+      "duration": 3.0,
+      "text": " The link is in the description box below."
+    },
+    {
+      "time": "01:15",
+      "start": 75.5,
+      "end": 79.5,
+      "duration": 4.0,
+      "text": " And even compiled time polymorphism is another."
+    },
+    {
+      "time": "01:19",
+      "start": 79.5,
+      "end": 81.5,
+      "duration": 2.0,
+      "text": " That is run time polymorphism."
+    },
+    {
+      "time": "01:21",
+      "start": 81.5,
+      "end": 84.5,
+      "duration": 3.0,
+      "text": " The function overloading concept is already done."
+    },
+    {
+      "time": "01:24",
+      "start": 84.5,
+      "end": 87.5,
+      "duration": 3.0,
+      "text": " This one is also our important operator."
+    },
+    {
+      "time": "01:27",
+      "start": 87.5,
+      "end": 90.5,
+      "duration": 3.0,
+      "text": " Operator overloading is simple."
+    },
+    {
+      "time": "01:30",
+      "start": 90.5,
+      "end": 95.5,
+      "duration": 5.0,
+      "text": " Giving additional meaning to the operators for user defined object."
+    },
+    {
+      "time": "01:35",
+      "start": 95.5,
+      "end": 98.5,
+      "duration": 3.0,
+      "text": " Example is used in simplest examples."
+    },
+    {
+      "time": "01:38",
+      "start": 98.5,
+      "end": 99.5,
+      "duration": 1.0,
+      "text": " I just told you."
+    },
+    {
+      "time": "01:39",
+      "start": 99.5,
+      "end": 102.5,
+      "duration": 3.0,
+      "text": " This is also the example of what operator overloading."
+    },
+    {
+      "time": "01:42",
+      "start": 102.5,
+      "end": 104.5,
+      "duration": 2.0,
+      "text": " One thing is used in multiple ways."
+    },
+    {
+      "time": "01:44",
+      "start": 104.5,
+      "end": 105.5,
+      "duration": 1.0,
+      "text": " What happens now?"
+    },
+    {
+      "time": "01:45",
+      "start": 105.5,
+      "end": 108.5,
+      "duration": 3.0,
+      "text": " See this example in C++."
+    },
+    {
+      "time": "01:48",
+      "start": 108.5,
+      "end": 109.5,
+      "duration": 1.0,
+      "text": " What I have done?"
+    },
+    {
+      "time": "01:49",
+      "start": 109.5,
+      "end": 110.5,
+      "duration": 1.0,
+      "text": " What I have done?"
+    },
+    {
+      "time": "01:50",
+      "start": 110.5,
+      "end": 111.5,
+      "duration": 1.0,
+      "text": " I have made a class."
+    },
+    {
+      "time": "01:51",
+      "start": 111.5,
+      "end": 112.5,
+      "duration": 1.0,
+      "text": " What I have done?"
+    },
+    {
+      "time": "01:52",
+      "start": 112.5,
+      "end": 113.5,
+      "duration": 1.0,
+      "text": " Insta."
+    },
+    {
+      "time": "01:53",
+      "start": 113.5,
+      "end": 116.5,
+      "duration": 3.0,
+      "text": " And in it, let's pose a variable."
+    },
+    {
+      "time": "01:56",
+      "start": 116.5,
+      "end": 117.5,
+      "duration": 1.0,
+      "text": " Int followers."
+    },
+    {
+      "time": "01:57",
+      "start": 117.5,
+      "end": 118.5,
+      "duration": 1.0,
+      "text": " Okay."
+    },
+    {
+      "time": "01:58",
+      "start": 118.5,
+      "end": 119.5,
+      "duration": 1.0,
+      "text": " I have made a member."
+    },
+    {
+      "time": "01:59",
+      "start": 119.5,
+      "end": 120.5,
+      "duration": 1.0,
+      "text": " Int followers."
+    },
+    {
+      "time": "02:00",
+      "start": 120.5,
+      "end": 122.5,
+      "duration": 2.0,
+      "text": " And what I have done in the main class."
+    },
+    {
+      "time": "02:02",
+      "start": 122.5,
+      "end": 124.5,
+      "duration": 2.0,
+      "text": " Insta has created an object."
+    },
+    {
+      "time": "02:04",
+      "start": 124.5,
+      "end": 125.5,
+      "duration": 1.0,
+      "text": " I."
+    },
+    {
+      "time": "02:05",
+      "start": 125.5,
+      "end": 126.5,
+      "duration": 1.0,
+      "text": " This is an object."
+    },
+    {
+      "time": "02:06",
+      "start": 126.5,
+      "end": 127.5,
+      "duration": 1.0,
+      "text": " What is the class?"
+    },
+    {
+      "time": "02:07",
+      "start": 127.5,
+      "end": 128.5,
+      "duration": 1.0,
+      "text": " Insta."
+    },
+    {
+      "time": "02:08",
+      "start": 128.5,
+      "end": 130.5,
+      "duration": 2.0,
+      "text": " Now what I have done?"
+    },
+    {
+      "time": "02:10",
+      "start": 130.5,
+      "end": 131.5,
+      "duration": 1.0,
+      "text": " I."
+    },
+    {
+      "time": "02:11",
+      "start": 131.5,
+      "end": 132.5,
+      "duration": 1.0,
+      "text": " I."
+    },
+    {
+      "time": "02:12",
+      "start": 132.5,
+      "end": 133.5,
+      "duration": 1.0,
+      "text": " Actually, what I want to do is."
+    },
+    {
+      "time": "02:13",
+      "start": 133.5,
+      "end": 136.5,
+      "duration": 3.0,
+      "text": " I want to increment its value."
+    },
+    {
+      "time": "02:16",
+      "start": 136.5,
+      "end": 138.5,
+      "duration": 2.0,
+      "text": " But what will I say?"
+    },
+    {
+      "time": "02:18",
+      "start": 138.5,
+      "end": 139.5,
+      "duration": 1.0,
+      "text": " Error."
+    },
+    {
+      "time": "02:19",
+      "start": 139.5,
+      "end": 140.5,
+      "duration": 1.0,
+      "text": " What is this?"
+    },
+    {
+      "time": "02:20",
+      "start": 140.5,
+      "end": 141.5,
+      "duration": 1.0,
+      "text": " Where do I say this?"
+    },
+    {
+      "time": "02:21",
+      "start": 141.5,
+      "end": 142.5,
+      "duration": 1.0,
+      "text": " Who are you?"
+    },
+    {
+      "time": "02:22",
+      "start": 142.5,
+      "end": 146.5,
+      "duration": 4.0,
+      "text": " I have heard that you have taken int a."
+    },
+    {
+      "time": "02:26",
+      "start": 146.5,
+      "end": 148.5,
+      "duration": 2.0,
+      "text": " And if you are doing it A++, it will go."
+    },
+    {
+      "time": "02:28",
+      "start": 148.5,
+      "end": 149.5,
+      "duration": 1.0,
+      "text": " It will go."
+    },
+    {
+      "time": "02:29",
+      "start": 149.5,
+      "end": 150.5,
+      "duration": 1.0,
+      "text": " I will do it in a value 5."
+    },
+    {
+      "time": "02:30",
+      "start": 150.5,
+      "end": 152.5,
+      "duration": 2.0,
+      "text": " I have heard that A greater than B."
+    },
+    {
+      "time": "02:32",
+      "start": 152.5,
+      "end": 155.5,
+      "duration": 3.0,
+      "text": " If A is a value 10, B is a value less than 20."
+    },
+    {
+      "time": "02:35",
+      "start": 155.5,
+      "end": 157.5,
+      "duration": 2.0,
+      "text": " So, it will tell the truth and false."
+    },
+    {
+      "time": "02:37",
+      "start": 157.5,
+      "end": 158.5,
+      "duration": 1.0,
+      "text": " But what is this?"
+    },
+    {
+      "time": "02:38",
+      "start": 158.5,
+      "end": 161.5,
+      "duration": 3.0,
+      "text": " You have made an Insta class."
+    },
+    {
+      "time": "02:41",
+      "start": 161.5,
+      "end": 162.5,
+      "duration": 1.0,
+      "text": " And you have made an object."
+    },
+    {
+      "time": "02:42",
+      "start": 162.5,
+      "end": 164.5,
+      "duration": 2.0,
+      "text": " And you are trying to do it."
+    },
+    {
+      "time": "02:44",
+      "start": 164.5,
+      "end": 166.5,
+      "duration": 2.0,
+      "text": " This compiler will not understand."
+    },
+    {
+      "time": "02:46",
+      "start": 166.5,
+      "end": 168.5,
+      "duration": 2.0,
+      "text": " Because what is this?"
+    },
+    {
+      "time": "02:48",
+      "start": 168.5,
+      "end": 170.5,
+      "duration": 2.0,
+      "text": " Actually, user defined."
+    },
+    {
+      "time": "02:50",
+      "start": 170.5,
+      "end": 172.5,
+      "duration": 2.0,
+      "text": " We have defined this object by ourselves."
+    },
+    {
+      "time": "02:52",
+      "start": 172.5,
+      "end": 175.5,
+      "duration": 3.0,
+      "text": " Now, we have the main operators."
+    },
+    {
+      "time": "02:55",
+      "start": 175.5,
+      "end": 177.5,
+      "duration": 2.0,
+      "text": " They are integer value."
+    },
+    {
+      "time": "02:57",
+      "start": 177.5,
+      "end": 179.5,
+      "duration": 2.0,
+      "text": " Or we have the character value."
+    },
+    {
+      "time": "02:59",
+      "start": 179.5,
+      "end": 181.5,
+      "duration": 2.0,
+      "text": " The primitive data types."
+    },
+    {
+      "time": "03:01",
+      "start": 181.5,
+      "end": 183.5,
+      "duration": 2.0,
+      "text": " They work with all of them."
+    },
+    {
+      "time": "03:03",
+      "start": 183.5,
+      "end": 186.5,
+      "duration": 3.0,
+      "text": " But when I talk about user defined data type."
+    },
+    {
+      "time": "03:06",
+      "start": 186.5,
+      "end": 187.5,
+      "duration": 1.0,
+      "text": " I don't understand that."
+    },
+    {
+      "time": "03:07",
+      "start": 187.5,
+      "end": 188.5,
+      "duration": 1.0,
+      "text": " What do I have to do?"
+    },
+    {
+      "time": "03:08",
+      "start": 188.5,
+      "end": 191.5,
+      "duration": 3.0,
+      "text": " So, that is why we have made an operator overroading concept."
+    },
+    {
+      "time": "03:11",
+      "start": 191.5,
+      "end": 194.5,
+      "duration": 3.0,
+      "text": " That is why we make the same operator"
+    },
+    {
+      "time": "03:14",
+      "start": 194.5,
+      "end": 196.5,
+      "duration": 2.0,
+      "text": " that we can use."
+    },
+    {
+      "time": "03:16",
+      "start": 196.5,
+      "end": 198.5,
+      "duration": 2.0,
+      "text": " This is the primitive user defined."
+    },
+    {
+      "time": "03:18",
+      "start": 198.5,
+      "end": 200.5,
+      "duration": 2.0,
+      "text": " This is the built-in."
+    },
+    {
+      "time": "03:20",
+      "start": 200.5,
+      "end": 202.5,
+      "duration": 2.0,
+      "text": " And this is the user defined."
+    },
+    {
+      "time": "03:22",
+      "start": 202.5,
+      "end": 204.5,
+      "duration": 2.0,
+      "text": " So, I will tell the same example."
+    },
+    {
+      "time": "03:24",
+      "start": 204.5,
+      "end": 207.5,
+      "duration": 3.0,
+      "text": " If I want to do it, how can we do the operator overroading?"
+    },
+    {
+      "time": "03:27",
+      "start": 207.5,
+      "end": 210.5,
+      "duration": 3.0,
+      "text": " I hope this is the basic concept."
+    },
+    {
+      "time": "03:30",
+      "start": 210.5,
+      "end": 211.5,
+      "duration": 1.0,
+      "text": " You will understand."
+    },
+    {
+      "time": "03:31",
+      "start": 211.5,
+      "end": 213.5,
+      "duration": 2.0,
+      "text": " Now, look at the code."
+    },
+    {
+      "time": "03:33",
+      "start": 213.5,
+      "end": 215.5,
+      "duration": 2.0,
+      "text": " There is nothing."
+    },
+    {
+      "time": "03:35",
+      "start": 215.5,
+      "end": 216.5,
+      "duration": 1.0,
+      "text": " It is a very simple code."
+    },
+    {
+      "time": "03:36",
+      "start": 216.5,
+      "end": 217.5,
+      "duration": 1.0,
+      "text": " I will tell you."
+    },
+    {
+      "time": "03:37",
+      "start": 217.5,
+      "end": 219.5,
+      "duration": 2.0,
+      "text": " I have taken the first class."
+    },
+    {
+      "time": "03:39",
+      "start": 219.5,
+      "end": 221.5,
+      "duration": 2.0,
+      "text": " I have taken the name of the class."
+    },
+    {
+      "time": "03:41",
+      "start": 221.5,
+      "end": 223.5,
+      "duration": 2.0,
+      "text": " Now, you can also take the name of A, B, C, D."
+    },
+    {
+      "time": "03:43",
+      "start": 223.5,
+      "end": 225.5,
+      "duration": 2.0,
+      "text": " You can also take the name of A, B, C, D."
+    },
+    {
+      "time": "03:45",
+      "start": 225.5,
+      "end": 227.5,
+      "duration": 2.0,
+      "text": " You can also take the name of the class."
+    },
+    {
+      "time": "03:47",
+      "start": 227.5,
+      "end": 229.5,
+      "duration": 2.0,
+      "text": " I have taken a variable."
+    },
+    {
+      "time": "03:49",
+      "start": 229.5,
+      "end": 230.5,
+      "duration": 1.0,
+      "text": " The type of variable."
+    },
+    {
+      "time": "03:50",
+      "start": 230.5,
+      "end": 233.5,
+      "duration": 3.0,
+      "text": " And I have named it variable."
+    },
+    {
+      "time": "03:53",
+      "start": 233.5,
+      "end": 235.5,
+      "duration": 2.0,
+      "text": " You can also keep the name of A, B, C, D."
+    },
+    {
+      "time": "03:55",
+      "start": 235.5,
+      "end": 237.5,
+      "duration": 2.0,
+      "text": " But you can also explain it."
+    },
+    {
+      "time": "03:57",
+      "start": 237.5,
+      "end": 239.5,
+      "duration": 2.0,
+      "text": " I have also taken a subscriber."
+    },
+    {
+      "time": "03:59",
+      "start": 239.5,
+      "end": 241.5,
+      "duration": 2.0,
+      "text": " Now, I have a public."
+    },
+    {
+      "time": "04:01",
+      "start": 241.5,
+      "end": 243.5,
+      "duration": 2.0,
+      "text": " I have specified the access."
+    },
+    {
+      "time": "04:03",
+      "start": 243.5,
+      "end": 245.5,
+      "duration": 2.0,
+      "text": " You can also access the class outside."
+    },
+    {
+      "time": "04:05",
+      "start": 245.5,
+      "end": 247.5,
+      "duration": 2.0,
+      "text": " We already know that public."
+    },
+    {
+      "time": "04:07",
+      "start": 247.5,
+      "end": 249.5,
+      "duration": 2.0,
+      "text": " Now, what I have done in it."
+    },
+    {
+      "time": "04:09",
+      "start": 249.5,
+      "end": 250.5,
+      "duration": 1.0,
+      "text": " I have created a constructor."
+    },
+    {
+      "time": "04:10",
+      "start": 250.5,
+      "end": 251.5,
+      "duration": 1.0,
+      "text": " The name of the constructor."
+    },
+    {
+      "time": "04:11",
+      "start": 251.5,
+      "end": 253.5,
+      "duration": 2.0,
+      "text": " The name of the class is not the same."
+    },
+    {
+      "time": "04:13",
+      "start": 253.5,
+      "end": 255.5,
+      "duration": 2.0,
+      "text": " It should be the same."
+    },
+    {
+      "time": "04:15",
+      "start": 255.5,
+      "end": 257.5,
+      "duration": 2.0,
+      "text": " And what I have done in it."
+    },
+    {
+      "time": "04:17",
+      "start": 257.5,
+      "end": 259.5,
+      "duration": 2.0,
+      "text": " I have created an int s in parameter."
+    },
+    {
+      "time": "04:19",
+      "start": 259.5,
+      "end": 261.5,
+      "duration": 2.0,
+      "text": " And what will happen?"
+    },
+    {
+      "time": "04:21",
+      "start": 261.5,
+      "end": 263.5,
+      "duration": 2.0,
+      "text": " As soon as we create an object."
+    },
+    {
+      "time": "04:23",
+      "start": 263.5,
+      "end": 265.5,
+      "duration": 2.0,
+      "text": " What will my constructor do?"
+    },
+    {
+      "time": "04:25",
+      "start": 265.5,
+      "end": 267.5,
+      "duration": 2.0,
+      "text": " What will he do?"
+    },
+    {
+      "time": "04:27",
+      "start": 267.5,
+      "end": 269.5,
+      "duration": 2.0,
+      "text": " What will he do?"
+    },
+    {
+      "time": "04:29",
+      "start": 269.5,
+      "end": 271.5,
+      "duration": 2.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:31",
+      "start": 271.5,
+      "end": 273.5,
+      "duration": 2.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:33",
+      "start": 273.5,
+      "end": 275.5,
+      "duration": 2.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:35",
+      "start": 275.5,
+      "end": 277.5,
+      "duration": 2.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:37",
+      "start": 277.5,
+      "end": 278.5,
+      "duration": 1.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:38",
+      "start": 278.5,
+      "end": 279.5,
+      "duration": 1.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:39",
+      "start": 279.5,
+      "end": 280.5,
+      "duration": 1.0,
+      "text": " What will I do?"
+    },
+    {
+      "time": "04:40",
+      "start": 280.5,
+      "end": 284.5,
+      "duration": 4.0,
+      "text": " What will be our operator loading concept?"
+    },
+    {
+      "time": "04:44",
+      "start": 284.5,
+      "end": 286.5,
+      "duration": 2.0,
+      "text": " When we want to do the operator loading."
+    },
+    {
+      "time": "04:46",
+      "start": 286.5,
+      "end": 287.5,
+      "duration": 1.0,
+      "text": " What is the type?"
+    },
+    {
+      "time": "04:47",
+      "start": 287.5,
+      "end": 288.5,
+      "duration": 1.0,
+      "text": " What is the syntax?"
+    },
+    {
+      "time": "04:48",
+      "start": 288.5,
+      "end": 290.5,
+      "duration": 2.0,
+      "text": " What will be the return type before it?"
+    },
+    {
+      "time": "04:50",
+      "start": 290.5,
+      "end": 292.5,
+      "duration": 2.0,
+      "text": " So, I have finished the variable."
+    },
+    {
+      "time": "04:52",
+      "start": 292.5,
+      "end": 295.5,
+      "duration": 3.0,
+      "text": " Now, you will have to write an operator word."
+    },
+    {
+      "time": "04:55",
+      "start": 295.5,
+      "end": 297.5,
+      "duration": 2.0,
+      "text": " It is a part of syntax."
+    },
+    {
+      "time": "04:57",
+      "start": 297.5,
+      "end": 299.5,
+      "duration": 2.0,
+      "text": " Then, what operator will you do?"
+    },
+    {
+      "time": "04:59",
+      "start": 299.5,
+      "end": 301.5,
+      "duration": 2.0,
+      "text": " If it is written, then I have to do plus to plus."
+    },
+    {
+      "time": "05:01",
+      "start": 301.5,
+      "end": 303.5,
+      "duration": 2.0,
+      "text": " Here, I have to overload."
+    },
+    {
+      "time": "05:03",
+      "start": 303.5,
+      "end": 304.5,
+      "duration": 1.0,
+      "text": " I have written plus."
+    },
+    {
+      "time": "05:04",
+      "start": 304.5,
+      "end": 305.5,
+      "duration": 1.0,
+      "text": " I did not take any parameter."
+    },
+    {
+      "time": "05:05",
+      "start": 305.5,
+      "end": 306.5,
+      "duration": 1.0,
+      "text": " You can take it."
+    },
+    {
+      "time": "05:06",
+      "start": 306.5,
+      "end": 307.5,
+      "duration": 1.0,
+      "text": " Here, it is not necessary."
+    },
+    {
+      "time": "05:07",
+      "start": 307.5,
+      "end": 309.5,
+      "duration": 2.0,
+      "text": " Next, I have taken subscriber."
+    },
+    {
+      "time": "05:09",
+      "start": 309.5,
+      "end": 313.04,
+      "duration": 3.5400000000000205,
+      "text": " یعنی جو بھی Value Subscriber میں آئے گی اس کو"
+    },
+    {
+      "time": "05:13",
+      "start": 313.04,
+      "end": 315.78,
+      "duration": 2.7399999999999523,
+      "text": " PLUS PLUS کر دے گا یہ جو ہے وہ آپ کا"
+    },
+    {
+      "time": "05:15",
+      "start": 315.78,
+      "end": 318.38,
+      "duration": 2.6000000000000227,
+      "text": " MAIN concept ہے Overloading کا اس کے بعد"
+    },
+    {
+      "time": "05:18",
+      "start": 318.38,
+      "end": 320.52,
+      "duration": 2.1399999999999864,
+      "text": " ہم نے گیا کرنا ہے صرف DISPLAY کرنا جی جو"
+    },
+    {
+      "time": "05:20",
+      "start": 320.52,
+      "end": 322.36,
+      "duration": 1.8400000000000318,
+      "text": " Value میری инкрیمٹ ہوئی ہے اس کو"
+    },
+    {
+      "time": "05:22",
+      "start": 322.36,
+      "end": 323.98,
+      "duration": 1.6200000000000045,
+      "text": " میں DISPLAY کرنا چاہتا ہوں SUBSCRIBE کو"
+    },
+    {
+      "time": "05:23",
+      "start": 323.98,
+      "end": 326.62,
+      "duration": 2.6399999999999864,
+      "text": " DISPLAY کر دی ہے اب آجتے جی MAIN پے آپ کو"
+    },
+    {
+      "time": "05:26",
+      "start": 326.62,
+      "end": 328.96,
+      "duration": 2.339999999999975,
+      "text": " پتے کہانی ہمیں سی start upی ہے MAIN کی"
+    },
+    {
+      "time": "05:28",
+      "start": 328.96,
+      "end": 331.02,
+      "duration": 2.0600000000000023,
+      "text": " اندرہم نے گیا چینل جو میرا"
+    },
+    {
+      "time": "05:31",
+      "start": 331.02,
+      "end": 333.16,
+      "duration": 2.140000000000043,
+      "text": " CLASS کیا ہوتی Blueprint ہوتا تو میں"
+    },
+    {
+      "time": "05:33",
+      "start": 333.16,
+      "end": 335.6,
+      "duration": 2.4399999999999977,
+      "text": " اس کا کیا کیا ایک Object Create کیا"
+    },
+    {
+      "time": "05:35",
+      "start": 335.6,
+      "end": 337.48,
+      "duration": 1.8799999999999955,
+      "text": " وہ سبجت کا نام ہے جی GS"
+    },
+    {
+      "time": "05:37",
+      "start": 337.48,
+      "end": 340.86,
+      "duration": 3.3799999999999955,
+      "text": " اور GS میں میں نے Value کیا دی 1000"
+    },
+    {
+      "time": "05:40",
+      "start": 340.86,
+      "end": 343.1,
+      "duration": 2.240000000000009,
+      "text": " جسی میں نے 1000 Value دی ہوگا کیا"
+    },
+    {
+      "time": "05:43",
+      "start": 343.1,
+      "end": 344.72,
+      "duration": 1.6200000000000045,
+      "text": " طورنت میرا جو یہ"
+    },
+    {
+      "time": "05:44",
+      "start": 344.72,
+      "end": 346.5,
+      "duration": 1.7799999999999727,
+      "text": " Constructor تھا وہ کیا کرے گا"
+    },
+    {
+      "time": "05:46",
+      "start": 346.5,
+      "end": 347.58000000000004,
+      "duration": 1.080000000000041,
+      "text": " طورنت INTS"
+    },
+    {
+      "time": "05:47",
+      "start": 347.58000000000004,
+      "end": 349.22,
+      "duration": 1.6399999999999864,
+      "text": " ملو بھی یہاں پے Value کیا گی"
+    },
+    {
+      "time": "05:49",
+      "start": 349.22,
+      "end": 349.98,
+      "duration": 0.7599999999999909,
+      "text": " 1000"
+    },
+    {
+      "time": "05:49",
+      "start": 349.98,
+      "end": 350.96000000000004,
+      "duration": 0.9800000000000182,
+      "text": " اور وہ 1000"
+    },
+    {
+      "time": "05:50",
+      "start": 350.96000000000004,
+      "end": 352.40000000000003,
+      "duration": 1.4399999999999977,
+      "text": " کس کے اندر پاس کر دے گا"
+    },
+    {
+      "time": "05:52",
+      "start": 352.40000000000003,
+      "end": 353.94,
+      "duration": 1.5399999999999636,
+      "text": " SUBSCRIBE کیا در پاس کر دے گا"
+    },
+    {
+      "time": "05:53",
+      "start": 353.94,
+      "end": 355.22,
+      "duration": 1.2800000000000296,
+      "text": " تو SUBSCRIBE کیا در کیا ہوں گی"
+    },
+    {
+      "time": "05:55",
+      "start": 355.22,
+      "end": 356.86,
+      "duration": 1.6399999999999864,
+      "text": " جی Value میری 1000"
+    },
+    {
+      "time": "05:56",
+      "start": 356.86,
+      "end": 357.56,
+      "duration": 0.6999999999999886,
+      "text": " پاس ہو گی"
+    },
+    {
+      "time": "05:57",
+      "start": 357.56,
+      "end": 360.14000000000004,
+      "duration": 2.580000000000041,
+      "text": " اس کے بعد کیا وہ PLUS PLUS GS"
+    },
+    {
+      "time": "06:00",
+      "start": 360.14000000000004,
+      "end": 361.70000000000005,
+      "duration": 1.5600000000000023,
+      "text": " مطلب اس کا کیا مطلب ہے"
+    },
+    {
+      "time": "06:01",
+      "start": 361.70000000000005,
+      "end": 363.52000000000004,
+      "duration": 1.8199999999999932,
+      "text": " ہم یہاں پے ایک چل میں"
+    },
+    {
+      "time": "06:03",
+      "start": 363.52,
+      "end": 365.26,
+      "duration": 1.740000000000009,
+      "text": " اپریٹر اوھر نوڑنگ کے Koncept کو"
+    },
+    {
+      "time": "06:05",
+      "start": 365.26,
+      "end": 365.7,
+      "duration": 0.4399999999999977,
+      "text": " use گرے"
+    },
+    {
+      "time": "06:05",
+      "start": 365.7,
+      "end": 367.21999999999997,
+      "duration": 1.5199999999999818,
+      "text": " ملو بھی اس فنشن کو کال کر رہے"
+    },
+    {
+      "time": "06:07",
+      "start": 367.21999999999997,
+      "end": 368.65999999999997,
+      "duration": 1.4399999999999977,
+      "text": " اس کو آپ ایسے بھی لیکسکتے ہو"
+    },
+    {
+      "time": "06:08",
+      "start": 368.65999999999997,
+      "end": 371.35999999999996,
+      "duration": 2.6999999999999886,
+      "text": " GS.Op."
+    },
+    {
+      "time": "06:11",
+      "start": 371.35999999999996,
+      "end": 372.85999999999996,
+      "duration": 1.5,
+      "text": " PLUS PLUS"
+    },
+    {
+      "time": "06:12",
+      "start": 372.85999999999996,
+      "end": 374.15999999999997,
+      "duration": 1.3000000000000114,
+      "text": " ٹیکے ملو بھی ایک ترس ہم لوگ"
+    },
+    {
+      "time": "06:14",
+      "start": 374.15999999999997,
+      "end": 375.29999999999995,
+      "duration": 1.1399999999999864,
+      "text": " اس کو کال کر رہے"
+    },
+    {
+      "time": "06:15",
+      "start": 375.29999999999995,
+      "end": 377.29999999999995,
+      "duration": 2.0,
+      "text": " اپریٹر PLUS PLUS کو یہاں پے کال کر رہے"
+    },
+    {
+      "time": "06:17",
+      "start": 377.29999999999995,
+      "end": 378.53999999999996,
+      "duration": 1.240000000000009,
+      "text": " GS.Op. PLUS"
+    },
+    {
+      "time": "06:18",
+      "start": 378.53999999999996,
+      "end": 379.97999999999996,
+      "duration": 1.4399999999999977,
+      "text": " یا پھر PLUS PLUS GS لکھ دو"
+    },
+    {
+      "time": "06:19",
+      "start": 379.97999999999996,
+      "end": 381.7,
+      "duration": 1.7200000000000273,
+      "text": " ملو بھی رہاں انگریمنٹ کر رہے"
+    },
+    {
+      "time": "06:21",
+      "start": 381.7,
+      "end": 382.97999999999996,
+      "duration": 1.2799999999999727,
+      "text": " اور پھر اس کو کال کر رہے"
+    },
+    {
+      "time": "06:22",
+      "start": 382.97999999999996,
+      "end": 385.14,
+      "duration": 2.160000000000025,
+      "text": " جسی میں نے PLUS PLUS GS کو کال کر رہے"
+    },
+    {
+      "time": "06:25",
+      "start": 385.14,
+      "end": 386.03999999999996,
+      "duration": 0.8999999999999773,
+      "text": " اس نے کال کر رہے"
+    }
+  ]
+}

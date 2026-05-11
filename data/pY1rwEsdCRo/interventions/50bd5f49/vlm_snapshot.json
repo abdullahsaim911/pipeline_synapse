@@ -1,0 +1,56 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "zone_mapping": {
+      "top left": "Physical drawing",
+      "top right": "Physical drawing",
+      "bottom left": "Physical drawing",
+      "bottom right": "Physical drawing"
+    },
+    "isolated_extraction": {
+      "top left": {
+        "physical_shape": "Sphere",
+        "color": "Blue",
+        "label": "Solid"
+      },
+      "top right": {
+        "physical_shape": "Sphere",
+        "color": "Red",
+        "label": "Hollow"
+      },
+      "bottom left": {
+        "physical_shape": "Sphere",
+        "color": "Blue",
+        "label": "Solid"
+      },
+      "bottom right": {
+        "physical_shape": "Sphere",
+        "color": "Red",
+        "label": "Hollow"
+      }
+    },
+    "structural_description": "The frame contains four distinct physical drawings of spheres, two labeled as 'Solid' and two as 'Hollow'. The spheres are arranged in a linear sequence from top left to bottom right.",
+    "reading_order": [
+      "top left",
+      "top right",
+      "bottom left",
+      "bottom right"
+    ],
+    "layout": "The spheres are arranged in a linear sequence from top left to bottom right.",
+    "text_readout": "Solid\nHollow",
+    "spatial_map": "The 'Solid' spheres are on the left side of the frame, while the 'Hollow' spheres are on the right side.",
+    "colors_styles": "The spheres are depicted in different colors: Blue for 'Solid' and Red for 'Hollow'.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

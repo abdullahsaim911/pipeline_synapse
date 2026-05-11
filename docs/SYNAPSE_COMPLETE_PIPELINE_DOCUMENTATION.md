@@ -149,6 +149,7 @@ The Synapse pipeline's architecture is the result of deliberate choices to optim
 
 **Decision**: Use a weighted scoring system combining multiple signals rather than a single criterion.
 
+
 **Rationale**:
 - **Robustness**: Different teachers have different styles; a single rule would miss many cases
 - **Flexibility**: Scoring allows tuning based on specific video types or subjects

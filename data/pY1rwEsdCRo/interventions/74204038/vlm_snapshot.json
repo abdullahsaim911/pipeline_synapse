@@ -1,0 +1,40 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "Translation": {
+        "equation": "K_trans = 1/2 m v^2",
+        "basketball": "red with yellow core",
+        "arrows": "3 yellow arrows pointing to different parts of the basketball",
+        "mass": "yellow dot labeled 'm'"
+      },
+      "Rotation": {
+        "omega": "yellow omega symbol",
+        "basketball": "red with yellow core",
+        "arrows": "3 yellow arrows pointing to different parts of the basketball",
+        "mass": "yellow dot labeled 'm'"
+      }
+    },
+    "structural_description": "The frame is divided into two main sections, one labeled 'Translation' and the other 'Rotation'. Each section contains a physical drawing of a basketball with yellow arrows and a yellow dot labeled 'm'. The 'Translation' section also includes an equation for translational kinetic energy. The 'Rotation' section includes a yellow omega symbol.",
+    "reading_order": [
+      "Translation",
+      "Rotation"
+    ],
+    "layout": "The frame is divided into two main sections, one labeled 'Translation' and the other 'Rotation'. Each section contains a physical drawing of a basketball with yellow arrows and a yellow dot labeled 'm'. The 'Translation' section also includes an equation for translational kinetic energy. The 'Rotation' section includes a yellow omega symbol.",
+    "text_readout": "Translation\nK_trans = 1/2 m v^2\nRotation\nomega",
+    "spatial_map": "The 'Translation' section is on the left side of the frame, and the 'Rotation' section is on the right side of the frame.",
+    "colors_styles": "The basketball is red with a yellow core, the arrows are yellow, and the dot labeled 'm' is yellow. The omega symbol is yellow.",
+    "missing_elements": null
+  },
+  "detected_types": [
+    "unknown"
+  ],
+  "structural_description": "",
+  "reading_order": [],
+  "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
+  "spatial_map": "",
+  "colors_styles": "",
+  "missing_elements": null
+}

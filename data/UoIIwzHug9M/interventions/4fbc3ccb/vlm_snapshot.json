@@ -1,0 +1,38 @@
+{
+  "content_type": "unknown",
+  "visual_analysis": {
+    "details": {
+      "top_left": "Equations and symbols related to force, acceleration, and momentum",
+      "top_right": "Text explaining the concept of momentum",
+      "middle_left": "Equation for calculating momentum change",
+      "middle_right": "Physical drawing of hands throwing a baseball",
+      "bottom_left": "Equation for calculating force",
+      "bottom_right": "Equation for calculating acceleration"
+    }
+  },
+  "structural_description": "The frame is divided into four main zones: top left, top right, middle left, and middle right. The top left and bottom left zones contain equations and symbols related to force, acceleration, and momentum. The top right zone has text explaining the concept of momentum. The middle left zone shows an equation for calculating momentum change. The middle right zone features a physical drawing of hands throwing a baseball. The bottom right zone contains equations for calculating force and acceleration.",
+  "reading_order": [
+    "top_left",
+    "top_right",
+    "middle_left",
+    "middle_right",
+    "bottom_left",
+    "bottom_right"
+  ],
+  "layout": "The frame is divided into four main zones: top left, top right, middle left, and middle right. The top left and bottom left zones contain equations and symbols related to force, acceleration, and momentum. The top right zone has text explaining the concept of momentum. The middle left zone shows an equation for calculating momentum change. The middle right zone features a physical drawing of hands throwing a baseball. The bottom right zone contains equations for calculating force and acceleration.",
+  "text_readout": {
+    "top_left": "ΣF/m = a",
+    "top_right": "Momentum",
+    "middle_left": "ΣF = mΔV/Δt",
+    "middle_right": "How quickly momentum is changing",
+    "bottom_left": "ΣF = ΔF/Δt",
+    "bottom_right": "ΣF = mΔV/Δt"
+  },
+  "spatial_map": "The top left and bottom left zones contain equations and symbols related to force, acceleration, and momentum. The top right zone has text explaining the concept of momentum. The middle left zone shows an equation for calculating momentum change. The middle right zone features a physical drawing of hands throwing a baseball. The bottom right zone contains equations for calculating force and acceleration.",
+  "colors_styles": "The frame uses a black background with colorful text and symbols. The equations and symbols are in white, yellow, blue, and green. The text explaining the concept of momentum is in green. The physical drawing of hands throwing a baseball is in white with a black outline. The equations for calculating force and acceleration are in white and yellow.",
+  "missing_elements": null,
+  "detected_types": [
+    "unknown"
+  ],
+  "conceptual_hints": ""
+}

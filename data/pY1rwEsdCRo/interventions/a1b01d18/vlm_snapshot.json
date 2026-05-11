@@ -1,0 +1,45 @@
+{
+  "content_type": "STEM lecture frame",
+  "visual_analysis": {
+    "top_left": {
+      "zone_mapping": "Equation",
+      "isolation": "Translation equation and diagram",
+      "zoned_ocr": "Translation",
+      "cross_connections": "Arrow pointing to the right"
+    },
+    "top_right": {
+      "zone_mapping": "Graph",
+      "isolation": "Graph of torque vs angle",
+      "zoned_ocr": "W = τ Δθ",
+      "cross_connections": "Arrow pointing to the right"
+    },
+    "bottom_left": {
+      "zone_mapping": "Physical drawing",
+      "isolation": "Basketball with rotation",
+      "zoned_ocr": "K_rot = 1/2 I ω^2",
+      "cross_connections": "Arrow pointing to the right"
+    },
+    "bottom_right": {
+      "zone_mapping": "Physical drawing",
+      "isolation": "Basketball with translation",
+      "zoned_ocr": "K_trans = 1/2 m v^2",
+      "cross_connections": "Arrow pointing to the right"
+    }
+  },
+  "structural_description": "The frame is divided into four zones, each containing a different STEM element. The top left and right zones show equations and graphs related to torque and translation, while the bottom left and right zones depict physical drawings of basketballs with rotation and translation.",
+  "reading_order": [
+    "top_left",
+    "top_right",
+    "bottom_left",
+    "bottom_right"
+  ],
+  "layout": "A 2x2 grid layout with STEM elements in each quadrant.",
+  "text_readout": "Translation: W = F_|| Δx, ΣW = ΣF_|| Δx = ΔK_trans; Rotation: W = τ Δθ, ΣW = ΣτΔθ = ΔK_rot; K_trans = 1/2 m v^2, K_rot = 1/2 I ω^2",
+  "spatial_map": "Top left: Translation equation and diagram; Top right: Graph of torque vs angle; Bottom left: Basketball with rotation; Bottom right: Basketball with translation",
+  "colors_styles": "The frame uses a dark background with colorful elements for the STEM content, including arrows, equations, and physical drawings.",
+  "detected_types": [
+    "unknown"
+  ],
+  "conceptual_hints": "",
+  "missing_elements": null
+}
