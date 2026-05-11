@@ -29,6 +29,7 @@ export default function Explanation({
   bookmarkData = null, // pre-populated when navigating from Bookmarks
   autoPlay = false, // auto-start audio when navigating from Library
   onBack = () => {},
+  onCancel = () => {},
   onNavigate = () => {},
 }) {
   const initialPoint = bookmarkData
@@ -73,6 +74,8 @@ export default function Explanation({
 
   // Load text explanation + kick off TTS fetch when point/mode changes
   useEffect(() => {
+    const controller = new AbortController();
+
     if (!preloadedExpl.current) setExplanation(null);
     setCurrentTime(0);
     setIsPlaying(false);
@@ -82,21 +85,29 @@ export default function Explanation({
     setBookmarked(isBookmarked(`${videoId}-${activePointId}`));
 
     // Text explanation
-    getExplanation(activePointId, mode, videoId)
+    getExplanation(activePointId, mode, videoId, controller.signal)
       .then((data) => {
         setExplanation(data);
         preloadedExpl.current = null;
       })
-      .catch((err) => console.error("Failed to load explanation:", err));
+      .catch((err) => {
+        if (err.name !== "AbortError")
+          console.error("Failed to load explanation:", err);
+      });
 
     // TTS audio — runs in parallel (shares the same HTTP request via cache)
-    getTTSExplanation(activePointId, mode, videoId)
+    getTTSExplanation(activePointId, mode, videoId, controller.signal)
       .then((tts) => {
         console.log("[Explanation] TTS response received:", tts);
         setAudioUrl(tts.audio_file_path);
       })
-      .catch((err) => console.error("TTS fetch failed:", err))
+      .catch((err) => {
+        if (err.name !== "AbortError")
+          console.error("TTS fetch failed:", err);
+      })
       .finally(() => setAudioLoading(false));
+
+    return () => controller.abort();
   }, [activePointId, mode, videoId]);
 
   // Wire up the HTML5 Audio element whenever the URL changes
@@ -272,6 +283,12 @@ export default function Explanation({
                 />
               ))}
             </div>
+            <button
+              onClick={onCancel}
+              className="mt-6 font-sans text-[12px] text-ink-muted hover:text-ink transition-colors"
+            >
+              ← Cancel and go back
+            </button>
             <style>{`@keyframes pulse { 0%,100%{opacity:0.2} 50%{opacity:1} }`}</style>
           </div>
         </main>

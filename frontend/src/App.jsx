@@ -116,6 +116,7 @@ function App() {
         bookmarkData={jobInfo.bookmarkData || null}
         autoPlay={jobInfo.autoPlay || false}
         onBack={handleBackToTimeline}
+        onCancel={() => setScreen("timeline")}
         onNavigate={handleNavigate}
       />
     );

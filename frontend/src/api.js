@@ -223,7 +223,7 @@ export async function getVideoMetadata(videoId) {
 // Cache so parallel calls for the same point share one HTTP request.
 const _explanationCache = new Map();
 
-async function getInterventionExplanation(videoId, interventionId, mode) {
+async function getInterventionExplanation(videoId, interventionId, mode, signal) {
   const key = `${videoId}::${interventionId}::${mode}`;
   if (_explanationCache.has(key)) return _explanationCache.get(key);
 
@@ -237,6 +237,7 @@ async function getInterventionExplanation(videoId, interventionId, mode) {
       intervention_id: interventionId,
       output_mode: mode,
     }),
+    signal,
   })
     .then(async (res) => {
       if (!res.ok) {
@@ -266,7 +267,7 @@ async function getInterventionExplanation(videoId, interventionId, mode) {
   return promise;
 }
 
-export async function getTTSExplanation(interventionId, mode, videoId) {
+export async function getTTSExplanation(interventionId, mode, videoId, signal) {
   if (USE_MOCK) {
     await delay(600);
     return {
@@ -277,7 +278,7 @@ export async function getTTSExplanation(interventionId, mode, videoId) {
     };
   }
 
-  return getInterventionExplanation(videoId, interventionId, mode);
+  return getInterventionExplanation(videoId, interventionId, mode, signal);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -323,7 +324,7 @@ function createMockAudioUrl() {
   return URL.createObjectURL(blob);
 }
 
-export async function getExplanation(pointId, mode, videoId) {
+export async function getExplanation(pointId, mode, videoId, signal) {
   if (USE_MOCK) {
     await delay(300);
     return {
@@ -340,7 +341,7 @@ export async function getExplanation(pointId, mode, videoId) {
     };
   }
 
-  const data = await getInterventionExplanation(videoId, pointId, mode);
+  const data = await getInterventionExplanation(videoId, pointId, mode, signal);
   return parseTextExplanation(data.text_explanation, pointId);
 }
 
