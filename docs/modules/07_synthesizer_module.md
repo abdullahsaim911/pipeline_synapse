@@ -68,6 +68,7 @@ class LLMSynthesizer:
 
     Implements Unified Injection Rule: VLM data never discarded for interventions
     unless marked as missing or cross-domain hallucination detected.
+
     """
 ```
 
@@ -75,6 +76,7 @@ class LLMSynthesizer:
 
 ```python
 DEFAULT_GENERATION_PARAMS = {
+
     "num_predict": 256,         # Maximum tokens to generate
     "temperature": 0.7,         # Sampling temperature
     "top_k": 40,                # Top-k sampling
@@ -87,6 +89,8 @@ DEFAULT_GENERATION_PARAMS = {
 
 ```python
 CROSS_DOMAIN_MISMATCHES = {
+    
+
     "equation": ["person", "man", "woman", "face", "people", "teacher"],
     "graph": ["person", "man", "woman", "face", "people"],
     "circuit": ["person", "man", "woman", "face", "text", "paragraph"],
@@ -95,6 +99,7 @@ CROSS_DOMAIN_MISMATCHES = {
     "biology": ["equation", "graph", "code"],
     "chemistry": ["equation", "graph", "code"],
     "text": ["circuit", "equation", "graph", "code"],
+
 }
 ```
 

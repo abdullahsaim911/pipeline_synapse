@@ -70,7 +70,7 @@ export default function Processing({
     { key: "downloading", title: "Fetching the video" },
     { key: "extracting",  title: "Scanning each frame" },
     { key: "detecting",   title: "Spotting equations, diagrams & charts" },
-    { key: "generating",  title: "Generating your explanations" },
+    { key: "generating",  title: "Detecting suffer points" },
   ];
   const currentStageIndex = stages.findIndex((s) => s.key === status.stage);
 

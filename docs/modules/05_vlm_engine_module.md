@@ -15,6 +15,7 @@ The VLM Engine Module serves as the "Universal Eye" of the Synapse pipeline, ana
 ## Tools & Technologies
 
 ### Core Dependencies
+
 - **Python 3.9+**: Primary programming language
 - **Qwen2-VL-7B-Instruct**: Primary vision-language model
 - **llama-cpp-python**: GGUF model support (optional)
@@ -178,13 +179,16 @@ For EACH equation provide in visual_analysis.equations array:
    - For integrals: "integral of [function] from [lower] to [upper]"
    - For fractions: "[numerator] over [denominator]"
 
+
 2. description (Spatial Layout):
    - Position: where in frame (top-left, center, bottom, etc.)
    - Size relative to other elements
    - Relationship to surrounding content
 
+
 3. position (Exact Coordinates):
    - "at top of frame", "below graph", "right of text"
+
 
 4. reading_order (Mental Navigation):
    - Step-by-step: "Start with integral symbol, then lower limit 0, then upper limit π, then sin(x)dx"
@@ -421,10 +425,12 @@ def cleanup(self):
     Clean up VLM Engine resources.
 
     Releases GPU memory and deletes model references.
+
     """
     print("[Snapshot Engine] Cleaning up...")
     self.vlm_interface.cleanup()
     print("[Snapshot Engine] Cleanup complete")
+
 ```
 
 ## Output Format
@@ -728,6 +734,7 @@ def process_in_batches(engine, frames, batch_size=5):
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
     return results
+        
 ```
 
 ### 3. Error Recovery

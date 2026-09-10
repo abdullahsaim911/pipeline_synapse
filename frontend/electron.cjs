@@ -1,4 +1,4 @@
-const { app, BrowserWindow, protocol, net } = require("electron");
+const { app, BrowserWindow, protocol, net, ipcMain, dialog } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
@@ -54,6 +54,29 @@ function registerCustomProtocol() {
   });
 }
 
+function registerIpcHandlers() {
+  ipcMain.handle("export-audio", async (_event, { sourcePath, fileName }) => {
+    const fullPath = path.join(path.dirname(__dirname), sourcePath);
+
+    if (!fs.existsSync(fullPath)) {
+      return { success: false, error: "Source file not found" };
+    }
+
+    const result = await dialog.showOpenDialog({
+      properties: ["openDirectory"],
+      title: "Choose folder to save audio",
+    });
+
+    if (result.canceled || result.filePaths.length === 0) {
+      return { success: false, canceled: true };
+    }
+
+    const destPath = path.join(result.filePaths[0], fileName);
+    await fs.promises.copyFile(fullPath, destPath);
+    return { success: true, destPath };
+  });
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 1400,
@@ -76,6 +99,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   registerCustomProtocol();
+  registerIpcHandlers();
   createWindow();
 });
 

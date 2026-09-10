@@ -1,12 +1,13 @@
-const { contextBridge } = require("electron");
+const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("synapseProtocol", {
   getDataUrl: (filePath) => {
     if (!filePath) return "";
     const normalizedPath = filePath.replace(/\\/g, "/");
-    // Keep the "data/" prefix in the pathname, use "files" as hostname
     return `synapse://files/${normalizedPath}`;
   },
+  exportAudio: (sourcePath, fileName) =>
+    ipcRenderer.invoke("export-audio", { sourcePath, fileName }),
 });
 
 console.log("[Preload] synapseProtocol exposed to window");

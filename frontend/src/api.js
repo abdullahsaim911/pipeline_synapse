@@ -225,7 +225,20 @@ const _explanationCache = new Map();
 
 async function getInterventionExplanation(videoId, interventionId, mode, signal) {
   const key = `${videoId}::${interventionId}::${mode}`;
-  if (_explanationCache.has(key)) return _explanationCache.get(key);
+
+  // If already cached (in-flight or resolved), piggyback on it.
+  // Attach abort awareness without contaminating the shared promise.
+  if (_explanationCache.has(key)) {
+    const cached = _explanationCache.get(key);
+    if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+    return signal
+      ? Promise.race([cached, new Promise((_, reject) => {
+          const onAbort = () => reject(new DOMException("Aborted", "AbortError"));
+          signal.addEventListener("abort", onAbort, { once: true });
+          cached.finally(() => signal.removeEventListener("abort", onAbort));
+        })])
+      : cached;
+  }
 
   const promise = fetch(`${API_BASE_URL}/video/intervention/explain`, {
     method: "POST",
@@ -237,7 +250,6 @@ async function getInterventionExplanation(videoId, interventionId, mode, signal)
       intervention_id: interventionId,
       output_mode: mode,
     }),
-    signal,
   })
     .then(async (res) => {
       if (!res.ok) {
@@ -255,7 +267,7 @@ async function getInterventionExplanation(videoId, interventionId, mode, signal)
         audioUrl = getFullUrl(data.audio_file_path);
         console.log("[api.js] Audio URL constructed:", data.audio_file_path, "->", audioUrl);
       }
-      return { ...data, audio_file_path: audioUrl };
+      return { ...data, audio_file_path: audioUrl, raw_audio_path: data.audio_file_path || null };
     })
     .catch((err) => {
       // Don't cache failures — allow retry on next call

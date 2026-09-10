@@ -48,9 +48,7 @@ function App() {
   };
 
   const handleBackToTimeline = () => {
-    if (jobInfo?.bookmarkData) setScreen("bookmarks");
-    else if (jobInfo?.autoPlay)  setScreen("library");
-    else                         setScreen("timeline");
+    setScreen("timeline");
   };
 
   // ── BOOKMARKS -> EXPLANATION ───────────────────────────────────────────────

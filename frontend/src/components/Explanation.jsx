@@ -58,6 +58,7 @@ export default function Explanation({
   const [currentTime, setCurrentTime] = useState(0);
   const [audioDuration, setAudioDuration] = useState(0);
   const [audioUrl, setAudioUrl] = useState(null);
+  const [rawAudioPath, setRawAudioPath] = useState(null);
   const [audioLoading, setAudioLoading] = useState(false);
   const trackRef = useRef(null);
   const dragging = useRef(false);
@@ -100,6 +101,7 @@ export default function Explanation({
       .then((tts) => {
         console.log("[Explanation] TTS response received:", tts);
         setAudioUrl(tts.audio_file_path);
+        setRawAudioPath(tts.raw_audio_path);
       })
       .catch((err) => {
         if (err.name !== "AbortError")
@@ -211,9 +213,9 @@ export default function Explanation({
     exportToPDF(explanation, activePoint);
   };
 
-  const handleExportAudio = () => {
-    if (!explanation) return;
-    exportToAudio(explanation, activePoint);
+  const handleExportAudio = async () => {
+    if (!rawAudioPath) return;
+    await exportToAudio(rawAudioPath, activePoint);
   };
 
   // ---- Derived data --------------------------------------------------------
@@ -310,12 +312,7 @@ export default function Explanation({
             onClick={onBack}
             className="font-serif text-[13px] text-ink-muted hover:text-ink"
           >
-            ←{" "}
-            {bookmarkData
-              ? "Back to bookmarks"
-              : autoPlay
-                ? "Back to library"
-                : "Back to timeline"}
+            ← Back to timeline
           </button>
         </div>
 
@@ -724,29 +721,13 @@ function exportToPDF(explanation, point) {
  * wired up, fetch the audio file URL from the backend and download that
  * instead.
  */
-function exportToAudio(explanation, point) {
-  const sampleRate = 22050;
-  const duration = 5; // seconds
-  const numSamples = sampleRate * duration;
-
-  // Create a low-volume tone as a placeholder so the file isn't completely
-  // silent — students will know it played.
-  const samples = new Int16Array(numSamples);
-  for (let i = 0; i < numSamples; i++) {
-    samples[i] = Math.sin((i / sampleRate) * 220 * 2 * Math.PI) * 1000;
-    // Fade in/out
-    if (i < sampleRate * 0.1) samples[i] *= i / (sampleRate * 0.1);
-    if (i > numSamples - sampleRate * 0.1)
-      samples[i] *= (numSamples - i) / (sampleRate * 0.1);
+async function exportToAudio(sourcePath, point) {
+  const ext = sourcePath.match(/\.\w+$/)?.[0] || ".mp3";
+  const fileName = `synapse-${slugify(point.title)}${ext}`;
+  const result = await window.synapseProtocol.exportAudio(sourcePath, fileName);
+  if (result.success) {
+    console.log("[Export] Audio saved to:", result.destPath);
   }
-
-  const wavBlob = createWavBlob(samples, sampleRate);
-  const url = URL.createObjectURL(wavBlob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `synapse-${slugify(point.title)}.wav`;
-  link.click();
-  URL.revokeObjectURL(url);
 }
 
 /**

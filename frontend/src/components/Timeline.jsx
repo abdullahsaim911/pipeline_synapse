@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Sidebar from "./Sidebar";
 import { getInterventionPoints, getFullUrl } from "../api";
 
@@ -342,8 +342,122 @@ function LaneTimeline({ totalSeconds, pointsByCategory, selectedId, onSelect }) 
   const PADDING_RIGHT  = 20;
   const VIEWBOX_WIDTH  = 760;
   const TIMELINE_WIDTH = VIEWBOX_WIDTH - PADDING_LEFT - PADDING_RIGHT;
-  const LANE_H         = 48; // height of each lane band
+  const LANE_H         = 48;
 
+  // ── Zoom state ──
+  const [rangeStart, setRangeStart] = useState(0);
+  const [rangeEnd, setRangeEnd] = useState(totalSeconds);
+  const containerRef = useRef(null);
+  const sliderRef    = useRef(null);
+  const dragging     = useRef(null); // "thumb" | "track-left" | "track-right" | null
+
+  useEffect(() => {
+    setRangeStart(0);
+    setRangeEnd(totalSeconds);
+  }, [totalSeconds]);
+
+  const visDur   = Math.max(1, rangeEnd - rangeStart);
+  const isZoomed = visDur < totalSeconds - 0.5;
+
+  const timeToX = (s) =>
+    PADDING_LEFT + ((s - rangeStart) / visDur) * TIMELINE_WIDTH;
+
+  // ── All points ──
+  const allPoints = [
+    ...pointsByCategory.equation,
+    ...pointsByCategory.diagram,
+    ...pointsByCategory.chart,
+    ...pointsByCategory.graph,
+  ];
+  const selectedPt = allPoints.find((p) => p.id === selectedId);
+
+  // ── Range helpers ──
+  const setRange = useCallback((s, e) => {
+    if (s < 0) { s = 0; e = Math.min(totalSeconds, e); }
+    if (e > totalSeconds) { e = totalSeconds; s = Math.max(0, s); }
+    if (e - s < 10) return; // don't allow shrinking below 10s
+    setRangeStart(s);
+    setRangeEnd(e);
+  }, [totalSeconds]);
+
+  const zoomTo = useCallback((newDur, center) => {
+    const clamped = Math.max(10, Math.min(totalSeconds, newDur));
+    setRange(center - clamped / 2, center + clamped / 2);
+  }, [setRange]);
+
+  // ── Button zoom (centered on selected point or view midpoint) ──
+  const handleZoomIn = () => {
+    const center = selectedPt
+      ? parseTimeToSeconds(selectedPt.timestamp)
+      : rangeStart + visDur / 2;
+    zoomTo(visDur / 1.5, center);
+  };
+
+  const handleZoomOut = () => {
+    zoomTo(visDur * 1.5, rangeStart + visDur / 2);
+  };
+
+  const handleReset = () => setRange(0, totalSeconds);
+
+  // ── Mouse-wheel zoom (centered on cursor position over the SVG) ──
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      const rect = el.getBoundingClientRect();
+      // Fraction of the container the mouse is over
+      const frac = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      // Map that fraction to a time in the current view
+      const cursorTime = rangeStart + frac * visDur;
+
+      const factor = e.deltaY < 0 ? 1 / 1.15 : 1.15;
+      const newDur = Math.max(10, Math.min(totalSeconds, visDur * factor));
+      const newStart = cursorTime - frac * newDur;
+      setRange(newStart, newStart + newDur);
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [rangeStart, visDur, setRange]);
+
+  // ── Slider drag handling ──
+  const handleSliderPointerDown = (e) => {
+    if (!sliderRef.current) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const frac = (e.clientX - rect.left) / rect.width;
+    const clickTime = frac * totalSeconds;
+
+    // Click inside the thumb → drag to pan
+    // Click outside the thumb → jump the view so center lands there
+    if (clickTime >= rangeStart && clickTime <= rangeEnd) {
+      dragging.current = { type: "thumb", startX: e.clientX, origStart: rangeStart, origEnd: rangeEnd };
+    } else {
+      const newStart = clickTime - visDur / 2;
+      setRange(newStart, newStart + visDur);
+      dragging.current = { type: "thumb", startX: e.clientX, origStart: newStart, origEnd: newStart + visDur };
+    }
+
+    sliderRef.current.setPointerCapture(e.pointerId);
+  };
+
+  const handleSliderPointerMove = useCallback((e) => {
+    if (!dragging.current || !sliderRef.current) return;
+    const rect = sliderRef.current.getBoundingClientRect();
+    const dx = e.clientX - dragging.current.startX;
+    const dt = (dx / rect.width) * totalSeconds;
+
+    if (dragging.current.type === "thumb") {
+      setRange(dragging.current.origStart + dt, dragging.current.origEnd + dt);
+    }
+  }, [totalSeconds, setRange]);
+
+  const handleSliderPointerUp = () => {
+    dragging.current = null;
+  };
+
+  // ── Layout ──
   const LANES = {
     equation: 55,
     diagram:  55 + LANE_H + 12,
@@ -352,36 +466,17 @@ function LaneTimeline({ totalSeconds, pointsByCategory, selectedId, onSelect }) 
   };
   const SVG_HEIGHT = 55 + (LANE_H + 12) * 4 - 4;
 
-  const timeToX = (s) => PADDING_LEFT + (s / totalSeconds) * TIMELINE_WIDTH;
+  // ── Ruler ──
+  const step = niceStep(visDur);
+  const rulerLabels = [];
+  for (let t = Math.ceil(rangeStart / step) * step; t <= rangeEnd + step * 0.01; t += step) {
+    rulerLabels.push({ secs: t, label: secondsToTime(Math.round(t)), x: timeToX(t) });
+  }
 
-  // Debug: log points
-  console.log("[LaneTimeline] pointsByCategory:", pointsByCategory);
-  console.log("[LaneTimeline] totalSeconds:", totalSeconds);
-  console.log("[LaneTimeline] selectedId:", selectedId);
-
-  // Ruler labels — every minute up to 6 labels
-  const numLabels  = Math.min(6, Math.ceil(totalSeconds / 60) + 1);
-  const labelStep  = totalSeconds / (numLabels - 1);
-  const labels     = Array.from({ length: numLabels }, (_, i) => {
-    const secs = Math.round(i * labelStep);
-    return { secs, label: secondsToTime(secs), x: timeToX(secs) };
-  });
-
-  // All points for playhead lookup
-  const allPoints = [
-    ...pointsByCategory.equation,
-    ...pointsByCategory.diagram,
-    ...pointsByCategory.chart,
-    ...pointsByCategory.graph,  // Fixed: missing graph category
-  ];
-  const selectedPoint = allPoints.find((p) => p.id === selectedId);
-  const playheadX     = selectedPoint
-    ? timeToX(parseTimeToSeconds(selectedPoint.timestamp))
+  // ── Playhead ──
+  const playheadX = selectedPt
+    ? timeToX(parseTimeToSeconds(selectedPt.timestamp))
     : null;
-
-  console.log("[LaneTimeline] allPoints length:", allPoints.length);
-  console.log("[LaneTimeline] selectedPoint:", selectedPoint);
-  console.log("[LaneTimeline] playheadX:", playheadX);
 
   const LANES_LIST = [
     { key: "equation", label: "Equations", color: CATEGORY_COLORS.equation },
@@ -390,85 +485,153 @@ function LaneTimeline({ totalSeconds, pointsByCategory, selectedId, onSelect }) 
     { key: "graph",    label: "Graphs",    color: CATEGORY_COLORS.graph    },
   ];
 
-  return (
-    <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${SVG_HEIGHT}`} width="100%" className="block overflow-visible">
+  // Slider position percentages
+  const thumbLeft  = (rangeStart / totalSeconds) * 100;
+  const thumbWidth = (visDur / totalSeconds) * 100;
 
-      {/* ── Ruler ── */}
-      <line
-        x1={PADDING_LEFT} y1={18}
-        x2={VIEWBOX_WIDTH - PADDING_RIGHT} y2={18}
-        stroke="#C4BAA5" strokeWidth="0.5"
-      />
-      {labels.map((l, i) => (
-        <g key={i}>
+  return (
+    <div>
+      {/* Zoom controls */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-1">
+          <button
+            onClick={handleZoomOut}
+            disabled={!isZoomed}
+            className="w-6 h-6 rounded flex items-center justify-center font-sans text-[13px] text-ink-muted hover:bg-paper-edge transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            −
+          </button>
+          <span className="font-mono text-[10px] text-ink-ghost w-8 text-center">
+            {isZoomed ? `${Math.round(totalSeconds / visDur)}×` : "1×"}
+          </span>
+          <button
+            onClick={handleZoomIn}
+            disabled={visDur <= 10}
+            className="w-6 h-6 rounded flex items-center justify-center font-sans text-[13px] text-ink-muted hover:bg-paper-edge transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          >
+            +
+          </button>
+        </div>
+        {isZoomed && (
+          <button
+            onClick={handleReset}
+            className="font-sans text-[10px] text-ink-ghost hover:text-ink transition-colors"
+          >
+            Reset
+          </button>
+        )}
+      </div>
+
+      {/* Timeline SVG */}
+      <div ref={containerRef} className="cursor-ns-resize select-none">
+        <svg viewBox={`0 0 ${VIEWBOX_WIDTH} ${SVG_HEIGHT}`} width="100%" className="block overflow-visible">
+          <defs>
+            <clipPath id="timeline-clip">
+              <rect x={PADDING_LEFT} y={0} width={TIMELINE_WIDTH} height={SVG_HEIGHT} />
+            </clipPath>
+          </defs>
+
+          {/* ── Ruler ── */}
           <line
-            x1={l.x} y1={14} x2={l.x} y2={22}
+            x1={PADDING_LEFT} y1={18}
+            x2={VIEWBOX_WIDTH - PADDING_RIGHT} y2={18}
             stroke="#C4BAA5" strokeWidth="0.5"
           />
-          <text
-            x={l.x} y={10}
-            textAnchor={i === 0 ? "start" : i === labels.length - 1 ? "end" : "middle"}
-            fontFamily="-apple-system, sans-serif" fontSize="8"
-            fill="#8A8070" letterSpacing="0.06em"
-          >
-            {l.label}
-          </text>
-        </g>
-      ))}
+          {rulerLabels.map((l, i) => (
+            <g key={i}>
+              <line x1={l.x} y1={14} x2={l.x} y2={22} stroke="#C4BAA5" strokeWidth="0.5" />
+              <text
+                x={l.x} y={10}
+                textAnchor={i === 0 ? "start" : i === rulerLabels.length - 1 ? "end" : "middle"}
+                fontFamily="-apple-system, sans-serif" fontSize="8"
+                fill="#8A8070" letterSpacing="0.06em"
+              >
+                {l.label}
+              </text>
+            </g>
+          ))}
 
-      {/* ── Playhead ── */}
-      {playheadX && (
-        <line
-          x1={playheadX} y1={22}
-          x2={playheadX} y2={SVG_HEIGHT}
-          stroke="#4A5B8C" strokeWidth="1"
-          strokeDasharray="3 3" opacity="0.5"
-        />
-      )}
-
-      {/* ── Lanes ── */}
-      {LANES_LIST.map(({ key, label, color }) => {
-        const y = LANES[key];
-        return (
-          <g key={key}>
-            {/* Lane band */}
-            <rect
-              x={PADDING_LEFT} y={y - LANE_H / 2}
-              width={TIMELINE_WIDTH} height={LANE_H}
-              fill={color} fillOpacity="0.05"
-              rx="3"
-            />
-            {/* Lane center line */}
+          {/* ── Playhead ── */}
+          {playheadX && playheadX >= PADDING_LEFT && playheadX <= VIEWBOX_WIDTH - PADDING_RIGHT && (
             <line
-              x1={PADDING_LEFT} y1={y}
-              x2={VIEWBOX_WIDTH - PADDING_RIGHT} y2={y}
-              stroke={color} strokeWidth="0.5" strokeOpacity="0.3"
+              x1={playheadX} y1={22}
+              x2={playheadX} y2={SVG_HEIGHT}
+              stroke="#4A5B8C" strokeWidth="1"
+              strokeDasharray="3 3" opacity="0.5"
             />
-            {/* Lane label */}
-            <text
-              x={0} y={y + 4}
-              fontFamily="-apple-system, sans-serif" fontSize="9"
-              fill={color} letterSpacing="0.1em"
-              style={{ textTransform: "uppercase" }}
-            >
-              {label}
-            </text>
-            {/* Markers */}
-            {pointsByCategory[key].map((point) => (
-              <Marker
-                key={point.id}
-                x={timeToX(parseTimeToSeconds(point.timestamp))}
-                y={y}
-                color={color}
-                isSelected={point.id === selectedId}
-                timestamp={point.timestamp}
-                onClick={() => onSelect(point.id)}
+          )}
+
+          {/* ── Lanes ── */}
+          {LANES_LIST.map(({ key, label, color }) => {
+            const y = LANES[key];
+            return (
+              <g key={key}>
+                <rect
+                  x={PADDING_LEFT} y={y - LANE_H / 2}
+                  width={TIMELINE_WIDTH} height={LANE_H}
+                  fill={color} fillOpacity="0.05" rx="3"
+                />
+                <line
+                  x1={PADDING_LEFT} y1={y}
+                  x2={VIEWBOX_WIDTH - PADDING_RIGHT} y2={y}
+                  stroke={color} strokeWidth="0.5" strokeOpacity="0.3"
+                />
+                <text
+                  x={0} y={y + 4}
+                  fontFamily="-apple-system, sans-serif" fontSize="9"
+                  fill={color} letterSpacing="0.1em"
+                  style={{ textTransform: "uppercase" }}
+                >
+                  {label}
+                </text>
+                <g clipPath="url(#timeline-clip)">
+                  {pointsByCategory[key].map((point) => (
+                    <Marker
+                      key={point.id}
+                      x={timeToX(parseTimeToSeconds(point.timestamp))}
+                      y={y}
+                      color={color}
+                      isSelected={point.id === selectedId}
+                      timestamp={point.timestamp}
+                      onClick={() => onSelect(point.id)}
+                    />
+                  ))}
+                </g>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+
+      {/* Navigation slider */}
+      {isZoomed && (
+        <div
+          ref={sliderRef}
+          className="mt-3 relative h-3 rounded-sm bg-paper-edge cursor-pointer select-none"
+          onPointerDown={handleSliderPointerDown}
+          onPointerMove={handleSliderPointerMove}
+          onPointerUp={handleSliderPointerUp}
+        >
+          {/* Minimap dots — all points in their full-timeline position */}
+          {allPoints.map((p) => {
+            const pct = (parseTimeToSeconds(p.timestamp) / totalSeconds) * 100;
+            const col = CATEGORY_COLORS[p.category];
+            return (
+              <div
+                key={p.id}
+                className="absolute top-1/2 w-1 h-1 rounded-full -translate-y-1/2"
+                style={{ left: `${pct}%`, backgroundColor: col }}
               />
-            ))}
-          </g>
-        );
-      })}
-    </svg>
+            );
+          })}
+          {/* Draggable thumb */}
+          <div
+            className="absolute top-0 bottom-0 bg-ink/15 rounded-sm hover:bg-ink/25 transition-colors"
+            style={{ left: `${thumbLeft}%`, width: `${thumbWidth}%` }}
+          />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -548,4 +711,12 @@ function secondsToTime(seconds) {
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+function niceStep(range) {
+  const rough = range / 5;
+  const mag = Math.pow(10, Math.floor(Math.log10(rough)));
+  const res = rough / mag;
+  const nice = res <= 1.5 ? 1 : res <= 3.5 ? 2 : res <= 7.5 ? 5 : 10;
+  return nice * mag;
 }
