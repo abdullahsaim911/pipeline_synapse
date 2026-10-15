@@ -1,0 +1,8 @@
+{
+  "run_id": "A",
+  "file_sha256": {
+    "per_question_results_m3.csv": "8b0ad317d342dc3f9a233c14260b6d4d1bfbd9afe3e016cadb12ef3a1a15d556",
+    "full_rankings_m3.csv": "711b1d4f996cf3cf9023d08519c2bb8c599bb572583e2603d415859647254564"
+  },
+  "python": "3.13.1"
+}

@@ -1,0 +1,677 @@
+{
+  "protocol_id": "bm25_v1",
+  "status": "FROZEN",
+  "created": "2026-10-13",
+  "purpose": "First frozen BM25 retrieval baseline for Synapse STEM-25. This file pins the protocol only; no harness exists and no retrieval has been run.",
+  "dataset": {
+    "path": "dataset/synapse_stem25_reviewed_v1",
+    "version": "0.1-draft+reviewed_v1",
+    "file_sha256": {
+      "questions.csv": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+      "gold_evidence.json": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+      "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+      "lecture_manifest.csv": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+      "dataset_readme.md": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+      "change_log.md": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520"
+    },
+    "audit_flags_file": "dataset/audit/audit_question_flags.csv",
+    "audit_flags_sha256": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+    "review_items_sha256": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779",
+    "review_log": "dataset/review_v1/verification_log.csv",
+    "review_log_sha256_snapshot": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50",
+    "review_log_note": "The log changes as review proceeds. Open/closed status in the manifest is a snapshot taken at this hash; regenerate the manifest (and re-freeze) if the log changes."
+  },
+  "question_manifest": {
+    "path": "eval/question_manifest_bm25_v1.csv",
+    "sha256": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+    "columns": [
+      "question_id",
+      "lecture_id",
+      "group",
+      "scored_in_primary",
+      "inclusion_or_exclusion_reason",
+      "eval_track",
+      "question_category",
+      "answerable",
+      "review_item_id",
+      "review_state",
+      "audit_readiness",
+      "audit_issue_codes",
+      "n_gold_intervals",
+      "n_gold_cues",
+      "n_gold_cues_retrievable",
+      "gold_cues_dropped_by_preprocessing"
+    ],
+    "group_definitions": {
+      "PRIMARY_ANSWERABLE": "eval_track=A_transcript_qa and no open review item. Used for Recall@k and MRR.",
+      "PRIMARY_UNANSWERABLE": "eval_track=A_transcript_qa_abstention and no open review item. NOT used for Recall/MRR (no gold evidence); separate abstention evaluation.",
+      "SENSITIVITY_ANSWERABLE": "eval_track=A_transcript_qa with an open review item. Reported separately, never merged into the primary numbers.",
+      "SENSITIVITY_UNANSWERABLE": "eval_track=A_transcript_qa_abstention with an open review item. Separate abstention sensitivity set.",
+      "EXCLUDED": "eval_track is B_visually_dependent, A_or_B_pending_review or X_EXCLUDED_PENDING_VIDEO_VERIFICATION."
+    },
+    "open_review_item_rule": "A question is 'open' if it has an item in review_items.csv whose log rows are not both completed with reviewer+review_date and video-row evidence_supported=yes and proposed_action in {keep_as_is, keep_unanswerable}. Questions with no review item are 'no_review_item' (primary).",
+    "counts": {
+      "EXCLUDED": 61,
+      "PRIMARY_ANSWERABLE": 133,
+      "PRIMARY_UNANSWERABLE": 43,
+      "SENSITIVITY_ANSWERABLE": 6,
+      "SENSITIVITY_UNANSWERABLE": 7
+    },
+    "total_questions": 250,
+    "primary_total": 176,
+    "sensitivity_total": 13,
+    "primary_review_basis": {
+      "closed_keep_video_checked": 1,
+      "no_review_item_unreviewed_machine_draft": 175
+    },
+    "caveat": "The gold labels are NOT fully verified. Of the 176 PRIMARY questions, only MATH04_Q08 has been checked against the video; the other 175 have not been human-reviewed (machine-drafted and mechanically validated only). \"No open review item\" does not mean \"verified\".",
+    "answerable_questions_with_no_retrievable_gold_cue": []
+  },
+  "text_field": {
+    "value": "text",
+    "status": "DECIDED (U1): production-faithful original caption text",
+    "source": "dataset/synapse_stem25_reviewed_v1/transcript_segments.jsonl -> field \"text\" (the dataset field \"text_normalized\" is NOT used)",
+    "rationale": "The product loads raw caption text and cleans it with qa.transcript.clean_text; indexing \"text\" reproduces that path. \"text_normalized\" would additionally strip speaker labels and drop 5 more cues (CHEM02, CS01-CS04)."
+  },
+  "preprocessing": {
+    "module": "qa/transcript.py",
+    "function": "normalize_segments(rows of {start, end, text})",
+    "input_mapping": {
+      "start": "start_seconds",
+      "end": "end_seconds",
+      "text": "text"
+    },
+    "clean_text": "html.unescape; remove [music|applause|laughter|silence|noise|inaudible] tags (case-insensitive); remove \">>\"; collapse whitespace. Speaker labels such as \"PROFESSOR:\" are NOT removed.",
+    "row_dropping": "rows with no usable start or with empty cleaned text are dropped, so later segments shift position",
+    "end_rule": "end = raw end only if it is after start and not past the next start; otherwise the next segment start; last segment gets +3.0 s",
+    "sorting": "rows are sorted by start; TranscriptSegment.index is 0-based position AFTER dropping and sorting",
+    "segment_index_vs_dataset_id": "dataset IDs (LECT_S0001...) are 1-based positions BEFORE dropping. Never convert between them by position.",
+    "text_field_used": "text"
+  },
+  "cue_id_mapping": {
+    "method": "stable key = start time (float equality) of the retained segment -> dataset cue_id; the harness must build this per lecture from the same rows it passes to normalize_segments",
+    "rule": "Never use array position or segment.index to obtain a cue ID. A chunk (first_index..last_index) is converted to cue IDs by looking up each member segment.start in the per-lecture start->cue_id map.",
+    "verification_performed_at_creation": {
+      "lectures": 25,
+      "cues_total": 6624,
+      "cues_retained_by_normalize_segments": 6622,
+      "start_times_unique_within_every_lecture": true,
+      "every_retained_segment_start_maps_to_a_cue": true,
+      "retained_text_equals_clean_text_of_cue": true,
+      "chunks_partition_retained_segments": true,
+      "cues_dropped_with_text_field": [
+        {
+          "cue_id": "CHEM02_S0310",
+          "text": "[LAUGHTER]"
+        },
+        {
+          "cue_id": "CHEM02_S0323",
+          "text": "[APPLAUSE]"
+        }
+      ],
+      "scored_or_sensitivity_gold_cues_dropped": [],
+      "excluded_questions_whose_gold_cues_are_dropped": [
+        "CHEM02_Q08"
+      ]
+    },
+    "dropped_gold_cue_policy": "Dropped cues cannot be retrieved: remove them from the gold set. If a question has no retrievable gold cue it is reported as unscoreable and excluded from metrics (none in primary/sensitivity at creation)."
+  },
+  "chunking": {
+    "function": "qa.retrieval._group(range(len(segments)), segments, EvidenceConfig())",
+    "chunk_seconds": 40.0,
+    "chunk_max_chars": 900,
+    "actual_behavior": "Consecutive retained segments are appended to the current chunk while (segment.end - first_segment.start) <= chunk_seconds AND (running characters + len(segment.text) + 1) <= chunk_max_chars; otherwise a new chunk starts. The first segment of a chunk is always accepted, so a single long segment can exceed either limit. Time uses the normalized (capped) segment end. Chunks are non-overlapping and partition the retained segments of the lecture; the chunk set does not depend on the question.",
+    "chunk_counts_per_lecture": {
+      "MATH01": 13,
+      "MATH02": 16,
+      "MATH03": 16,
+      "MATH04": 11,
+      "MATH05": 20,
+      "PHYS01": 21,
+      "PHYS02": 26,
+      "PHYS03": 27,
+      "PHYS04": 26,
+      "PHYS05": 9,
+      "CHEM01": 43,
+      "CHEM02": 49,
+      "CHEM03": 23,
+      "CHEM04": 13,
+      "CHEM05": 21,
+      "BIO01": 53,
+      "BIO02": 16,
+      "BIO03": 27,
+      "BIO04": 29,
+      "BIO05": 18,
+      "CS01": 15,
+      "CS02": 10,
+      "CS03": 30,
+      "CS04": 37,
+      "CS05": 23
+    },
+    "chunks_per_lecture_min_median_max": [
+      9,
+      21,
+      53
+    ]
+  },
+  "retrieval": {
+    "mode": "RAW_BM25_RANKING",
+    "engine": "qa.retrieval._rank_groups(groups, chunks, segments)",
+    "bm25_parameters": {
+      "k1": 1.5,
+      "b": 0.75,
+      "source": "hard-coded inside _rank_groups (not configurable)"
+    },
+    "idf": "ln(1 + (N - df + 0.5) / (df + 0.5)) per question-term group over chunks of the same lecture",
+    "query": "terms = qa.retrieval.content_terms(qa.retrieval._TIME_TEXT_RE.sub(\" \", question_text)); groups = [qa.retrieval.expand_term(t) for t in terms]. Includes stemming, stopword removal, the hand-written synonym groups and the ASR alias 8 -> \"ate\". Query = question_text only.",
+    "document_tokens": "qa.retrieval.tokenize(segment.text) summed over the chunk",
+    "ranked_list": "all chunks of the lecture with score > 0, sorted by score descending",
+    "tie_break": "lower chunk index (earlier in the lecture) first; identical to production because sorted(..., reverse=True) is stable",
+    "zero_score_chunks": "never ranked and never counted as retrieved, even if fewer than k chunks have a positive score",
+    "search_scope": "one lecture per question (the question lecture_id); never across lectures",
+    "gates_not_applied": [
+      "min_coverage (0.25) coverage gate",
+      "min_relative_score (0.35) relative-score cutoff",
+      "top_k=6 truncation",
+      "context_padding_seconds (25 s) padding",
+      "merging of adjacent chunks into S1..Sn blocks",
+      "chronological reordering",
+      "max_chars budget"
+    ],
+    "select_evidence_not_used": "qa.retrieval.select_evidence is NOT used for ranking metrics because it returns merged chronological blocks and applies the gates above.",
+    "full_transcript_chars": 0,
+    "full_transcript_chars_note": "Pinned to 0 (EvidenceConfig default) so no whole-transcript shortcut can occur; qa/service.py derives this from ASK_FULL_TRANSCRIPT_MAX_TOKENS in production, which must not be read by the harness.",
+    "time_and_global_routing": "Not applicable: parse_time_reference/is_global_question are not used. Preflight at creation found no primary/sensitivity question that would be diverted and none with an empty term list.",
+    "private_api_note": "Uses underscore-prefixed functions (_group, _rank_groups, _TIME_TEXT_RE); pinned by code hash so a change in them is detected.",
+    "evidence_config_defaults_recorded": {
+      "max_chars": 12000,
+      "chunk_seconds": 40.0,
+      "chunk_max_chars": 900,
+      "top_k": 6,
+      "local_before_seconds": 45.0,
+      "local_after_seconds": 15.0,
+      "full_transcript_chars": 0,
+      "min_coverage": 0.25,
+      "min_relative_score": 0.35,
+      "context_padding_seconds": 25.0
+    }
+  },
+  "relevance": {
+    "rule": "A retrieved chunk is relevant to a question if its cue-ID set contains at least one gold-evidence cue ID of that question.",
+    "gold_source": "dataset/synapse_stem25_reviewed_v1/gold_evidence.json -> questions[].gold_intervals[].segment_ids (one cue-ID list per interval)",
+    "gold_cue_set": "union of segment_ids over all gold intervals, minus cues dropped by preprocessing"
+  },
+  "metrics": {
+    "terminology": "DISTINCT GOLD INTERVAL = one entry of gold_evidence.json gold_intervals for the question (a maximal run of consecutive cues; adjacent runs were merged when the dataset was built). A chunk COVERS an interval when the chunk's cue IDs overlap that interval's gold cue IDs (at least one shared cue).",
+    "top_k_rule": "top k chunks of the raw ranked list (positive BM25 score only). If fewer than k chunks have a positive score, all of them are used; the list is never padded with zero-score chunks.",
+    "recall_at_k": [
+      1,
+      3,
+      5
+    ],
+    "recall_name": "Interval Recall@k",
+    "recall_definition": "Per answerable question: (number of its distinct gold intervals covered by the top-k chunks) / (number of its distinct gold intervals). Gold intervals whose cues were all dropped by preprocessing are removed from the denominator. The reported value is the mean of the per-question values over the questions of the evaluation set.",
+    "recall_is_not": "Interval Recall@k is NOT complete-question evidence recall. A single shared cue covers an interval, so a question can score 1.0 while most of its gold cues are not in the top-k chunks, and it is not a cue-level or text-level recall.",
+    "full_evidence_coverage_at_k": [
+      1,
+      3,
+      5
+    ],
+    "full_evidence_coverage_name": "Full-evidence coverage@k",
+    "full_evidence_coverage_definition": "Proportion of answerable questions in the set for which EVERY distinct gold interval (after removing intervals with no retrievable cue) is covered by the top-k chunks. \"Every interval is covered\" means every interval shares at least one cue with some top-k chunk; it does not mean every gold cue was retrieved. For single-interval questions it equals Hit Rate@k.",
+    "hit_rate_at_k": [
+      1,
+      3,
+      5
+    ],
+    "hit_rate_name": "Hit Rate@k",
+    "hit_rate_definition": "Proportion of answerable questions in the set with at least one distinct gold interval covered by the top-k chunks (equivalently, at least one top-k chunk is relevant; equivalently per-question interval recall > 0).",
+    "mrr_depth": 10,
+    "mrr_name": "MRR@10",
+    "mrr_definition": "Per answerable question: 1 / rank of the first relevant chunk in the raw ranked list if that rank <= 10, else 0 (also 0 when no chunk is relevant). Mean over the questions of the set.",
+    "applies_to": [
+      "PRIMARY_ANSWERABLE (headline)",
+      "SENSITIVITY_ANSWERABLE (reported separately, descriptive only)"
+    ],
+    "invariants_for_harness_tests": [
+      "0 <= interval recall <= 1 for every question",
+      "Hit Rate@k >= Full-evidence coverage@k for every k",
+      "for single-interval questions Hit Rate@k == Full-evidence coverage@k == interval recall@k",
+      "Hit Rate@k, interval Recall@k and Full-evidence coverage@k are non-decreasing in k",
+      "MRR@10 >= Hit Rate@1 and MRR@10 <= the share of questions with any relevant chunk in the top 10",
+      "relevant chunks never include cues from another lecture"
+    ],
+    "reconciliation": {
+      "with_dataset_readme_section_9": "The README's \"Recall@5: share of gold intervals covered by at least one top-5 chunk\" and \"Hit Rate@5: at least one top-5 chunk is relevant\" are the same definitions as above, generalized to k = 1, 3, 5. The README example \"MRR cut-off e.g. 20\" is superseded: MRR depth is 10 here. The README is in the dataset folder and was not edited.",
+      "with_previous_config_version": "The earlier recall_definition (intervals with >=1 cue in a top-k chunk, divided by all intervals, dropped-cue intervals excluded) is unchanged in meaning; it is now named Interval Recall@k and its limits are stated. Hit Rate@k and Full-evidence coverage@k are new.",
+      "readme_supersession": "The configured MRR@10 (mrr_depth = 10) supersedes the illustrative \"cut-off at a fixed depth, e.g. 20\" in dataset_readme.md section 9. The README was deliberately left unchanged (its SHA-256 is pinned in dataset.file_sha256); where it differs from this file, this file governs the baseline."
+    },
+    "not_pinned": [
+      "abstention metrics (open decision A1)",
+      "production-set / gated-evidence metrics (later phase P1)",
+      "paired significance tests for a later BM25-vs-hybrid comparison",
+      "lecture-level breakdowns"
+    ]
+  },
+  "abstention_note": "UNANSWERABLE questions have no gold evidence, so Recall@k, Hit Rate, coverage and MRR do not apply. They stay on a SEPARATE abstention evaluation track that is NOT defined in this protocol (open decision A1). Raw BM25 ranking must not be used to claim production abstention performance.",
+  "code_sha256": {
+    "qa/retrieval.py": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+    "qa/transcript.py": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+    "qa/__init__.py": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f"
+  },
+  "code_pin_note": "qa/ is untracked in Git (HEAD does not contain it), so file hashes are the only version pin until the code is committed. qa/tokens.py and qa/service.py are not used by the baseline.",
+  "git": {
+    "head": "5dddf4d",
+    "qa_directory_tracked": false,
+    "dataset_directory_tracked": false
+  },
+  "environment": {
+    "python": "3.13.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "third_party_dependencies": "none (standard library only: math, re, collections, dataclasses, html)"
+  },
+  "unresolved_protocol_questions": [
+    {
+      "id": "A1",
+      "status": "DEFERRED",
+      "blocks_raw_bm25_baseline": false,
+      "question": "Abstention rule and metrics (see abstention.required_decisions A1a-A1d). Needs a decision before any abstention number is reported; the unanswerable sets stay on their separate track meanwhile.",
+      "proposed": "leave unimplemented until decided"
+    },
+    {
+      "id": "P1",
+      "status": "DEFERRED",
+      "blocks_raw_bm25_baseline": false,
+      "question": "Design of the later production-set evaluation (see later_phases P1), after the raw-ranking baseline.",
+      "proposed": "after the raw baseline"
+    }
+  ],
+  "not_done": [
+    "evaluation harness not written",
+    "no retrieval executed, no scores computed",
+    "no model or API calls",
+    "no files committed or staged",
+    "abstention scoring not defined or implemented",
+    "production-set evaluation not implemented",
+    "lecture-clustered bootstrap documented only; no scoring code"
+  ],
+  "updated": "2026-10-13",
+  "verification_statement": {
+    "summary": "The gold labels are NOT fully verified. Of the 176 PRIMARY questions, only MATH04_Q08 has been checked against the video; the other 175 have not been human-reviewed (machine-drafted and mechanically validated only).",
+    "primary_video_checked": 1,
+    "primary_not_human_reviewed": 175,
+    "primary_total": 176,
+    "sensitivity_set": "The 13 SENSITIVITY questions have an open review item and are reported separately, never merged into primary numbers.",
+    "required_wording": "Results must be described as \"against machine-drafted gold labels, 1 of 176 primary questions video-checked\", not as results against verified gold.",
+    "audit_caveats": "Audit caveat codes per question are in the manifest column audit_issue_codes (e.g. long evidence spans, caption gaps inside evidence)."
+  },
+  "text_processing_path": {
+    "order": [
+      "1. Source: dataset field \"text\" of each caption cue (cue IDs LECT_S0001... are 1-based positions before any dropping).",
+      "2. qa.transcript.normalize_segments({start: start_seconds, end: end_seconds, text}) -> qa.transcript.clean_text: html.unescape; remove [music|applause|laughter|silence|noise|inaudible] tags (case-insensitive); replace \">>\" with a space; collapse whitespace; strip. Cues with empty cleaned text (or no usable start) are dropped; the rest are sorted by start; end is capped at the next start.",
+      "3. Chunking (qa.retrieval._group) groups consecutive retained cues; the chunk text is the member cues' cleaned text.",
+      "4. Document tokens: qa.retrieval.tokenize(cue.text) for every member cue, summed per chunk. Stopwords are NOT removed from documents (they count toward chunk length in BM25 length normalization). Cues are tokenized separately, so no token sequence spans a cue boundary.",
+      "5. tokenize(): lower-case; remove the contraction suffixes 's 't 'd 'm 're 've 'll (straight or curly apostrophe) when they follow a letter; split with [a-z0-9]+; stem() each token; for tokens with a digit 8 and >=2 letters, also emit the ASR alias stem (\"li8\" -> \"liat\").",
+      "6. stem(): irregular-form map first; tokens that are digits or have <=3 characters are unchanged; otherwise strip the first matching suffix in the order ies->y, ing, ed, es, s (not \"ss\") provided >=3 characters remain; then drop a final \"e\" when the token is longer than 4 characters.",
+      "7. Query: question_text only. Time expressions are removed with qa.retrieval._TIME_TEXT_RE; content_terms() lower-cases, removes the contraction suffixes, drops stopwords (qa.retrieval._STOPWORDS as finally defined at import), drops single letters not in _KEEP_SINGLE (digits are kept), stems, and keeps unique terms in order.",
+      "8. Each query term becomes a group via qa.retrieval.expand_term (hand-written synonym groups). A group's term frequency in a chunk is the sum over its members; df and idf are computed per group; BM25 uses k1=1.5, b=0.75 over the chunks of the question's lecture."
+    ],
+    "derived_from_code": {
+      "stopwords_count": 227,
+      "stopwords_sha256": "377b57fef6c1330c0e5f82a5234ee80c5e1f1c8ab3dc6d0b9628a482990a0f68",
+      "keep_single_letters": "bcefghjklmnpqruvwxyz",
+      "asr_digit_sounds": {
+        "8": "ate"
+      },
+      "irregular_forms_count": 19,
+      "synonym_groups": [
+        "choose select selection pick decide decision determine prioritize prioritise prefer choice",
+        "order ranking rank priority prioritize prioritise sequence hierarchy precedence",
+        "substitute substitution replace replacement plug swap",
+        "type kind sort category variety",
+        "acronym abbreviation stand",
+        "integrate integral integration",
+        "differentiate differentiation derivative"
+      ]
+    },
+    "known_text_artifacts": {
+      "speaker_label_cues_in_text_field": 106,
+      "note": "Labels such as \"AUDIENCE:\" or \"ERIC LANDER:\" are NOT removed by production clean_text, so they are indexed (e.g. \"audience\" is not a stopword). [INAUDIBLE] tags ARE removed by production clean_text. Caption errors in the source text are kept (see lecture_manifest.csv caption_quality_notes).",
+      "tuning_note": "Synonym groups, irregular stems and the 8->ate alias were hand-written for another lecture domain (LIATE); this is the production configuration, not tuned for this dataset."
+    }
+  },
+  "statistics": {
+    "headline_set": "PRIMARY_ANSWERABLE",
+    "headline_metrics": [
+      "Interval Recall@1",
+      "Interval Recall@3",
+      "Interval Recall@5",
+      "Hit Rate@1",
+      "Hit Rate@3",
+      "Hit Rate@5",
+      "Full-evidence coverage@1",
+      "Full-evidence coverage@3",
+      "Full-evidence coverage@5",
+      "MRR@10"
+    ],
+    "confidence_interval": {
+      "level": 0.95,
+      "method": "question-level percentile bootstrap",
+      "resamples": 10000,
+      "seed": 20261013,
+      "rng": "Python standard library random.Random(seed)",
+      "resampling": "For each of B = 10000 replicates draw n question indices with replacement using rng.randrange(n) called n times in order (n = number of answerable questions in the stratum); the replicate value of a metric is the mean of its per-question values over the drawn questions. All metrics in a stratum use the same B replicates. Re-seed random.Random(20261013) at the start of each (set, stratum) so results do not depend on reporting order.",
+      "interval": "nearest-rank percentiles of the sorted replicate values: lower = the ceil(0.025*B) = 250th smallest, upper = the ceil(0.975*B) = 9750th smallest",
+      "applies_to": "PRIMARY_ANSWERABLE overall and each stratum with sample_flag OK or SMALL; strata with sample_flag VERY_SMALL get counts and point estimates only (no interval)",
+      "limitation": "Resampling treats questions as independent. The questions are grouped in 25 lectures (about 5 per lecture), so question-level intervals can be too narrow; the lecture-clustered bootstrap (secondary_sensitivity_analysis, S1) is the pinned check on this."
+    },
+    "small_sample_flags": {
+      "rule": "n < 10 -> VERY_SMALL (no CI); 10 <= n < 30 -> SMALL (CI reported with a warning that it is unstable); n >= 30 -> OK",
+      "status": "APPROVED (S2)",
+      "approved_thresholds": {
+        "small": "n < 30",
+        "very_small": "n < 10"
+      },
+      "ci_policy": {
+        "VERY_SMALL": "point estimate and sample size only; NO confidence interval",
+        "SMALL": "point estimate, sample size and confidence interval, with an instability warning attached",
+        "OK": "point estimate, sample size and confidence interval"
+      }
+    },
+    "sample_sizes_always_reported": true,
+    "breakdowns": {
+      "rule": "Strata are derived from the dataset; no label is invented. Every breakdown row reports n and its sample_flag. The 13 sensitivity questions get no breakdown.",
+      "dimensions": {
+        "subject": "questions.csv field \"subject\"",
+        "question_category": "questions.csv field \"question_category\" (answerable categories only)",
+        "gold_interval_count": "derived from the manifest column n_gold_intervals: \"1\" versus \"2+\" (distinguishes Hit Rate from Interval Recall)"
+      },
+      "not_used": {
+        "lecture_id": "about 5 answerable questions per lecture: every stratum would be VERY_SMALL",
+        "difficulty": "confounded with question_category in this dataset (49/50 direct_keyword easy, 47/50 multi_segment hard)",
+        "visual_information_required": "only visual=false questions are in the primary set"
+      },
+      "derived_sample_sizes_PRIMARY_ANSWERABLE": {
+        "subject": {
+          "Biology": {
+            "n": 28,
+            "sample_flag": "SMALL"
+          },
+          "Chemistry": {
+            "n": 24,
+            "sample_flag": "SMALL"
+          },
+          "Computer science": {
+            "n": 23,
+            "sample_flag": "SMALL"
+          },
+          "Mathematics": {
+            "n": 26,
+            "sample_flag": "SMALL"
+          },
+          "Physics": {
+            "n": 32,
+            "sample_flag": "OK"
+          }
+        },
+        "question_category": {
+          "direct_keyword": {
+            "n": 40,
+            "sample_flag": "OK"
+          },
+          "multi_segment": {
+            "n": 24,
+            "sample_flag": "SMALL"
+          },
+          "paraphrase": {
+            "n": 37,
+            "sample_flag": "OK"
+          },
+          "technical_term": {
+            "n": 32,
+            "sample_flag": "OK"
+          }
+        },
+        "gold_interval_count": {
+          "1": {
+            "n": 103,
+            "sample_flag": "OK"
+          },
+          "2+": {
+            "n": 30,
+            "sample_flag": "OK"
+          }
+        }
+      },
+      "derived_sample_sizes_SENSITIVITY_ANSWERABLE": {
+        "subject": {
+          "Biology": {
+            "n": 1,
+            "sample_flag": "VERY_SMALL"
+          },
+          "Chemistry": {
+            "n": 2,
+            "sample_flag": "VERY_SMALL"
+          },
+          "Mathematics": {
+            "n": 2,
+            "sample_flag": "VERY_SMALL"
+          },
+          "Physics": {
+            "n": 1,
+            "sample_flag": "VERY_SMALL"
+          }
+        },
+        "question_category": {
+          "direct_keyword": {
+            "n": 2,
+            "sample_flag": "VERY_SMALL"
+          },
+          "paraphrase": {
+            "n": 1,
+            "sample_flag": "VERY_SMALL"
+          },
+          "technical_term": {
+            "n": 3,
+            "sample_flag": "VERY_SMALL"
+          }
+        },
+        "gold_interval_count": {
+          "1": {
+            "n": 6,
+            "sample_flag": "VERY_SMALL"
+          }
+        }
+      },
+      "primary_answerable_n": 133,
+      "sensitivity_answerable_n": 6
+    },
+    "primary_interval": "The question-level percentile bootstrap (confidence_interval) remains the PRIMARY interval for every reported estimate.",
+    "secondary_sensitivity_analysis": {
+      "id": "S1",
+      "status": "APPROVED (S1) - documented method; no scoring code exists or is added by this protocol",
+      "role": "SECONDARY sensitivity analysis only. It never replaces or overrides the question-level interval; both are reported side by side and labelled.",
+      "name": "lecture-clustered percentile bootstrap",
+      "cluster_unit": "lecture_id (the lecture a question belongs to)",
+      "applies_to": "PRIMARY_ANSWERABLE, overall, for the headline metrics only. Not computed for strata (clusters would be too few and too small).",
+      "level": 0.95,
+      "resamples": 10000,
+      "seed": 20261013,
+      "rng": "Python standard library random.Random(seed), re-seeded at the start of the analysis",
+      "resampling": "Let L be the lectures that contain at least one PRIMARY_ANSWERABLE question and G = len(L). For each of B = 10000 replicates draw G lectures with replacement using rng.randrange(G) called G times in order; the replicate pool is every PRIMARY_ANSWERABLE question of each drawn lecture (a lecture drawn twice contributes its questions twice). The replicate value of a metric is the mean of its per-question values over the whole pool (pooled mean, so lectures with more questions weigh more).",
+      "interval": "nearest-rank percentiles of the sorted replicate values: the 250th and 9750th smallest (ceil(0.025*B) and ceil(0.975*B)), as for the primary interval",
+      "purpose": "Checks whether the primary question-level interval is too narrow because questions from the same lecture are correlated. If the clustered interval is materially wider, report that.",
+      "derived_from_manifest": {
+        "lectures_with_primary_answerable_questions": 25,
+        "questions_per_lecture_min_median_max": [
+          2,
+          5,
+          8
+        ],
+        "primary_answerable_questions": 133
+      }
+    }
+  },
+  "abstention": {
+    "status": "NOT_DEFINED - DEFERRED (A1); does not block the raw BM25 ranking baseline; scoring unimplemented and no abstention metric pinned",
+    "sets": {
+      "PRIMARY_UNANSWERABLE": 43,
+      "SENSITIVITY_UNANSWERABLE": 7
+    },
+    "metrics_defined": [],
+    "prohibitions": [
+      "Do not report raw-BM25 ranking scores or score thresholds as abstention performance.",
+      "Do not merge unanswerable questions into the Recall/Hit/MRR sets.",
+      "Do not describe a retrieval-gate result as \"production abstention rate\"."
+    ],
+    "facts_from_code": {
+      "retrieval_gate": "qa.retrieval.select_evidence returns decision \"no_evidence\" when the question has terms and either no query-term group matches the lecture or the IDF-weighted coverage is below EvidenceConfig.min_coverage (= 0.25); this is the only part of abstention decided by retrieval.",
+      "production_behavior_on_no_evidence": "qa/service.py answers STATUS_INSUFFICIENT (\"insufficient_context\") without calling the LLM; its comment says a keyword miss on a long transcript proves nothing about what the lecture covers.",
+      "llm_decides_after_gate": "When the gate passes, the LLM returns the final status. A \"not_in_lecture\" reply is downgraded to \"insufficient_context\" unless the whole transcript was supplied (plan.complete). Final abstention therefore needs LLM calls, which are out of scope for this phase.",
+      "short_lecture_bypass": "Transcripts up to min(ASK_FULL_TRANSCRIPT_MAX_TOKENS x chars_per_token, evidence budget) characters are sent whole and bypass retrieval. Defaults: 2000 tokens x 3.5 = 7000 characters (an upper bound; the evidence budget can lower it). Lectures at or below that bound (cleaned \"text\", incl. separators): ['MATH01', 'MATH03', 'MATH04', 'PHYS05', 'BIO02', 'CS02'].",
+      "status_values": [
+        "answered",
+        "not_in_lecture",
+        "insufficient_context"
+      ],
+      "protocol_pin_full_transcript_chars_0_differs_from_production_for_lectures": [
+        "MATH01",
+        "MATH03",
+        "MATH04",
+        "PHYS05",
+        "BIO02",
+        "CS02"
+      ],
+      "questions_in_those_lectures": 47
+    },
+    "required_decisions": [
+      {
+        "id": "A1a",
+        "decision": "What is the target behavior for an unanswerable question: final status other than \"answered\" (insufficient_context or not_in_lecture), or specifically not_in_lecture? Production downgrades not_in_lecture to insufficient_context unless the whole transcript is supplied."
+      },
+      {
+        "id": "A1b",
+        "decision": "Is a retrieval-gate-only diagnostic (gate \"no_evidence\" rate on unanswerable questions and false-gate rate on answerable questions) wanted? It would have to be labelled a diagnostic of the retrieval gate at min_coverage=0.25, never production abstention, and it ignores the LLM stage and the short-lecture bypass."
+      },
+      {
+        "id": "A1c",
+        "decision": "How are short lectures handled (full-transcript bypass in production versus full_transcript_chars=0 in this baseline)?"
+      },
+      {
+        "id": "A1d",
+        "decision": "Is a full system-level abstention evaluation (retrieval + LLM) wanted, with the LLM, prompt and temperature pinned? It needs model calls and is a later phase."
+      }
+    ],
+    "deferred": true,
+    "blocks_raw_bm25_baseline": false
+  },
+  "later_phases": [
+    {
+      "id": "P1",
+      "name": "Production-set evaluation",
+      "status": "NOT IMPLEMENTED - DEFERRED (P1); does not block the raw BM25 ranking baseline",
+      "scope": "Score the evidence a production request would actually receive: qa.retrieval.select_evidence under a production-like EvidenceConfig (coverage gate, relative-score cutoff, top_k=6, context padding, merged chronological S1..Sn blocks, short-lecture full-transcript mode). The relevance rule, metrics and question sets would need their own definitions (blocks instead of chunks).",
+      "depends_on": [
+        "approval of this raw-ranking protocol",
+        "decision A1c on short lectures",
+        "a pinned production-like EvidenceConfig"
+      ],
+      "deferred": true,
+      "blocks_raw_bm25_baseline": false
+    }
+  ],
+  "protocol_decisions": [
+    {
+      "id": "U1",
+      "decision": "Use the production-faithful \"text\" field; processing path documented in text_processing_path.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U2",
+      "decision": "Interval Recall@k (mean per-question fraction of distinct gold intervals covered by the top-k chunks) plus Full-evidence coverage@k (share of questions with every interval covered); interval recall is not complete evidence recall.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U3",
+      "decision": "Hit Rate@1, @3, @5 added.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U4",
+      "decision": "95% question-level percentile bootstrap, 10000 resamples, seed 20261013; breakdowns by subject, question_category and gold_interval_count with n and small-sample flags.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U5",
+      "decision": "Unanswerable questions stay on a separate abstention track; no abstention metric is pinned because the production behavior depends on the LLM stage and the short-lecture bypass (open decision A1).",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U6",
+      "decision": "176 primary / 13 sensitivity sets kept separate; only MATH04_Q08 of the 176 is video-checked; labels are not described as verified.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "U7",
+      "decision": "Production-set evaluation recorded as later phase P1; not implemented.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "S1",
+      "decision": "Lecture-clustered bootstrap documented as a SECONDARY sensitivity analysis; the question-level bootstrap stays the primary interval. Method documented in statistics.secondary_sensitivity_analysis; no scoring code.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "S2",
+      "decision": "Small-sample thresholds approved: n < 30 small, n < 10 very small. Very-small strata: point estimate and n, no interval. Small strata: interval with an instability warning.",
+      "date": "2026-10-13"
+    },
+    {
+      "id": "F1",
+      "decision": "Protocol frozen for the raw BM25 ranking baseline on the project owner's instruction.",
+      "date": "2026-10-13"
+    }
+  ],
+  "authority": "This file is the authoritative frozen protocol for the raw BM25 ranking baseline. Where dataset_readme.md (section 9), dataset_summary.md or any other document differs, this file governs. It does not claim that the gold labels are fully human-verified (see verification_statement).",
+  "freeze": {
+    "status": "FROZEN",
+    "protocol_version": "bm25_v1.0",
+    "frozen_date": "2026-10-13",
+    "frozen_by": "project owner (instruction given in the working session; not an independent review)",
+    "scope": "Raw BM25 ranking baseline: the question sets, definitions, retrieval settings, statistics and hashes in this file.",
+    "frozen_items": [
+      "dataset path/version and file hashes",
+      "question manifest and its hash (inclusion logic)",
+      "review-log snapshot hash used to derive open/closed review state",
+      "text field and text_processing_path",
+      "chunking (40 s / 900 chars), raw ranking, tie-break, positive scores only, full_transcript_chars=0",
+      "relevance rule",
+      "Interval Recall@1/3/5, Hit Rate@1/3/5, Full-evidence coverage@1/3/5, MRR@10",
+      "question-level bootstrap (primary) and lecture-clustered bootstrap (secondary), small-sample policy, breakdown dimensions",
+      "code hashes for qa/retrieval.py, qa/transcript.py, qa/__init__.py"
+    ],
+    "not_frozen_deferred": [
+      "A1 abstention rule and metrics",
+      "P1 production-set evaluation",
+      "the evaluation harness (not yet written)"
+    ],
+    "change_policy": "Do not edit this file after the baseline run starts. Any change to a pinned value, set, definition, hash target or the manifest requires a new protocol_id/version (e.g. bm25_v2) with its own date and history entry. If the review log changes, the manifest must be regenerated under a new version; validate_protocol.py then reports a hash mismatch by design.",
+    "version_history": [
+      {
+        "version": "bm25_v1.0-proposed",
+        "date": "2026-10-13",
+        "change": "initial proposal: relevance, chunking, raw ranking, manifest with 176 primary / 13 sensitivity sets"
+      },
+      {
+        "version": "bm25_v1.0-decisions",
+        "date": "2026-10-13",
+        "change": "U1-U7 resolved: text field, interval Recall / Hit Rate / Full-evidence coverage, bootstrap CIs, abstention left undefined, verification statement, later production phase"
+      },
+      {
+        "version": "bm25_v1.0",
+        "date": "2026-10-13",
+        "change": "S1 and S2 resolved; A1 and P1 deferred as non-blocking; status FROZEN"
+      }
+    ]
+  }
+}

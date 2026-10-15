@@ -1,0 +1,96 @@
+{
+  "PRIMARY_ANSWERABLE": {
+    "shorter_than_5": {
+      "questions": 7,
+      "of_which_lecture_has_at_least_k_chunks": 7,
+      "question_ids": [
+        "PHYS04_Q08",
+        "CHEM01_Q05",
+        "CHEM04_Q02",
+        "CHEM05_Q02",
+        "CHEM05_Q05",
+        "BIO01_Q05",
+        "BIO01_Q06"
+      ]
+    },
+    "shorter_than_10": {
+      "questions": 36,
+      "of_which_lecture_has_at_least_k_chunks": 28,
+      "question_ids": [
+        "MATH02_Q03",
+        "MATH02_Q05",
+        "MATH04_Q03",
+        "MATH04_Q04",
+        "MATH04_Q06",
+        "MATH05_Q05",
+        "PHYS01_Q06",
+        "PHYS03_Q04",
+        "PHYS04_Q06",
+        "PHYS04_Q08",
+        "PHYS05_Q01",
+        "PHYS05_Q02",
+        "PHYS05_Q03",
+        "PHYS05_Q04",
+        "PHYS05_Q05",
+        "PHYS05_Q06",
+        "PHYS05_Q07",
+        "PHYS05_Q08",
+        "CHEM01_Q05",
+        "CHEM03_Q01",
+        "CHEM04_Q02",
+        "CHEM05_Q02",
+        "CHEM05_Q05",
+        "CHEM05_Q08",
+        "BIO01_Q05",
+        "BIO01_Q06",
+        "BIO02_Q02",
+        "BIO02_Q04",
+        "BIO02_Q05",
+        "BIO02_Q06",
+        "BIO03_Q08",
+        "BIO04_Q02",
+        "BIO05_Q02",
+        "BIO05_Q07",
+        "CS02_Q02",
+        "CS02_Q06"
+      ]
+    },
+    "empty_list": {
+      "questions": 0,
+      "question_ids": []
+    },
+    "n_questions": 133
+  },
+  "SENSITIVITY_ANSWERABLE": {
+    "shorter_than_5": {
+      "questions": 1,
+      "of_which_lecture_has_at_least_k_chunks": 1,
+      "question_ids": [
+        "CHEM04_Q05"
+      ]
+    },
+    "shorter_than_10": {
+      "questions": 3,
+      "of_which_lecture_has_at_least_k_chunks": 3,
+      "question_ids": [
+        "MATH05_Q04",
+        "CHEM04_Q05",
+        "CHEM05_Q06"
+      ]
+    },
+    "empty_list": {
+      "questions": 0,
+      "question_ids": []
+    },
+    "n_questions": 6
+  },
+  "dense_truncation": {
+    "max_seq_length": 256,
+    "chunks_truncated": 0,
+    "chunks_total": 592,
+    "max_chunk_tokens": 202,
+    "questions_truncated": 0,
+    "max_question_tokens": 37,
+    "note": "diagnostic only; truncation is the model default and was not altered"
+  }
+}

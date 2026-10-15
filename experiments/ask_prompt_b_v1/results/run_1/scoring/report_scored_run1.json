@@ -1,0 +1,644 @@
+{
+ "cells": [
+  {
+   "case": "C1",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": false,
+   "words": 38,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "partial",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "C1",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 73,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "C2",
+   "repeat": 1,
+   "arm": "current",
+   "status": "answered",
+   "status_ok": true,
+   "words": 104,
+   "derived_label": true,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "yes"
+  },
+  {
+   "case": "C2",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 92,
+   "derived_label": true,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "yes"
+  },
+  {
+   "case": "N1",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 12,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N1",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 14,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N2",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 14,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N2",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 15,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N3",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 30,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N3",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 19,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "acceptable",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N5",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": true,
+   "words": 22,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "N5",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 87,
+   "derived_label": true,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "yes"
+  },
+  {
+   "case": "P1",
+   "repeat": 1,
+   "arm": "current",
+   "status": "insufficient_context",
+   "status_ok": false,
+   "words": 30,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "none",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "P1",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 39,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "none",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "na"
+  },
+  {
+   "case": "P2",
+   "repeat": 1,
+   "arm": "current",
+   "status": "answered",
+   "status_ok": true,
+   "words": 21,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "unlabelled",
+   "abstention": "na",
+   "labelled_derived": "no"
+  },
+  {
+   "case": "P2",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 43,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "all",
+   "grounding": "ok",
+   "attribution": "unlabelled",
+   "abstention": "na",
+   "labelled_derived": "no"
+  },
+  {
+   "case": "P3",
+   "repeat": 1,
+   "arm": "current",
+   "status": "ERROR",
+   "status_ok": false,
+   "words": 0,
+   "derived_label": false,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": true,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "",
+   "grounding": "",
+   "attribution": "",
+   "abstention": "",
+   "labelled_derived": ""
+  },
+  {
+   "case": "P3",
+   "repeat": 1,
+   "arm": "revised",
+   "status": "answered",
+   "status_ok": true,
+   "words": 107,
+   "derived_label": true,
+   "auto_hard": false,
+   "review_reasons": "",
+   "error": false,
+   "over_250": false,
+   "math_symbols": false,
+   "completeness": "partial",
+   "grounding": "ok",
+   "attribution": "ok",
+   "abstention": "na",
+   "labelled_derived": "yes"
+  }
+ ],
+ "per_case_arm": {
+  "C1": {
+   "current": {
+    "cells": 1,
+    "status_ok": 0,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 0,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  },
+  "C2": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 1,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 1,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  },
+  "N1": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   }
+  },
+  "N2": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   }
+  },
+  "N3": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 1
+   }
+  },
+  "N5": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 1,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  },
+  "P1": {
+   "current": {
+    "cells": 1,
+    "status_ok": 0,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 0,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 0,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  },
+  "P2": {
+   "current": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 0,
+    "completeness_all": 1,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  },
+  "P3": {
+   "current": {
+    "cells": 1,
+    "status_ok": 0,
+    "auto_hard": 0,
+    "derived_label": 0,
+    "errors": 1,
+    "completeness_all": 0,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   },
+   "revised": {
+    "cells": 1,
+    "status_ok": 1,
+    "auto_hard": 0,
+    "derived_label": 1,
+    "errors": 0,
+    "completeness_all": 0,
+    "grounding_hard": 0,
+    "misattributed": 0,
+    "abstention_ok": 0
+   }
+  }
+ },
+ "cells_reported": 18,
+ "pooled_overall_verdict": null,
+ "acceptance": [
+  {
+   "criterion": "1_no_hard_violations",
+   "passed": true,
+   "detail": {
+    "scored": true,
+    "revised_hard_cells": [],
+    "current_hard_count": 0,
+    "needs_written_reconciliation": []
+   }
+  },
+  {
+   "criterion": "2_abstention",
+   "passed": true,
+   "detail": {
+    "N1": {
+     "current": 1,
+     "revised": 1
+    },
+    "N2": {
+     "current": 1,
+     "revised": 1
+    },
+    "N3": {
+     "current": 1,
+     "revised": 1
+    }
+   }
+  },
+  {
+   "criterion": "3_synthesis",
+   "passed": false,
+   "detail": {
+    "P1": {
+     "current": 0,
+     "revised": 0
+    },
+    "P2": {
+     "current": 0,
+     "revised": 0
+    }
+   }
+  },
+  {
+   "criterion": "4_no_regression",
+   "passed": true,
+   "detail": {
+    "P3": {
+     "current": 0,
+     "revised": 0
+    },
+    "C1": {
+     "current": 0,
+     "revised": 1
+    },
+    "C2": {
+     "current": 1,
+     "revised": 1
+    },
+    "over_labelled_cells_revised_C1_C2": 1
+   }
+  },
+  {
+   "criterion": "5_hygiene",
+   "passed": false,
+   "detail": {
+    "over_250_words": [],
+    "errors": [
+     [
+      "P3",
+      1,
+      "current"
+     ]
+    ]
+   }
+  }
+ ],
+ "decision": "DO NOT ADOPT"
+}

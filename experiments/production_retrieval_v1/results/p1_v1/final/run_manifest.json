@@ -1,0 +1,30 @@
+{
+  "experiment": "prod_retrieval_p1",
+  "config_sha256": "719251ff7f48c965b8914530e6b8496a509544af4991c0c17b9facd57616fba1",
+  "pins": {
+    "registered_pins": 11,
+    "frozen_config_pins": 13
+  },
+  "python": "3.11.5",
+  "ask_config": {
+    "max_prompt_tokens": 4000,
+    "full_transcript_max_tokens": 2000,
+    "chars_per_token": 3.5,
+    "max_evidence_chars": null
+  },
+  "harness_sha256": "a72cf2903b630ab23ff453f1cd72185d02e65230afde3e7c950c309c8cc4aa3d",
+  "results_sha256": {
+    "per_question_results.csv": "ea40ac39c07c337b81c6f7049e2451c1e9ddb3c867e5400a7ebe912dc3c7c1dc",
+    "aggregate_metrics.json": "3761ad247d908d611e3b2915fc781b75e591de5179d92bfe019f2c0765100a28",
+    "aggregate_metrics.csv": "4a57575691749891d3d9b9e0f28ab3ed7c8ebcdb14983a0134583c0faa49a0cb",
+    "repeatability_report.json": "598a204636cdb3b4aba537894c7a8212fbad815b4db4de2a365225cf6aa40176"
+  },
+  "no_model_called": "the stand-in provider replaced Gemini; no network or API key was used",
+  "limitations": [
+    "Labels are machine-drafted; only 1 of 176 primary questions is video-checked.",
+    "Evidence containing the gold passage is necessary, not sufficient, for a correct answer: answer quality is not measured here.",
+    "No playback position or attached moment is supplied, unlike a student using the app mid-lecture.",
+    "Whole-transcript mode (short lectures) makes evidence_hit trivially 1 for those lectures; strata by mode make this visible.",
+    "A passage containing a gold cue is counted relevant even when the cue is a minor part of it."
+  ]
+}

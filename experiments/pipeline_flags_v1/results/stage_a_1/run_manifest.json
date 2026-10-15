@@ -1,0 +1,15 @@
+{
+  "experiment": "pipeline_flags_v1",
+  "registration_sha256": "90579e4e5ba8682da4732f1bb47bca9172f59129c94366b118bd7983ed14f996",
+  "python": "3.13.1",
+  "machine": "Windows-11-10.0.26200-SP0",
+  "cpu_count": 12,
+  "harness_sha256": "d718d52c54d46fe29cef9219bc506574d32c0eaf6855caa06f9fc1c598347bc7",
+  "files_sha256": {
+    "analysis.json": "c9309eaa10d5360e205da1c22988350bd42e45b984d49779e818571c8e1ae1f5",
+    "latency_per_question_ms.csv": "496e6ed76d7eb4b4e156712780d8de5e55bc9a6369b178691c8b62748aeec268",
+    "per_question_evidence.csv": "eaf06cc58e002e7f02aae4440a1060411ffa1dfd3f0b92e12b26a72fe9b6f3ab",
+    "per_question_ranking.csv": "a7161aa2248bc8157584d8386c53ae9bfcb13e623a5ff091606caa27a1578f66"
+  },
+  "no_model_calls": true
+}

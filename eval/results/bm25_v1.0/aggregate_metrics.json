@@ -1,0 +1,1096 @@
+{
+  "counts": {
+    "EXCLUDED": 61,
+    "PRIMARY_ANSWERABLE": 133,
+    "PRIMARY_UNANSWERABLE": 43,
+    "SENSITIVITY_ANSWERABLE": 6,
+    "SENSITIVITY_UNANSWERABLE": 7
+  },
+  "sets": {
+    "PRIMARY_ANSWERABLE": {
+      "role": "headline",
+      "overall": {
+        "n": 133,
+        "sample_flag": "OK",
+        "metrics": {
+          "interval_recall_at_1": {
+            "estimate": 0.5889724310776941,
+            "ci_low": 0.5100250626566416,
+            "ci_high": 0.6666666666666667,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "interval_recall_at_3": {
+            "estimate": 0.8421052631578947,
+            "ci_low": 0.7807017543859649,
+            "ci_high": 0.8972431077694235,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "interval_recall_at_5": {
+            "estimate": 0.9097744360902256,
+            "ci_low": 0.862155388471178,
+            "ci_high": 0.9523809523809524,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "hit_rate_at_1": {
+            "estimate": 0.6541353383458647,
+            "ci_low": 0.5714285714285714,
+            "ci_high": 0.7368421052631579,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "hit_rate_at_3": {
+            "estimate": 0.8796992481203008,
+            "ci_low": 0.8195488721804511,
+            "ci_high": 0.9323308270676691,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "hit_rate_at_5": {
+            "estimate": 0.9323308270676691,
+            "ci_low": 0.8872180451127819,
+            "ci_high": 0.9699248120300752,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "full_evidence_coverage_at_1": {
+            "estimate": 0.5263157894736842,
+            "ci_low": 0.44360902255639095,
+            "ci_high": 0.6090225563909775,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "full_evidence_coverage_at_3": {
+            "estimate": 0.8045112781954887,
+            "ci_low": 0.7368421052631579,
+            "ci_high": 0.8721804511278195,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "full_evidence_coverage_at_5": {
+            "estimate": 0.8872180451127819,
+            "ci_low": 0.8345864661654135,
+            "ci_high": 0.9398496240601504,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          },
+          "mrr_at_10": {
+            "estimate": 0.7735350280463063,
+            "ci_low": 0.7164757130922544,
+            "ci_high": 0.8286549707602339,
+            "ci_method": "question-level percentile bootstrap",
+            "instability_warning": false
+          }
+        }
+      },
+      "breakdowns": {
+        "subject": {
+          "Biology": {
+            "n": 28,
+            "sample_flag": "SMALL",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.511904761904762,
+                "ci_low": 0.3511904761904762,
+                "ci_high": 0.6785714285714286,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.9047619047619048,
+                "ci_low": 0.8035714285714286,
+                "ci_high": 0.9821428571428571,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.9702380952380952,
+                "ci_low": 0.9226190476190476,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.6071428571428571,
+                "ci_low": 0.42857142857142855,
+                "ci_high": 0.7857142857142857,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.9642857142857143,
+                "ci_low": 0.8928571428571429,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_5": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.42857142857142855,
+                "ci_low": 0.25,
+                "ci_high": 0.6071428571428571,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.8571428571428571,
+                "ci_low": 0.7142857142857143,
+                "ci_high": 0.9642857142857143,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.9285714285714286,
+                "ci_low": 0.8214285714285714,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "mrr_at_10": {
+                "estimate": 0.7827380952380952,
+                "ci_low": 0.681547619047619,
+                "ci_high": 0.8839285714285714,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              }
+            },
+            "ci_note": "SMALL sample (10 <= n < 30): interval reported with an instability warning"
+          },
+          "Chemistry": {
+            "n": 24,
+            "sample_flag": "SMALL",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.6666666666666666,
+                "ci_low": 0.5,
+                "ci_high": 0.8333333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.75,
+                "ci_low": 0.5833333333333334,
+                "ci_high": 0.8958333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.8263888888888888,
+                "ci_low": 0.6736111111111112,
+                "ci_high": 0.9583333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.75,
+                "ci_low": 0.5833333333333334,
+                "ci_high": 0.9166666666666666,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.7916666666666666,
+                "ci_low": 0.625,
+                "ci_high": 0.9583333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.875,
+                "ci_low": 0.75,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.5833333333333334,
+                "ci_low": 0.375,
+                "ci_high": 0.7916666666666666,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.7083333333333334,
+                "ci_low": 0.5416666666666666,
+                "ci_high": 0.875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.7916666666666666,
+                "ci_low": 0.625,
+                "ci_high": 0.9583333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "mrr_at_10": {
+                "estimate": 0.7868055555555555,
+                "ci_low": 0.6277777777777778,
+                "ci_high": 0.9270833333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              }
+            },
+            "ci_note": "SMALL sample (10 <= n < 30): interval reported with an instability warning"
+          },
+          "Computer science": {
+            "n": 23,
+            "sample_flag": "SMALL",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.6086956521739131,
+                "ci_low": 0.41304347826086957,
+                "ci_high": 0.782608695652174,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.6521739130434783,
+                "ci_low": 0.43478260869565216,
+                "ci_high": 0.8260869565217391,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.5652173913043478,
+                "ci_low": 0.34782608695652173,
+                "ci_high": 0.782608695652174,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.9130434782608695,
+                "ci_low": 0.782608695652174,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "mrr_at_10": {
+                "estimate": 0.7729468599033816,
+                "ci_low": 0.6352657004830917,
+                "ci_high": 0.8985507246376813,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              }
+            },
+            "ci_note": "SMALL sample (10 <= n < 30): interval reported with an instability warning"
+          },
+          "Mathematics": {
+            "n": 26,
+            "sample_flag": "SMALL",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.5,
+                "ci_low": 0.3076923076923077,
+                "ci_high": 0.6923076923076923,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.7115384615384616,
+                "ci_low": 0.5384615384615384,
+                "ci_high": 0.8846153846153846,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.8269230769230769,
+                "ci_low": 0.6730769230769231,
+                "ci_high": 0.9615384615384616,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.5384615384615384,
+                "ci_low": 0.34615384615384615,
+                "ci_high": 0.7307692307692307,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.7307692307692307,
+                "ci_low": 0.5769230769230769,
+                "ci_high": 0.8846153846153846,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.8461538461538461,
+                "ci_low": 0.6923076923076923,
+                "ci_high": 0.9615384615384616,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.46153846153846156,
+                "ci_low": 0.2692307692307692,
+                "ci_high": 0.6538461538461539,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.6923076923076923,
+                "ci_low": 0.5,
+                "ci_high": 0.8461538461538461,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.8076923076923077,
+                "ci_low": 0.6538461538461539,
+                "ci_high": 0.9615384615384616,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "mrr_at_10": {
+                "estimate": 0.6641941391941392,
+                "ci_low": 0.5142857142857143,
+                "ci_high": 0.8134615384615385,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              }
+            },
+            "ci_note": "SMALL sample (10 <= n < 30): interval reported with an instability warning"
+          },
+          "Physics": {
+            "n": 32,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.65625,
+                "ci_low": 0.5,
+                "ci_high": 0.796875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.9114583333333334,
+                "ci_low": 0.8229166666666666,
+                "ci_high": 0.984375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.984375,
+                "ci_low": 0.953125,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.71875,
+                "ci_low": 0.5625,
+                "ci_high": 0.875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.96875,
+                "ci_low": 0.90625,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.59375,
+                "ci_low": 0.4375,
+                "ci_high": 0.75,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.84375,
+                "ci_low": 0.71875,
+                "ci_high": 0.96875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.96875,
+                "ci_low": 0.90625,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.8447916666666667,
+                "ci_low": 0.753125,
+                "ci_high": 0.9270833333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          }
+        },
+        "question_category": {
+          "direct_keyword": {
+            "n": 40,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.55,
+                "ci_low": 0.4,
+                "ci_high": 0.7,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.8375,
+                "ci_low": 0.7125,
+                "ci_high": 0.9375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.9125,
+                "ci_low": 0.825,
+                "ci_high": 0.9875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.6,
+                "ci_low": 0.45,
+                "ci_high": 0.75,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.85,
+                "ci_low": 0.725,
+                "ci_high": 0.95,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.925,
+                "ci_low": 0.825,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.5,
+                "ci_low": 0.35,
+                "ci_high": 0.65,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.825,
+                "ci_low": 0.7,
+                "ci_high": 0.925,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.9,
+                "ci_low": 0.8,
+                "ci_high": 0.975,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.7306547619047619,
+                "ci_low": 0.6196428571428572,
+                "ci_high": 0.8354166666666666,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          },
+          "multi_segment": {
+            "n": 24,
+            "sample_flag": "SMALL",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.5347222222222222,
+                "ci_low": 0.3680555555555556,
+                "ci_high": 0.7013888888888888,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.8541666666666666,
+                "ci_low": 0.7361111111111112,
+                "ci_high": 0.9513888888888888,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.9236111111111112,
+                "ci_low": 0.8194444444444445,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.7083333333333334,
+                "ci_low": 0.5416666666666666,
+                "ci_high": 0.875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.9583333333333334,
+                "ci_low": 0.875,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.9583333333333334,
+                "ci_low": 0.875,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.375,
+                "ci_low": 0.16666666666666666,
+                "ci_high": 0.5833333333333334,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.75,
+                "ci_low": 0.5833333333333334,
+                "ci_high": 0.9166666666666666,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.875,
+                "ci_low": 0.75,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              },
+              "mrr_at_10": {
+                "estimate": 0.8263888888888888,
+                "ci_low": 0.7083333333333334,
+                "ci_high": 0.9375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": true
+              }
+            },
+            "ci_note": "SMALL sample (10 <= n < 30): interval reported with an instability warning"
+          },
+          "paraphrase": {
+            "n": 37,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.5675675675675675,
+                "ci_low": 0.4189189189189189,
+                "ci_high": 0.7162162162162162,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.7972972972972973,
+                "ci_low": 0.6621621621621622,
+                "ci_high": 0.9054054054054054,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.8468468468468469,
+                "ci_low": 0.7342342342342343,
+                "ci_high": 0.9459459459459459,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.5945945945945946,
+                "ci_low": 0.43243243243243246,
+                "ci_high": 0.7567567567567568,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.8378378378378378,
+                "ci_low": 0.7027027027027027,
+                "ci_high": 0.9459459459459459,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.8918918918918919,
+                "ci_low": 0.7837837837837838,
+                "ci_high": 0.972972972972973,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.5405405405405406,
+                "ci_low": 0.3783783783783784,
+                "ci_high": 0.7027027027027027,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.7567567567567568,
+                "ci_low": 0.6216216216216216,
+                "ci_high": 0.8918918918918919,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.8108108108108109,
+                "ci_low": 0.6756756756756757,
+                "ci_high": 0.918918918918919,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.7245817245817247,
+                "ci_low": 0.6101673101673102,
+                "ci_high": 0.8344916344916345,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          },
+          "technical_term": {
+            "n": 32,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.703125,
+                "ci_low": 0.546875,
+                "ci_high": 0.84375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.890625,
+                "ci_low": 0.78125,
+                "ci_high": 0.984375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.96875,
+                "ci_low": 0.90625,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.75,
+                "ci_low": 0.59375,
+                "ci_high": 0.90625,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.90625,
+                "ci_low": 0.78125,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.96875,
+                "ci_low": 0.90625,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.65625,
+                "ci_low": 0.5,
+                "ci_high": 0.8125,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.875,
+                "ci_low": 0.75,
+                "ci_high": 0.96875,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.96875,
+                "ci_low": 0.90625,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.8440972222222223,
+                "ci_low": 0.7388888888888889,
+                "ci_high": 0.9375,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          }
+        },
+        "gold_interval_count": {
+          "1": {
+            "n": 103,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.6213592233009708,
+                "ci_low": 0.5242718446601942,
+                "ci_high": 0.7184466019417476,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.8640776699029126,
+                "ci_low": 0.7961165048543689,
+                "ci_high": 0.9223300970873787,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.912621359223301,
+                "ci_low": 0.8543689320388349,
+                "ci_high": 0.9611650485436893,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.6213592233009708,
+                "ci_low": 0.5242718446601942,
+                "ci_high": 0.7184466019417476,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.8640776699029126,
+                "ci_low": 0.7961165048543689,
+                "ci_high": 0.9223300970873787,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 0.912621359223301,
+                "ci_low": 0.8543689320388349,
+                "ci_high": 0.9611650485436893,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.6213592233009708,
+                "ci_low": 0.5242718446601942,
+                "ci_high": 0.7184466019417476,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.8640776699029126,
+                "ci_low": 0.7961165048543689,
+                "ci_high": 0.9223300970873787,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.912621359223301,
+                "ci_low": 0.8543689320388349,
+                "ci_high": 0.9611650485436893,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.7485128679303437,
+                "ci_low": 0.6801741408537525,
+                "ci_high": 0.8124826629680998,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          },
+          "2+": {
+            "n": 30,
+            "sample_flag": "OK",
+            "metrics": {
+              "interval_recall_at_1": {
+                "estimate": 0.4777777777777778,
+                "ci_low": 0.3611111111111111,
+                "ci_high": 0.5944444444444444,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_3": {
+                "estimate": 0.7666666666666667,
+                "ci_low": 0.65,
+                "ci_high": 0.8722222222222222,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "interval_recall_at_5": {
+                "estimate": 0.9,
+                "ci_low": 0.8222222222222223,
+                "ci_high": 0.9666666666666667,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_1": {
+                "estimate": 0.7666666666666667,
+                "ci_low": 0.6,
+                "ci_high": 0.9,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_3": {
+                "estimate": 0.9333333333333333,
+                "ci_low": 0.8333333333333334,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "hit_rate_at_5": {
+                "estimate": 1.0,
+                "ci_low": 1.0,
+                "ci_high": 1.0,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_1": {
+                "estimate": 0.2,
+                "ci_low": 0.06666666666666667,
+                "ci_high": 0.3333333333333333,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_3": {
+                "estimate": 0.6,
+                "ci_low": 0.43333333333333335,
+                "ci_high": 0.7666666666666667,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "full_evidence_coverage_at_5": {
+                "estimate": 0.8,
+                "ci_low": 0.6666666666666666,
+                "ci_high": 0.9333333333333333,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              },
+              "mrr_at_10": {
+                "estimate": 0.8594444444444445,
+                "ci_low": 0.7594444444444445,
+                "ci_high": 0.95,
+                "ci_method": "question-level percentile bootstrap",
+                "instability_warning": false
+              }
+            }
+          }
+        }
+      },
+      "secondary_lecture_clustered": {
+        "role": "SECONDARY sensitivity analysis; the question-level interval is primary",
+        "clusters": 25,
+        "questions_per_cluster_min_median_max": [
+          2,
+          5,
+          8
+        ],
+        "metrics": {
+          "interval_recall_at_1": {
+            "estimate": 0.5889724310776941,
+            "ci_low": 0.5165394402035624,
+            "ci_high": 0.6653439153439153,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "interval_recall_at_3": {
+            "estimate": 0.8421052631578947,
+            "ci_low": 0.7777777777777778,
+            "ci_high": 0.8992537313432836,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "interval_recall_at_5": {
+            "estimate": 0.9097744360902256,
+            "ci_low": 0.8559523809523809,
+            "ci_high": 0.95679012345679,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "hit_rate_at_1": {
+            "estimate": 0.6541353383458647,
+            "ci_low": 0.5801526717557252,
+            "ci_high": 0.7317073170731707,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "hit_rate_at_3": {
+            "estimate": 0.8796992481203008,
+            "ci_low": 0.8181818181818182,
+            "ci_high": 0.935251798561151,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "hit_rate_at_5": {
+            "estimate": 0.9323308270676691,
+            "ci_low": 0.8863636363636364,
+            "ci_high": 0.9745762711864406,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "full_evidence_coverage_at_1": {
+            "estimate": 0.5263157894736842,
+            "ci_low": 0.4452054794520548,
+            "ci_high": 0.6097560975609756,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "full_evidence_coverage_at_3": {
+            "estimate": 0.8045112781954887,
+            "ci_low": 0.7285714285714285,
+            "ci_high": 0.8723404255319149,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "full_evidence_coverage_at_5": {
+            "estimate": 0.8872180451127819,
+            "ci_low": 0.8223684210526315,
+            "ci_high": 0.9435483870967742,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          },
+          "mrr_at_10": {
+            "estimate": 0.7735350280463063,
+            "ci_low": 0.7188838498362308,
+            "ci_high": 0.8262919202768827,
+            "ci_method": "lecture-clustered percentile bootstrap"
+          }
+        }
+      }
+    },
+    "SENSITIVITY_ANSWERABLE": {
+      "role": "sensitivity (reported separately, never merged)",
+      "overall": {
+        "n": 6,
+        "sample_flag": "VERY_SMALL",
+        "metrics": {
+          "interval_recall_at_1": {
+            "estimate": 0.6666666666666666,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "interval_recall_at_3": {
+            "estimate": 0.8333333333333334,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "interval_recall_at_5": {
+            "estimate": 1.0,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "hit_rate_at_1": {
+            "estimate": 0.6666666666666666,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "hit_rate_at_3": {
+            "estimate": 0.8333333333333334,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "hit_rate_at_5": {
+            "estimate": 1.0,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "full_evidence_coverage_at_1": {
+            "estimate": 0.6666666666666666,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "full_evidence_coverage_at_3": {
+            "estimate": 0.8333333333333334,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "full_evidence_coverage_at_5": {
+            "estimate": 1.0,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          },
+          "mrr_at_10": {
+            "estimate": 0.7916666666666666,
+            "ci_low": null,
+            "ci_high": null,
+            "ci_method": null,
+            "instability_warning": null
+          }
+        },
+        "ci_note": "no confidence interval (VERY_SMALL stratum or interval not applicable); point estimate and n only"
+      }
+    }
+  },
+  "not_evaluated": {
+    "EXCLUDED": 61,
+    "SENSITIVITY_UNANSWERABLE": 7,
+    "PRIMARY_UNANSWERABLE": 43
+  },
+  "unscoreable_question_ids": []
+}

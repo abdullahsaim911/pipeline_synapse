@@ -1,0 +1,9 @@
+{
+  "registration_sha256": "50a6398d2b33de4131e2aaa4c8aae6ff181bcdfbaae55d228694c6e454bb08f5",
+  "requests_sent": 18,
+  "items_recorded": 18,
+  "items_planned": 60,
+  "stopped_early": true,
+  "raw_results_sha256": "16245b06a49e741959f1364ab6ccbaff0fd7fdb70ae7216f6f17d8a813364f4d",
+  "harness_sha256": "34d0029b286f9a2641654d56a3a6be3eff470c0d24dda51839158caa36991dc9"
+}

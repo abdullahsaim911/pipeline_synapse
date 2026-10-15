@@ -1,0 +1,390 @@
+{
+  "experiment_id": "ask_prompt_b_v1",
+  "status": "REGISTERED - NOT RUN",
+  "created": "2026-10-14",
+  "purpose": "Compare the current and revised (Change B) Ask system instruction with IDENTICAL evidence, on completeness, grounding, attribution and abstention.",
+  "not_in_scope": [
+    "Change A (full-transcript threshold)",
+    "visual evidence integration",
+    "any change to production code or the frozen retrieval benchmark"
+  ],
+  "honesty_notes": [
+    "P1 is the motivating case and is not independent.",
+    "P1 expected content is PROVISIONAL (author reading; owner confirmation pending).",
+    "P3, C1, C2 expected answers come from machine-drafted dataset labels and are UNVERIFIED.",
+    "N1-N3 absence rests on caption search and machine-drafted labels; N4 and N5 are author-written.",
+    "n = 3 repeats per cell: results are descriptive, not statistical."
+  ],
+  "instruction": {
+    "rule_3_anchor": "3. If the excerpts answer only part of the question, answer that part and say plainly what they do not cover.",
+    "added_sentence": " When the instructor describes the steps of a derivation or procedure but never states its result, put only those stated steps together into the result and introduce it with \"From these steps, it seems that ...\". Answer every part of the question that the excerpts support.",
+    "current_sha256": "23522ad0c8ed164953a7484d15b382e8237509fc62f41785d8529aaf7f0f1895",
+    "revised_sha256": "da1bf938043e2f7c4076496c423ab87880697c70f185cdca2f135d485e6bcbfc",
+    "revised_is_built_in_memory_only": true
+  },
+  "arms": {
+    "current": "production SYSTEM_INSTRUCTION unchanged",
+    "revised": "production SYSTEM_INSTRUCTION with the added sentence appended to rule 3"
+  },
+  "settings": {
+    "provider": "gemini",
+    "model": "gemini-3.5-flash-lite",
+    "temperature": 0.2,
+    "max_output_tokens": 1024,
+    "ask_config": "AskConfig() defaults, ASK_* unset",
+    "repeats": 3,
+    "schedule_seed": 20261014,
+    "schedule": "per round the cases are shuffled and, per case, the arm order is randomised (seeded)",
+    "pacing": "at least 6 s between requests (10 per minute)",
+    "retries": "none",
+    "stop_rule": "abort on the first provider error or prompt/instruction hash mismatch; partial results are kept and reported",
+    "requests_total": 60
+  },
+  "identical_evidence_gate": "the SHA-256 of the user prompt (which carries the evidence) must equal the registered value before every request",
+  "quota_estimate": {
+    "requests": 60,
+    "estimated_input_tokens": {
+      "current": 64200,
+      "revised": 66540
+    },
+    "estimated_input_tokens_total": 130740,
+    "note": "chars/3.5 estimates; the only measured actual-vs-estimate pairs (n = 2) were 11-16% below the estimate; limits for the model are unverified"
+  },
+  "cases": [
+    {
+      "id": "P1",
+      "role": "positive-synthesis (motivating case; NOT independent)",
+      "source": "demo",
+      "expectation_status": "PROVISIONAL: the author's reading of the captions; the project owner has not yet confirmed it against the video (0:37-1:30 and 2:45-3:30)",
+      "expected_content": [
+        "Integration by parts is described as the reverse of the product rule (stated).",
+        "After integrating the product rule, the left side leaves UV (stated).",
+        "The right side has an integral term plus \"the integral of V du\" (the caption garbles the first term as \"integral of UV\"); the integral of V du is moved to the other side (stated).",
+        "U is chosen with the LIATE acronym; du comes from differentiating u; v comes from integrating dv (stated).",
+        "A complete answer gives the formula in words, introduced as derived (\"From these steps, it seems that ...\"), defines u, dv, du and v from the spoken text, and says the final formula is not read aloud in full.",
+        "Reading the garbled \"integral of UV\" as \"integral of u dv\" is allowed only as a labelled reading."
+      ],
+      "acceptable_statuses": [
+        "answered"
+      ],
+      "checks": [
+        "common"
+      ],
+      "question": "What is the formula for integration by parts, and what do the terms in the formula represent.",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "ce64d634ee4e3da5631bec0d6038df587bd8b4815c954a6b28036938441ed393",
+      "estimated_input_tokens": {
+        "current": 2013,
+        "revised": 2091
+      }
+    },
+    {
+      "id": "P2",
+      "role": "positive-synthesis",
+      "source": "dataset:MATH04_Q08",
+      "expectation_status": "DATASET NOTE + OWNER REVIEW (log R02): evidence_supported=yes; the video observation is as reported by the project owner and was not independently confirmed",
+      "expected_content": [
+        "The series is built from four separately spoken terms: constant 1, minus 2x, plus 4x squared, plus 3x cubed (dataset note: MATH04_S0079, S0086, S0098, S0106).",
+        "Expected combined series (dataset): 1 - 2x + 4x^2 + 3x^3, written in words.",
+        "The lecturer does not state the series as one expression, so a correct answer labels the assembled series as derived.",
+        "The dataset's second point (\"same polynomial as the original with reversed order\") is unclear and is NOT scored."
+      ],
+      "acceptable_statuses": [
+        "answered"
+      ],
+      "checks": [
+        "common"
+      ],
+      "question": "Combine the derivative table and the term-by-term plugging to state the Taylor series of the function.",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "7817959dca2f92ff7de2766c9b4f20806fe5130ee333af7fabb6552a605c38ae",
+      "estimated_input_tokens": {
+        "current": 2549,
+        "revised": 2627
+      }
+    },
+    {
+      "id": "P3",
+      "role": "positive-synthesis",
+      "source": "dataset:PHYS04_Q07",
+      "expectation_status": "UNVERIFIED: dataset machine-draft (human review pending)",
+      "expected_content": [
+        "Look for a solution of the same form as the pure exponential forcing (I = W e^(i omega t)).",
+        "The derivative brings down i omega; the integral divides by i omega (stated in the gold window).",
+        "Result W = V / (i omega L + R + 1/(i omega C)) (dataset point; whether the lecture states it in the supplied evidence is unverified)."
+      ],
+      "acceptable_statuses": [
+        "answered"
+      ],
+      "checks": [
+        "common"
+      ],
+      "question": "How is the solution form I = W e^(i omega t) used to find W?",
+      "evidence_mode": "retrieval",
+      "user_prompt_sha256": "c4d5b815e72de364ae13e593ea71102299b28eca22be04cc173edf4f9af38a21",
+      "estimated_input_tokens": {
+        "current": 1709,
+        "revised": 1787
+      }
+    },
+    {
+      "id": "C1",
+      "role": "control-result-stated",
+      "source": "dataset:MATH02_Q07",
+      "expectation_status": "UNVERIFIED: dataset machine-draft (human review pending)",
+      "expected_content": [
+        "The derivative of (5x^2-1)^(4/3) gives 40x/3 (5x^2-1)^(1/3).",
+        "The target has 4x, so the constant is off by 10/3.",
+        "Multiply by 3/10.",
+        "The result is stated by the lecturer; the answer should not need a \"From these steps\" label (over-labelling is counted, not failed)."
+      ],
+      "acceptable_statuses": [
+        "answered"
+      ],
+      "checks": [
+        "common"
+      ],
+      "question": "Why is the constant 3/10 needed in the second antiderivative?",
+      "evidence_mode": "retrieval",
+      "user_prompt_sha256": "c36e569ca1f6f6aed988ecd3778a236e2d2988011e15a5167317a6eacd067ae4",
+      "estimated_input_tokens": {
+        "current": 2030,
+        "revised": 2108
+      }
+    },
+    {
+      "id": "C2",
+      "role": "control-result-stated",
+      "source": "dataset:MATH03_Q03",
+      "expectation_status": "UNVERIFIED: dataset machine-draft (human review pending)",
+      "expected_content": [
+        "If A v = lambda v then A^2 v = lambda^2 v.",
+        "Same eigenvector, squared eigenvalue."
+      ],
+      "acceptable_statuses": [
+        "answered"
+      ],
+      "checks": [
+        "common"
+      ],
+      "question": "Why do we not need to square the matrix to know the eigenvalues of A squared?",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "9f67cf0d0efa5716994f4d8ea30892e234e233481f13b2589e068fdf2bd7c00c",
+      "estimated_input_tokens": {
+        "current": 2128,
+        "revised": 2206
+      }
+    },
+    {
+      "id": "N1",
+      "role": "negative-absence",
+      "source": "dataset:MATH05_Q09",
+      "expectation_status": "ABSENCE: an automatic caption search found no occurrence of \"Bayes\"; the dataset label is a machine-draft and unverified",
+      "expected_content": [
+        "The lecture does not name or give Bayes' theorem. Evidence is partial (retrieval), so not_in_lecture cannot be returned; the status must be insufficient_context.",
+        "The answer must not state Bayes' theorem, its name or its terms as lecture content, and must add no outside knowledge."
+      ],
+      "acceptable_statuses": [
+        "insufficient_context"
+      ],
+      "checks": [
+        "common",
+        "n1"
+      ],
+      "question": "What is Bayes' theorem formula called in the lecture?",
+      "evidence_mode": "retrieval",
+      "user_prompt_sha256": "ac2eeb8e12f9d6b79d1ad592adad5574293bf731169a3c4391c9a18e4d4f82d2",
+      "estimated_input_tokens": {
+        "current": 2399,
+        "revised": 2477
+      }
+    },
+    {
+      "id": "N2",
+      "role": "negative-absence",
+      "source": "dataset:MATH04_Q09",
+      "expectation_status": "ABSENCE: an automatic caption search found no occurrence of \"radius\" or \"converge\"; the dataset label is a machine-draft and unverified",
+      "expected_content": [
+        "Convergence is not discussed. not_in_lecture or insufficient_context are acceptable.",
+        "The answer must not state or derive a radius of convergence (that would be outside knowledge) and must not use the \"From these steps\" label to do so."
+      ],
+      "acceptable_statuses": [
+        "not_in_lecture",
+        "insufficient_context"
+      ],
+      "checks": [
+        "common",
+        "n2"
+      ],
+      "question": "What is the radius of convergence of this Taylor series?",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "3c767312c5f1bf1ae63ad5d1a7fbf96763a91020b5b58326b0a62b2564b21fff",
+      "estimated_input_tokens": {
+        "current": 2536,
+        "revised": 2614
+      }
+    },
+    {
+      "id": "N3",
+      "role": "negative-absence",
+      "source": "dataset:MATH01_Q10",
+      "expectation_status": "ABSENCE: the dataset note says the derivative of sine is only cited from an earlier lecture; machine-draft, unverified (caption search cannot prove a proof is absent)",
+      "expected_content": [
+        "No proof from the limit definition is given. not_in_lecture or insufficient_context are acceptable, or an answered reply that plainly says no proof is given and adds nothing from outside.",
+        "The answer must not supply a limit-definition proof."
+      ],
+      "acceptable_statuses": [
+        "not_in_lecture",
+        "insufficient_context"
+      ],
+      "checks": [
+        "common",
+        "n3"
+      ],
+      "question": "How does the lecturer prove from the limit definition that the derivative of sine is cosine?",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "edc418b2fbbd84c0cf54c6bdc66c10713c87ca36dd45b8a809837fd8f004b03e",
+      "estimated_input_tokens": {
+        "current": 2598,
+        "revised": 2676
+      }
+    },
+    {
+      "id": "N4",
+      "role": "negative-visual-only",
+      "source": "demo",
+      "expectation_status": "CUSTOM question written by the author; whether any text is shown on screen is not verified",
+      "expected_content": [
+        "The answer must say it cannot see the screen. It may add what the instructor says at the start.",
+        "It must not describe or guess slide content."
+      ],
+      "acceptable_statuses": [
+        "insufficient_context",
+        "answered"
+      ],
+      "checks": [
+        "common",
+        "n4"
+      ],
+      "question": "What is written on the slide at the start of the video?",
+      "evidence_mode": "time",
+      "user_prompt_sha256": "4dccd477a34ae1c2d2851f1dc8c91f51bab1bda693c77d5d8aef261ceaabdac9",
+      "estimated_input_tokens": {
+        "current": 1429,
+        "revised": 1507
+      }
+    },
+    {
+      "id": "N5",
+      "role": "negative-attribution",
+      "source": "demo",
+      "expectation_status": "CUSTOM question written by the author; premise (the product rule formula is never spoken) confirmed by caption search only",
+      "expected_content": [
+        "The captions mention \"the formula of the product rule\" but never state it. The best answer says the product rule formula is not stated in the lecture.",
+        "It may derive only from the stated steps, labelled \"From these steps, it seems that ...\".",
+        "STRICT: any product-rule formula in the answer is a violation; attributing it to the instructor is a hard misattribution."
+      ],
+      "acceptable_statuses": [
+        "answered",
+        "insufficient_context"
+      ],
+      "checks": [
+        "common",
+        "n5"
+      ],
+      "question": "State the product rule and use it to derive the formula for integration by parts.",
+      "evidence_mode": "full",
+      "user_prompt_sha256": "86bd984b234e8008afc2c1b51562e924d3f2d7d6f8ae0db767f041267d8a1449",
+      "estimated_input_tokens": {
+        "current": 2009,
+        "revised": 2087
+      }
+    }
+  ],
+  "automated_checks": {
+    "common": [
+      "status in the registered acceptable set",
+      "sources non-empty only when answered",
+      "words (over 150 flagged, over 250 failed)",
+      "math symbols (rule 8)",
+      "timestamps in text",
+      "markdown bullets",
+      "derived-content label present"
+    ],
+    "n1": "content about Bayes' theorem terms (posterior, prior, likelihood, conditional probability) -> review flag",
+    "n2": "a radius value, \"ratio test\" or \"converges for\" -> review flag",
+    "n3": "limit-definition proof language (angle addition, \"limit as h\") -> review flag",
+    "n4": "must contain a \"cannot see the screen\" statement; slide-content phrases without it -> hard flag",
+    "n5_strict": {
+      "H1_misattribution": "a product-rule formula pattern in the same sentence as an \"instructor says/states/...\" phrase (HARD)",
+      "H2_product_rule_present": "a product-rule formula pattern anywhere in the answer (HARD, or SOFT when an explicit outside-the-lecture marker is in the same sentence)",
+      "H3_missing_acknowledgement": "no statement that the product rule formula is not stated/spoken in the lecture (FAIL)",
+      "H4_unlabelled_derivation": "an integration-by-parts formula or derived result without a \"From these steps / From this, it seems\" label (FAIL)",
+      "rule": "automated N5 flags are advisory; ALL six N5 answers get human review; a human \"ok\" against an automated HARD flag must be reconciled in writing before the result counts"
+    }
+  },
+  "human_scoring": {
+    "blinded": true,
+    "dimensions": {
+      "completeness": [
+        "all",
+        "partial",
+        "none"
+      ],
+      "grounding": [
+        "ok",
+        "soft",
+        "hard"
+      ],
+      "attribution": [
+        "ok",
+        "unlabelled",
+        "misattributed"
+      ],
+      "abstention": [
+        "acceptable",
+        "unacceptable",
+        "na"
+      ],
+      "labelled_derived": [
+        "yes",
+        "no",
+        "na"
+      ]
+    },
+    "who_reviews": "all P1, P2 and N5 answers plus any answer where the arms differ on an automated check; the sheet lists every answer"
+  },
+  "reporting": {
+    "granularity": "every (case, repeat, arm) row is reported; summaries are per case and arm; no pooled \"overall\" pass/fail is produced",
+    "acceptance_cells": "each criterion lists the exact failing (case, repeat, arm) cells"
+  },
+  "acceptance": {
+    "1_no_hard_violations": "revised arm: zero HARD grounding or misattribution verdicts in N1-N5 (15 answers) and not more than the current arm",
+    "2_abstention": "revised arm acceptable-abstention count in N1-N3 is not lower than the current arm, per case",
+    "3_synthesis": "P1 and P2 each: revised reaches completeness=all with derived content labelled in at least 2 of 3 repeats while the current arm reaches it in fewer than 2",
+    "4_no_regression": "P3, C1, C2: revised \"all\" count is not lower than the current count; over-labelling is reported, not failed",
+    "5_hygiene": "no answer over 250 words, no provider errors, no malformed-marker rejections",
+    "decision": "adopt only if all five hold; otherwise do not adopt. One wording revision is allowed but then needs fresh cases (these would be contaminated)."
+  },
+  "pins": {
+    "production_code": {
+      "qa/__init__.py": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+      "qa/moment.py": "99ebee463be5027cf1157dcbe20499eca2c484e069f9031b8a7b53e1d10d257f",
+      "qa/retrieval.py": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+      "qa/service.py": "ad860b9d91e3c127edc34240f8a9dda624861e6f6a4bfe006c41715a16b527de",
+      "qa/tokens.py": "9ee745173a9b98d7b781196c7f46e4ebec37bda2d9007f5e4d61e08d6eba3f55",
+      "qa/transcript.py": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+      "llm_interface/__init__.py": "eb32b082ccb1e57b9ed89fdfaa4643fca65ceab32b5cb585b81f49a15aabaf9d",
+      "llm_interface/gemini_provider.py": "b4a55fbac39deaeefdbfc5c8c139967c02073ad11831183f7bb7370cc88df094",
+      "llm_interface/ollama_client.py": "f268b6543727766035bf76f8e61c95ccefbd3f43400c68e4a2703ebef460dba4",
+      "llm_interface/providers.py": "28434fe416173bdb29e5b3bea539388eb882441498e87a68acc190f8d23b0ff1"
+    },
+    "dataset": {
+      "questions.csv": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+      "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829"
+    },
+    "demo_transcript": {
+      "data/3zLQfuMZMF4/transcript.json": "f7b61552eb39a1a8df180ed492ace55a996c3336d88fa094961b770084a59895"
+    }
+  }
+}

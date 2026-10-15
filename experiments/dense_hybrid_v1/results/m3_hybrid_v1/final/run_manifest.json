@@ -1,0 +1,63 @@
+{
+  "experiment": "exp_dense_hybrid_v1",
+  "arm": "M3_hybrid_rrf + contrasts",
+  "preregistration_sha256": "ba06467957935190b50ab2e8d7cb09c5e392bbda40f4219325677af4ccc09dc6",
+  "input_verification": {
+    "frozen_config_pins_ok": 13,
+    "prereg_file_pins_ok": 8,
+    "m1_validation_equals_saved_baseline": true,
+    "m2_final_hashes_verified": true,
+    "m2_runs_A_B_embeddings_identical": true,
+    "m2_records_recomputed_equal_validated": true,
+    "m1_records_equal_saved_per_question": true,
+    "aggregation_self_check_on_m1": true
+  },
+  "model_tree_fingerprint": "863d392e9e18dbd40363b73d4c11ea47dfe3543dcc4e4680dbc943725f499f05",
+  "offline": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  },
+  "rrf": {
+    "k": 60,
+    "weights": {
+      "bm25": 1.0,
+      "dense": 1.0
+    },
+    "ranks": "one-based",
+    "missing_list": "contributes 0",
+    "tie_break": "-score, original chunk index"
+  },
+  "input_hashes": {
+    "m2_chunk_embeddings": "ad9de4724834c5ad563dec0277662b99d52e08c645a7d2369238b5f8932f80b8",
+    "m2_question_embeddings": "5f1b4d48cd8debec9a1b20834b9521db4d9bb141104f600d4697dd077e8ba03e",
+    "m2_results": {
+      "per_question_results.csv": "1ca2572173197e1577a4d99fcf6ea48429e00022744ca8be5176cc54f1053e3b",
+      "aggregate_metrics.json": "05dae4029413ac501e6d9e5a7398d3ab6c495640a84fbfa2612d4864b89bff55",
+      "aggregate_metrics.csv": "11b3e3b779d3540dad3afcc471d29caadd3b21f6d171d61d75dadb9997c30146",
+      "repeatability_report.json": "f4323d0cdc17a4d12e41749ccb8cfae041abcd9b71d44cacf740ac8575b3c557"
+    }
+  },
+  "code_sha256": {
+    "dense_hybrid_eval.py": "50934a9e98abf6cb950aab69e1fb281390d3dd2e8ca994524274fdbfd13439a4",
+    "dense_arm.py": "0dd23420a532f35bca7bd3fb5c949c69089ceabebec97a4f697eb42f3103ab03",
+    "hybrid_arm.py": "6e36a1ee4912dafc7c66f02688a0088410970dcbab2503d5acba9d668462ad68"
+  },
+  "results_sha256": {
+    "per_question_results_m3.csv": "8b0ad317d342dc3f9a233c14260b6d4d1bfbd9afe3e016cadb12ef3a1a15d556",
+    "full_rankings_m3.csv": "711b1d4f996cf3cf9023d08519c2bb8c599bb572583e2603d415859647254564",
+    "aggregate_metrics_m3.json": "f17c9dd0f9fb56e92aae98a360090a33bed5440dbd854c52c3f700bbe5d0ca19",
+    "aggregate_metrics_m3.csv": "3c1af2ec5dd28aa9c9509bdf5b41c9022f610ee386435c34ac9ea5a88c29f756",
+    "paired_contrasts.json": "08b81ca3afa77babe4072bdf135eb9b00d12500b7a7ac630285a6b682b5c9404",
+    "flip_table.csv": "07648890982682f32552da60596b65459d89d2cdf9115ea9bbbae0fdebc65036",
+    "flip_summary.json": "bee41d520dd4d6c385762786db093f30d3d3c4c6ec70ed5f1c3a63e32f72dd48",
+    "diagnostics.json": "8a424e1914bef8583a436e1237dab72627b1ee17b75bcc856a938d2695fcb624",
+    "arm_comparison.csv": "4e8c1b3c3c3d0132f6de4392f8ef8c0880010fc13eae6d4f829b91ca29628848",
+    "repeatability_report.json": "7f02cdd6c1c355e15f12957b0e0434837501fff82a58bfc6063d15c343bf1512"
+  },
+  "limitations": [
+    "Gold labels are machine-drafted from captions; only 1 of 176 primary questions was checked against the video.",
+    "n=133 in 25 lectures; questions within a lecture are correlated.",
+    "Alternate valid passages outside gold count as misses for every arm.",
+    "Offline retrieval benchmark only: no claim about production answer quality or user benefit."
+  ]
+}

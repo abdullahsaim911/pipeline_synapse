@@ -1,0 +1,6 @@
+{
+  "rule": "byte identity of two independent runs",
+  "sha256_a": "ea40ac39c07c337b81c6f7049e2451c1e9ddb3c867e5400a7ebe912dc3c7c1dc",
+  "sha256_b": "ea40ac39c07c337b81c6f7049e2451c1e9ddb3c867e5400a7ebe912dc3c7c1dc",
+  "result": "PASS"
+}

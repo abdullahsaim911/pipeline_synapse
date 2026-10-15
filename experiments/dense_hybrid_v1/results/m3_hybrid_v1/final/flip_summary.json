@@ -1,0 +1,38 @@
+{
+  "n_primary": 133,
+  "bm25_hit_at_5_misses": 9,
+  "hybrid_rescued": [
+    "MATH03_Q01",
+    "MATH04_Q02",
+    "CS04_Q03"
+  ],
+  "hybrid_not_rescued": [
+    "MATH02_Q02",
+    "MATH04_Q03",
+    "CHEM01_Q08",
+    "CHEM02_Q03",
+    "CHEM02_Q04",
+    "CS05_Q05"
+  ],
+  "dense_rescued": [
+    "MATH02_Q02",
+    "MATH03_Q01",
+    "MATH04_Q02",
+    "CHEM01_Q08",
+    "CHEM02_Q03",
+    "CS04_Q03",
+    "CS05_Q05"
+  ],
+  "dense_not_rescued": [
+    "MATH04_Q03",
+    "CHEM02_Q04"
+  ],
+  "bm25_hits_lost_by_hybrid": [],
+  "bm25_hits_lost_by_dense": [
+    "BIO03_Q01"
+  ],
+  "questions_missed_by_all_three": [
+    "MATH04_Q03",
+    "CHEM02_Q04"
+  ]
+}

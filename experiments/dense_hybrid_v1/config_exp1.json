@@ -1,0 +1,489 @@
+{
+  "experiment_id": "exp_dense_hybrid_v1",
+  "protocol_version": "exp_dense_hybrid_v1.0",
+  "status": "PREREGISTERED - NOT RUN",
+  "created": "2026-10-13",
+  "statement": "Preregistration written before any dense or hybrid retrieval has been implemented, installed or run. Nothing below was tuned on evaluation results. Changes after the first run require a new version id.",
+  "purpose": "Compare raw BM25 (frozen bm25_v1.0), dense retrieval and Reciprocal Rank Fusion hybrid retrieval on chunk-level ranking quality over the same questions, chunks and relevance rule as bm25_v1.0.",
+  "not_done_at_registration": [
+    "no retrieval or evaluation code written",
+    "no virtual environment created, no packages installed",
+    "no network access",
+    "no model inference or embedding",
+    "baseline BM25 not re-executed",
+    "no existing file modified"
+  ],
+  "location_rules": {
+    "experiment_dir": "experiments/dense_hybrid_v1",
+    "all_experiment_code_and_results_outside": [
+      "eval/",
+      "qa/",
+      "dataset/"
+    ],
+    "virtual_environment": "new isolated venv OUTSIDE the repository (path to be fixed when approved); no packages installed into any existing environment",
+    "planned_files_not_yet_created": [
+      "dense_hybrid_eval.py",
+      "tests/test_dense_hybrid_eval.py",
+      "requirements-exp.txt",
+      "results/exp1_v1.0/"
+    ],
+    "reuse_of_frozen_code": "eval/bm25_eval.py may be imported read-only (hash-pinned below); it must not be edited."
+  },
+  "frozen_inputs": {
+    "frozen_bm25_config": {
+      "path": "eval/config_bm25_v1.json",
+      "sha256": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c",
+      "protocol_version": null,
+      "status": "FROZEN"
+    },
+    "dataset": {
+      "path": "dataset/synapse_stem25_reviewed_v1",
+      "version": "0.1-draft+reviewed_v1",
+      "file_sha256": {
+        "questions.csv": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+        "gold_evidence.json": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+        "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+        "lecture_manifest.csv": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+        "dataset_readme.md": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+        "change_log.md": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520"
+      }
+    },
+    "audit_flags": {
+      "path": "dataset/audit/audit_question_flags.csv",
+      "sha256": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6"
+    },
+    "review_items": {
+      "path": "dataset/review_v1/review_items.csv",
+      "sha256": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779"
+    },
+    "review_log_snapshot": {
+      "path": "dataset/review_v1/verification_log.csv",
+      "sha256": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50"
+    },
+    "question_manifest": {
+      "path": "eval/question_manifest_bm25_v1.csv",
+      "sha256": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+      "counts": {
+        "EXCLUDED": 61,
+        "PRIMARY_ANSWERABLE": 133,
+        "PRIMARY_UNANSWERABLE": 43,
+        "SENSITIVITY_ANSWERABLE": 6,
+        "SENSITIVITY_UNANSWERABLE": 7
+      }
+    },
+    "production_code": {
+      "qa/retrieval.py": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+      "qa/transcript.py": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+      "qa/__init__.py": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f"
+    },
+    "harness_code": {
+      "files": {
+        "eval/bm25_eval.py": "351e67bb6701f5948fa551a725e7c06f84ad2703d9779fdaf2cc26a2e17c52f8",
+        "eval/tests/test_bm25_eval.py": "b955da88c913343337b7ed7a01c13f0749387e88c2ef874f9a46790771aead6f",
+        "eval/validate_protocol.py": "3a2d8564382f68f340d2bd4d79a9c6e19ddd27bae76c3eeb7b0a47800e703b46"
+      },
+      "note": "Observed at registration; not pinned inside the frozen config. Must be equal at run time."
+    },
+    "saved_bm25_results": {
+      "dir": "eval/results/bm25_v1.0",
+      "files": {
+        "eval/results/bm25_v1.0/per_question_results.csv": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216",
+        "eval/results/bm25_v1.0/aggregate_metrics.json": "ff5996196310efed56f38d42d64917294939d6a2b35dff0e1008b99f7ab0c94e",
+        "eval/results/bm25_v1.0/aggregate_metrics.csv": "603354d3cd4e3c2c81b0d18fdc51a9451b8bcae09aeed08507672f6dfa8da666",
+        "eval/results/bm25_v1.0/run_manifest.json": "e419ba59f6a6f0c5ca8835d8edb524fae2544a794878a3c7253606a7553bca30"
+      },
+      "note": "Must remain unchanged. The BM25 arm of this experiment must reproduce per_question_results.csv metrics exactly."
+    }
+  },
+  "hash_verification_at_registration": {
+    "method": "SHA-256 of each file on disk compared with the value pinned in eval/config_bm25_v1.json (and with run_manifest.config_sha256 for the frozen config itself)",
+    "checks_total": 14,
+    "checks_matched": 14,
+    "all_match": true,
+    "checks": [
+      {
+        "item": "dataset/questions.csv",
+        "path": "dataset/synapse_stem25_reviewed_v1/questions.csv",
+        "expected": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+        "actual": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+        "match": true
+      },
+      {
+        "item": "dataset/gold_evidence.json",
+        "path": "dataset/synapse_stem25_reviewed_v1/gold_evidence.json",
+        "expected": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+        "actual": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+        "match": true
+      },
+      {
+        "item": "dataset/transcript_segments.jsonl",
+        "path": "dataset/synapse_stem25_reviewed_v1/transcript_segments.jsonl",
+        "expected": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+        "actual": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+        "match": true
+      },
+      {
+        "item": "dataset/lecture_manifest.csv",
+        "path": "dataset/synapse_stem25_reviewed_v1/lecture_manifest.csv",
+        "expected": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+        "actual": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+        "match": true
+      },
+      {
+        "item": "dataset/dataset_readme.md",
+        "path": "dataset/synapse_stem25_reviewed_v1/dataset_readme.md",
+        "expected": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+        "actual": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+        "match": true
+      },
+      {
+        "item": "dataset/change_log.md",
+        "path": "dataset/synapse_stem25_reviewed_v1/change_log.md",
+        "expected": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520",
+        "actual": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520",
+        "match": true
+      },
+      {
+        "item": "audit_flags",
+        "path": "dataset/audit/audit_question_flags.csv",
+        "expected": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+        "actual": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+        "match": true
+      },
+      {
+        "item": "review_items",
+        "path": "dataset/review_v1/review_items.csv",
+        "expected": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779",
+        "actual": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779",
+        "match": true
+      },
+      {
+        "item": "review_log_snapshot",
+        "path": "dataset/review_v1/verification_log.csv",
+        "expected": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50",
+        "actual": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50",
+        "match": true
+      },
+      {
+        "item": "question_manifest",
+        "path": "eval/question_manifest_bm25_v1.csv",
+        "expected": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+        "actual": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+        "match": true
+      },
+      {
+        "item": "qa/retrieval.py",
+        "path": "qa/retrieval.py",
+        "expected": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+        "actual": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+        "match": true
+      },
+      {
+        "item": "qa/transcript.py",
+        "path": "qa/transcript.py",
+        "expected": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+        "actual": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+        "match": true
+      },
+      {
+        "item": "qa/__init__.py",
+        "path": "qa/__init__.py",
+        "expected": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+        "actual": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+        "match": true
+      },
+      {
+        "item": "run_manifest.config_sha256 vs current frozen config",
+        "path": "eval/results/bm25_v1.0/run_manifest.json",
+        "expected": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c",
+        "actual": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c",
+        "match": true
+      }
+    ]
+  },
+  "question_sets": {
+    "headline": {
+      "group": "PRIMARY_ANSWERABLE",
+      "n": 133
+    },
+    "sensitivity": {
+      "group": "SENSITIVITY_ANSWERABLE",
+      "n": 6,
+      "reporting": "separate; never merged into headline; point estimates only (n<10)"
+    },
+    "not_evaluated": [
+      "PRIMARY_UNANSWERABLE",
+      "SENSITIVITY_UNANSWERABLE (abstention deferred, A1)",
+      "EXCLUDED (61)"
+    ],
+    "production_set_evaluation": "deferred (P1)",
+    "search_scope": "one lecture per question; never across lectures"
+  },
+  "chunks": {
+    "definition": "identical to bm25_v1.0: qa.retrieval._group over qa.transcript.normalize_segments output, max 40.0 s and 900 chars, first cue always accepted",
+    "expected_total_chunks": 592,
+    "chunk_counts_per_lecture_source": "eval/config_bm25_v1.json chunking.chunk_counts_per_lecture; run must abort if the rebuilt counts differ",
+    "text_field": "text (original caption text), as in bm25_v1.0"
+  },
+  "relevance": {
+    "rule": "A retrieved chunk is relevant to a question if its cue-ID set contains at least one gold-evidence cue ID of that question.",
+    "gold_source": "dataset/synapse_stem25_reviewed_v1/gold_evidence.json -> questions[].gold_intervals[].segment_ids (one cue-ID list per interval)",
+    "same_as_frozen": true
+  },
+  "arms": {
+    "M1_bm25": {
+      "description": "Frozen raw BM25 ranking, identical to bm25_v1.0 (qa.retrieval._rank_groups, k1=1.5, b=0.75, synonym groups, stemming, stopwords).",
+      "ranked_list": "only chunks with BM25 score > 0, sorted by score descending",
+      "tie_break": "lower chunk index first",
+      "consistency_gate": "recomputed per-question metrics and top-10 lists must equal eval/results/bm25_v1.0/per_question_results.csv exactly; otherwise abort"
+    },
+    "M2_dense": {
+      "description": "Bi-encoder dense retrieval with cosine similarity.",
+      "ranked_list": "ALL chunks of the lecture are ranked (every chunk has a cosine score); there is no positive-score filter",
+      "score": "cosine similarity = dot product of L2-normalised embeddings",
+      "tie_break": "lower chunk index first (sort key: -score, chunk_index)",
+      "query_text": "question_text exactly as in questions.csv, raw: no time-expression removal, stopword removal, stemming or synonym expansion, no instruction prefix",
+      "chunk_text": "the member cues' cleaned texts (normalize_segments output) joined with a single space, in chunk order; no timestamps, cue IDs or speaker labels",
+      "query_processing_asymmetry": "BM25 uses its hand-written query processing (stemming, stopwords, synonym groups, ASR alias); dense uses the raw question. Deliberate: each arm is used as designed. Differences therefore reflect the whole pipeline, not only the scoring function.",
+      "truncation": "chunk text beyond max_seq_length tokens is truncated by the model. Number of truncated chunks cannot be determined without the tokenizer library; to be measured and reported at run time (diagnostic only, no effect on the protocol)."
+    },
+    "M3_hybrid_rrf": {
+      "description": "Reciprocal Rank Fusion of the M1 and M2 ranked lists.",
+      "rrf_k": 60,
+      "weights": {
+        "bm25": 1.0,
+        "dense": 1.0
+      },
+      "score": "RRF(chunk) = 1.0/(60 + rank_bm25(chunk)) + 1.0/(60 + rank_dense(chunk)). rank_X is the ONE-BASED position of the chunk in list X after that list's own sort (the best chunk has rank 1). Each list is strictly ordered (ties already broken by original chunk index), so ranks are positions, never shared. A term is included only for lists that contain the chunk.",
+      "input_lists": "M1 list (positive-score chunks only) and M2 list (all chunks)",
+      "chunks_missing_from_a_list": "A chunk absent from a list contributes exactly 0 from that list (no penalty rank, no imputed rank such as list length + 1). Only the BM25 list can omit chunks; every chunk is in the dense list.",
+      "ranked_list": "all chunks of the lecture (all appear in the dense list)",
+      "tie_break": "Chunks are sorted by RRF score descending; chunks with exactly equal RRF scores are ordered by ORIGINAL chunk index ascending (the index of the chunk within its lecture's chunk list, as built by qa.retrieval._group; not a rank, not renumbered). Sort key: (-rrf_score, original_chunk_index). Scores are compared as computed floats; no rounding.",
+      "tuning": "none. k=60 and equal weights were fixed before any run."
+    }
+  },
+  "positive_score_vs_all_chunks_note": "IMPORTANT ASYMMETRY. BM25 returns only chunks whose score is > 0 (chunks sharing no query term are never ranked, so a question can have fewer than 10 BM25 results and BM25 can have an empty list). Dense retrieval ranks every chunk of the lecture, because cosine similarity is defined for all chunks. Consequences: (1) dense and hybrid always return a full list while BM25 may not; (2) a relevant chunk absent from the BM25 list counts as a miss at every k for M1, whereas dense always assigns it a rank; (3) in RRF a chunk missing from the BM25 list gets no BM25 term. Metrics are computed on each arm's list as returned, with no padding of the BM25 list. Reporting must include the number of questions for which the BM25 list is shorter than 5 and than 10 entries.",
+  "metrics": {
+    "per_question": [
+      "interval_recall_at_k",
+      "hit_rate_at_k",
+      "full_evidence_coverage_at_k (k = 1, 3, 5)",
+      "mrr_at_10"
+    ],
+    "k_values": [
+      1,
+      3,
+      5
+    ],
+    "mrr_depth": 10,
+    "definitions": "identical to eval/config_bm25_v1.json metrics and implemented by the same functions in eval/bm25_eval.py (question_metrics); no redefinition",
+    "primary_metrics": [
+      "hit_rate_at_5",
+      "mrr_at_10"
+    ],
+    "secondary_metrics": "all other metrics, reported descriptively without inferential claims",
+    "mrr_rank_when_no_relevant_in_top10": 0.0
+  },
+  "statistics": {
+    "per_arm_intervals": {
+      "method": "question-level percentile bootstrap",
+      "level": 0.95,
+      "resamples": 10000,
+      "seed": 20261013,
+      "rng": "random.Random(seed), re-seeded per (arm-or-contrast, set)",
+      "interval": "nearest-rank 250th and 9750th smallest replicate values",
+      "resampling": "n draws with rng.randrange(n), same as bm25_v1.0"
+    },
+    "paired_differences": {
+      "method": "paired question-level percentile bootstrap of the mean per-question difference (A minus B) using the SAME resampled indices for both arms",
+      "level": 0.95,
+      "resamples": 10000,
+      "seed": 20261013,
+      "rng": "random.Random(seed), re-seeded at the start of each contrast",
+      "interval": "nearest-rank 250th and 9750th smallest",
+      "decision_rule": {
+        "improvement": "the ENTIRE 95% paired bootstrap interval is above zero (lower bound > 0). Described as an improvement of the first arm over the second.",
+        "decline": "the ENTIRE 95% paired bootstrap interval is below zero (upper bound < 0). Described as a decline of the first arm relative to the second, never as 'no improvement'.",
+        "no_demonstrated_difference": "the interval contains zero (lower bound <= 0 <= upper bound), including when a bound equals exactly 0. Reported as no demonstrated difference; the point estimate is still shown.",
+        "applies_to": "every planned contrast (C1-C4) and metric; direction of wording follows the sign convention above."
+      },
+      "sign_convention": "difference = metric(first arm) minus metric(second arm), per question, then averaged. Positive = the first arm is better."
+    },
+    "lecture_clustered_secondary": {
+      "applies_to": "primary contrasts on PRIMARY_ANSWERABLE overall",
+      "method": "same as bm25_v1.0 S1 (resample lectures, pooled mean), applied to paired differences",
+      "role": "sensitivity check only"
+    },
+    "multiplicity": "two primary contrasts x two metrics are tested without correction; secondary contrasts are descriptive. Stated here so results are not over-read.",
+    "small_sample_policy": "as bm25_v1.0 (n<10 no interval). SENSITIVITY_ANSWERABLE (n=6) gets point estimates only.",
+    "breakdowns": "as bm25_v1.0 breakdown dimensions, descriptive only; strata with n<10 get no interval"
+  },
+  "planned_contrasts": {
+    "primary": [
+      {
+        "id": "C1",
+        "contrast": "M3_hybrid_rrf minus M1_bm25",
+        "metric": "hit_rate_at_5",
+        "set": "PRIMARY_ANSWERABLE"
+      },
+      {
+        "id": "C2",
+        "contrast": "M3_hybrid_rrf minus M1_bm25",
+        "metric": "mrr_at_10",
+        "set": "PRIMARY_ANSWERABLE"
+      }
+    ],
+    "secondary": [
+      {
+        "id": "C3",
+        "contrast": "M2_dense minus M1_bm25",
+        "metrics": [
+          "hit_rate_at_5",
+          "mrr_at_10"
+        ]
+      },
+      {
+        "id": "C4",
+        "contrast": "M3_hybrid_rrf minus M2_dense",
+        "metrics": [
+          "hit_rate_at_5",
+          "mrr_at_10"
+        ]
+      }
+    ],
+    "descriptive_extras": [
+      "all other metrics and k values per arm and per contrast",
+      "flip table: questions BM25 misses at Hit@5 and whether M2/M3 recover them, and the reverse",
+      "BM25 list-length diagnostics",
+      "dense truncation count"
+    ]
+  },
+  "dense_model": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "role": "primary and only dense model; no other model is evaluated (no model selection on evaluation data)",
+    "source": "local Hugging Face cache snapshot; loaded offline",
+    "offline_flags_required_at_run_time": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "loading": "SentenceTransformer(<local snapshot path>) so no download can occur"
+    },
+    "local_snapshot": {
+      "cache_dir": "~/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2",
+      "snapshot_commit_directory": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "refs_main": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "refs_main_equals_snapshot_directory": true,
+      "files": {
+        "1_Pooling/config.json": {
+          "bytes": 190,
+          "sha256": "4be450dde3b0273bb9787637cfbd28fe04a7ba6ab9d36ac48e92b11e350ffc23"
+        },
+        "README.md": {
+          "bytes": 10502,
+          "sha256": "dcd602d2fd35c203a247304a06fec6654a12f7941b739f9221a064fe8dc3b7f0"
+        },
+        "config.json": {
+          "bytes": 612,
+          "sha256": "953f9c0d463486b10a6871cc2fd59f223b2c70184f49815e7efbcab5d8908b41"
+        },
+        "config_sentence_transformers.json": {
+          "bytes": 116,
+          "sha256": "061ca9d39661d6c6d6de5ba27f79a1cd5770ea247f8d46412a68a498dc5ac9f3"
+        },
+        "model.safetensors": {
+          "bytes": 90868376,
+          "sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"
+        },
+        "modules.json": {
+          "bytes": 349,
+          "sha256": "84e40c8e006c9b1d6c122e02cba9b02458120b5fb0c87b746c41e0207cf642cf"
+        },
+        "sentence_bert_config.json": {
+          "bytes": 53,
+          "sha256": "fc1993fde0a95c24ec6c022539d41cf6e2f7c9721e5415d6fb6897472a9cd4b7"
+        },
+        "special_tokens_map.json": {
+          "bytes": 112,
+          "sha256": "303df45a03609e4ead04bc3dc1536d0ab19b5358db685b6f3da123d05ec200e3"
+        },
+        "tokenizer.json": {
+          "bytes": 466247,
+          "sha256": "be50c3628f2bf5bb5e3a7f17b1f74611b2561a3a27eeab05e5aa30f411572037"
+        },
+        "tokenizer_config.json": {
+          "bytes": 350,
+          "sha256": "acb92769e8195aabd29b7b2137a9e6d6e25c476a4f15aa4355c233426c61576b"
+        },
+        "vocab.txt": {
+          "bytes": 231508,
+          "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+        }
+      },
+      "tree_fingerprint_sha256": "863d392e9e18dbd40363b73d4c11ea47dfe3543dcc4e4680dbc943725f499f05",
+      "tree_fingerprint_definition": "SHA-256 of the text '<relative path>\\t<file sha256>' lines (sorted by path, joined with newline) over all files in the snapshot directory",
+      "blobs_directory": "empty on this machine: snapshot files are standalone copies, so the file hashes could not be cross-checked against Hugging Face blob names. Not a mismatch; simply no second local source."
+    },
+    "revision_verification": {
+      "local_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "status_local_files": "VERIFIED from files on disk: the snapshot directory name, refs/main and the SHA-256 of every file listed above.",
+      "status_upstream_revision": "UNRESOLVED: that this commit equals the current upstream Hugging Face revision of the model, and the provenance of how the files reached this machine, cannot be verified without network access and are NOT asserted.",
+      "note": "The cache directory name is a commit hash chosen by the Hugging Face client; the file hashes above are what the run is bound to. The run must recompute the tree fingerprint and abort on mismatch."
+    },
+    "architecture_from_local_files": {
+      "modules": [
+        "Transformer",
+        "Pooling (mean tokens)",
+        "Normalize"
+      ],
+      "embedding_dimension": 384,
+      "pooling_mode_mean_tokens": true,
+      "max_seq_length": 256,
+      "do_lower_case": false,
+      "config_sentence_transformers_versions_recorded_by_authors": {
+        "sentence_transformers": "2.0.0",
+        "transformers": "4.6.1",
+        "pytorch": "1.8.1"
+      }
+    },
+    "inference_settings": {
+      "batch_size": 32,
+      "device": "cpu",
+      "normalize_embeddings": true,
+      "precision": "float32",
+      "torch_threads": "recorded at run time",
+      "note": "Batch size and device may change last-digit floating-point values; the run must repeat twice and compare rankings. Any ranking difference between repeats is reported, not hidden."
+    },
+    "library_versions": "UNRESOLVED: sentence-transformers, transformers and torch are not installed in any local environment; exact versions will be pinned in requirements-exp.txt and recorded in the run manifest after the isolated environment is approved and created."
+  },
+  "determinism_and_reproducibility": {
+    "runs": "two independent runs; per-question rankings and all metrics must be identical across runs, or differences reported",
+    "tie_handling": "sort keys fully specified above; no unstable sorting",
+    "outputs_planned": [
+      "per_question_results.csv (incl. top10 lists for all three arms)",
+      "aggregate_metrics.json/.csv",
+      "paired_contrasts.json",
+      "flip_table.csv",
+      "run_manifest.json (hashes of inputs, code, model files, library versions)"
+    ],
+    "abort_conditions": [
+      "any frozen hash mismatch",
+      "rebuilt chunk counts differ from the frozen config",
+      "model tree fingerprint mismatch",
+      "BM25 arm differs from saved baseline results",
+      "results directory already exists (no overwrite)"
+    ]
+  },
+  "limitations_acknowledged": [
+    "Gold labels are machine-drafted from captions; only 1 of 176 primary questions was checked against the video; labels are not claimed to be fully human-verified.",
+    "n=133 headline questions in 25 lectures; intervals are wide and questions within a lecture are correlated.",
+    "Five audited questions (CHEM02_Q04, CHEM02_Q03, MATH04_Q04, BIO01_Q07, BIO03_Q01) have open gold-boundary or rubric concerns; they are kept as frozen and not removed or reweighted.",
+    "Relevance counts a chunk relevant if it contains any gold cue, so alternate valid passages outside gold count as misses for every arm.",
+    "The three arms differ in query processing (see M2 query_processing_asymmetry) and in list completeness (positive_score_vs_all_chunks_note).",
+    "One dense model and one fusion setting only; results do not generalise to other models or fusion parameters.",
+    "Retrieval quality is not answer quality; production gating, padding and merging are not evaluated here."
+  ],
+  "open_items_before_run": [
+    "approval to create the isolated virtual environment outside the repository and install dependencies (pinned versions to be recorded)",
+    "upstream model revision verification (needs network; not required for the run, which is bound to local file hashes)",
+    "measurement of dense truncation at run time"
+  ]
+}

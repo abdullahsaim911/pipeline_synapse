@@ -1,0 +1,60 @@
+{
+  "preregistration_sha256": "ba06467957935190b50ab2e8d7cb09c5e392bbda40f4219325677af4ccc09dc6",
+  "files": {
+    "per_question_results.csv": {
+      "saved_sha256": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216",
+      "new_sha256": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216",
+      "byte_identical": true,
+      "cell_differences": []
+    },
+    "aggregate_metrics.json": {
+      "saved_sha256": "ff5996196310efed56f38d42d64917294939d6a2b35dff0e1008b99f7ab0c94e",
+      "new_sha256": "ff5996196310efed56f38d42d64917294939d6a2b35dff0e1008b99f7ab0c94e",
+      "byte_identical": true
+    },
+    "aggregate_metrics.csv": {
+      "saved_sha256": "603354d3cd4e3c2c81b0d18fdc51a9451b8bcae09aeed08507672f6dfa8da666",
+      "new_sha256": "603354d3cd4e3c2c81b0d18fdc51a9451b8bcae09aeed08507672f6dfa8da666",
+      "byte_identical": true,
+      "cell_differences": []
+    }
+  },
+  "record_level_differences": [],
+  "chunk_counts_total": 592,
+  "questions_compared": 139,
+  "result": "PASS",
+  "determinism": {
+    "python": "3.13.1",
+    "executable": "C:\\Users\\PMLS\\venvs\\exp_dense_hybrid_v1\\Scripts\\python.exe",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "env": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "PYTHONHASHSEED": null,
+      "CUDA_VISIBLE_DEVICES": null,
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null
+    },
+    "sys_flags": {
+      "dont_write_bytecode": true,
+      "hash_randomization": 1,
+      "isolated": 0,
+      "utf8_mode": 1
+    },
+    "bm25_arm_uses": "pure Python (random.Random with an explicit seed, sorted() with explicit keys); no numpy/torch in the M1 path",
+    "torch": {
+      "version": "2.14.1+cpu",
+      "cuda_available": false,
+      "num_threads": 10,
+      "num_interop_threads": 10,
+      "deterministic_algorithms_enabled": false,
+      "default_dtype": "torch.float32",
+      "default_device_cpu_only": true
+    },
+    "numpy": "2.5.4",
+    "notes": [
+      "Dense encoding (later phase) will run on CPU, float32, fixed batch size; repeat-run ranking identity is the preregistered check.",
+      "torch.use_deterministic_algorithms is NOT enabled in this phase; it matters only for dense inference and will be decided with the dense phase."
+    ]
+  }
+}

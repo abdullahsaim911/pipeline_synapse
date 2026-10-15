@@ -1,0 +1,87 @@
+{
+  "experiment_id": "prod_retrieval_p1",
+  "protocol_version": "prod_retrieval_p1_v1.0",
+  "status": "REGISTERED - NOT RUN",
+  "created": "2026-10-14",
+  "purpose": "Measure the evidence the PRODUCTION /ask pipeline actually hands to the language model (frozen protocol item P1). The bm25_v1.0 benchmark scored the raw BM25 ranking; production additionally applies a coverage gate, a relative-score cutoff, top_k = 6, 25 s context padding, merging into passages, chronological order, a prompt-token budget, and sends short transcripts whole.",
+  "what_is_run": {
+    "code_path": "qa.service.AskService.answer (unmodified), which calls qa.retrieval.select_evidence; the plan it builds is captured by wrapping qa.service.select_evidence at run time (nothing is edited on disk)",
+    "language_model": "NONE is called. A local recording stand-in provider replaces Gemini, so no network and no API key are used; it only counts how many times the model would have been called.",
+    "ask_config": "AskConfig.from_env() with every ASK_* environment variable unset, i.e. the code defaults: max_prompt_tokens 4000, full_transcript_max_tokens 2000, chars_per_token 3.5. The run aborts if any ASK_* variable is set.",
+    "question_text": "question_text exactly as in questions.csv",
+    "current_time": "None (benchmark questions carry no playback position)",
+    "moment": "None (no intervention / visual analysis attached)",
+    "transcript": "qa.transcript.normalize_segments over the dataset field \"text\", as in bm25_v1.0; one lecture per question",
+    "evidence": "the union of the passage blocks in the final EvidencePlan of that question (the text the model would be sent); a question with a failed gate has empty evidence"
+  },
+  "question_sets": {
+    "headline": "PRIMARY_ANSWERABLE (133)",
+    "descriptive_only_answerable": "SENSITIVITY_ANSWERABLE (6)",
+    "descriptive_gate_behaviour_only": "PRIMARY_UNANSWERABLE (43) and SENSITIVITY_UNANSWERABLE (7): counts of gate decisions / modes / model calls; NOT an abstention evaluation (A1 stays deferred)",
+    "not_run": "EXCLUDED (61)"
+  },
+  "relevance": "identical to bm25_v1.0: an evidence passage is relevant by the cue IDs it contains; gold cue sets come from the same gold intervals with preprocessing-dropped cues removed",
+  "metrics": {
+    "evidence_hit": "1 if the evidence contains at least one gold cue of any gold interval, else 0 (HEADLINE; the production counterpart of Hit Rate@k)",
+    "interval_coverage": "fraction of the question's gold intervals having at least one cue in the evidence (counterpart of Interval Recall@k)",
+    "full_interval_coverage": "1 if EVERY gold interval has at least one cue in the evidence (counterpart of Full-evidence coverage@k) (HEADLINE)",
+    "strict_containment": "1 if EVERY retrievable gold cue of every interval is in the evidence (stricter than the benchmark metrics; the whole gold passage reaches the model)",
+    "gold_cue_fraction": "share of the retrievable gold cues present in the evidence (descriptive)",
+    "gate_failure": "1 if select_evidence returned no usable evidence (the model is never called and the student gets the \"couldn't find it\" reply)",
+    "cost_descriptives": "estimated prompt tokens, evidence characters, number of passages, share of the transcript sent, evidence mode (full / retrieval / time / summary / playback), model called yes/no",
+    "raw_comparison": "raw BM25 Hit@5 and Hit@6 per question from the frozen ranking (top_k in production is 6); Hit@5 must equal the saved bm25_v1.0 per-question values"
+  },
+  "headline_metrics": [
+    "evidence_hit",
+    "full_interval_coverage"
+  ],
+  "statistics": {
+    "interval": "question-level percentile bootstrap, 95%, B = 10000, seed 20261013, random.Random, nearest-rank 250th/9750th (same function as bm25_v1.0)",
+    "secondary": "lecture-clustered bootstrap for the headline metrics (same function as bm25_v1.0)",
+    "small_samples": "n < 10: point estimate only; n < 30: interval with instability warning",
+    "strata": "evidence mode, subject, question category (PRIMARY_ANSWERABLE only), descriptive",
+    "paired_comparison": "per-question difference evidence_hit minus raw BM25 Hit@5 (and Hit@6), paired bootstrap interval, DESCRIPTIVE: no decision rule is registered for this comparison",
+    "multiplicity": "none applied; only evidence_hit and full_interval_coverage are headline"
+  },
+  "determinism": "two independent runs (separate processes) must give byte-identical per-question results; otherwise no aggregate is written",
+  "abort_conditions": [
+    "any frozen or registered hash mismatch",
+    "any ASK_* environment variable set",
+    "raw BM25 Hit@5 differs from the saved bm25_v1.0 per-question values",
+    "results directory already exists",
+    "the stand-in provider is asked for a network call"
+  ],
+  "no_tuning": "Production code, thresholds and prompts are measured as they are. Nothing is changed in response to the results; any later change needs a new registered version.",
+  "interpreter": "C:\\Users\\PMLS\\miniconda3\\python.exe (Python 3.11.5); the Python version differs from the one used for bm25_v1.0 (3.13.1), so the raw BM25 per-question values are cross-checked against the saved file",
+  "frozen_inputs": {
+    "frozen_bm25_config": {
+      "path": "eval/config_bm25_v1.json",
+      "sha256": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c"
+    },
+    "bm25_harness": {
+      "eval/bm25_eval.py": "351e67bb6701f5948fa551a725e7c06f84ad2703d9779fdaf2cc26a2e17c52f8"
+    },
+    "saved_bm25_per_question_results": {
+      "eval/results/bm25_v1.0/per_question_results.csv": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216"
+    },
+    "production_code_at_registration": {
+      "qa/__init__.py": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+      "qa/moment.py": "99ebee463be5027cf1157dcbe20499eca2c484e069f9031b8a7b53e1d10d257f",
+      "qa/retrieval.py": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+      "qa/service.py": "ad860b9d91e3c127edc34240f8a9dda624861e6f6a4bfe006c41715a16b527de",
+      "qa/tokens.py": "9ee745173a9b98d7b781196c7f46e4ebec37bda2d9007f5e4d61e08d6eba3f55",
+      "qa/transcript.py": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+      "llm_interface/providers.py": "28434fe416173bdb29e5b3bea539388eb882441498e87a68acc190f8d23b0ff1",
+      "llm_interface/__init__.py": "eb32b082ccb1e57b9ed89fdfaa4643fca65ceab32b5cb585b81f49a15aabaf9d"
+    },
+    "note": "qa/retrieval.py, qa/transcript.py and qa/__init__.py are also pinned inside the frozen config. qa/service.py differs from the version in the earlier experiments: its \"not found\" message and its visual rule (6) were edited on 2026-10-14 (neither affects evidence selection); its hash is recorded here.",
+    "dataset_and_manifest_pins": "verified through the frozen config's own pin list (14 hashes)"
+  },
+  "limitations": [
+    "Labels are machine-drafted; only 1 of 176 primary questions is video-checked.",
+    "Evidence containing the gold passage is necessary, not sufficient, for a correct answer: answer quality is not measured here.",
+    "No playback position or attached moment is supplied, unlike a student using the app mid-lecture.",
+    "Whole-transcript mode (short lectures) makes evidence_hit trivially 1 for those lectures; strata by mode make this visible.",
+    "A passage containing a gold cue is counted relevant even when the cue is a minor part of it."
+  ]
+}

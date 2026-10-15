@@ -1,0 +1,191 @@
+{
+  "protocol_id": "bm25_v1",
+  "protocol_version": "bm25_v1.0",
+  "protocol_frozen_date": "2026-10-13",
+  "protocol_status": "FROZEN",
+  "config_path": "eval/config_bm25_v1.json",
+  "config_sha256": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c",
+  "hash_verification": {
+    "all_ok": true,
+    "checked": [
+      {
+        "name": "code:qa/retrieval.py",
+        "path": "qa/retrieval.py",
+        "expected_sha256": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+        "actual_sha256": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+        "ok": true
+      },
+      {
+        "name": "code:qa/transcript.py",
+        "path": "qa/transcript.py",
+        "expected_sha256": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+        "actual_sha256": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09",
+        "ok": true
+      },
+      {
+        "name": "code:qa/__init__.py",
+        "path": "qa/__init__.py",
+        "expected_sha256": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+        "actual_sha256": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+        "ok": true
+      },
+      {
+        "name": "dataset:questions.csv",
+        "path": "dataset/synapse_stem25_reviewed_v1/questions.csv",
+        "expected_sha256": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+        "actual_sha256": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+        "ok": true
+      },
+      {
+        "name": "dataset:gold_evidence.json",
+        "path": "dataset/synapse_stem25_reviewed_v1/gold_evidence.json",
+        "expected_sha256": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+        "actual_sha256": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+        "ok": true
+      },
+      {
+        "name": "dataset:transcript_segments.jsonl",
+        "path": "dataset/synapse_stem25_reviewed_v1/transcript_segments.jsonl",
+        "expected_sha256": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+        "actual_sha256": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+        "ok": true
+      },
+      {
+        "name": "dataset:lecture_manifest.csv",
+        "path": "dataset/synapse_stem25_reviewed_v1/lecture_manifest.csv",
+        "expected_sha256": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+        "actual_sha256": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+        "ok": true
+      },
+      {
+        "name": "dataset:dataset_readme.md",
+        "path": "dataset/synapse_stem25_reviewed_v1/dataset_readme.md",
+        "expected_sha256": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+        "actual_sha256": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+        "ok": true
+      },
+      {
+        "name": "dataset:change_log.md",
+        "path": "dataset/synapse_stem25_reviewed_v1/change_log.md",
+        "expected_sha256": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520",
+        "actual_sha256": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520",
+        "ok": true
+      },
+      {
+        "name": "audit_flags",
+        "path": "dataset/audit/audit_question_flags.csv",
+        "expected_sha256": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+        "actual_sha256": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+        "ok": true
+      },
+      {
+        "name": "review_items",
+        "path": "dataset/review_v1/review_items.csv",
+        "expected_sha256": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779",
+        "actual_sha256": "7a10bf90c54ce55196807ce6284e5abc49ab4ae24784172266247c5c06e4a779",
+        "ok": true
+      },
+      {
+        "name": "review_log_snapshot",
+        "path": "dataset/review_v1/verification_log.csv",
+        "expected_sha256": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50",
+        "actual_sha256": "81dc431d1002c994696a6533ba791ee55a945246d5b6ef0d6184c5dc6432dc50",
+        "ok": true
+      },
+      {
+        "name": "question_manifest",
+        "path": "eval/question_manifest_bm25_v1.csv",
+        "expected_sha256": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+        "actual_sha256": "f65f0eb7c0570c4ff3f5ba9e998977cc785f9c1bb476abdfa018d197fe35a57b",
+        "ok": true
+      }
+    ]
+  },
+  "settings": {
+    "ks": [
+      1,
+      3,
+      5
+    ],
+    "mrr_depth": 10,
+    "metrics": [
+      "interval_recall_at_1",
+      "interval_recall_at_3",
+      "interval_recall_at_5",
+      "hit_rate_at_1",
+      "hit_rate_at_3",
+      "hit_rate_at_5",
+      "full_evidence_coverage_at_1",
+      "full_evidence_coverage_at_3",
+      "full_evidence_coverage_at_5",
+      "mrr_at_10"
+    ],
+    "chunk_seconds": 40.0,
+    "chunk_max_chars": 900,
+    "ranking": "raw BM25 (qa.retrieval._rank_groups), positive scores only, ordered by (-score, chunk index)",
+    "full_transcript_chars": 0,
+    "text_field": "text",
+    "relevance": "A retrieved chunk is relevant to a question if its cue-ID set contains at least one gold-evidence cue ID of that question.",
+    "bootstrap": {
+      "primary": {
+        "level": 0.95,
+        "method": "question-level percentile bootstrap",
+        "resamples": 10000,
+        "seed": 20261013,
+        "rng": "Python standard library random.Random(seed)",
+        "resampling": "For each of B = 10000 replicates draw n question indices with replacement using rng.randrange(n) called n times in order (n = number of answerable questions in the stratum); the replicate value of a metric is the mean of its per-question values over the drawn questions. All metrics in a stratum use the same B replicates. Re-seed random.Random(20261013) at the start of each (set, stratum) so results do not depend on reporting order.",
+        "interval": "nearest-rank percentiles of the sorted replicate values: lower = the ceil(0.025*B) = 250th smallest, upper = the ceil(0.975*B) = 9750th smallest",
+        "applies_to": "PRIMARY_ANSWERABLE overall and each stratum with sample_flag OK or SMALL; strata with sample_flag VERY_SMALL get counts and point estimates only (no interval)",
+        "limitation": "Resampling treats questions as independent. The questions are grouped in 25 lectures (about 5 per lecture), so question-level intervals can be too narrow; the lecture-clustered bootstrap (secondary_sensitivity_analysis, S1) is the pinned check on this."
+      },
+      "secondary": "lecture-clustered percentile bootstrap",
+      "resamples": 10000,
+      "seed": 20261013
+    }
+  },
+  "harness_files_sha256": {
+    "bm25_eval.py": "351e67bb6701f5948fa551a725e7c06f84ad2703d9779fdaf2cc26a2e17c52f8",
+    "tests/test_bm25_eval.py": "b955da88c913343337b7ed7a01c13f0749387e88c2ef874f9a46790771aead6f"
+  },
+  "results_sha256": {
+    "per_question_results.csv": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216",
+    "aggregate_metrics.json": "ff5996196310efed56f38d42d64917294939d6a2b35dff0e1008b99f7ab0c94e",
+    "aggregate_metrics.csv": "603354d3cd4e3c2c81b0d18fdc51a9451b8bcae09aeed08507672f6dfa8da666"
+  },
+  "python": "3.13.1",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "groups": {
+    "evaluated": [
+      "PRIMARY_ANSWERABLE",
+      "SENSITIVITY_ANSWERABLE"
+    ],
+    "counts_in_manifest": {
+      "EXCLUDED": 61,
+      "PRIMARY_ANSWERABLE": 133,
+      "PRIMARY_UNANSWERABLE": 43,
+      "SENSITIVITY_ANSWERABLE": 6,
+      "SENSITIVITY_UNANSWERABLE": 7
+    },
+    "not_evaluated": {
+      "EXCLUDED": 61,
+      "SENSITIVITY_UNANSWERABLE": 7,
+      "PRIMARY_UNANSWERABLE": 43
+    },
+    "not_evaluated_reason": "unanswerable questions need the deferred abstention evaluation (A1); EXCLUDED questions are visual/uncertain/pending; production-set evaluation (P1) deferred"
+  },
+  "limitations": [
+    "The gold labels are NOT fully verified. Of the 176 PRIMARY questions, only MATH04_Q08 has been checked against the video; the other 175 have not been human-reviewed (machine-drafted and mechanically validated only).",
+    "Results must be described as \"against machine-drafted gold labels, 1 of 176 primary questions video-checked\", not as results against verified gold.",
+    "Raw BM25 ranking describes retrieval quality only; it is not the production evidence set (gated, padded, merged) and says nothing about abstention.",
+    "Six short lectures (MATH01, MATH03, MATH04, PHYS05, BIO02, CS02) are sent whole in production; here they are ranked like the others.",
+    "Interval Recall@k and Full-evidence coverage@k count an interval as covered when ONE of its cues is in a top-k chunk; they are not complete-evidence recall.",
+    "Question-level intervals treat questions as independent; the lecture-clustered interval is the secondary check.",
+    "qa/ is untracked in Git; code hashes are the only version pin."
+  ],
+  "deviations_from_frozen_protocol": [],
+  "not_implemented_deferred": [
+    "A1 abstention scoring",
+    "P1 production-set evaluation"
+  ],
+  "note": "m1 validation output of exp_dense_hybrid_v1; not a final experiment result"
+}

@@ -1,0 +1,30 @@
+{
+ "created": "2026-10-13",
+ "note": "SHA-256 at creation of review_v1. validate_review_artifacts.py checks these are unchanged.",
+ "synapse_stem25": {
+  "dataset_readme.md": "93097bda3285eeaa279c09d2304ad80d25e520b2201102ee2958e7e6cf272a05",
+  "dataset_summary.md": "e689dc38bf9da8c8408a6fba1b8b5f8b3ff2c7d7d52ad1ffef3eb853c4d6b06f",
+  "gold_evidence.json": "67b4ea8720691d38cb9b7194b2cf4adfa197a80a148a192c8fbe3ad34fd79eb4",
+  "lecture_manifest.csv": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+  "questions.csv": "26cade0b0d8fdba48e7e22dab7e0714708828273f137cfddeaa4c4fc9e801fa6",
+  "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+  "verification_report.csv": "83d803bd4c87628fca20e47e8e1e2a17cc7b6b60b56747baaecdc062bbb158ad",
+  "visual_accessibility_annotations.csv": "c0d148b69cd7a8573124933074d3cc55ff06e4ba64bf90d330370cbdbfb6d3ef"
+ },
+ "synapse_stem25_reviewed_v1": {
+  "change_log.csv": "bf6006936308ab1ae189f92eb3e0e5d33a077f28ac05b6173f690bcfdb7001e6",
+  "change_log.md": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520",
+  "dataset_readme.md": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+  "dataset_summary.md": "22d332d6578ced596537cda954e527d766998017cf0c980d1289a02ff40f09b1",
+  "gold_evidence.json": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+  "lecture_manifest.csv": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+  "questions.csv": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+  "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+  "verification_report.csv": "83d803bd4c87628fca20e47e8e1e2a17cc7b6b60b56747baaecdc062bbb158ad",
+  "visual_accessibility_annotations.csv": "c0d148b69cd7a8573124933074d3cc55ff06e4ba64bf90d330370cbdbfb6d3ef"
+ },
+ "audit": {
+  "audit_question_flags.csv": "6c99d02d929a1ca005a29dbfd97f36a508a52acdd726f25ebe9733f0eab2b5c6",
+  "audit_report.md": "f9fd8f497418834644d0a5aaaa86e7e76856a1c4aa2eb1c966a15ca8f28bc21f"
+ }
+}

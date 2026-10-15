@@ -1,0 +1,147 @@
+{
+  "n_real_answers": 17,
+  "evidence_prompt_hashes_match_the_registered_ones": true,
+  "real_answer_scores": [
+    {
+      "case": "P1",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "P1",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "P2",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "P2",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "N1",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "N1",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "N3",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "N3",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "C2",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "C2",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "C1",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "C1",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "N2",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "N2",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "N5",
+      "arm": "current",
+      "score": 1.0
+    },
+    {
+      "case": "N5",
+      "arm": "revised",
+      "score": 1.0
+    },
+    {
+      "case": "P3",
+      "arm": "revised",
+      "score": 1.0
+    }
+  ],
+  "mean_score_real": 1.0,
+  "min_score_real": 1.0,
+  "by_threshold": {
+    "0.5": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 0.5882352941176471,
+      "detect_wrong_numbers": 0.0
+    },
+    "0.6": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 0.7058823529411765,
+      "detect_wrong_numbers": 0.0
+    },
+    "0.7": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 0.8235294117647058,
+      "detect_wrong_numbers": 0.0
+    },
+    "0.8": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 0.9411764705882353,
+      "detect_wrong_numbers": 0.0
+    },
+    "0.9": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 1.0,
+      "detect_wrong_numbers": 0.0
+    },
+    "1.0": {
+      "false_block_rate_on_real_answers": 0.0,
+      "detect_mismatch": 0.35294117647058826,
+      "detect_appended_fabrication": 1.0,
+      "detect_wrong_numbers": 0.0
+    }
+  },
+  "n_negatives": {
+    "mismatch": 17,
+    "appended_fabrication": 17,
+    "wrong_numbers": 3
+  },
+  "mean_score_negatives": {
+    "mismatch": 0.6470588235294118,
+    "appended_fabrication": 0.2725490196078431,
+    "wrong_numbers": 1.0
+  },
+  "caveats": [
+    "17 answers, all scored 'grounding ok' by AI-assisted, non-blind scoring; not human-verified faithful.",
+    "Negatives are synthetic; detection rates say nothing about real hallucinations.",
+    "One fabricated sentence added to a multi-sentence answer lowers the score by only the share of one sentence.",
+    "A faithful copy of a wrong caption (case P3) cannot be detected."
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "experiment_id": "pipeline_flags_v1",
+  "status": "REGISTERED - NOT RUN",
+  "created": "2026-10-15",
+  "purpose": "Measure whether the optional Ask pipeline stages improve retrieval on the frozen benchmark, and how the faithfulness gate scores, BEFORE any flag is enabled.",
+  "no_model_calls": "No Gemini or other language-model API call is made in this experiment (stage A and the faithfulness pilot).",
+  "stage_b_not_included": "A shadow run of the faithfulness gate on freshly generated answers (about 139 Gemini calls) is NOT part of this registration and needs separate approval and a quota check.",
+  "questions": {
+    "headline": "PRIMARY_ANSWERABLE (133)",
+    "descriptive_only": "SENSITIVITY_ANSWERABLE (6)",
+    "not_run": "unanswerable and excluded questions",
+    "gold": "frozen bm25_v1.0 gold cue sets (baseline preprocessing) for ALL arms; a cue removed by cleaning counts as not covered"
+  },
+  "arms": {
+    "ranking": {
+      "R0_bm25": "frozen raw BM25 ranking (must reproduce the saved baseline exactly)",
+      "R1_bm25_asr": "the same BM25 on ASR-cleaned captions (qa.asr_cleanup.sanitize_segments)",
+      "R2_rrf": "BM25 (positive scores) + dense (MiniLM) fused with RRF k=60, all chunks ranked (HybridSelector.rank_chunks)",
+      "R3_rrf_rerank": "top 12 fused chunks reordered by the cross-encoder, then the remaining fused chunks"
+    },
+    "evidence": {
+      "A0_baseline": "AskService defaults",
+      "A1_hybrid": "AskService with HybridSelector (12 candidates, keep 4, offline models)",
+      "A2_asr": "AskConfig(asr_sanitize=True)",
+      "A12_hybrid_asr": "both (exploratory)"
+    },
+    "evidence_method": "AskService.answer with a recording stand-in model; the final EvidencePlan is captured; no prompt tuning, no thresholds changed"
+  },
+  "metrics": {
+    "ranking": "frozen: Hit Rate@1/3/5, Interval Recall@1/3/5, Full-evidence coverage@1/3/5, MRR@10 (headline: Hit Rate@5 and MRR@10)",
+    "evidence": "evidence_hit, interval_coverage, full_interval_coverage, strict_containment, gold_cue_fraction, gate_failure, evidence size, estimated prompt tokens"
+  },
+  "statistics": {
+    "interval": "question-level percentile bootstrap 95%, B=10000, seed 20261013 (frozen function); paired differences; lecture-clustered check for primary contrasts",
+    "decision_rule": "improvement iff the WHOLE paired 95% interval is above 0; decline iff the whole interval is below 0; otherwise no demonstrated difference (a bound equal to 0 counts as containing 0)",
+    "multiplicity": "none applied; 2 primary contrasts x 2 metrics",
+    "power_note": "BM25 Hit@5 is already about 0.93 (9 misses of 133), so at most 9 questions can improve; only a large gain could reach the decision rule. This benchmark can show harm or a large gain, not a small one."
+  },
+  "contrasts": {
+    "ranking_primary": [
+      "C1: R3_rrf_rerank - R0_bm25",
+      "C2: R1_bm25_asr - R0_bm25"
+    ],
+    "ranking_secondary": [
+      "C3: R2_rrf - R0_bm25",
+      "C4: R3_rrf_rerank - R2_rrf"
+    ],
+    "evidence": [
+      "E1: A1_hybrid - A0_baseline",
+      "E2: A2_asr - A0_baseline",
+      "E3: A12_hybrid_asr - A0_baseline (exploratory)"
+    ],
+    "metrics_for_decision": [
+      "hit_rate_at_5",
+      "mrr_at_10"
+    ],
+    "evidence_metrics_for_decision": [
+      "evidence_hit",
+      "strict_containment"
+    ]
+  },
+  "enable_rule_preregistered": {
+    "for_each_flag": "RECOMMEND only if ALL hold: (1) its ranking primary contrast shows 'improvement' on Hit Rate@5 or MRR@10 and 'decline' on neither; (2) its evidence contrast shows 'decline' on neither evidence_hit nor strict_containment, and gate failures do not increase; (3) latency: warm median pre-model time added versus A0 is within budget (hybrid 500 ms, ASR clean-up 50 ms) and, for hybrid, cold start is within 5 s",
+    "otherwise": "DO NOT ENABLE YET, and the failing criteria are listed",
+    "even_if_recommended": "the benchmark was already used for the earlier BM25/hybrid comparison and for production-evidence checks, so a recommendation must be confirmed on new held-out questions before permanent enabling"
+  },
+  "latency_protocol": {
+    "passes": 3,
+    "pass_1": "cold: fresh selector (model load and chunk-vector cache misses)",
+    "passes_2_3": "warm",
+    "measured": "AskService.answer wall time with an instant stand-in model, and the selector call alone",
+    "excluded": "Gemini request time; memory use"
+  },
+  "faithfulness_pilot": {
+    "data": "the 17 existing run_1 answers of ask_prompt_b_v1 (no new calls); evidence passages rebuilt with the production code and checked against the registered prompt hashes",
+    "presumed_faithful_label": "the AI-assisted scores of those answers (grounding = ok for all 17); NOT human-verified",
+    "synthetic_negatives": [
+      "mismatch: the answer scored against another case's passages",
+      "append: the real answer plus one fabricated unrelated sentence",
+      "number: every number in the answer replaced by a different number (only answers with numbers)"
+    ],
+    "reported": "score per answer, share blocked at thresholds 0.5-1.0 (false-block rate on the 17), detection rate per negative type; NOT a precision on real hallucinations, which cannot be computed without labelled unfaithful answers"
+  },
+  "determinism": "evidence plans must be identical across passes; R0 must reproduce the saved baseline metrics; R2 is compared with the saved dense_hybrid_v1 M3 rankings (agreement rate reported)",
+  "limitations": [
+    "Benchmark labels are machine-drafted; 1 of 176 primary questions is video-verified.",
+    "Ranking metrics ignore the production relevance gate; evidence metrics include it.",
+    "Latency is single-machine CPU timing, pre-model only.",
+    "The cross-encoder and the faithfulness gate had not been evaluated before this experiment."
+  ],
+  "pins": {
+    "frozen_config": {
+      "eval/config_bm25_v1.json": "6fe45aa67dbffb527059d755d50649db609ce8af382fcc01b13f49d39779162c"
+    },
+    "frozen_harness": {
+      "eval/bm25_eval.py": "351e67bb6701f5948fa551a725e7c06f84ad2703d9779fdaf2cc26a2e17c52f8"
+    },
+    "saved_baseline": {
+      "eval/results/bm25_v1.0/per_question_results.csv": "c66bf1bddd591e26132501eb7db295e121664335e64377a7f6568559b5f93216"
+    },
+    "saved_m3": {
+      "experiments/dense_hybrid_v1/results/m3_hybrid_v1/final/full_rankings_m3.csv": "711b1d4f996cf3cf9023d08519c2bb8c599bb572583e2603d415859647254564"
+    },
+    "code": {
+      "llm_interface/__init__.py": "eb32b082ccb1e57b9ed89fdfaa4643fca65ceab32b5cb585b81f49a15aabaf9d",
+      "llm_interface/gemini_provider.py": "b4a55fbac39deaeefdbfc5c8c139967c02073ad11831183f7bb7370cc88df094",
+      "llm_interface/ollama_client.py": "f268b6543727766035bf76f8e61c95ccefbd3f43400c68e4a2703ebef460dba4",
+      "llm_interface/providers.py": "28434fe416173bdb29e5b3bea539388eb882441498e87a68acc190f8d23b0ff1",
+      "qa/__init__.py": "2d0f5899e8a17dbc92584b6236ed8ac187d87da48ad4f7a71d5d628891de543f",
+      "qa/asr_cleanup.py": "b78546e4a4020eb1cabfb6f871f23fed9ad72d9ba9f03f1bfbcd2a4eaced81a2",
+      "qa/faithfulness.py": "a3d1983e0cc312bf4bf5e8c9925ca7f1c7361fb13a74737e0703ad397a4fce6e",
+      "qa/hybrid.py": "b28ce0c9a44b30dd0a9659ed39cf42957b27caece6b5f8ebcfccde3d69b6251c",
+      "qa/moment.py": "99ebee463be5027cf1157dcbe20499eca2c484e069f9031b8a7b53e1d10d257f",
+      "qa/retrieval.py": "50471730e56254c220892f4a5d9a8cf2f63beff80f91467e7e80311080ad6000",
+      "qa/service.py": "0a7c31a977d8a90216bc78a19ad63dcb4d60ad09925a3284c6d1eb9e00eba989",
+      "qa/tokens.py": "9ee745173a9b98d7b781196c7f46e4ebec37bda2d9007f5e4d61e08d6eba3f55",
+      "qa/transcript.py": "cef66dc8647645c7eec63cf6acb75dddab20f2654a4aa5621bd727db838a3f09"
+    },
+    "dataset": {
+      "questions.csv": "323f6d5b1a43130355607ec745c6be14ad36720c74cd37778934b9fad3bee2b3",
+      "gold_evidence.json": "b6b979f3d54a85dc9360a617c062a1380e007b6fc37a9312165c2f432cb6a321",
+      "transcript_segments.jsonl": "3d3b6a2e77941319f906ee75795fb9699790f06feef2fc376a06d44c1dcb7829",
+      "lecture_manifest.csv": "7b7e615e24c28f25a4067e3a0af4f9f4824abef60a00b701276d54ad145f43b5",
+      "dataset_readme.md": "e6cb4ac18893570ac251dffcf30523355f749da5262360bd4a46880e1f2e4007",
+      "change_log.md": "aaaa583d3919657bfc4cf651d57f48d6b21093347b89ee61fc4c7024f72ec520"
+    }
+  },
+  "models": {
+    "embed": {
+      "name": "sentence-transformers/all-MiniLM-L6-v2",
+      "tree_fingerprint": "863d392e9e18dbd40363b73d4c11ea47dfe3543dcc4e4680dbc943725f499f05"
+    },
+    "rerank": {
+      "name": "cross-encoder/ms-marco-MiniLM-L-6-v2",
+      "tree_fingerprint": "47c1b7fc795e9e2ef324dc0138dcc318e8c0cbdede3069358c5201e4d15ab442"
+    }
+  }
+}

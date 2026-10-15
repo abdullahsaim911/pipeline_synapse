@@ -1,0 +1,141 @@
+set,level,dimension,stratum,n,sample_flag,metric,estimate,ci_low,ci_high,ci_method,instability_warning
+PRIMARY_ANSWERABLE,overall,,,133,OK,interval_recall_at_1,0.5889724310776941,0.5100250626566416,0.6666666666666667,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,interval_recall_at_3,0.8421052631578947,0.7807017543859649,0.8972431077694235,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,interval_recall_at_5,0.9097744360902256,0.862155388471178,0.9523809523809524,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,hit_rate_at_1,0.6541353383458647,0.5714285714285714,0.7368421052631579,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,hit_rate_at_3,0.8796992481203008,0.8195488721804511,0.9323308270676691,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,hit_rate_at_5,0.9323308270676691,0.8872180451127819,0.9699248120300752,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,full_evidence_coverage_at_1,0.5263157894736842,0.44360902255639095,0.6090225563909775,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,full_evidence_coverage_at_3,0.8045112781954887,0.7368421052631579,0.8721804511278195,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,full_evidence_coverage_at_5,0.8872180451127819,0.8345864661654135,0.9398496240601504,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall,,,133,OK,mrr_at_10,0.7735350280463063,0.7164757130922544,0.8286549707602339,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,interval_recall_at_1,0.511904761904762,0.3511904761904762,0.6785714285714286,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,interval_recall_at_3,0.9047619047619048,0.8035714285714286,0.9821428571428571,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,interval_recall_at_5,0.9702380952380952,0.9226190476190476,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,hit_rate_at_1,0.6071428571428571,0.42857142857142855,0.7857142857142857,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,hit_rate_at_3,0.9642857142857143,0.8928571428571429,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,hit_rate_at_5,1.0,1.0,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,full_evidence_coverage_at_1,0.42857142857142855,0.25,0.6071428571428571,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,full_evidence_coverage_at_3,0.8571428571428571,0.7142857142857143,0.9642857142857143,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,full_evidence_coverage_at_5,0.9285714285714286,0.8214285714285714,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Biology,28,SMALL,mrr_at_10,0.7827380952380952,0.681547619047619,0.8839285714285714,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,interval_recall_at_1,0.6666666666666666,0.5,0.8333333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,interval_recall_at_3,0.75,0.5833333333333334,0.8958333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,interval_recall_at_5,0.8263888888888888,0.6736111111111112,0.9583333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,hit_rate_at_1,0.75,0.5833333333333334,0.9166666666666666,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,hit_rate_at_3,0.7916666666666666,0.625,0.9583333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,hit_rate_at_5,0.875,0.75,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,full_evidence_coverage_at_1,0.5833333333333334,0.375,0.7916666666666666,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,full_evidence_coverage_at_3,0.7083333333333334,0.5416666666666666,0.875,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,full_evidence_coverage_at_5,0.7916666666666666,0.625,0.9583333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Chemistry,24,SMALL,mrr_at_10,0.7868055555555555,0.6277777777777778,0.9270833333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,interval_recall_at_1,0.6086956521739131,0.41304347826086957,0.782608695652174,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,interval_recall_at_3,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,interval_recall_at_5,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,hit_rate_at_1,0.6521739130434783,0.43478260869565216,0.8260869565217391,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,hit_rate_at_3,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,hit_rate_at_5,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,full_evidence_coverage_at_1,0.5652173913043478,0.34782608695652173,0.782608695652174,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,full_evidence_coverage_at_3,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,full_evidence_coverage_at_5,0.9130434782608695,0.782608695652174,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Computer science,23,SMALL,mrr_at_10,0.7729468599033816,0.6352657004830917,0.8985507246376813,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,interval_recall_at_1,0.5,0.3076923076923077,0.6923076923076923,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,interval_recall_at_3,0.7115384615384616,0.5384615384615384,0.8846153846153846,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,interval_recall_at_5,0.8269230769230769,0.6730769230769231,0.9615384615384616,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,hit_rate_at_1,0.5384615384615384,0.34615384615384615,0.7307692307692307,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,hit_rate_at_3,0.7307692307692307,0.5769230769230769,0.8846153846153846,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,hit_rate_at_5,0.8461538461538461,0.6923076923076923,0.9615384615384616,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,full_evidence_coverage_at_1,0.46153846153846156,0.2692307692307692,0.6538461538461539,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,full_evidence_coverage_at_3,0.6923076923076923,0.5,0.8461538461538461,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,full_evidence_coverage_at_5,0.8076923076923077,0.6538461538461539,0.9615384615384616,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Mathematics,26,SMALL,mrr_at_10,0.6641941391941392,0.5142857142857143,0.8134615384615385,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,interval_recall_at_1,0.65625,0.5,0.796875,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,interval_recall_at_3,0.9114583333333334,0.8229166666666666,0.984375,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,interval_recall_at_5,0.984375,0.953125,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,hit_rate_at_1,0.71875,0.5625,0.875,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,hit_rate_at_3,0.96875,0.90625,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,hit_rate_at_5,1.0,1.0,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,full_evidence_coverage_at_1,0.59375,0.4375,0.75,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,full_evidence_coverage_at_3,0.84375,0.71875,0.96875,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,full_evidence_coverage_at_5,0.96875,0.90625,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,subject,Physics,32,OK,mrr_at_10,0.8447916666666667,0.753125,0.9270833333333334,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,interval_recall_at_1,0.55,0.4,0.7,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,interval_recall_at_3,0.8375,0.7125,0.9375,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,interval_recall_at_5,0.9125,0.825,0.9875,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,hit_rate_at_1,0.6,0.45,0.75,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,hit_rate_at_3,0.85,0.725,0.95,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,hit_rate_at_5,0.925,0.825,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,full_evidence_coverage_at_1,0.5,0.35,0.65,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,full_evidence_coverage_at_3,0.825,0.7,0.925,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,full_evidence_coverage_at_5,0.9,0.8,0.975,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,direct_keyword,40,OK,mrr_at_10,0.7306547619047619,0.6196428571428572,0.8354166666666666,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,interval_recall_at_1,0.5347222222222222,0.3680555555555556,0.7013888888888888,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,interval_recall_at_3,0.8541666666666666,0.7361111111111112,0.9513888888888888,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,interval_recall_at_5,0.9236111111111112,0.8194444444444445,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,hit_rate_at_1,0.7083333333333334,0.5416666666666666,0.875,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,hit_rate_at_3,0.9583333333333334,0.875,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,hit_rate_at_5,0.9583333333333334,0.875,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,full_evidence_coverage_at_1,0.375,0.16666666666666666,0.5833333333333334,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,full_evidence_coverage_at_3,0.75,0.5833333333333334,0.9166666666666666,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,full_evidence_coverage_at_5,0.875,0.75,1.0,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,multi_segment,24,SMALL,mrr_at_10,0.8263888888888888,0.7083333333333334,0.9375,question-level percentile bootstrap,True
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,interval_recall_at_1,0.5675675675675675,0.4189189189189189,0.7162162162162162,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,interval_recall_at_3,0.7972972972972973,0.6621621621621622,0.9054054054054054,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,interval_recall_at_5,0.8468468468468469,0.7342342342342343,0.9459459459459459,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,hit_rate_at_1,0.5945945945945946,0.43243243243243246,0.7567567567567568,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,hit_rate_at_3,0.8378378378378378,0.7027027027027027,0.9459459459459459,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,hit_rate_at_5,0.8918918918918919,0.7837837837837838,0.972972972972973,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,full_evidence_coverage_at_1,0.5405405405405406,0.3783783783783784,0.7027027027027027,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,full_evidence_coverage_at_3,0.7567567567567568,0.6216216216216216,0.8918918918918919,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,full_evidence_coverage_at_5,0.8108108108108109,0.6756756756756757,0.918918918918919,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,paraphrase,37,OK,mrr_at_10,0.7245817245817247,0.6101673101673102,0.8344916344916345,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,interval_recall_at_1,0.703125,0.546875,0.84375,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,interval_recall_at_3,0.890625,0.78125,0.984375,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,interval_recall_at_5,0.96875,0.90625,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,hit_rate_at_1,0.75,0.59375,0.90625,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,hit_rate_at_3,0.90625,0.78125,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,hit_rate_at_5,0.96875,0.90625,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,full_evidence_coverage_at_1,0.65625,0.5,0.8125,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,full_evidence_coverage_at_3,0.875,0.75,0.96875,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,full_evidence_coverage_at_5,0.96875,0.90625,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,question_category,technical_term,32,OK,mrr_at_10,0.8440972222222223,0.7388888888888889,0.9375,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,interval_recall_at_1,0.6213592233009708,0.5242718446601942,0.7184466019417476,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,interval_recall_at_3,0.8640776699029126,0.7961165048543689,0.9223300970873787,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,interval_recall_at_5,0.912621359223301,0.8543689320388349,0.9611650485436893,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,hit_rate_at_1,0.6213592233009708,0.5242718446601942,0.7184466019417476,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,hit_rate_at_3,0.8640776699029126,0.7961165048543689,0.9223300970873787,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,hit_rate_at_5,0.912621359223301,0.8543689320388349,0.9611650485436893,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,full_evidence_coverage_at_1,0.6213592233009708,0.5242718446601942,0.7184466019417476,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,full_evidence_coverage_at_3,0.8640776699029126,0.7961165048543689,0.9223300970873787,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,full_evidence_coverage_at_5,0.912621359223301,0.8543689320388349,0.9611650485436893,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,1,103,OK,mrr_at_10,0.7485128679303437,0.6801741408537525,0.8124826629680998,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,interval_recall_at_1,0.4777777777777778,0.3611111111111111,0.5944444444444444,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,interval_recall_at_3,0.7666666666666667,0.65,0.8722222222222222,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,interval_recall_at_5,0.9,0.8222222222222223,0.9666666666666667,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,hit_rate_at_1,0.7666666666666667,0.6,0.9,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,hit_rate_at_3,0.9333333333333333,0.8333333333333334,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,hit_rate_at_5,1.0,1.0,1.0,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,full_evidence_coverage_at_1,0.2,0.06666666666666667,0.3333333333333333,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,full_evidence_coverage_at_3,0.6,0.43333333333333335,0.7666666666666667,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,full_evidence_coverage_at_5,0.8,0.6666666666666666,0.9333333333333333,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,stratum,gold_interval_count,2+,30,OK,mrr_at_10,0.8594444444444445,0.7594444444444445,0.95,question-level percentile bootstrap,False
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,interval_recall_at_1,0.5889724310776941,0.5165394402035624,0.6653439153439153,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,interval_recall_at_3,0.8421052631578947,0.7777777777777778,0.8992537313432836,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,interval_recall_at_5,0.9097744360902256,0.8559523809523809,0.95679012345679,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,hit_rate_at_1,0.6541353383458647,0.5801526717557252,0.7317073170731707,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,hit_rate_at_3,0.8796992481203008,0.8181818181818182,0.935251798561151,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,hit_rate_at_5,0.9323308270676691,0.8863636363636364,0.9745762711864406,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,full_evidence_coverage_at_1,0.5263157894736842,0.4452054794520548,0.6097560975609756,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,full_evidence_coverage_at_3,0.8045112781954887,0.7285714285714285,0.8723404255319149,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,full_evidence_coverage_at_5,0.8872180451127819,0.8223684210526315,0.9435483870967742,lecture-clustered percentile bootstrap,
+PRIMARY_ANSWERABLE,overall_lecture_clustered,,,133,OK,mrr_at_10,0.7735350280463063,0.7188838498362308,0.8262919202768827,lecture-clustered percentile bootstrap,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,interval_recall_at_1,0.6666666666666666,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,interval_recall_at_3,0.8333333333333334,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,interval_recall_at_5,1.0,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,hit_rate_at_1,0.6666666666666666,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,hit_rate_at_3,0.8333333333333334,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,hit_rate_at_5,1.0,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,full_evidence_coverage_at_1,0.6666666666666666,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,full_evidence_coverage_at_3,0.8333333333333334,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,full_evidence_coverage_at_5,1.0,,,,
+SENSITIVITY_ANSWERABLE,overall,,,6,VERY_SMALL,mrr_at_10,0.7916666666666666,,,,

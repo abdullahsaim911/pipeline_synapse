@@ -1,0 +1,61 @@
+{
+  "run_id": "B",
+  "preregistration_sha256": "ba06467957935190b50ab2e8d7cb09c5e392bbda40f4219325677af4ccc09dc6",
+  "model_snapshot": "C:/Users/PMLS/.cache/huggingface/hub/models--sentence-transformers--all-MiniLM-L6-v2/snapshots/1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+  "model_tree_fingerprint": "863d392e9e18dbd40363b73d4c11ea47dfe3543dcc4e4680dbc943725f499f05",
+  "model_unchanged_after_run": true,
+  "n_chunks": 592,
+  "n_questions": 139,
+  "batch_size": 32,
+  "device": "cpu",
+  "dtype_embeddings": "float32",
+  "score_accumulation": "float64 dot product of the float32 normalised embeddings (np.dot)",
+  "encode_call": "SentenceTransformer.encode(texts, batch_size=32, convert_to_numpy=True, normalize_embeddings=True) under torch.inference_mode()",
+  "query_text": "question_text exactly as in questions.csv (no prefix, no preprocessing)",
+  "chunk_text": "member cues cleaned text joined with one space",
+  "chunk_embeddings_sha256": "ad9de4724834c5ad563dec0277662b99d52e08c645a7d2369238b5f8932f80b8",
+  "question_embeddings_sha256": "5f1b4d48cd8debec9a1b20834b9521db4d9bb141104f600d4697dd077e8ba03e",
+  "max_abs_norm_deviation": {
+    "chunks": 1.2022313078396962e-07,
+    "questions": 9.956869262417456e-08
+  },
+  "truncation": {
+    "max_seq_length": 256,
+    "chunks_truncated": 0,
+    "chunks_total": 592,
+    "max_chunk_tokens": 202,
+    "questions_truncated": 0,
+    "max_question_tokens": 37,
+    "note": "diagnostic only; truncation is the model default and was not altered"
+  },
+  "timing_seconds": {
+    "model_load": 10.13,
+    "encode_all": 16.56
+  },
+  "runtime": {
+    "python": "3.13.1",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.14.1+cpu",
+    "sentence_transformers": "6.1.0",
+    "transformers": "5.19.0",
+    "numpy": "2.5.4",
+    "torch_threads": 10,
+    "torch_interop_threads": 10,
+    "torch_deterministic_algorithms_enabled": false,
+    "determinism_note": "torch deterministic-algorithms mode was NOT enabled; repeatability is verified empirically (bitwise comparison of two runs), not assumed.",
+    "env": {
+      "HF_HUB_OFFLINE": "1",
+      "TRANSFORMERS_OFFLINE": "1",
+      "PYTHONHASHSEED": null,
+      "OMP_NUM_THREADS": null,
+      "MKL_NUM_THREADS": null
+    }
+  },
+  "file_sha256": {
+    "chunk_embeddings.npy": "d45f6cc11fb8adf2ab7711b8163dfa0babddd57523ad7c6fce393c835920d5a5",
+    "question_embeddings.npy": "c97a2086c38acbfad028f80633713c2df3b1cf39049e93257da7564817df6e48",
+    "per_question_results.csv": "1ca2572173197e1577a4d99fcf6ea48429e00022744ca8be5176cc54f1053e3b",
+    "full_rankings.csv": "ee38afdae6ab6eae8147eb3bfbe17949c24259e505733842a256c1272801a20d",
+    "chunk_index.csv": "3373f6679837ae174679f4ca3dc6c96b0ab2d937dc5131f25238974e9f26bae4"
+  }
+}

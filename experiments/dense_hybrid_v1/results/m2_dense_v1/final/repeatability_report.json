@@ -1,0 +1,65 @@
+{
+  "tolerance_rule": "ZERO tolerance (bitwise identity) - the preregistration declares identical rankings/metrics and no numerical tolerance; the strictest rule is applied",
+  "checks": {
+    "chunk_embeddings.npy": {
+      "bitwise_identical": true,
+      "shape": [
+        592,
+        384
+      ],
+      "sha256_a": "ad9de4724834c5ad563dec0277662b99d52e08c645a7d2369238b5f8932f80b8",
+      "sha256_b": "ad9de4724834c5ad563dec0277662b99d52e08c645a7d2369238b5f8932f80b8",
+      "max_abs_difference": 0.0,
+      "n_differing_values": 0
+    },
+    "question_embeddings.npy": {
+      "bitwise_identical": true,
+      "shape": [
+        139,
+        384
+      ],
+      "sha256_a": "5f1b4d48cd8debec9a1b20834b9521db4d9bb141104f600d4697dd077e8ba03e",
+      "sha256_b": "5f1b4d48cd8debec9a1b20834b9521db4d9bb141104f600d4697dd077e8ba03e",
+      "max_abs_difference": 0.0,
+      "n_differing_values": 0
+    },
+    "full_rankings": {
+      "rows": [
+        3326,
+        3326
+      ],
+      "ranking_order_differences": 0,
+      "score_differences": 0,
+      "max_abs_score_difference": 0.0,
+      "first_ranking_differences": []
+    },
+    "per_question_results.csv_bytes": {
+      "byte_identical": true
+    },
+    "full_rankings.csv_bytes": {
+      "byte_identical": true
+    },
+    "chunk_index.csv_bytes": {
+      "byte_identical": true
+    }
+  },
+  "result": "PASS",
+  "runs": {
+    "A": {
+      "timing_seconds": {
+        "model_load": 9.39,
+        "encode_all": 15.51
+      },
+      "model_unchanged_after_run": true,
+      "torch_threads": 10
+    },
+    "B": {
+      "timing_seconds": {
+        "model_load": 10.13,
+        "encode_all": 16.56
+      },
+      "model_unchanged_after_run": true,
+      "torch_threads": 10
+    }
+  }
+}

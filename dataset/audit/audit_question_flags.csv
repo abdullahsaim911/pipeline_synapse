@@ -1,0 +1,251 @@
+question_id,lecture_id,question_category,answerable,visual_information_required,eval_track,audit_readiness,highest_severity,issue_codes,reasons,human_verified
+MATH01_Q01,MATH01,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH01_Q02,MATH01,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH01_Q03,MATH01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH01_Q04,MATH01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH01_Q05,MATH01,technical_term,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH01_Q06,MATH01,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH01_Q07,MATH01,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE;MULTI_INTERVALS_WEAKLY_DISTINCT,"Expected ""(peak)"" at pi/6 is not stated; the lecture only says the second tangent is ""that minimum there"" at 7pi/6. || Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+MATH01_Q08,MATH01,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH01_Q09,MATH01,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION,The second derivative of h is easily derivable from the stated h; the lecture never states it or discusses concavity.,false
+MATH01_Q10,MATH01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+MATH02_Q01,MATH02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH02_Q02,MATH02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH02_Q03,MATH02,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH02_Q04,MATH02,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH02_Q05,MATH02,technical_term,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,LONG_EVIDENCE_SPAN,"A gold interval is 177s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+MATH02_Q06,MATH02,technical_term,true,false,A_transcript_qa,READY,,,,false
+MATH02_Q07,MATH02,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+MATH02_Q08,MATH02,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 11 cues, 31s): does not test separated evidence.",false
+MATH02_Q09,MATH02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+MATH02_Q10,MATH02,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION,"The definite integral from 0 to 1 can be calculated from the antiderivative the lecture states (-1/2 sin(1-e^2x)+C); ""not stated"" is true, ""not derivable"" is not.",false
+MATH03_Q01,MATH03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH03_Q02,MATH03,direct_keyword,true,false,A_transcript_qa,READY,INFO,TEMPLATE_SIMILAR_QUESTION,Pair MATH03_Q02~MATH03_Q05 (0.50 same_lecture=True); inspected: not true duplicates.,false
+MATH03_Q03,MATH03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH03_Q04,MATH03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH03_Q05,MATH03,technical_term,true,false,A_transcript_qa,READY,INFO,TEMPLATE_SIMILAR_QUESTION,Pair MATH03_Q02~MATH03_Q05 (0.50 same_lecture=True); inspected: not true duplicates.,false
+MATH03_Q06,MATH03,technical_term,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH03_Q07,MATH03,multi_segment,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE;MULTI_SEGMENT_SINGLE_INTERVAL;TEMPLATE_SIMILAR_QUESTION,"Expected eigenvector ""(1,0,0)"" is implied (""set it to 1 ... other two entries should be 0""), not stated; the matrix as read aloud (""0, 0, 3, 2, 3, 0, -2, 0, 1"") is garbled. || Category multi_segment but only one contiguous gold interval (1 interval, 11 cues, 78s): does not test separated evidence. || Pair MATH03_Q07~MATH03_Q09 (0.55 same_lecture=True); inspected: not true duplicates.",false
+MATH03_Q08,MATH03,multi_segment,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,CAPTION_GAP_INSIDE_EVIDENCE,Silent/uncaptioned stretch of 6.4s inside the gold interval.,false
+MATH03_Q09,MATH03,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION;TEMPLATE_SIMILAR_QUESTION,The lecture says the same procedure gives an eigenvector for each eigenvalue and reads the matrix aloud; the value for lambda=3 is derivable but never stated. || Pair MATH03_Q07~MATH03_Q09 (0.55 same_lecture=True); inspected: not true duplicates.,false
+MATH03_Q10,MATH03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+MATH04_Q01,MATH04,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH04_Q02,MATH04,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH04_Q03,MATH04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+MATH04_Q04,MATH04,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+MATH04_Q05,MATH04,technical_term,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+MATH04_Q06,MATH04,technical_term,true,false,A_transcript_qa,READY,,,,false
+MATH04_Q07,MATH04,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 33 cues, 87s): does not test separated evidence.",false
+MATH04_Q08,MATH04,multi_segment,true,false,A_transcript_qa,EXCLUDE_UNTIL_FIXED,BLOCKER,EVIDENCE_DOES_NOT_SUPPORT_ANSWER;LONG_EVIDENCE_SPAN,"Gold intervals skip ~218-316 s, where the terms 1, -2x and 4x^2 are derived; the full series is never stated in one place, so the expected answer ""1 - 2x + 4x^2 + 3x^3"" is not supported by the gold text. || A gold interval is 108s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+MATH04_Q09,MATH04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+MATH04_Q10,MATH04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,INFO,TEMPLATE_SIMILAR_QUESTION,Pair MATH04_Q10~CHEM04_Q05 (0.50 same_lecture=False); inspected: not true duplicates.,false
+MATH05_Q01,MATH05,direct_keyword,true,false,A_transcript_qa,MANUAL_REVIEW,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE;CAPTION_GAP_INSIDE_EVIDENCE,"Gold interval spans an 11 s caption gap (644-656 s); the formula cue and the ""about 0.09"" cue are separated by uncaptioned time. || Silent/uncaptioned stretch of 11.3s inside the gold interval.",false
+MATH05_Q02,MATH05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+MATH05_Q03,MATH05,paraphrase,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH05_Q04,MATH05,paraphrase,true,false,A_transcript_qa,MANUAL_REVIEW,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE,"Expected point ""disease is rare so false positives from the healthy group dominate"" is not stated in the gold interval (rarity and the false-positive path appear at ~564-656 s).",false
+MATH05_Q05,MATH05,technical_term,true,false,A_transcript_qa,READY,,,,false
+MATH05_Q06,MATH05,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+MATH05_Q07,MATH05,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 10 cues, 56s): does not test separated evidence.",false
+MATH05_Q08,MATH05,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+MATH05_Q09,MATH05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+MATH05_Q10,MATH05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS01_Q01,PHYS01,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS01_Q02,PHYS01,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS01_Q03,PHYS01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS01_Q04,PHYS01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS01_Q05,PHYS01,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS01_Q06,PHYS01,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS01_Q07,PHYS01,multi_segment,true,false,A_transcript_qa,READY,,,,false
+PHYS01_Q08,PHYS01,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 16 cues, 81s): does not test separated evidence.",false
+PHYS01_Q09,PHYS01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS01_Q10,PHYS01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS02_Q01,PHYS02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS02_Q02,PHYS02,direct_keyword,true,false,A_transcript_qa,MANUAL_REVIEW,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE,"Four consecutive cues (~60 words) are timestamped within ~3 s (299-302 s); caption timing is compressed here, so the gold timestamps are unreliable.",false
+PHYS02_Q03,PHYS02,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+PHYS02_Q04,PHYS02,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS02_Q05,PHYS02,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS02_Q06,PHYS02,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS02_Q07,PHYS02,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 14 cues, 80s): does not test separated evidence.",false
+PHYS02_Q08,PHYS02,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS02_Q09,PHYS02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS02_Q10,PHYS02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS03_Q01,PHYS03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q02,PHYS03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q03,PHYS03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q04,PHYS03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q05,PHYS03,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q06,PHYS03,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS03_Q07,PHYS03,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN,"Category multi_segment but only one contiguous gold interval (1 interval, 19 cues, 91s): does not test separated evidence. || A gold interval is 91s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+PHYS03_Q08,PHYS03,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,LONG_EVIDENCE_SPAN,"A gold interval is 180s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+PHYS03_Q09,PHYS03,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION,"The lecture hints that curly E ""will be either 1, 2, 1/2, a nice number"" without deriving levels; borderline.",false
+PHYS03_Q10,PHYS03,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION;TEMPLATE_SIMILAR_QUESTION,"Creation/annihilation operators are named and deferred, not defined; every content word of the question occurs in the transcript, so the absence rests on a human reading. || Pair PHYS03_Q10~CHEM02_Q06 (0.50 same_lecture=False); inspected: not true duplicates.",false
+PHYS04_Q01,PHYS04,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+PHYS04_Q02,PHYS04,direct_keyword,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+PHYS04_Q03,PHYS04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS04_Q04,PHYS04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS04_Q05,PHYS04,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS04_Q06,PHYS04,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS04_Q07,PHYS04,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,LONG_EVIDENCE_SPAN,"A gold interval is 146s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+PHYS04_Q08,PHYS04,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN,"Category multi_segment but only one contiguous gold interval (1 interval, 30 cues, 121s): does not test separated evidence. || A gold interval is 121s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+PHYS04_Q09,PHYS04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS04_Q10,PHYS04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS05_Q01,PHYS05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q02,PHYS05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q03,PHYS05,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q04,PHYS05,paraphrase,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q05,PHYS05,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q06,PHYS05,technical_term,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q07,PHYS05,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+PHYS05_Q08,PHYS05,multi_segment,true,false,A_transcript_qa,READY,,,,false
+PHYS05_Q09,PHYS05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+PHYS05_Q10,PHYS05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM01_Q01,CHEM01,direct_keyword,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,VISUAL_LABEL_INCONSISTENT;NONMULTI_HAS_MULTIPLE_INTERVALS,visual_information_required=false but visual_element_type=molecule. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM01_Q02,CHEM01,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM01_Q03,CHEM01,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM01_Q04,CHEM01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CHEM01_Q05,CHEM01,technical_term,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,VISUAL_LABEL_INCONSISTENT;NONMULTI_HAS_MULTIPLE_INTERVALS,visual_information_required=false but visual_element_type=molecule. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM01_Q06,CHEM01,technical_term,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM01_Q07,CHEM01,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 15 cues, 38s): does not test separated evidence.",false
+CHEM01_Q08,CHEM01,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 10 cues, 28s): does not test separated evidence.",false
+CHEM01_Q09,CHEM01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM01_Q10,CHEM01,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION,"Captions only promise course policies (""number of points you need, when the exams are""); a slide could show grading. Video ends before the policy section per captions.",false
+CHEM02_Q01,CHEM02,direct_keyword,true,false,A_transcript_qa,EXCLUDE_UNTIL_FIXED,BLOCKER,EVIDENCE_DOES_NOT_SUPPORT_ANSWER;NONMULTI_HAS_MULTIPLE_INTERVALS,"Question asks which equation; gold intervals say G depends on dH and T dS and that ""this equation"" is important, but the spoken equation ""delta G equals delta H minus T delta S"" occurs at ~1613-1616 s and ~1896-1901 s, outside gold. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.",false
+CHEM02_Q02,CHEM02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM02_Q03,CHEM02,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CHEM02_Q04,CHEM02,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CHEM02_Q05,CHEM02,technical_term,true,false,A_transcript_qa,READY,,,,false
+CHEM02_Q06,CHEM02,technical_term,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS;TEMPLATE_SIMILAR_QUESTION,2 gold intervals on a non-multi_segment question; recall@k counts all of them. || Pair PHYS03_Q10~CHEM02_Q06 (0.50 same_lecture=False); inspected: not true duplicates.,false
+CHEM02_Q07,CHEM02,multi_segment,true,false,A_transcript_qa,READY,,,,false
+CHEM02_Q08,CHEM02,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE,"Expected ""soap foam shows the gas"" (~995-1005 s) is not inside the gold intervals.",false
+CHEM02_Q09,CHEM02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM02_Q10,CHEM02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM03_Q01,CHEM03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM03_Q02,CHEM03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM03_Q03,CHEM03,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM03_Q04,CHEM03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CHEM03_Q05,CHEM03,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM03_Q06,CHEM03,technical_term,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,VISUAL_LABEL_INCONSISTENT,visual_information_required=false but visual_element_type=molecule.,false
+CHEM03_Q07,CHEM03,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM03_Q08,CHEM03,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 30 cues, 77s): does not test separated evidence.",false
+CHEM03_Q09,CHEM03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM03_Q10,CHEM03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM04_Q01,CHEM04,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM04_Q02,CHEM04,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM04_Q03,CHEM04,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,BLOCKER,EVIDENCE_DOES_NOT_SUPPORT_ANSWER;CAPTION_GAP_INSIDE_EVIDENCE;NONMULTI_HAS_MULTIPLE_INTERVALS,"Gold intervals (182-200 s, 282-357 s, 389-448 s) do not contain the stated motivation. The relevant speech is roughly 64-99 s (negative anion attracted to a nucleus), 102-129 s (bromine electronegativity) and 141-161 s (sharing the pair). Authoring error: cue numbers were typed as seconds. || Silent/uncaptioned stretch of 6.2s inside the gold interval. || 3 gold intervals on a non-multi_segment question; recall@k counts all of them.",false
+CHEM04_Q04,CHEM04,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM04_Q05,CHEM04,technical_term,true,false,A_transcript_qa,EXCLUDE_UNTIL_FIXED,BLOCKER,EVIDENCE_DOES_NOT_SUPPORT_ANSWER;NONMULTI_HAS_MULTIPLE_INTERVALS;TEMPLATE_SIMILAR_QUESTION;POSSIBLE_HIDDEN_VISUAL_DEPENDENCE,"Second gold interval (247-278 s) is about drawing the hydrogens and does not support the expected point; only the first interval (70-102 s) supports it. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them. || Pair MATH04_Q10~CHEM04_Q05 (0.50 same_lecture=False); inspected: not true duplicates. || 5 deictic phrases (""over here"", ""like this"", ...) in the gold text while labelled non-visual.",false
+CHEM04_Q06,CHEM04,technical_term,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,NONMULTI_HAS_MULTIPLE_INTERVALS;POSSIBLE_HIDDEN_VISUAL_DEPENDENCE,"2 gold intervals on a non-multi_segment question; recall@k counts all of them. || 6 deictic phrases (""over here"", ""like this"", ...) in the gold text while labelled non-visual.",false
+CHEM04_Q07,CHEM04,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+CHEM04_Q08,CHEM04,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM04_Q09,CHEM04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM04_Q10,CHEM04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM05_Q01,CHEM05,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CHEM05_Q02,CHEM05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CHEM05_Q03,CHEM05,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,3 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CHEM05_Q04,CHEM05,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CHEM05_Q05,CHEM05,technical_term,true,false,A_transcript_qa,READY,,,,false
+CHEM05_Q06,CHEM05,technical_term,true,false,A_transcript_qa,MANUAL_REVIEW,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE;POSSIBLE_HIDDEN_VISUAL_DEPENDENCE,"Expected ""initial departure of bromide"" as the rate-determining step is inferred from ""in this case, it was the bromo group""; not stated explicitly. || 4 deictic phrases (""over here"", ""like this"", ...) in the gold text while labelled non-visual.",false
+CHEM05_Q07,CHEM05,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,BLOCKER,EVIDENCE_DOES_NOT_SUPPORT_ANSWER;LONG_EVIDENCE_SPAN,"Step 1 (bromide leaving to form the carbocation, ~93-205 s) is missing from gold; the first gold interval (236-249 s) only labels the tertiary carbocation. || A gold interval is 122s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+CHEM05_Q08,CHEM05,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;POSSIBLE_HIDDEN_VISUAL_DEPENDENCE,"Category multi_segment but only one contiguous gold interval (1 interval, 33 cues, 81s): does not test separated evidence. || 4 deictic phrases (""over here"", ""like this"", ...) in the gold text while labelled non-visual.",false
+CHEM05_Q09,CHEM05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CHEM05_Q10,CHEM05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO01_Q01,BIO01,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO01_Q02,BIO01,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO01_Q03,BIO01,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO01_Q04,BIO01,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,CAPTION_GAP_INSIDE_EVIDENCE;NONMULTI_HAS_MULTIPLE_INTERVALS,Silent/uncaptioned stretch of 5.8s inside the gold interval. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO01_Q05,BIO01,technical_term,true,false,A_transcript_qa,READY,,,,false
+BIO01_Q06,BIO01,technical_term,true,false,A_transcript_qa,READY,,,,false
+BIO01_Q07,BIO01,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,LONG_EVIDENCE_SPAN;CAPTION_GAP_INSIDE_EVIDENCE,"A gold interval is 135s long: the answer is a small part of it, which inflates hit chances and lowers precision. || Silent/uncaptioned stretch of 6.1s inside the gold interval.",false
+BIO01_Q08,BIO01,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN,"Category multi_segment but only one contiguous gold interval (1 interval, 31 cues, 107s): does not test separated evidence. || A gold interval is 107s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+BIO01_Q09,BIO01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO01_Q10,BIO01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO02_Q01,BIO02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO02_Q02,BIO02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO02_Q03,BIO02,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO02_Q04,BIO02,paraphrase,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,EVIDENCE_NEXT_TO_CAPTION_GAP,Gold interval is immediately followed/preceded by a caption gap (gap 217-231s).,false
+BIO02_Q05,BIO02,technical_term,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,CAPTION_GAP_INSIDE_EVIDENCE,Silent/uncaptioned stretch of 7.2s inside the gold interval.,false
+BIO02_Q06,BIO02,technical_term,true,false,A_transcript_qa,READY,,,,false
+BIO02_Q07,BIO02,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN;CAPTION_GAP_INSIDE_EVIDENCE,"Category multi_segment but only one contiguous gold interval (1 interval, 25 cues, 118s): does not test separated evidence. || A gold interval is 118s long: the answer is a small part of it, which inflates hit chances and lowers precision. || Silent/uncaptioned stretch of 7.6s inside the gold interval.",false
+BIO02_Q08,BIO02,multi_segment,true,false,A_transcript_qa,READY,,,,false
+BIO02_Q09,BIO02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO02_Q10,BIO02,unanswerable,false,false,A_transcript_qa_abstention,MANUAL_REVIEW,MAJOR,UNANSWERABLE_NEEDS_HUMAN_DECISION,"UUA is named in the captions but its amino acid is not; a codon table (""table one"") is referred to and may be shown on screen, so the video may answer it.",false
+BIO03_Q01,BIO03,direct_keyword,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,CAPTION_GAP_INSIDE_EVIDENCE;NONMULTI_HAS_MULTIPLE_INTERVALS,Silent/uncaptioned stretch of 8.8s inside the gold interval. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO03_Q02,BIO03,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO03_Q03,BIO03,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO03_Q04,BIO03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+BIO03_Q05,BIO03,technical_term,true,false,A_transcript_qa,READY,,,,false
+BIO03_Q06,BIO03,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO03_Q07,BIO03,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE,"Expected ""passes electrons downhill making ATP"": the ATP-making statement (~630-645 s) is not inside the gold intervals.",false
+BIO03_Q08,BIO03,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+BIO03_Q09,BIO03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO03_Q10,BIO03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO04_Q01,BIO04,direct_keyword,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO04_Q02,BIO04,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO04_Q03,BIO04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+BIO04_Q04,BIO04,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO04_Q05,BIO04,technical_term,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE;CAPTION_GAP_INSIDE_EVIDENCE;NONMULTI_HAS_MULTIPLE_INTERVALS,"Expected ""mitosis ... 2N chromosomes"" is not in the gold intervals (2N for mitotic cells is said at ~577 s). || Silent/uncaptioned stretch of 7.0s inside the gold interval. || 2 gold intervals on a non-multi_segment question; recall@k counts all of them.",false
+BIO04_Q06,BIO04,technical_term,true,false,A_transcript_qa,READY,,,,false
+BIO04_Q07,BIO04,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO04_Q08,BIO04,multi_segment,true,false,A_transcript_qa,READY,,,,false
+BIO04_Q09,BIO04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO04_Q10,BIO04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO05_Q01,BIO05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO05_Q02,BIO05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+BIO05_Q03,BIO05,paraphrase,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+BIO05_Q04,BIO05,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO05_Q05,BIO05,technical_term,true,false,A_transcript_qa,MANUAL_REVIEW,MAJOR,EXPECTED_POINT_NOT_IN_GOLD_OR_TIMING_UNRELIABLE,"Gold text says ""hydrolysis lipids"" (caption error) and uses ""amphipathic"" without defining it; the expected definition is inferred.",false
+BIO05_Q06,BIO05,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+BIO05_Q07,BIO05,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 10 cues, 34s): does not test separated evidence.",false
+BIO05_Q08,BIO05,multi_segment,true,uncertain,A_or_B_pending_review,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 15 cues, 47s): does not test separated evidence.",false
+BIO05_Q09,BIO05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+BIO05_Q10,BIO05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS01_Q01,CS01,direct_keyword,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CS01_Q02,CS01,direct_keyword,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS;TEMPLATE_SIMILAR_QUESTION,2 gold intervals on a non-multi_segment question; recall@k counts all of them. || Pair CS01_Q02~CS01_Q06 (0.54 same_lecture=True); inspected: not true duplicates.,false
+CS01_Q03,CS01,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS01_Q04,CS01,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CS01_Q05,CS01,technical_term,true,false,A_transcript_qa,READY,,,,false
+CS01_Q06,CS01,technical_term,true,false,A_transcript_qa,READY,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS;TEMPLATE_SIMILAR_QUESTION,2 gold intervals on a non-multi_segment question; recall@k counts all of them. || Pair CS01_Q02~CS01_Q06 (0.54 same_lecture=True); inspected: not true duplicates.,false
+CS01_Q07,CS01,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+CS01_Q08,CS01,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS01_Q09,CS01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS01_Q10,CS01,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS02_Q01,CS02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS02_Q02,CS02,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS02_Q03,CS02,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS02_Q04,CS02,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS02_Q05,CS02,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS02_Q06,CS02,technical_term,true,false,A_transcript_qa,READY,,,,false
+CS02_Q07,CS02,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS02_Q08,CS02,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together.",false
+CS02_Q09,CS02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS02_Q10,CS02,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS03_Q01,CS03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS03_Q02,CS03,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS03_Q03,CS03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS03_Q04,CS03,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS03_Q05,CS03,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS03_Q06,CS03,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CS03_Q07,CS03,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_INTERVALS_WEAKLY_DISTINCT;LONG_EVIDENCE_SPAN,"Multi-interval but nearest gap between intervals is <15 s, so the spans are close together. || A gold interval is 110s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+CS03_Q08,CS03,multi_segment,true,false,A_transcript_qa,READY_WITH_CAVEATS,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL,"Category multi_segment but only one contiguous gold interval (1 interval, 20 cues, 65s): does not test separated evidence.",false
+CS03_Q09,CS03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS03_Q10,CS03,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS04_Q01,CS04,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS04_Q02,CS04,direct_keyword,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS04_Q03,CS04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS04_Q04,CS04,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS04_Q05,CS04,technical_term,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS04_Q06,CS04,technical_term,true,false,A_transcript_qa,READY,,,,false
+CS04_Q07,CS04,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN,"Category multi_segment but only one contiguous gold interval (1 interval, 44 cues, 126s): does not test separated evidence. || A gold interval is 126s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+CS04_Q08,CS04,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,LONG_EVIDENCE_SPAN,"A gold interval is 91s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+CS04_Q09,CS04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS04_Q10,CS04,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS05_Q01,CS05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS05_Q02,CS05,direct_keyword,true,false,A_transcript_qa,READY,,,,false
+CS05_Q03,CS05,paraphrase,true,false,A_transcript_qa,READY,,,,false
+CS05_Q04,CS05,paraphrase,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,INFO,NONMULTI_HAS_MULTIPLE_INTERVALS,2 gold intervals on a non-multi_segment question; recall@k counts all of them.,false
+CS05_Q05,CS05,technical_term,true,false,A_transcript_qa,READY,,,,false
+CS05_Q06,CS05,technical_term,true,false,A_transcript_qa,READY,,,,false
+CS05_Q07,CS05,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,,,,false
+CS05_Q08,CS05,multi_segment,true,true,B_visually_dependent,NOT_TRANSCRIPT_ONLY_VISUAL_OR_UNCERTAIN,CAVEAT,MULTI_SEGMENT_SINGLE_INTERVAL;LONG_EVIDENCE_SPAN,"Category multi_segment but only one contiguous gold interval (1 interval, 53 cues, 146s): does not test separated evidence. || A gold interval is 146s long: the answer is a small part of it, which inflates hit chances and lowers precision.",false
+CS05_Q09,CS05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false
+CS05_Q10,CS05,unanswerable,false,false,A_transcript_qa_abstention,READY_ABSTENTION_TRANSCRIPT_LEVEL,,,,false

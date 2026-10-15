@@ -1,0 +1,11 @@
+question_id,lecture_id,subject,question_category,gold_interval_count,bm25_hit_at_5,dense_hit_at_5,hybrid_hit_at_5,bm25_first_relevant_rank,dense_first_relevant_rank,hybrid_first_relevant_rank,bm25_n_ranked,category
+MATH02_Q02,MATH02,Mathematics,direct_keyword,1,0,1,0,11,5,8,15,bm25_miss_hybrid_miss_dense_hit
+MATH03_Q01,MATH03,Mathematics,direct_keyword,1,0,1,1,11,1,4,13,bm25_miss_hybrid_hit_dense_hit
+MATH04_Q02,MATH04,Mathematics,direct_keyword,1,0,1,1,7,3,5,10,bm25_miss_hybrid_hit_dense_hit
+MATH04_Q03,MATH04,Mathematics,paraphrase,1,0,0,0,7,6,7,8,all_arms_miss_at_5
+CHEM01_Q08,CHEM01,Chemistry,multi_segment,1,0,1,0,14,2,6,15,bm25_miss_hybrid_miss_dense_hit
+CHEM02_Q03,CHEM02,Chemistry,paraphrase,1,0,1,0,16,5,7,26,bm25_miss_hybrid_miss_dense_hit
+CHEM02_Q04,CHEM02,Chemistry,paraphrase,1,0,0,0,10,6,8,27,all_arms_miss_at_5
+BIO03_Q01,BIO03,Biology,direct_keyword,2+,1,0,1,4,6,2,24,bm25_hit_hybrid_hit_dense_miss
+CS04_Q03,CS04,Computer science,paraphrase,1,0,1,1,6,4,5,34,bm25_miss_hybrid_hit_dense_hit
+CS05_Q05,CS05,Computer science,technical_term,1,0,1,0,9,4,6,23,bm25_miss_hybrid_miss_dense_hit
