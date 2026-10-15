@@ -1,0 +1,5 @@
+opencv-python>=4.8
+numpy
+yt-dlp            # only needed when the source is a YouTube URL / id
+mediapipe>=0.10   # optional: only for HAND_POINTING (see README: model files)
+pytest            # tests only
