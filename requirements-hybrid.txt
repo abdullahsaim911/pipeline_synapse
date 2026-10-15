@@ -1,0 +1,6 @@
+# OPTIONAL dependencies for the experimental Ask stages in qa/ (hybrid retrieval + reranking, NLI faithfulness).
+# Not needed for the default pipeline. Versions below are the ones the stages were tested with (CPU build of torch).
+sentence-transformers==6.1.0
+transformers==5.19.0
+torch==2.14.1
+numpy>=2.0
