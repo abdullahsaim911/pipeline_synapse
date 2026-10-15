@@ -81,3 +81,10 @@ tests/
 plans/
 frame-extraction/
 misc/
+# Secrets: never commit real environment files
+.env.*
+!.env.example
+
+# Track tests and the LLM provider docs (broad rules above would ignore them)
+!tests/
+!llm_interface/README.md

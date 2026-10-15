@@ -9,3 +9,6 @@ sqlalchemy>=2.0.36
 
 # API tools
 python-multipart>=0.0.12
+
+# Hosted LLM provider for Ask a Question (Gemini)
+google-genai>=1.0.0

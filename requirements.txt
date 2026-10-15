@@ -46,6 +46,9 @@ pydantic-settings>=2.6.0
 sqlalchemy>=2.0.36
 python-multipart>=0.0.12
 
+# Hosted LLM provider for Ask a Question (Gemini)
+google-genai>=1.0.0
+
 # =============================================================================
 # Additional Dependencies for Pipeline
 # =============================================================================
@@ -86,3 +89,4 @@ psutil>=5.9.0
 #   - Download: https://ollama.ai/download
 #   - Pull model: ollama pull mistral
 #   - Verify: ollama list
+python-dotenv

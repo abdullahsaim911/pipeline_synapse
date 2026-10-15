@@ -6,11 +6,16 @@ and explanation generation.
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 from api.database import engine, Base
 from api.routers import video_router
+from api.logging_setup import configure_ask_logging
+from api.security import configure_cors
+
+load_dotenv()
+configure_ask_logging()
 
 
 # Create database tables on startup
@@ -29,17 +34,11 @@ app = FastAPI(
     title="Synapse API",
     description="AI-powered accessibility pipeline for blind students",
     version="1.0.0",
-    lifespan=lifespan
+    lifespan=lifespan,
 )
 
-# Configure CORS for Electron frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # For Electron, we allow all origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS limited to the frontend origin(s); see api/security.py (SYNAPSE_CORS_ORIGINS)
+configure_cors(app)
 
 # Include routers
 app.include_router(video_router)
@@ -52,7 +51,7 @@ async def root():
     return {
         "message": "Synapse API is running",
         "version": "1.0.0",
-        "status": "healthy"
+        "status": "healthy",
     }
 
 
@@ -65,9 +64,4 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(
-        "api.main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True
-    )
+    uvicorn.run("api.main:app", host="127.0.0.1", port=8000, reload=True)
