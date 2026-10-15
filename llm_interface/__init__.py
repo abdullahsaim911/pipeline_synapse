@@ -12,6 +12,23 @@ from .ollama_client import (
     OllamaClientError,
     FUSION_AVAILABLE
 )
+from .providers import (
+    TextGenerationProvider,
+    GenerationSettings,
+    GenerationResult,
+    TokenUsage,
+    LLMProviderError,
+    LLMConfigurationError,
+    LLMAuthenticationError,
+    LLMRateLimitError,
+    LLMTimeoutError,
+    LLMConnectionError,
+    LLMUnavailableError,
+    LLMRequestError,
+    LLMEmptyResponseError,
+    LLMMalformedResponseError,
+    get_text_provider,
+)
 
 __all__ = [
     "OllamaClient",
@@ -21,5 +38,20 @@ __all__ = [
     "OllamaTimeoutError",
     "OllamaServerError",
     "OllamaClientError",
-    "FUSION_AVAILABLE"
+    "FUSION_AVAILABLE",
+    "TextGenerationProvider",
+    "GenerationSettings",
+    "GenerationResult",
+    "TokenUsage",
+    "LLMProviderError",
+    "LLMConfigurationError",
+    "LLMAuthenticationError",
+    "LLMRateLimitError",
+    "LLMTimeoutError",
+    "LLMConnectionError",
+    "LLMUnavailableError",
+    "LLMRequestError",
+    "LLMEmptyResponseError",
+    "LLMMalformedResponseError",
+    "get_text_provider"
 ]
