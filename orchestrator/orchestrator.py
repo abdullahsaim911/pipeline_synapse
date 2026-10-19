@@ -285,6 +285,14 @@ class PipelineOrchestrator:
         print("[Orchestrator] Cleaning GPU memory after transcription...")
         clear_gpu_memory()
 
+        if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
+            try:
+                from synapse_interaction import detect_interactions
+                out_path = os.path.join(video_dir, "interactions.json")
+                detect_interactions(youtube_url, out_path)
+            except Exception as e:
+                print(f"[Orchestrator] Interaction detection failed: {e}")
+
         return transcript_result, keyframes_result
 
     def _synchronize(self, video_dir: str) -> List:
@@ -307,6 +315,17 @@ class PipelineOrchestrator:
         )
 
         intervention_points = synchronizer.detect_suffer_points()
+        if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
+            try:
+                from synapse_interaction import fuse_interactions
+                intervention_points = fuse_interactions(
+                    intervention_points,
+                    os.path.join(video_dir, "interactions.json"),
+                    transcript_path=f"{video_dir}/transcript.json",
+                    keyframes_path=f"{video_dir}/keyframes/keyframes.json"
+                )
+            except Exception as e:
+                print(f"[Orchestrator] Interaction fusion failed: {e}")
         print(f"[Orchestrator] Found {len(intervention_points)} suffer points")
 
         return intervention_points
