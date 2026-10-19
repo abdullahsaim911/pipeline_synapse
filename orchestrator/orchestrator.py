@@ -287,9 +287,34 @@ class PipelineOrchestrator:
 
         if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
             try:
-                from synapse_interaction import detect_interactions
+                from synapse_interaction import Config, detect_interactions
                 out_path = os.path.join(video_dir, "interactions.json")
-                detect_interactions(youtube_url, out_path)
+                cfg = Config(enable_hand=False)
+                print("[Orchestrator] Detecting visual interactions...")
+                try:
+                    interactions = detect_interactions(
+                        youtube_url, out_path, cfg, verbose=True
+                    )
+                except Exception:
+                    # OpenCV often cannot decode a live YouTube stream; download
+                    # once into this video's existing data dir (not demo_videos).
+                    local_mp4 = os.path.join(video_dir, "video.mp4")
+                    if not os.path.exists(local_mp4):
+                        import yt_dlp
+                        with yt_dlp.YoutubeDL({
+                            "format": "bv*[height<=720]",
+                            "outtmpl": local_mp4,
+                            "quiet": True,
+                            "no_warnings": True,
+                        }) as ydl:
+                            ydl.download([youtube_url])
+                    interactions = detect_interactions(
+                        local_mp4, out_path, cfg, verbose=True
+                    )
+                print(
+                    f"[Orchestrator] Interaction detection complete: "
+                    f"{len(interactions)} events -> {out_path}"
+                )
             except Exception as e:
                 print(f"[Orchestrator] Interaction detection failed: {e}")
 
@@ -318,11 +343,16 @@ class PipelineOrchestrator:
         if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
             try:
                 from synapse_interaction import fuse_interactions
+                before = len(intervention_points)
                 intervention_points = fuse_interactions(
                     intervention_points,
                     os.path.join(video_dir, "interactions.json"),
                     transcript_path=f"{video_dir}/transcript.json",
                     keyframes_path=f"{video_dir}/keyframes/keyframes.json"
+                )
+                print(
+                    f"[Orchestrator] Fused interactions into M1 points: "
+                    f"{before} -> {len(intervention_points)}"
                 )
             except Exception as e:
                 print(f"[Orchestrator] Interaction fusion failed: {e}")
