@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "name": "TEMPLATE: copy me, then replace every PENDING value",
+  "status": "template",
+  "is_synthetic": true,
+  "notes": "A template with placeholders only. It contains no real lecture and no real review. Set is_synthetic to false only in a copy that holds real data.",
+  "selection_rule": "PENDING: the pre-registered rule that picks which questions are reviewed (required before status can be 'frozen')",
+  "frozen_config": {
+    "prompt_version": "PENDING",
+    "prompt_sha256": "PENDING",
+    "model": "PENDING",
+    "config_sha256": "PENDING"
+  },
+  "lectures": [
+    {
+      "lecture_id": "EXAMPLE01",
+      "video_id": "AAAAAAAAAAA",
+      "subject": "Mathematics",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "PENDING/path/to/transcript_segments.jsonl",
+        "lecture_id": "EXAMPLE01"
+      },
+      "expected_word_count": null,
+      "word_count_status": "pending"
+    }
+  ],
+  "samples": [
+    {
+      "sample_id": "EXAMPLE01-S1",
+      "lecture_id": "EXAMPLE01",
+      "subject": "Mathematics",
+      "question_type": "pending",
+      "requires_visual": null,
+      "answerable_from_evidence": null,
+      "question": null,
+      "key_rationale": null,
+      "evidence": null,
+      "review": {
+        "status": "pending",
+        "reviewer": null,
+        "reviewed_at": null,
+        "notes": null,
+        "exclusion_reason": null
+      }
+    }
+  ],
+  "authorized_approvers": []
+}

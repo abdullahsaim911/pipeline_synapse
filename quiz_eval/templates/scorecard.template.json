@@ -1,0 +1,85 @@
+{
+  "scorecard_version": 2,
+  "is_synthetic": true,
+  "manifest_name": "PENDING",
+  "run": {
+    "run_id": "PENDING",
+    "source": "pending",
+    "prompt_version": "PENDING",
+    "prompt_sha256": "PENDING",
+    "model": "PENDING",
+    "config_sha256": "PENDING",
+    "code_version": "PENDING",
+    "generated_at": null,
+    "raw_responses_sha256": "PENDING"
+  },
+  "items": [
+    {
+      "item_id": "EXAMPLE01-G1",
+      "sample_id": "EXAMPLE01-S1",
+      "lecture_id": "EXAMPLE01",
+      "subject": "Mathematics",
+      "split": "pending",
+      "question_type": "mcq",
+      "question": {
+        "prompt": "PENDING: the question exactly as the server returned it",
+        "choices": [
+          {
+            "id": "a",
+            "text": "PENDING"
+          },
+          {
+            "id": "b",
+            "text": "PENDING"
+          },
+          {
+            "id": "c",
+            "text": "PENDING"
+          }
+        ],
+        "correct_choice_id": "a",
+        "explanation": "PENDING"
+      },
+      "evidence": [
+        {
+          "start_seconds": 0,
+          "end_seconds": 1,
+          "quote": "PENDING: the quote exactly as the server returned it"
+        }
+      ],
+      "reviews": [
+        {
+          "reviewer": null,
+          "completed_at": null,
+          "judgments": {
+            "answerable_from_transcript": null,
+            "key_correct": null,
+            "single_defensible_option": null,
+            "evidence_quote_valid": null,
+            "evidence_relevant": null,
+            "evidence_range_contains_support": null,
+            "unsupported_claims": null,
+            "misleading_distractors": null,
+            "requires_visual": null,
+            "key_false_about_subject": null,
+            "lecture_factually_incorrect": null
+          },
+          "subject_failure": {
+            "category": null,
+            "notes": null
+          },
+          "notes": null,
+          "source_error": null
+        }
+      ],
+      "adjudication": null,
+      "exclusion": null,
+      "returned_position": 1
+    }
+  ],
+  "manifest_binding": {
+    "name": "PENDING",
+    "sha256": "PENDING: canonical SHA-256 of the frozen manifest this run used (python -c on quiz_eval.manifest.canonical_sha256)"
+  },
+  "subject_approvals": []
+}

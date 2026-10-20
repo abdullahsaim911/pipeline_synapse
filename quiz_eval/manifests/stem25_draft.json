@@ -1,0 +1,335 @@
+{
+  "manifest_version": 1,
+  "name": "STEM25 lectures (draft: no split, no review items)",
+  "status": "draft",
+  "is_synthetic": false,
+  "notes": "Draft built from the dataset's own lecture_manifest.csv. No split is assigned and no review item exists yet.",
+  "lectures": [
+    {
+      "lecture_id": "BIO01",
+      "video_id": "DRBREvFL19g",
+      "subject": "Biology",
+      "title": "DNA Replication | MIT 7.01SC Fundamentals of Biology",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "BIO01"
+      },
+      "expected_word_count": 4268,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "BIO02",
+      "video_id": "x_vlxGFrZLY",
+      "subject": "Biology",
+      "title": "Transcription & Translation | MIT 7.01SC Fundamentals of Biology",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "BIO02"
+      },
+      "expected_word_count": 1155,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "BIO03",
+      "video_id": "SxaoWJ2gkzc",
+      "subject": "Biology",
+      "title": "Photosynthesis | MIT 7.01SC Fundamentals of Biology",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "BIO03"
+      },
+      "expected_word_count": 1959,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "BIO04",
+      "video_id": "kaSIjIzAtYA",
+      "subject": "Biology",
+      "title": "Mitosis, Meiosis and Sexual Reproduction",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "BIO04"
+      },
+      "expected_word_count": 3030,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "BIO05",
+      "video_id": "rTIzwUEqI8k",
+      "subject": "Biology",
+      "title": "Lecture 2.4: The Cell and How it Works  — Organelles",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "BIO05"
+      },
+      "expected_word_count": 1368,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CHEM01",
+      "video_id": "-c-X8zk0ywo",
+      "subject": "Chemistry",
+      "title": "1. The importance of chemical principles",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CHEM01"
+      },
+      "expected_word_count": 4747,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CHEM02",
+      "video_id": "OjhZYx1FbhI",
+      "subject": "Chemistry",
+      "title": "16. Thermodynamics: Gibbs Free Energy and Entropy",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CHEM02"
+      },
+      "expected_word_count": 4060,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CHEM03",
+      "video_id": "6jndt6MXgtA",
+      "subject": "Chemistry",
+      "title": "Lewis diagrams for molecules | Chemistry | Khan Academy",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CHEM03"
+      },
+      "expected_word_count": 2813,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CHEM04",
+      "video_id": "iiGYwCGNrl8",
+      "subject": "Chemistry",
+      "title": "Sn2 reactions | Substitution and elimination reactions | Organic chemistry | Khan Academy",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CHEM04"
+      },
+      "expected_word_count": 1308,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CHEM05",
+      "video_id": "eB5NVPzBCzM",
+      "subject": "Chemistry",
+      "title": "Sn1 reactions introduction",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CHEM05"
+      },
+      "expected_word_count": 2168,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CS01",
+      "video_id": "T98PIp4omUA",
+      "subject": "Computer science",
+      "title": "Binary Search - CS50 Shorts",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CS01"
+      },
+      "expected_word_count": 1948,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CS02",
+      "video_id": "RT-hUXUWQ2I",
+      "subject": "Computer science",
+      "title": "Bubble Sort - CS50 Shorts",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CS02"
+      },
+      "expected_word_count": 1220,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CS03",
+      "video_id": "nvzVHwrrub0",
+      "subject": "Computer science",
+      "title": "Hash Tables - CS50 Shorts",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CS03"
+      },
+      "expected_word_count": 3705,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CS04",
+      "video_id": "zQI3FyWm144",
+      "subject": "Computer science",
+      "title": "Singly-Linked Lists - CS50 Shorts",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CS04"
+      },
+      "expected_word_count": 4801,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "CS05",
+      "video_id": "hVsNqhEthOk",
+      "subject": "Computer science",
+      "title": "Stacks - CS50 Shorts",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "CS05"
+      },
+      "expected_word_count": 2942,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "MATH01",
+      "video_id": "Bb-bgJdOqig",
+      "subject": "Mathematics",
+      "title": "Derivatives of Sine and Cosine | MIT 18.01SC Single Variable Calculus, Fall 2010",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "MATH01"
+      },
+      "expected_word_count": 1239,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "MATH02",
+      "video_id": "W7sNkRpcydk",
+      "subject": "Mathematics",
+      "title": "Antidifferentiation by substitution | MIT 18.01SC Single Variable Calculus, Fall 2010",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "MATH02"
+      },
+      "expected_word_count": 1460,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "MATH03",
+      "video_id": "ighcncy6qQ8",
+      "subject": "Mathematics",
+      "title": "Eigenvalues and Eigenvectors | MIT 18.06SC Linear Algebra, Fall 2011",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "MATH03"
+      },
+      "expected_word_count": 810,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "MATH04",
+      "video_id": "19x213y_uk4",
+      "subject": "Mathematics",
+      "title": "Taylor's Series of a Polynomial | MIT 18.01SC Single Variable Calculus, Fall 2010",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "MATH04"
+      },
+      "expected_word_count": 1156,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "MATH05",
+      "video_id": "JGeTcRfKgBo",
+      "subject": "Mathematics",
+      "title": "Conditional Probability",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "MATH05"
+      },
+      "expected_word_count": 1696,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "PHYS01",
+      "video_id": "-fhWuEt5yKc",
+      "subject": "Physics",
+      "title": "Gravity",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "PHYS01"
+      },
+      "expected_word_count": 1955,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "PHYS02",
+      "video_id": "tGqogBLtK4M",
+      "subject": "Physics",
+      "title": "Flux and Gauss' Law",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "PHYS02"
+      },
+      "expected_word_count": 2495,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "PHYS03",
+      "video_id": "sxzFpOsvfgU",
+      "subject": "Physics",
+      "title": "Harmonic oscillator: Differential equation",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "PHYS03"
+      },
+      "expected_word_count": 1775,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "PHYS04",
+      "video_id": "6b9AW6QxXt0",
+      "subject": "Physics",
+      "title": "Electrical Networks: Voltages and Currents",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "PHYS04"
+      },
+      "expected_word_count": 1825,
+      "word_count_status": "from_dataset_manifest"
+    },
+    {
+      "lecture_id": "PHYS05",
+      "video_id": "z5JfWSocZUQ",
+      "subject": "Physics",
+      "title": "24.1 Mechanical Energy and Energy Conservation",
+      "split": "pending",
+      "transcript_ref": {
+        "path": "dataset/synapse_stem25/transcript_segments.jsonl",
+        "lecture_id": "PHYS05"
+      },
+      "expected_word_count": 736,
+      "word_count_status": "from_dataset_manifest"
+    }
+  ],
+  "samples": []
+}
