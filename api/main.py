@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 
 from api.database import engine, Base
 from api.routers import video_router
+from api.routers.quiz import router as quiz_router
 from api.logging_setup import configure_ask_logging
 from api.security import configure_cors
 
@@ -42,6 +43,7 @@ configure_cors(app)
 
 # Include routers
 app.include_router(video_router)
+app.include_router(quiz_router)  # POST /video/quiz; QUIZ_ENABLED decides; unset: on in development, off when SYNAPSE_ENV=production
 
 
 # Health check endpoint

@@ -16,7 +16,7 @@ def configure_ask_logging() -> None:
     """Send INFO and above from the Ask code to the console, once, unless logging is already set up."""
     if logging.getLogger().handlers:      # the host application configured logging; respect it
         return
-    for name in ("qa", "llm_interface"):
+    for name in ("qa", "llm_interface", "quiz"):
         log = logging.getLogger(name)
         log.setLevel(logging.INFO)
         if not log.handlers:
