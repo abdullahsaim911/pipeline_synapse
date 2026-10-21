@@ -78,7 +78,21 @@ git .dmypy.json
 dmypy.json
 
 tests/
+!tests/
+tests/*
+!tests/__init__.py
+!tests/qa/
+!tests/qa/**
+!tests/quiz/
+!tests/quiz/**
+!tests/llm_interface/
+!tests/llm_interface/**
+tests/**/__pycache__/
+tests/**/*.py[cod]
 plans/
 frame-extraction/
 misc/
 data/
+
+
+/synapse-web/

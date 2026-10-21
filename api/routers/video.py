@@ -5,6 +5,7 @@ Handles video processing, metadata retrieval, and intervention management.
 """
 
 import json
+import logging
 import os
 import sys
 import uuid
@@ -30,8 +31,29 @@ from api.schemas import (
     BookmarkResponse,
     CategoryCounts,
     GenerateExplanationRequest,
-    GenerateExplanationResponse
+    GenerateExplanationResponse,
+    AskRequest,
+    AskResponse,
+    AskSource
 )
+from llm_interface.providers import (
+    LLMAuthenticationError,
+    LLMConfigurationError,
+    LLMConnectionError,
+    LLMMalformedResponseError,
+    LLMProviderError,
+    LLMRateLimitError,
+    LLMTimeoutError,
+    LLMUnavailableError,
+)
+from api.security import enforce_allowed_origin
+from qa.moment import InterventionNotFoundError, load_moment
+from qa.faithfulness import build_gate_from_env
+from qa.hybrid import build_selector_from_env
+from qa.service import AskService
+from qa.transcript import load_transcript
+
+logger = logging.getLogger(__name__)
 
 
 router = APIRouter(prefix="/video", tags=["video"])
@@ -615,3 +637,134 @@ async def get_intervention_explanation(
         vlm_snapshot_path=explanation.vlm_snapshot_path,
         output_mode=explanation.output_mode
     )
+# ============================================================================
+# Endpoint 7: Ask a Question (transcript-grounded, lecture-wide)
+# ============================================================================
+
+_ask_service = None
+
+
+def get_ask_service() -> AskService:
+    """Shared AskService (dependency, so tests can substitute a fake provider)."""
+    global _ask_service
+    if _ask_service is None:
+        # build_selector_from_env() is None unless ASK_HYBRID_RETRIEVAL=1, so nothing heavy loads by default.
+        _ask_service = AskService(evidence_selector=build_selector_from_env())
+    return _ask_service
+
+
+_answer_gate = None
+_answer_gate_built = False
+
+
+def get_answer_gate():
+    """Faithfulness guardrail applied to answered responses (None while ASK_FAITHFULNESS_MODE is off). Built once; overridable in tests."""
+    global _answer_gate, _answer_gate_built
+    if not _answer_gate_built:
+        _answer_gate = build_gate_from_env()
+        _answer_gate_built = True
+    return _answer_gate
+
+
+def get_data_dir() -> str:
+    """Root folder holding data/<video_id>/ (dependency, overridable in tests)."""
+    return os.path.join(project_root, "data")
+
+
+def _llm_http_error(exc: LLMProviderError) -> HTTPException:
+    """Map provider failures to HTTP errors without exposing provider details."""
+    if isinstance(exc, LLMConfigurationError):
+        return HTTPException(status_code=500, detail="Question answering is not configured on this server.")
+    if isinstance(exc, LLMRateLimitError):
+        return HTTPException(status_code=429, detail="The AI service is busy or over its quota. Please try again shortly.")
+    if isinstance(exc, LLMTimeoutError):
+        return HTTPException(status_code=504, detail="The AI service took too long to respond. Please try again.")
+    if isinstance(exc, (LLMConnectionError, LLMUnavailableError)):
+        return HTTPException(status_code=503, detail="The AI service is temporarily unavailable. Please try again.")
+    if isinstance(exc, LLMMalformedResponseError):
+        return HTTPException(status_code=502, detail="The AI service returned an unusable response. Please try again.")
+    if isinstance(exc, LLMAuthenticationError):
+        return HTTPException(status_code=502, detail="The AI service rejected this server's credentials.")
+    return HTTPException(status_code=502, detail="The AI service could not produce an answer.")
+
+
+@router.post("/ask", response_model=AskResponse, dependencies=[Depends(enforce_allowed_origin)])
+def ask_question(
+    request: AskRequest,
+    db: Session = Depends(get_db),
+    service: AskService = Depends(get_ask_service),
+    data_dir: str = Depends(get_data_dir),
+    gate=Depends(get_answer_gate)
+):
+    """
+    Answer a question about the whole lecture using its transcript.
+
+    The current moment is optional context, not a restriction: intervention_id
+    adds that moment's explanation and reliable visual analysis, and
+    current_time_seconds anchors phrases such as "the last five minutes".
+
+    Input:
+    {
+        "video_id": "3zLQfuMZMF4",
+        "question": "What did the instructor say about choosing u?",
+        "current_time_seconds": 187.5,   // optional
+        "intervention_id": null           // optional
+    }
+
+    Output: status (answered | not_in_lecture | insufficient_context), scope
+    (lecture | lecture_with_moment), answer_text, and sources (backend-computed
+    time ranges of the lecture material given to the model).
+
+    Declared as a plain `def` so FastAPI runs it in a worker thread: the
+    database, file and LLM calls block and must not stall the event loop that
+    serves the other endpoints.
+    """
+    try:
+        transcript = load_transcript(request.video_id, db, data_dir)
+
+        video = db.query(Video).filter(Video.id == request.video_id).first()
+        if video is None and not transcript.file_exists:
+            raise HTTPException(status_code=404, detail="Video not found")
+
+        moment = None
+        if request.intervention_id:
+            try:
+                moment = load_moment(
+                    db, request.video_id, request.intervention_id,
+                    transcript.segments, data_dir
+                )
+            except InterventionNotFoundError:
+                raise HTTPException(status_code=404, detail="Intervention not found")
+
+        outcome = service.answer(
+            question=request.question,
+            segments=transcript.segments,
+            current_time=request.current_time_seconds,
+            moment=moment
+        )
+        if gate is not None:
+            # Programmatic grounding check; may turn a low-faithfulness answer into insufficient_context.
+            outcome = gate(outcome)
+
+        return AskResponse(
+            status=outcome.status,
+            scope=outcome.scope,
+            answer_text=outcome.answer_text,
+            sources=[
+                AskSource(
+                    start_seconds=s.start_seconds,
+                    end_seconds=s.end_seconds,
+                    intervention_id=s.intervention_id
+                )
+                for s in outcome.sources
+            ]
+        )
+
+    except HTTPException:
+        raise
+    except LLMProviderError as e:
+        logger.warning("Ask failed for video %s: %s (upstream status %s)", request.video_id, e.code, e.status_code)
+        raise _llm_http_error(e)
+    except Exception:
+        logger.exception("Unexpected error answering question for video %s", request.video_id)
+        raise HTTPException(status_code=500, detail="Could not answer the question.")

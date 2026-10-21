@@ -46,6 +46,10 @@ pydantic-settings>=2.6.0
 sqlalchemy>=2.0.36
 python-multipart>=0.0.12
 
+# Hosted LLM provider and environment loading for Q&A / quiz
+google-genai>=1.0.0
+python-dotenv
+
 # =============================================================================
 # Additional Dependencies for Pipeline
 # =============================================================================

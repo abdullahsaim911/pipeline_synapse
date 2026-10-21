@@ -2,8 +2,8 @@
 Pydantic schemas for request/response validation.
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict, Any
+from pydantic import BaseModel, Field, field_validator, model_validator
+from typing import Optional, List, Dict, Any, Literal
 from datetime import datetime
 
 
@@ -194,3 +194,55 @@ class BookmarkResponse(BaseModel):
     """Response schema for bookmark."""
     intervention_id: str
     is_bookmarked: bool
+
+
+# ============================================================================
+# Ask a Question
+# ============================================================================
+
+class AskRequest(BaseModel):
+    """Request schema for asking a question about a lecture."""
+    video_id: str = Field(..., pattern=r"^[A-Za-z0-9_-]{11}$", description="YouTube video ID")
+    question: str = Field(..., min_length=1, max_length=500)
+    current_time_seconds: Optional[float] = Field(
+        default=None, ge=0, le=172800, allow_inf_nan=False,
+        description="Current playback position in seconds"
+    )
+    intervention_id: Optional[str] = Field(
+        default=None, pattern=r"^[A-Za-z0-9-]{1,64}$",
+        description="Intervention the user is currently viewing"
+    )
+
+    @field_validator("question", mode="before")
+    @classmethod
+    def _strip_question(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
+class AskSource(BaseModel):
+    """Lecture material, located by backend-computed times, that was given to the model."""
+    start_seconds: float = Field(..., ge=0)
+    end_seconds: float = Field(..., ge=0)
+    intervention_id: Optional[str] = None
+
+    @model_validator(mode="after")
+    def _ordered(self):
+        if self.end_seconds < self.start_seconds:
+            raise ValueError("end_seconds must not be before start_seconds")
+        return self
+
+
+class AskResponse(BaseModel):
+    """Response schema for Ask a Question."""
+    status: Literal["answered", "not_in_lecture", "insufficient_context"]
+    scope: Literal["lecture", "lecture_with_moment"]
+    answer_text: str = Field(..., min_length=1)
+    sources: List[AskSource]
+
+    @model_validator(mode="after")
+    def _sources_match_status(self):
+        if self.status == "answered" and not self.sources:
+            raise ValueError("an answered response must include at least one source")
+        if self.status != "answered" and self.sources:
+            raise ValueError("a non-answered response must not include sources")
+        return self

@@ -6,11 +6,17 @@ and explanation generation.
 """
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from dotenv import load_dotenv
 
 from api.database import engine, Base
 from api.routers import video_router
+from api.routers.quiz import router as quiz_router
+from api.logging_setup import configure_ask_logging
+from api.security import configure_cors
+
+load_dotenv()
+configure_ask_logging()
 
 
 # Create database tables on startup
@@ -32,17 +38,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Configure CORS for Electron frontend
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],  # For Electron, we allow all origins
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# CORS defaults to the Vite development origins. Packaged Electron's `null`
+# origin is intentionally not enabled without a reviewed transport/auth design.
+configure_cors(app)
 
 # Include routers
 app.include_router(video_router)
+app.include_router(quiz_router)
 
 
 # Health check endpoint
