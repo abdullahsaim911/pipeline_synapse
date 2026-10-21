@@ -8,13 +8,32 @@
 4. [Design Choices](#design-choices)
 5. [Algorithms](#algorithms)
 6. [System Architecture](#system-architecture)
-7. [Module Integration](#module-integration)
+7. [Module Integration & Contracts](#module-integration)
 8. [Step-by-Step Implementation Process](#step-by-step-implementation-process)
 9. [Module Descriptions](#module-descriptions)
-10. [Data Flow](#data-flow)
+   - [M0: Frame Extraction](#m0-frame-extraction-module)
+   - [M0b: Transcription](#m0b-transcription-module)
+   - [M1: Synchronizer](#m1-synchronizer-module)
+   - [M7: Visual Interaction Detection & Fusion](#m7-visual-interaction-detection--fusion-synapse_interaction)
+   - [M5a: VLM Interface](#m5a-vlm-interface-module)
+   - [M2: VLM Engine](#m2-vlm-engine-module)
+   - [M5b: LLM Interface & Provider Abstraction](#m5b-llm-interface--provider-abstraction-module)
+   - [M3: Synthesizer](#m3-synthesizer-module)
+   - [M6: TTS Engine](#m6-tts-engine-module)
+   - [M4: Pipeline Orchestrator](#m4-orchestrator-module)
+   - [M8: Transcript-Grounded Q&A Subsystem](#m8-transcript-grounded-qa-subsystem-qa)
+   - [M9: Screened Formative Quiz Subsystem](#m9-screened-formative-quiz-subsystem-quiz)
+   - [M10: FastAPI Backend & Security](#m10-fastapi-backend--security-api)
+10. [Data Flow, Database & File Persistence](#data-flow)
+    - [Complete Pipeline Flow](#complete-pipeline-flow)
+    - [Database Schema & SQLAlchemy Models](#database-schema--sqlalchemy-models)
+    - [File System Hierarchy & On-Disk Saves](#file-system-hierarchy--on-disk-saves)
+    - [Data Save Lifecycle & Transaction Boundaries](#data-save-lifecycle--transaction-boundaries)
 11. [Installation](#installation)
 12. [Usage Guide](#usage-guide)
 13. [API Reference](#api-reference)
+    - [FastAPI REST API Reference](#fastapi-rest-api-reference)
+    - [PipelineOrchestrator Python API](#pipelineorchestrator)
 14. [Performance](#performance)
 15. [Troubleshooting](#troubleshooting)
 16. [Future Enhancements](#future-enhancements)
@@ -115,12 +134,16 @@ YouTube URL
 | Frame Extraction | M0 | Extract pedagogical keyframes | YouTube URL | keyframes/*.jpg, keyframes.json |
 | Transcription | M0b | Convert speech to text | YouTube URL | transcript.json |
 | Synchronizer | M1 | Detect suffer points | transcript.json, keyframes.json | intervention_points |
+| Interaction Detection | M7 | Detect visual writing, pointing & gestures | Video stream, transcript | Fused intervention_points |
 | VLM Interface | M5a | VLM wrapper | Image, prompt | VLMResponse |
 | VLM Engine | M2 | Analyze visual content | Frame, content_type | vlm_snapshot.json |
-| LLM Interface | M5b | LLM wrapper | Prompt | OllamaResponse |
+| LLM Interface & Providers | M5b | LLM wrapper & provider abstraction (Ollama, Gemini) | Prompt, GenerationSettings | GenerationResult / OllamaResponse |
 | Synthesizer | M3 | Fuse transcript + VLM | Transcript, VLM data | audio_script |
 | TTS Engine | M6 | Generate audio | audio_script | MP3 file |
-| Orchestrator | M4 | Coordinate pipeline | YouTube URL | manifest.json |
+| Orchestrator | M4 | Coordinate pipeline lifecycle | YouTube URL | manifest.json |
+| Q&A Subsystem | M8 | Transcript-grounded student Q&A with citations | video_id, question, moment | AskResponse with citations |
+| Quiz Subsystem | M9 | Screened formative practice quiz generation | video_id, question_count | QuizResponse with screened MCQs |
+| FastAPI Backend | M10 | REST API gateway, SQLite persistence & CORS | HTTP requests | JSON responses, SQLite records, disk files |
 
 ---
 
@@ -866,64 +889,60 @@ The Synapse system follows a modular, pipeline-based architecture designed for m
 ### High-Level Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                    SYAPSE PIPELINE                            │
-└─────────────────────────────────────────────────────────────────┘
-                            ↓
-┌─────────────────────────────────────────────────────────────────┐
-│                    ORCHESTRATOR (M4)                        │
-│                 Central Brain & Coordinator                     │
-└─────────────────────────────────────────────────────────────────┘
-                            ↓
-              ┌─────────────┴─────────────┐
-              ↓                           ↓
-┌─────────────────────────┐   ┌─────────────────────────┐
-│   FRAME EXTRACTION      │   │     TRANSCRIPTION       │
-│         (M0)           │   │         (M0b)          │
-│  CLIP + OpenCV         │   │  Whisper + YouTube API  │
-└─────────────────────────┘   └─────────────────────────┘
-              ↓                           ↓
-              keyframes.json             transcript.json
-              └─────────────┬─────────────┘
-                            ↓
-                ┌─────────────────────────┐
-                │     SYNCHRONIZER (M1)  │
-                │   Suffer Point Detector  │
-                │  Pure Python Scoring     │
-                └─────────────────────────┘
-                            ↓
-                  intervention_points
-                            ↓
-                ┌─────────────────────────┐
-                │      VLM ENGINE (M2)   │
-                │   Qwen2-VL + GGUF     │
-                │  Vision-Language Analysis│
-                └─────────────────────────┘
-                            ↓
-                  vlm_snapshots
-                            ↓
-                ┌─────────────────────────┐
-                │    SYNTHESIZER (M3)   │
-                │      Audio Weaver       │
-                │  LLM Fusion Engine    │
-                └─────────────────────────┘
-                            ↓
-                   audio_scripts
-                            ↓
-                ┌─────────────────────────┐
-                │      TTS ENGINE (M6)   │
-                │  Edge-TTS + SpeechT5   │
-                │   Audio Generation      │
-                └─────────────────────────┘
-                            ↓
-                      *.mp3 files
-                            ↓
-                ┌─────────────────────────┐
-                │     MANIFEST GENERATOR  │
-                │     JSON Output        │
-                └─────────────────────────┘
-                            ↓
-              manifest.json
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                          EXTERNAL CLIENTS / FRONTEND                            │
+│                     HTTP Requests / REST API / Electron                         │
+└──────────────────────────────────────┬──────────────────────────────────────────┘
+                                       │ HTTP / JSON
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                     FASTAPI BACKEND GATEWAY (M10: api/)                         │
+│   • CORS Security & Origin Validation (api/security.py)                          │
+│   • Structured Logging & Sanitization (api/logging_setup.py)                     │
+│   • SQLite Database Engine & Session Management (api/database.py)               │
+│   • Routers: Video Pipeline (video.py), Quiz (quiz.py), Health                  │
+└──────┬───────────────────────┬───────────────────────────┬──────────────────────┘
+       │                       │                           │
+       ▼                       ▼                           ▼
+┌──────────────┐     ┌─────────────────────┐     ┌─────────────────────┐
+│ PIPELINE     │     │ Q&A SUBSYSTEM (M8)  │     │ QUIZ SUBSYSTEM (M9) │
+│ ORCHESTRATOR │     │ qa/                 │     │ quiz/               │
+│ (M4)         │     │ • Temporal / BM25   │     │ • Passage Builder   │
+│              │     │ • Moment Context    │     │ • Screened MCQs/TF  │
+│              │     │ • Faithfulness Gate │     │ • Duplicate Filter  │
+└──────┬───────┘     └─────────┬───────────┘     └─────────┬───────────┘
+       │                       │                           │
+       ▼                       └─────────────┬─────────────┘
+┌───────────────────────────────────┐        │
+│ CORE EXTRACTION & DETECTION       │        │
+│ • M0: Frame Extractor (OpenCV)    │        ▼
+│ • M0b: Transcriber (Whisper/API)  │ ┌──────────────────────────────────────┐
+│ • M7: Interaction Detector (Ink/  │ │ UNIFIED LLM PROVIDERS (M5b)          │
+│       Pointing / Before-After)    │ │ • Gemini Provider (google-genai)     │
+│ • M1: Suffer Point Synchronizer   │ │ • Ollama Client (Local Mistral)      │
+│   (Fusion of M1 + M7)             │ │ • Structured Output Schemas          │
+└──────┬────────────────────────────┘ └──────────────────┬───────────────────┘
+       │                                                 │
+       ▼                                                 │
+┌───────────────────────────────────┐                    │
+│ ANALYSIS & SPEECH GENERATION      │                    │
+│ • M2: VLM Engine (Qwen2-VL)       │◄───────────────────┘
+│ • M3: LLM Synthesizer (Fusion)    │
+│ • M6: Dual TTS Engine (Edge-TTS   │
+│       + SpeechT5 Fallback)        │
+└──────┬────────────────────────────┘
+       │
+       ▼
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                             PERSISTENCE LAYER                                   │
+│  ┌───────────────────────────────────┐  ┌────────────────────────────────────┐  │
+│  │   SQLITE DATABASE (synapse.db)    │  │     FILE SYSTEM (data/<video_id>/) │  │
+│  │   • videos                        │  │     • keyframes/*.jpg              │  │
+│  │   • transcripts                   │  │     • audio_segments/*.mp3         │  │
+│  │   • interventions                 │  │     • interventions/*/             │  │
+│  │   • explanations                  │  │     • manifest.json                │  │
+│  └───────────────────────────────────┘  └────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Module Responsibility Matrix
@@ -933,12 +952,16 @@ The Synapse system follows a modular, pipeline-based architecture designed for m
 | **M0: Frame Extraction** | Extract pedagogical keyframes | OpenCV, CLIP, PyTorch | YouTube URL | keyframes/*.jpg, keyframes.json |
 | **M0b: Transcription** | Convert speech to text | Whisper, YouTube API | YouTube URL | transcript.json |
 | **M1: Synchronizer** | Detect suffer points | Pure Python, Regex | transcript.json, keyframes.json | intervention_points |
+| **M7: Interaction Detection** | Detect writing, pointing & gestures | OpenCV, MediaPipe, NumPy | Video stream, transcript | Fused intervention_points |
 | **M5a: VLM Interface** | VLM wrapper interface | Transformers, Qwen2-VL | Image, prompt | VLMResponse |
 | **M2: VLM Engine** | Analyze visual content | Qwen2-VL, llama-cpp-python | Frame, content_type | vlm_snapshot.json |
-| **M5b: LLM Interface** | LLM wrapper interface | Ollama, Requests | Prompt | OllamaResponse |
+| **M5b: LLM Interface & Providers** | Unified LLM abstraction | Ollama, Gemini SDK, Requests | Prompt, GenerationSettings | GenerationResult / OllamaResponse |
 | **M3: Synthesizer** | Fuse transcript + VLM | Ollama, Mistral, NumPy | Transcript, VLM data | audio_script |
 | **M6: TTS Engine** | Generate audio files | edge-tts, SpeechT5, PyTorch | Text script | *.mp3 files |
-| **M4: Orchestrator** | Coordinate pipeline | Threading, PyTorch | YouTube URL | manifest.json |
+| **M4: Orchestrator** | Coordinate pipeline lifecycle | Threading, PyTorch | YouTube URL | manifest.json |
+| **M8: Q&A Subsystem** | Transcript-grounded student Q&A | BM25, Gemini/Ollama, Regex | video_id, question, moment | AskResponse with citations |
+| **M9: Quiz Subsystem** | Screened formative practice quizzes | Pydantic, Gemini/Ollama | video_id, question_count | QuizResponse with screened MCQs |
+| **M10: FastAPI Backend** | REST API, SQLite persistence & CORS | FastAPI, SQLAlchemy, Pydantic | HTTP requests | JSON responses, SQLite records, disk files |
 
 ### Architecture Principles
 
@@ -1582,8 +1605,102 @@ Critical cleanup points:
 - After VLM: Clear GPU before TTS
 - After TTS: Release model references
 
----
 
+
+#### Contract 8: Interaction Detection → Synchronizer (M1 Fusion)
+
+**Module**: `synapse_interaction` → `synchronizer`
+
+**Input to Interaction Fusion**:
+- Raw interaction episodes (`List[Interaction]`: `WRITING_DRAWING`, `MOUSE_POINTING`, start/end times, confidence)
+- M1 Synchronizer suffer points (`List[InterventionPoint]`)
+- Transcript entries (`transcript.json`)
+
+**Output**: Fused and enriched `List[InterventionPoint]` with visual interaction triggers:
+```python
+@dataclass
+class InterventionPoint:
+    timestamp: float              # Trigger timestamp in seconds
+    frame_path: str               # Representative keyframe image
+    content_type: str             # Visual category
+    complexity_score: float       # Visual complexity
+    clip_confidence: float        # Classification confidence
+    transcript_context: str       # Teacher's spoken words
+    trigger_reason: str           # "Silent Writing", "Deictic Phrase + Interaction"
+    confidence: str = "high"      # Boosted confidence when visual + speech coincide
+```
+
+#### Contract 9: FastAPI Backend → Orchestrator & SQLite Database
+
+**Module**: `api/routers/video.py` → `orchestrator` & `api/models.py`
+
+**Input to Endpoint**: `ProcessVideoRequest(youtube_url="https://youtube.com/...")`
+
+**Backend Execution**:
+1. Creates or updates `Video` record in SQLite `videos` table.
+2. Invokes `PipelineOrchestrator.process_detection_only()` or `process_video()`.
+3. Inserts all transcript entries into `transcripts` table (`start_time`, `end_time`, `text`).
+4. Inserts all detected suffer points into `interventions` table (`id` UUID, `timestamp`, `frame_path`, `content_type`, etc.).
+5. Persists files to `data/{video_id}/`.
+6. Commits database transaction.
+
+**Output to Client**: `ProcessVideoResponse` containing video metadata, category counts, and full intervention list.
+
+#### Contract 10: FastAPI Backend → Q&A Subsystem
+
+**Module**: `api/routers/video.py` → `qa/service.py`
+
+**Input to `AskService.answer()`**:
+- `question`: User question string (1 to 500 chars)
+- `video_id`: 11-character YouTube video ID
+- `data_dir`: Path to storage directory
+- `current_time`: Optional video playback position in seconds
+- `moment`: Optional `MomentContext` (active intervention frame OCR, visual summary, and nearby captions)
+
+**Output from `AskService`**: `AnswerOutcome` converted to `AskResponse`:
+```json
+{
+  "status": "answered",
+  "scope": "lecture",
+  "answer_text": "The lecture explains that energy is conserved in closed systems...",
+  "sources": [
+    {
+      "start_seconds": 120.0,
+      "end_seconds": 145.0,
+      "intervention_id": null
+    }
+  ]
+}
+```
+
+#### Contract 11: FastAPI Backend → Screened Quiz Subsystem
+
+**Module**: `api/routers/quiz.py` → `quiz/service.py`
+
+**Input to `QuizService.generate_quiz()`**:
+- `video_id`: 11-character YouTube video ID
+- `question_count`: Requested questions (5 to 10, default 6)
+- `db`: Active SQLAlchemy session (loads from `transcripts` table)
+- `data_dir`: Storage directory path
+
+**Output from `QuizService`**: `QuizResponse` with strictly screened questions, server-verified citations, and duplicate suppression:
+```json
+{
+  "contract_version": 1,
+  "quiz_id": "c4b3a120-8e12-4211-9a3b-9a8421b01234",
+  "video_id": "3zLQfuMZMF4",
+  "generated_at": "2026-10-21T05:00:00Z",
+  "prompt_version": "v1",
+  "model": "gemini-2.5-flash",
+  "requested_count": 5,
+  "returned_count": 5,
+  "status": "complete",
+  "reason": null,
+  "questions": [...]
+}
+```
+
+---
 ## Step-by-Step Implementation Process
 
 This section documents the development journey from initial concept to working Synapse pipeline, highlighting key milestones, challenges faced, and solutions implemented.
@@ -2195,119 +2312,357 @@ This section documents the development journey from initial concept to working S
 
 **Documentation**: [09_orchestrator_module.md](modules/09_orchestrator_module.md)
 
+
+
+### M7: Visual Interaction Detection & Fusion (synapse_interaction)
+
+**Purpose**: Detect visual teacher actions—including chalkboard/whiteboard writing, drawing episodes, mouse cursor pointing, and hand gestures—and fuse them into pedagogical suffer points.
+
+**Tools & Technologies**:
+- OpenCV (video frame analysis and stroke contour extraction)
+- MediaPipe / Heuristic Hand Tracker (index finger pointing detection)
+- NumPy (spatial novelty and stroke containment)
+- Subprocess & JSON (interaction serialization)
+
+**Submodules & Implementation Highlights**:
+1. **`classify.py`**: Classifies optical motion episodes into `WRITING_DRAWING` vs. `MOUSE_POINTING`. Tracks ink accumulation density over time and filters out transient cursor movements.
+2. **`hand.py`**: Detects hand presence and verifies whether the index finger is extended toward a diagram or board element (`index_pointing` rule).
+3. **`novelty.py`**: Evaluates stroke containment (`contained_fraction`). Distinguishes between ongoing progressive writing (which should be coalesced) and distinct page turns / slide transitions.
+4. **`before_after.py`**: Extracts pair frames: a "before" frame (clean board before writing starts) and an "after" frame (complete board when writing ceases).
+5. **`fusion.py`**: Fuses raw interaction episodes with M1 Synchronizer suffer points (`fuse_interactions`). Identifies "Silent Writing" moments where teacher writes without speech, and boosts confidence for deictic speech that coincides with physical pointing.
+
+**Output**:
+- `interactions.json` - Episode list with timestamps, bounding boxes, and interaction classes.
+- Fused `InterventionPoint` objects with enriched triggers (`Silent Writing`, `Deictic Phrase + Interaction`).
+
 ---
 
-## Data Flow
+### M5b: LLM Interface & Provider Abstraction (llm_interface)
+
+**Purpose**: Provide a robust, provider-neutral abstraction layer for text generation across local open-weights models and hosted API providers.
+
+**Tools & Technologies**:
+- Ollama (local Mistral 7B inference)
+- Google GenAI SDK (`google-genai` for Gemini 2.5 Flash / Flash Lite)
+- Pydantic & Python Dataclasses (settings, results, token usage)
+- Requests / HTTP Client (Ollama REST communication)
+
+**Architecture & Implementation Highlights**:
+- **`providers.py`**: Defines `TextGenerationProvider` base class with:
+  - `GenerationSettings`: Temperature (0.0 to 2.0), max tokens, system instructions.
+  - `GenerationResult`: Generated text, provider name, model name, latency in milliseconds, and token usage breakdown (`prompt_tokens`, `output_tokens`, `total_tokens`).
+  - Sanitized Error Hierarchy: `LLMProviderError`, `LLMUnavailableError` (503), `LLMAuthenticationError` (401), `LLMRateLimitError` (429), `LLMTimeoutError` (504), `LLMConfigurationError`. Never leaks API keys or prompts in log messages.
+- **`gemini_provider.py`**: Implements `GeminiProvider` and `QuizGeminiProvider`. Supports structured JSON output enforcement (`response_json_schema`) ensuring strict compliance with Pydantic schemas.
+- **`ollama_client.py`**: Backward-compatible local Ollama client used for offline synthesis and TTS script generation.
+
+**Output**:
+- `GenerationResult` - Standardized text output with metadata.
+
+---
+
+### M8: Transcript-Grounded Q&A Subsystem (qa)
+
+**Purpose**: Provide real-time, student-facing question answering strictly grounded in lecture transcripts and visual intervention moments, returning precise timestamp citations.
+
+**Tools & Technologies**:
+- BM25 / Lexical Retrieval (`qa/retrieval.py`)
+- LLM Provider Abstraction (`llm_interface/providers.py`)
+- Python Dataclasses & Regex (`qa/tokens.py`, `qa/moment.py`)
+
+**Architecture & Implementation Highlights**:
+1. **`transcript.py`**: Loads transcript segments. Queries SQLite `transcripts` table first; if unavailable, falls back safely to `data/{video_id}/transcript.json`. Validates video IDs to prevent path traversal.
+2. **`retrieval.py`**: Selects transcript passages within token budget:
+   - *Whole transcript*: Used for short lectures fitting context limits.
+   - *Time-window retrieval*: Used when `current_time_seconds` is supplied to prioritize nearby context.
+   - *Lexical / BM25 ranking*: Used for focused student questions.
+3. **`moment.py`**: Builds `MomentContext` when the student is viewing an active intervention point, injecting frame OCR, visual summaries, and adjacent captions into the prompt.
+4. **`tokens.py`**: Estimates token usage before invoking the LLM to prevent context overflow.
+5. **`service.py`**: `AskService` orchestrates answering: constructs prompts with strict anti-hallucination instructions, invokes provider, parses status (`answered`, `not_in_lecture`, `insufficient_context`), and formats `AskResponse`.
+6. **`faithfulness.py`**: Post-generation verification checking that model citations map to actual transcript intervals.
+
+**Output**:
+- `AskResponse`: Status, scope, answer text, and source intervals (`start_seconds`, `end_seconds`, `intervention_id`).
+
+---
+
+### M9: Screened Formative Quiz Subsystem (quiz)
+
+**Purpose**: Generate high-quality formative practice questions grounded in lecture transcripts, strictly screened against distractor conflicts, duplicate facts, and suspect speech-recognition tokens.
+
+**Tools & Technologies**:
+- Gemini / Ollama with Structured JSON Output
+- Pydantic v2 (Strict schema validation)
+- Pure Python Screening Algorithms (Jaccard token similarity, lexical window containment)
+
+**Architecture & Implementation Highlights**:
+1. **`passages.py`**: Deterministic passage segmentation (`S1`, `S2`, ...). Passage boundaries and IDs are stable pure functions of transcript timings.
+2. **`service.py`**: `QuizService` coordinates generation:
+   - Verifies transcript duration and passage count; returns `insufficient_material` (`too_short` or `no_transcript`) without calling LLM if material is inadequate.
+   - Requests candidate questions via structured JSON schema (`candidate_extra` buffer).
+   - Runs two-tier screening filter.
+3. **`screening.py`**: Enforces contract invariants (choice counts 3-4 for MCQ, exactly True/False for TF, valid option IDs `a`, `b`, `c`, `d`, explanation bounds).
+4. **`support_screening.py`**:
+   - *Lexical support check*: Verifies key terms appear in cited evidence passage.
+   - *Distractor margin check*: Rejects questions where distractors are better supported than the answer key.
+   - *Duplicate suppression*: Flags questions testing the same fact using token-set Jaccard overlap and supporting window overlap.
+   - *Suspect token screening*: Rejects questions containing garbled ASR artifacts.
+5. **`config.py`**: Safe deployment toggles: enabled by default in development, disabled in production unless `QUIZ_ENABLED=1`.
+
+**Output**:
+- `QuizResponse`: Formative quiz questions with server-owned quotes, timestamps, hints, and explanations.
+
+---
+
+### M10: FastAPI Backend & Security (api)
+
+**Purpose**: Serve production REST endpoints for video processing, on-demand explanations, bookmarking, Q&A, and quizzes, with SQLite persistence and CORS security.
+
+**Tools & Technologies**:
+- FastAPI (ASGI Web Framework)
+- SQLAlchemy (ORM with SQLite)
+- Pydantic v2 (Request/Response validation)
+- Starlette & Uvicorn (ASGI server & middleware)
+
+**Architecture & Implementation Highlights**:
+1. **`main.py`**: App initialization, lifespan event handler creating SQLite database tables (`Base.metadata.create_all(bind=engine)`), route inclusion, and healthcheck endpoints.
+2. **`routers/video.py`**: Video processing (`/video/process`), metadata (`/video/meta/{video_id}`), on-demand explanations (`/video/intervention/explain`), bookmarking (`/video/intervention/bookmark/{id}`), intervention queries, and Q&A (`/video/ask`).
+3. **`routers/quiz.py`**: Quiz generation (`/video/quiz`) with pre-validation feature flag checks and worker-thread execution.
+4. **`security.py`**: Strict CORS configuration. Validates allowed origins via `SYNAPSE_CORS_ORIGINS`, permits development tooling (`localhost:5173`), rejects untrusted origins with 403 Forbidden, and safely handles Electron null origins.
+5. **`logging_setup.py`**: Standardized logging with prompt and API key redaction.
+
+**Output**:
+- REST API responses, SQLite `synapse.db` records, and persisted disk files.
+
+---
+## Data Flow, Database & File Persistence
 
 ### Complete Pipeline Flow
 
 ```mermaid
 graph TD
-    A[YouTube URL] --> B[Orchestrator: process_video]
-    B --> C[Parallel Extraction]
-    C --> D[Transcription Module]
-    C --> E[Frame Extraction Module]
-    D --> F[transcript.json]
-    E --> G[keyframes.json]
-    F --> H[Synchronizer]
-    G --> H
-    H --> I[intervention_points]
-    I --> J[VLM Engine]
-    J --> K[vlm_snapshots]
-    K --> L[Synthesizer]
-    F --> L
-    K --> L
-    L --> M[audio_scripts]
-    M --> N[TTS Engine]
-    N --> O[MP3 files]
-    O --> P[Manifest Creation]
-    P --> Q[manifest.json]
+    Client[REST Client / Frontend] -->|POST /video/process| Gateway[FastAPI Backend Gateway]
+    Gateway --> DB[(SQLite: synapse.db)]
+    Gateway --> Orch[Pipeline Orchestrator]
+
+    Orch --> Extraction[Parallel Extraction]
+    Extraction --> TransModule[Transcription Engine]
+    Extraction --> FrameModule[Frame Extraction Module]
+    Extraction --> InterModule[Interaction Detector: synapse_interaction]
+
+    TransModule --> TranscriptFile[data/<id>/transcript.json]
+    FrameModule --> KeyframesFile[data/<id>/keyframes/keyframes.json]
+    InterModule --> InteractionsFile[data/<id>/interactions.json]
+
+    TranscriptFile --> Sync[Synchronizer + Fusion]
+    KeyframesFile --> Sync
+    InteractionsFile --> Sync
+
+    Sync --> InterventionsList[intervention_points]
+    InterventionsList -->|Save Suffer Points| DB
+
+    InterventionsList --> VLM[VLM Engine: Qwen2-VL]
+    VLM --> Snapshots[vlm_snapshots.json]
+
+    Snapshots --> Synth[LLM Synthesizer]
+    TranscriptFile --> Synth
+    Synth --> AudioScripts[audio_scripts]
+
+    AudioScripts --> TTS[TTS Engine: Edge-TTS / SpeechT5]
+    TTS --> MP3Files[data/<id>/audio_segments/*.mp3]
+
+    MP3Files --> ManifestGen[Manifest Generator]
+    ManifestGen --> ManifestFile[data/<id>/manifest.json]
+    ManifestGen -->|Save Explanations| DB
+
+    Client -->|POST /video/ask| QA[Q&A Service]
+    DB -->|Read Transcripts/Moments| QA
+    QA --> AskAnswer[AskResponse with Citations]
+
+    Client -->|POST /video/quiz| Quiz[Quiz Service]
+    DB -->|Read Transcripts| Quiz
+    Quiz --> ScreenedQuiz[QuizResponse with MCQs]
 ```
 
-### Data Structures
+### Database Schema & SQLAlchemy Models
 
-#### Transcript Entry
+The Synapse API uses SQLite with SQLAlchemy for local metadata storage (`synapse.db`). The database maintains relational integrity and allows instant retrieval of videos, transcripts, interventions, and cached explanations without re-reading the filesystem.
 
-```json
-{
-  "start": 15.5,
-  "end": 18.0,
-  "duration": 2.5,
-  "text": "Look at this graph on the screen."
-}
-```
+```mermaid
+erDiagram
+    VIDEOS ||--o{ TRANSCRIPTS : "has"
+    VIDEOS ||--o{ INTERVENTIONS : "contains"
+    INTERVENTIONS ||--o{ EXPLANATIONS : "generates"
 
-#### Keyframe Metadata
-
-```json
-{
-  "timestamp": "02:15",
-  "timestamp_seconds": 135.0,
-  "frame_path": "data/video_id/keyframes/frame_0001.jpg",
-  "content_type": "graph",
-  "complexity_score": 0.4523,
-  "clip_confidence": 0.3891
-}
-```
-
-#### Intervention Point
-
-```json
-{
-  "timestamp": 135.5,
-  "frame_path": "data/video_id/keyframes/frame_0005.jpg",
-  "content_type": "graph",
-  "complexity_score": 0.4523,
-  "clip_confidence": 0.3891,
-  "transcript_context": "Look at this graph on the screen.",
-  "trigger_reason": "Deictic Phrase",
-  "confidence": "high"
-}
-```
-
-#### VLM Snapshot
-
-```json
-{
-  "content_type": "graph",
-  "detected_types": ["graph", "text"],
-  "visual_analysis": {
-    "graph": {
-      "axes": {...},
-      "curves": [...],
-      "relationship": "...",
-      "legend": null,
-      "annotations": []
+    VIDEOS {
+        string id PK "YouTube Video ID (11 chars)"
+        string title "Video Title"
+        int duration_seconds "Total Duration in Seconds"
+        string duration_formatted "e.g. 05:30"
+        int total_keyframes "Number of extracted keyframes"
+        string subject "Academic subject classification"
+        string source_url "YouTube URL"
+        datetime date_processed "Timestamp processed"
+        string thumbnail_url "Thumbnail image URL"
     }
-  },
-  "structural_description": "A line graph on white background...",
-  "reading_order": [...],
-  "conceptual_hints": "This graph demonstrates terminal velocity...",
-  "layout": "Line graph on white background...",
-  "text_readout": "Velocity vs Time graph...",
-  "spatial_map": "2D coordinate system...",
-  "colors_styles": "White background, black axes...",
-  "missing_elements": null
-}
+
+    TRANSCRIPTS {
+        int id PK "Auto-increment ID"
+        string video_id FK "References videos.id"
+        float start_time "Segment start in seconds"
+        float end_time "Segment end in seconds"
+        text text "Spoken transcription text"
+    }
+
+    INTERVENTIONS {
+        string id PK "UUID"
+        string video_id FK "References videos.id"
+        float timestamp "Suffer point timestamp (seconds)"
+        string timestamp_formatted "e.g. 02:15"
+        string frame_path "Relative path to keyframe JPEG"
+        string content_type "graph, equation, diagram, etc."
+        float complexity_score "Visual complexity (0.0 to 1.0)"
+        float clip_confidence "CLIP classification confidence"
+        string trigger_reason "Deictic, Silent Writing, etc."
+        string confidence "high, medium, low"
+        text transcript_context "Nearby spoken captions"
+        boolean is_bookmarked "User bookmark flag"
+        datetime created_at "Creation timestamp"
+    }
+
+    EXPLANATIONS {
+        int id PK "Auto-increment ID"
+        string intervention_id FK "References interventions.id"
+        text text_explanation "Woven audio script"
+        string audio_file_path "Path to generated MP3 file"
+        string text_file_path "Path to generated TXT file"
+        string vlm_snapshot_path "Path to VLM snapshot JSON"
+        string output_mode "brief, explanatory, detailed"
+        text vlm_snapshot "Full VLM analysis JSON string"
+        datetime created_at "Generation timestamp"
+    }
 ```
 
-#### Manifest Segment
+#### Detailed Table Specifications
 
-```json
-{
-  "chunk_id": 5,
-  "timestamp": 15.5,
-  "text": "Look at this graph, which shows velocity increasing linearly with time...",
-  "is_intervention": true,
-  "audio_file": "audio_segments/intervention_0005.mp3",
-  "original_transcript": "Look at this graph on the screen.",
-  "vlm_data": {
-    "content_type": "graph",
-    "structural_description": "...",
-    "conceptual_hints": "..."
-  }
-}
+1. **`videos` Table**:
+   - `id` (String, PK, indexed): 11-character YouTube video ID.
+   - `title` (String, nullable=False): Video title.
+   - `duration_seconds` (Integer): Video length in seconds.
+   - `duration_formatted` (String): Human-readable duration (`"MM:SS"` or `"HH:MM:SS"`).
+   - `total_keyframes` (Integer): Count of extracted pedagogical keyframes.
+   - `subject` (String): Inferred academic subject (e.g., Mathematics, Physics, Chemistry).
+   - `source_url` (String, nullable=False): Original YouTube URL.
+   - `date_processed` (DateTime): Server timestamp when processed.
+   - `thumbnail_url` (String): YouTube video thumbnail URL.
+
+2. **`transcripts` Table**:
+   - `id` (Integer, PK, autoincrement): Unique segment record ID.
+   - `video_id` (String, FK `videos.id`, indexed): Parent video ID.
+   - `start_time` (Float, indexed): Caption start time in seconds.
+   - `end_time` (Float): Caption end time in seconds.
+   - `text` (Text, nullable=False): Spoken words during the segment.
+
+3. **`interventions` Table**:
+   - `id` (String, PK, indexed): Unique UUID for the intervention point.
+   - `video_id` (String, FK `videos.id`, indexed): Parent video ID.
+   - `timestamp` (Float, indexed): Exact timestamp in seconds where intervention occurs.
+   - `timestamp_formatted` (String): Formatted timestamp (e.g., `"03:45"`).
+   - `frame_path` (String, nullable=False): Relative filesystem path to the keyframe JPEG.
+   - `content_type` (String): Primary visual type (`equation`, `graph`, `circuit`, etc.).
+   - `complexity_score` (Float): Edge-density and visual complexity metric.
+   - `clip_confidence` (Float): CLIP classifier confidence score.
+   - `trigger_reason` (String): Why the point was triggered (`Deictic Phrase`, `Silent Writing`, etc.).
+   - `confidence` (String): Confidence rating (`"high"`, `"medium"`, `"low"`).
+   - `transcript_context` (Text): Spoken context surrounding the trigger.
+   - `is_bookmarked` (Boolean, default=False, indexed): Student bookmark flag.
+   - `created_at` (DateTime): Record creation timestamp.
+
+4. **`explanations` Table**:
+   - `id` (Integer, PK, autoincrement): Unique explanation ID.
+   - `intervention_id` (String, FK `interventions.id`, indexed): Target intervention.
+   - `output_mode` (String): Depth mode (`"brief"`, `"explanatory"`, `"detailed"`).
+   - `text_explanation` (Text, nullable=False): Synthesized description text.
+   - `audio_file_path` (String): Path to synthesized MP3 file on disk.
+   - `text_file_path` (String): Path to plain text description on disk.
+   - `vlm_snapshot_path` (String): Path to VLM snapshot JSON file on disk.
+   - `vlm_snapshot` (Text): Complete serialized VLM analysis JSON.
+   - `created_at` (DateTime): Timestamp of explanation generation.
+
+---
+
+### File System Hierarchy & On-Disk Saves
+
+In addition to SQLite metadata, Synapse stores all heavy binary assets (images, audio) and JSON manifests on the filesystem under the `data/` directory partitioned by `video_id`.
+
 ```
+data/
+└── {video_id}/                               # 11-character YouTube video ID
+    ├── keyframes/                            # Extracted pedagogical keyframe images
+    │   ├── frame_0000_00_00.jpg              # Frame image at 00:00
+    │   ├── frame_0001_02_15.jpg              # Frame image at 02:15
+    │   └── keyframes.json                    # Metadata for all keyframes
+    ├── audio_segments/                       # Audio description MP3 files
+    │   ├── intervention_0000.mp3             # Synthesized audio for intervention 0
+    │   ├── intervention_0001.mp3             # Synthesized audio for intervention 1
+    │   └── segment_0005.mp3                  # Optional stitched/continuous audio
+    ├── interventions/                        # Self-contained intervention bundles
+    │   ├── intervention_0000/
+    │   │   ├── frame.jpg                     # Keyframe image copy
+    │   │   ├── description.txt               # Plain text audio description
+    │   │   ├── audio.mp3                     # Synthesized MP3 narration
+    │   │   ├── vlm_snapshot.json             # VLM visual analysis JSON
+    │   │   └── metadata.json                 # Intervention metadata & trigger info
+    │   └── intervention_0001/
+    │       └── ...
+    ├── transcript.json                       # Normalized transcript segments
+    ├── video_meta.json                       # YouTube metadata & download info
+    ├── manifest.json                         # Master playback and timeline manifest
+    ├── interventions_manifest.json           # Intervention-only timeline manifest
+    └── interactions.json                     # Visual interaction detection output
+```
+
+---
+
+### Data Save Lifecycle & Transaction Boundaries
+
+To maintain data integrity and prevent partial state corruption, Synapse defines strict save points and transaction boundaries across each phase of execution:
+
+#### 1. Video Processing Lifecycle (`POST /video/process`)
+1. **Initial Record Creation**: The API checks if `Video(id=video_id)` exists in SQLite. If not, a record is created and committed with `processed=False`.
+2. **Parallel Extraction Phase**:
+   - Thread A runs transcription; outputs `data/{video_id}/transcript.json`.
+   - Thread B runs keyframe extraction; outputs images to `data/{video_id}/keyframes/` and writes `keyframes.json`.
+3. **Database Transcript Commit**: The API reads `transcript.json` and inserts each caption line into the `transcripts` table within a single atomic database transaction.
+4. **Suffer Point Synchronization & Interaction Fusion**:
+   - `synchronizer.py` and `synapse_interaction/fusion.py` compute suffer points.
+   - Suffer points are transformed into `Intervention` ORM objects and bulk-inserted into the `interventions` table.
+5. **Video Status Finalization**: The `Video` record is updated with `duration_seconds`, `total_keyframes`, `total_interventions`, and committed.
+
+#### 2. On-Demand Explanation Lifecycle (`POST /video/intervention/explain`)
+1. **Cache Lookup**: Before invoking heavy models, the API queries `explanations` table for `(intervention_id, output_mode)`:
+   ```python
+   explanation = db.query(Explanation).filter(
+       Explanation.intervention_id == intervention_id,
+       Explanation.output_mode == output_mode
+   ).first()
+   if explanation and os.path.exists(explanation.audio_file_path):
+       return cached_response
+   ```
+2. **Model Invocation (On Cache Miss)**:
+   - VLM analyzes keyframe image (`vlm_engine.analyze_frame()`).
+   - LLM Synthesizer weaves transcript context with VLM data (`synthesizer.weave()`).
+   - TTS Engine generates speech audio (`tts_engine.generate()`).
+3. **Disk Persistence**: Files are written to disk:
+   - `data/{video_id}/interventions/{intervention_id}/description.txt`
+   - `data/{video_id}/interventions/{intervention_id}/audio.mp3`
+   - `data/{video_id}/interventions/{intervention_id}/vlm_snapshot.json`
+4. **Database Transaction**: A new `Explanation` record is created, linked to the `Intervention`, and committed to SQLite.
+
+#### 3. Storage Fallback Hierarchy
+Modules requiring transcript access (such as Q&A and Quiz) employ an automatic fallback hierarchy:
+- **Tier 1 (Database)**: Query SQLite `transcripts` table by `video_id` ordered by `start_time`.
+- **Tier 2 (Disk File)**: If the database returns 0 rows, load `data/{video_id}/transcript.json` from disk and normalize segments.
+- **Tier 3 (Degraded)**: If no file exists, return clean empty segment lists (`source="none"`) and respond with informative student messages without raising unhandled 500 server crashes.
 
 ---
 
@@ -2515,97 +2870,311 @@ data/
 
 ## API Reference
 
-### PipelineOrchestrator
+### FastAPI REST API Reference
 
-#### Methods
+The Synapse backend provides a RESTful HTTP API hosted with FastAPI and Uvicorn. By default, the API binds to `http://127.0.0.1:8000`.
 
-##### `process_video(youtube_url, output_mode="explanatory")`
+#### CORS Security Policy
 
-Full pipeline processing.
-
-**Parameters**:
-- `youtube_url` (str): YouTube video URL
-- `output_mode` (str): "brief", "explanatory", or "detailed"
-
-**Returns**:
-- `dict`: Complete manifest with all segments
-
-**Example**:
-```python
-manifest = orchestrator.process_video(
-    "https://www.youtube.com/watch?v=VIDEO_ID",
-    "explanatory"
-)
-```
-
-##### `process_video_intervention_only(youtube_url, output_mode="explanatory")`
-
-Generate interventions only.
-
-**Parameters**:
-- `youtube_url` (str): YouTube video URL
-- `output_mode` (str): "brief", "explanatory", or "detailed"
-
-**Returns**:
-- `dict`: Intervention results with metadata
-
-**Example**:
-```python
-result = orchestrator.process_video_intervention_only(
-    "https://www.youtube.com/watch?v=VIDEO_ID",
-    "detailed"
-)
-```
-
-##### `process_detection_only(youtube_url)`
-
-Detect intervention points only.
-
-**Parameters**:
-- `youtube_url` (str): YouTube video URL
-
-**Returns**:
-- `dict`: Detection results with intervention points
-
-**Example**:
-```python
-result = orchestrator.process_detection_only(
-    "https://www.youtube.com/watch?v=VIDEO_ID"
-)
-```
-
-##### `generate_intervention_explanation(video_id, intervention_id, ...)`
-
-Generate explanation for single intervention.
-
-**Parameters**:
-- `video_id` (str): YouTube video ID
-- `intervention_id` (str): UUID of intervention
-- `intervention_timestamp` (float): Timestamp in seconds
-- `frame_path` (str): Path to frame image
-- `content_type` (str): Type of visual content
-- `trigger_reason` (str): Reason for intervention
-- `transcript_entries` (List): All transcript entries
-- `output_mode` (str): "brief", "explanatory", or "detailed"
-
-**Returns**:
-- `dict`: Explanation with text and audio paths
-
-**Example**:
-```python
-result = orchestrator.generate_intervention_explanation(
-    video_id="VIDEO_ID",
-    intervention_id="abc123",
-    intervention_timestamp=135.5,
-    frame_path="data/VIDEO_ID/keyframes/frame_0005.jpg",
-    content_type="graph",
-    trigger_reason="Deictic Phrase",
-    transcript_entries=transcripts,
-    output_mode="explanatory"
-)
-```
+Cross-Origin Resource Sharing (CORS) is governed by `api/security.py`:
+- **Allowed Origins**: Configured via `SYNAPSE_CORS_ORIGINS` environment variable (comma-separated).
+- **Default Origins**: `http://localhost:5173`, `http://127.0.0.1:5173` (Vite development servers).
+- **Electron Origin (`null`)**: Packaged desktop Electron windows transmitting `Origin: null` are rejected by default unless explicitly configured in `SYNAPSE_CORS_ORIGINS`.
+- **Untrusted Origins**: Any non-whitelisted origin receives `403 Forbidden` (`{"detail": "Origin not allowed"}`).
 
 ---
+
+#### Endpoint 1: Health Check
+
+##### `GET /health` & `GET /`
+Basic service health and readiness check.
+
+- **Request**: No parameters or body required.
+- **Response `200 OK`**:
+  ```json
+  {
+    "status": "healthy"
+  }
+  ```
+
+---
+
+#### Endpoint 2: Process Video
+
+##### `POST /video/process`
+Initiates complete video analysis, pedagogical keyframe extraction, transcript synchronization, and visual interaction detection.
+
+- **Request Headers**: `Content-Type: application/json`
+- **Request Body (`ProcessVideoRequest`)**:
+  ```json
+  {
+    "youtube_url": "https://www.youtube.com/watch?v=3zLQfuMZMF4"
+  }
+  ```
+- **Response `200 OK` (`ProcessVideoResponse`)**:
+  ```json
+  {
+    "video_id": "3zLQfuMZMF4",
+    "title": "Integration by Parts - Calculus Lecture",
+    "duration_seconds": 273,
+    "duration_formatted": "04:33",
+    "total_keyframes": 12,
+    "total_interventions": 8,
+    "interventions": [
+      {
+        "id": "e8d7a312-4211-4a9b-8134-123456789abc",
+        "video_id": "3zLQfuMZMF4",
+        "timestamp": 105.4,
+        "timestamp_formatted": "01:45",
+        "frame_path": "data/3zLQfuMZMF4/keyframes/frame_0004_01_45.jpg",
+        "content_type": "equation",
+        "complexity_score": 0.521,
+        "clip_confidence": 0.892,
+        "trigger_reason": "Deictic Phrase",
+        "confidence": "high",
+        "transcript_context": "notice how we choose u according to the formula",
+        "is_bookmarked": false,
+        "created_at": "2026-10-21T05:00:00"
+      }
+    ],
+    "category_counts": {
+      "text": 1,
+      "equation": 4,
+      "graph": 2,
+      "circuit": 0,
+      "diagram": 1,
+      "code": 0,
+      "handwritten_notes": 0,
+      "biology": 0,
+      "chemistry": 0,
+      "physics": 0,
+      "slide": 0,
+      "table": 0,
+      "unknown": 0
+    }
+  }
+  ```
+- **Error Codes**:
+  - `400 Bad Request`: Invalid YouTube URL or video unavailable.
+  - `500 Internal Server Error`: Processing pipeline failure.
+
+---
+
+#### Endpoint 3: Video Metadata
+
+##### `GET /video/meta/{video_id}`
+Checks whether a video exists and whether processing has completed.
+
+- **Path Parameters**:
+  - `video_id` (string): 11-character YouTube ID.
+- **Response `200 OK` (`VideoMetaResponse`)**:
+  ```json
+  {
+    "video_id": "3zLQfuMZMF4",
+    "title": "Integration by Parts - Calculus Lecture",
+    "duration_seconds": 273,
+    "duration_formatted": "04:33",
+    "thumbnail_url": "https://img.youtube.com/vi/3zLQfuMZMF4/maxresdefault.jpg",
+    "exists": true,
+    "processed": true
+  }
+  ```
+- **Response `404 Not Found`**: Returned when video ID has not been registered.
+
+---
+
+#### Endpoint 4: Generate Intervention Explanation
+
+##### `POST /video/intervention/explain`
+Generates (or retrieves from SQLite cache) an AI audio description for a specific intervention point at the requested depth.
+
+- **Request Body (`GenerateExplanationRequest`)**:
+  ```json
+  {
+    "video_id": "3zLQfuMZMF4",
+    "intervention_id": "e8d7a312-4211-4a9b-8134-123456789abc",
+    "output_mode": "explanatory"
+  }
+  ```
+- **Response `200 OK` (`GenerateExplanationResponse`)**:
+  ```json
+  {
+    "intervention_id": "e8d7a312-4211-4a9b-8134-123456789abc",
+    "text_explanation": "On the chalkboard, the instructor writes the integration by parts formula: the integral of u d v equals u times v minus the integral of v d u.",
+    "audio_file_path": "data/3zLQfuMZMF4/interventions/e8d7a312-4211-4a9b-8134-123456789abc/audio.mp3",
+    "text_file_path": "data/3zLQfuMZMF4/interventions/e8d7a312-4211-4a9b-8134-123456789abc/description.txt",
+    "vlm_snapshot_path": "data/3zLQfuMZMF4/interventions/e8d7a312-4211-4a9b-8134-123456789abc/vlm_snapshot.json",
+    "output_mode": "explanatory"
+  }
+  ```
+- **Error Codes**:
+  - `400 Bad Request`: Unknown output mode (must be `brief`, `explanatory`, or `detailed`).
+  - `404 Not Found`: Intervention ID or parent video not found.
+  - `500 Internal Server Error`: VLM analysis or TTS generation failure.
+
+---
+
+#### Endpoint 5: Bookmark Intervention
+
+##### `POST /video/intervention/bookmark/{intervention_id}`
+Toggles or sets the student bookmark flag on an intervention point.
+
+- **Path Parameters**: `intervention_id` (string UUID).
+- **Request Body (`BookmarkRequest`)**:
+  ```json
+  {
+    "bookmarked": true
+  }
+  ```
+- **Response `200 OK` (`BookmarkResponse`)**:
+  ```json
+  {
+    "intervention_id": "e8d7a312-4211-4a9b-8134-123456789abc",
+    "is_bookmarked": true
+  }
+  ```
+- **Error Codes**: `404 Not Found` if intervention does not exist.
+
+---
+
+#### Endpoint 6: List Video Interventions
+
+##### `GET /video/{video_id}/interventions`
+Returns all interventions for a video, ordered reverse-chronologically, along with category counts.
+
+- **Path Parameters**: `video_id` (string).
+- **Response `200 OK` (`ProcessVideoResponse`)**: Same schema as Endpoint 2.
+- **Error Codes**: `404 Not Found` if video does not exist.
+
+---
+
+#### Endpoint 7: Ask a Question
+
+##### `POST /video/ask`
+Answers student questions strictly grounded in lecture transcripts and visual intervention moments, returning verified timestamped sources.
+
+- **Request Body (`AskRequest`)**:
+  ```json
+  {
+    "video_id": "3zLQfuMZMF4",
+    "question": "What is the acronym LIATE used for?",
+    "current_time_seconds": 120.0,
+    "intervention_id": "e8d7a312-4211-4a9b-8134-123456789abc"
+  }
+  ```
+- **Validation Constraints**:
+  - `video_id`: 11 ASCII characters matching `^[A-Za-z0-9_-]{11}$`.
+  - `question`: 1 to 500 characters, whitespace stripped.
+  - `current_time_seconds`: Optional float between 0 and 172800 (48 hours).
+  - `intervention_id`: Optional UUID string.
+- **Response `200 OK` (`AskResponse`)**:
+  ```json
+  {
+    "status": "answered",
+    "scope": "lecture_with_moment",
+    "answer_text": "The acronym LIATE is a rule of thumb for choosing which function to set as u in integration by parts. L stands for logarithmic, I for inverse trigonometric, A for algebraic, T for trigonometric, and E for exponential functions.",
+    "sources": [
+      {
+        "start_seconds": 103.96,
+        "end_seconds": 139.48,
+        "intervention_id": "e8d7a312-4211-4a9b-8134-123456789abc"
+      }
+    ]
+  }
+  ```
+- **Degraded Status Values**:
+  - `not_in_lecture`: When the topic is completely absent from the lecture transcript.
+  - `insufficient_context`: When the transcript is missing or too short to answer reliably.
+- **Error Codes**:
+  - `404 Not Found`: Video ID does not exist in database or filesystem.
+  - `422 Unprocessable Entity`: Malformed video ID or empty question text.
+  - `503 Service Unavailable`: Upstream LLM provider is unavailable or experiencing rate limits.
+
+---
+
+#### Endpoint 8: Generate Formative Quiz
+
+##### `POST /video/quiz`
+Generates auto-scored practice questions (multiple-choice and true/false) grounded in the lecture transcript, with two-tier screening against distractors, duplicates, and suspect ASR tokens.
+
+- **Request Body (`QuizRequest`)**:
+  ```json
+  {
+    "video_id": "3zLQfuMZMF4",
+    "question_count": 5
+  }
+  ```
+- **Validation Constraints**:
+  - `video_id`: 11 ASCII characters.
+  - `question_count`: Integer between 5 and 10 (default 6).
+- **Response `200 OK` (`QuizResponse`)**:
+  ```json
+  {
+    "contract_version": 1,
+    "quiz_id": "c4b3a120-8e12-4211-9a3b-9a8421b01234",
+    "video_id": "3zLQfuMZMF4",
+    "generated_at": "2026-10-21T05:00:00Z",
+    "prompt_version": "v1",
+    "model": "gemini-2.5-flash",
+    "requested_count": 5,
+    "returned_count": 5,
+    "status": "complete",
+    "reason": null,
+    "notice": null,
+    "omitted": [],
+    "questions": [
+      {
+        "id": "q1",
+        "type": "multiple_choice",
+        "prompt": "In the LIATE acronym, which type of function takes priority when choosing u?",
+        "choices": [
+          {"id": "a", "text": "Logarithmic functions"},
+          {"id": "b", "text": "Exponential functions"},
+          {"id": "c", "text": "Algebraic functions"},
+          {"id": "d", "text": "Trigonometric functions"}
+        ],
+        "correct_choice_id": "a",
+        "evidence": [
+          {
+            "start_seconds": 103.96,
+            "end_seconds": 125.0,
+            "quote": "L stands for logarithmic functions... pick u as the function that comes first in LIATE"
+          }
+        ],
+        "concept": {
+          "id": "liate-priority",
+          "label": "LIATE Rule"
+        },
+        "hints": [
+          "Look at the first letter of the acronym."
+        ],
+        "explanation": "L comes first in LIATE, representing logarithmic functions."
+      }
+    ]
+  }
+  ```
+- **Insufficient Material Response**:
+  If the lecture has fewer than 300 words or too few distinct passages:
+  ```json
+  {
+    "contract_version": 1,
+    "quiz_id": "...",
+    "video_id": "...",
+    "status": "insufficient_material",
+    "reason": "too_short",
+    "returned_count": 0,
+    "questions": []
+  }
+  ```
+- **Error Codes**:
+  - `404 Not Found`: Returned when `QUIZ_ENABLED=0` (or production without explicit flag) or unknown video.
+  - `422 Unprocessable Entity`: Question count outside range [5, 10].
+  - `502 Bad Gateway`: Model output failed screening repeatedly.
+  - `503 Service Unavailable`: Upstream LLM provider unavailable.
+
+---
+
+### PipelineOrchestrator Python API
 
 ## Performance
 
@@ -2764,30 +3333,38 @@ interventions = sync.detect_suffer_points()
 
 ### Recently Implemented
 
-1. **3-Mode Explanation System**
-   - Brief, Explanatory, and Detailed output modes
-   - Flexible intervention depth
-   - Context-aware generation
+1. **FastAPI REST API & SQLite Persistence**
+   - Full REST gateway with health checks, video processing, explanation, bookmarking, Q&A, and quiz endpoints.
+   - SQLite relational schema (`videos`, `transcripts`, `interventions`, `explanations`) for fast query execution and deduplication.
+   - Configurable CORS policy rejecting untrusted origins and safeguarding desktop Electron environments.
 
-2. **Intervention-Only Workflow**
-   - Dedicated workflow for interventions only
-   - Separate metadata and directory structure
-   - Efficient for review and curation
+2. **Visual Interaction Detection & Fusion (`synapse_interaction`)**
+   - Optical motion and stroke accumulation distinguishing writing/drawing from pointer movements.
+   - MediaPipe / heuristic hand tracking for index finger pointing gestures.
+   - Novelty containment filtering and before/after frame pair extraction.
+   - Automatic fusion with M1 Synchronizer suffer points.
 
-3. **TTS Provider Fallback**
-   - SpeechT5 fallback for offline TTS
-   - Automatic provider selection
-   - Reliable audio generation
+3. **Transcript-Grounded Q&A Subsystem (`qa`)**
+   - Real-time student question answering grounded in timestamped lecture captions.
+   - Dynamic passage retrieval combining temporal proximity, whole-lecture sampling, and BM25 lexical ranking.
+   - Active visual moment context injection (frame OCR and visual summary).
+   - Strict token budgeting and post-generation citation faithfulness verification.
 
-4. **Physics Content Type**
-   - Added as 10th content type
-   - Handles physical diagrams and force vectors
-   - Complete content coverage
+4. **Screened Formative Quiz Engine (`quiz`)**
+   - Deterministic passage segmentation (`S1..SN`).
+   - Two-tier screening filter checking lexical support, distractor margins, same-fact duplicates, and suspect ASR tokens.
+   - Server-owned quotes and timestamp attribution preventing hallucinated citations.
 
-5. **Unified VLM Output Format**
-   - Enhanced JSON structure
-   - Multiple content type detection
-   - Reading order and conceptual hints
+5. **Unified Multi-Provider LLM Abstraction (`llm_interface`)**
+   - Unified `TextGenerationProvider` supporting local Ollama (Mistral) and hosted Google GenAI (Gemini 2.5 Flash / Flash Lite).
+   - Structured JSON schema enforcement (`QuizGeminiProvider`).
+   - Sanitized exception hierarchy with automatic HTTP status mapping.
+
+6. **3-Mode Explanation System**
+   - Brief, Explanatory, and Detailed output modes with token range enforcement.
+
+7. **TTS Provider Fallback**
+   - Edge-TTS primary with automatic SpeechT5 offline fallback.
 
 ### Under Consideration
 
