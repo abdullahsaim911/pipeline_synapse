@@ -1,7 +1,7 @@
 """
 Setup script for Synapse API.
 
-Creates the database tables and verifies the installation.
+Applies database migrations and verifies the installation.
 """
 
 import sys
@@ -12,15 +12,30 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from api.database import engine, Base, SessionLocal
-from api.models import Video, Intervention, Transcript, Explanation
+from api.database import SessionLocal
+from api.migrations import upgrade_database
+from api.models import (
+    Explanation,
+    ExplanationPreparation,
+    Intervention,
+    LectureActivity,
+    LibraryItem,
+    PlaybackProgress,
+    ProcessingJob,
+    ProcessingJobRequestedMode,
+    RecentExplanation,
+    Transcript,
+    User,
+    UserPreference,
+    Video,
+)
 
 
-def create_tables():
-    """Create all database tables."""
-    print("Creating database tables...")
-    Base.metadata.create_all(bind=engine)
-    print("✓ Database tables created successfully")
+def migrate_database():
+    """Apply every pending non-destructive Alembic migration."""
+    print("Applying database migrations...")
+    upgrade_database()
+    print("✓ Database migrations applied successfully")
 
 
 def verify_tables():
@@ -30,7 +45,21 @@ def verify_tables():
 
     try:
         # Check each table
-        tables = [Video, Intervention, Transcript, Explanation]
+        tables = [
+            User,
+            UserPreference,
+            Video,
+            Transcript,
+            Intervention,
+            Explanation,
+            ExplanationPreparation,
+            ProcessingJob,
+            ProcessingJobRequestedMode,
+            LectureActivity,
+            LibraryItem,
+            PlaybackProgress,
+            RecentExplanation,
+        ]
         for table in tables:
             count = db.query(table).count()
             print(f"✓ {table.__tablename__}: {count} records")
@@ -49,7 +78,7 @@ if __name__ == "__main__":
     print("=" * 60)
     print()
 
-    create_tables()
+    migrate_database()
     verify_tables()
 
     print()

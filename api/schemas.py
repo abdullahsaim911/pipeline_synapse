@@ -126,7 +126,10 @@ class GenerateExplanationRequest(BaseModel):
     """Request schema for generating explanation for intervention."""
     video_id: str = Field(..., description="YouTube video ID (for validation and path construction)")
     intervention_id: str
-    output_mode: str = Field(default="explanatory", description="Output mode: brief, explanatory, detailed")
+    output_mode: Literal["brief", "explanatory", "detailed"] = Field(
+        default="explanatory",
+        description="Output mode: brief, explanatory, detailed",
+    )
 
 
 class GenerateExplanationResponse(BaseModel):
@@ -134,6 +137,7 @@ class GenerateExplanationResponse(BaseModel):
     intervention_id: str
     text_explanation: str
     audio_file_path: Optional[str] = None
+    audio_url: Optional[str] = None
     text_file_path: Optional[str] = None
     vlm_snapshot_path: Optional[str] = None
     output_mode: str
@@ -143,6 +147,10 @@ class GenerateExplanationResponse(BaseModel):
 class ProcessVideoRequest(BaseModel):
     """Request schema for processing a video."""
     youtube_url: str = Field(..., description="YouTube video URL")
+    output_mode: Literal["brief", "explanatory", "detailed"] = Field(
+        default="explanatory",
+        description="Explanation mode to prepare after detection is persisted",
+    )
 
 
 class CategoryCounts(BaseModel):
@@ -174,10 +182,80 @@ class ProcessVideoResponse(BaseModel):
     category_counts: CategoryCounts
 
 
+ProcessingJobStatus = Literal["queued", "running", "succeeded", "failed"]
+ProcessingJobStage = Literal[
+    "queued",
+    "processing",
+    "persisting",
+    "preparing_explanations",
+    "complete",
+    "failed",
+]
+
+
+class ProcessingJobResponse(BaseModel):
+    """Durable processing state; progress percentages are intentionally absent."""
+    job_id: str
+    video_id: str
+    status: ProcessingJobStatus
+    stage: ProcessingJobStage
+    attempt_count: int
+    requested_modes: List[Literal["brief", "explanatory", "detailed"]] = Field(
+        default_factory=list
+    )
+    joined_existing: bool = False
+    reused_cache: bool = False
+    error_code: Optional[str] = None
+    error_message: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    started_at: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+
+
+PreparationStatus = Literal["pending", "generating", "ready", "failed"]
+
+
+class ExplanationPreparationItem(BaseModel):
+    """Small frontend-readable state for one intervention and mode."""
+    intervention_id: str
+    timestamp: float
+    status: PreparationStatus
+    error_code: Optional[str] = None
+    attempt_count: int = 0
+
+
+class ExplanationPreparationStatusResponse(BaseModel):
+    video_id: str
+    output_mode: Literal["brief", "explanatory", "detailed"]
+    items: List[ExplanationPreparationItem]
+
+
+class ExplanationRetryResponse(BaseModel):
+    video_id: str
+    intervention_id: str
+    output_mode: Literal["brief", "explanatory", "detailed"]
+    status: PreparationStatus
+    error_code: Optional[str] = None
+    attempt_count: int
+
+
+class VideoSearchResult(BaseModel):
+    """Normalized search result from YouTube Data API v3."""
+    video_id: str = Field(..., description="11-character YouTube video ID")
+    title: str = Field(..., description="Video title")
+    channel_name: str = Field(..., description="Channel or creator name")
+    thumbnail_url: Optional[str] = Field(None, description="Video thumbnail URL")
+    duration_seconds: int = Field(..., ge=1, le=600, description="Exact duration in seconds (<= 600)")
+    duration_formatted: Optional[str] = Field(None, description="Formatted duration string (MM:SS)")
+    canonical_url: str = Field(..., description="Canonical YouTube watch URL")
+
+
 class VideoMetaResponse(BaseModel):
     """Response schema for video metadata endpoint."""
     video_id: str
     title: Optional[str] = None
+    channel_name: Optional[str] = None
     duration_seconds: Optional[int] = None
     duration_formatted: Optional[str] = None
     thumbnail_url: Optional[str] = None

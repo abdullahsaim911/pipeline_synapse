@@ -7,13 +7,22 @@ Handles video processing, metadata retrieval, and intervention management.
 import json
 import logging
 import os
+import re
 import sys
-import uuid
 from typing import List
-from datetime import datetime
+from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
-from sqlalchemy.orm import Session
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Path as ApiPath,
+    Query,
+    Request,
+    Response,
+)
+from fastapi.responses import FileResponse
+from sqlalchemy.orm import Session, sessionmaker
 
 # Add project root to path for module imports
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -21,7 +30,22 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from api.database import get_db
+from api.explanation_service import (
+    ExplanationTargetNotFoundError,
+    find_valid_cached_explanation,
+    generate_or_get_explanation,
+    resolve_explanation_audio_path,
+)
+from api.explanation_preparation import (
+    PreparationNotRetryableError,
+    PreparationRetryExhaustedError,
+)
 from api.models import Video, Intervention, Transcript, Explanation
+from api.processing_jobs import (
+    ProcessingJobManager,
+    ProcessingJobNotFoundError,
+    ProcessingJobTimeoutError,
+)
 from api.schemas import (
     ProcessVideoRequest,
     ProcessVideoResponse,
@@ -34,7 +58,21 @@ from api.schemas import (
     GenerateExplanationResponse,
     AskRequest,
     AskResponse,
-    AskSource
+    AskSource,
+    ExplanationPreparationItem,
+    ExplanationPreparationStatusResponse,
+    ExplanationRetryResponse,
+    ProcessingJobResponse,
+    VideoSearchResult,
+)
+from api.youtube_search import (
+    YouTubeSearchService,
+    YouTubeSearchNotConfiguredError,
+    YouTubeSearchTimeoutError,
+    YouTubeSearchRateLimitError,
+    YouTubeSearchUnavailableError,
+    YouTubeSearchProviderError,
+    get_youtube_search_service,
 )
 from llm_interface.providers import (
     LLMAuthenticationError,
@@ -69,6 +107,54 @@ def get_orchestrator():
         from orchestrator.orchestrator import PipelineOrchestrator
         orchestrator = PipelineOrchestrator(base_dir="data")
     return orchestrator
+
+
+def get_data_dir() -> str:
+    """Root folder holding data/<video_id>/ (dependency, overridable in tests)."""
+    return os.path.join(project_root, "data")
+
+
+def get_preparation_manager(request: Request):
+    """Return the lifespan-owned worker, or None in router-only test apps."""
+    return getattr(request.app.state, "explanation_preparation", None)
+
+
+def _processing_manager(request: Request, db: Session, preparation_manager):
+    """Return the lifespan manager, with a lazy fallback for router-only apps."""
+    manager = getattr(request.app.state, "processing_jobs", None)
+    if manager is None:
+        manager = ProcessingJobManager(
+            session_factory=sessionmaker(bind=db.get_bind(), expire_on_commit=False),
+            orchestrator_factory=get_orchestrator,
+            preparation_manager=preparation_manager,
+        )
+        manager.start()
+        request.app.state.processing_jobs = manager
+    return manager
+
+
+def _schedule_background_preparation(manager, video_id: str, output_mode: str) -> None:
+    """Schedule best-effort background work without invalidating saved results."""
+    if manager is None:
+        return
+    try:
+        manager.schedule_video(video_id, output_mode)
+    except Exception:
+        logger.exception(
+            "Could not schedule background explanations for video %s in mode %s",
+            video_id,
+            output_mode,
+        )
+
+
+def _audio_url(intervention_id: str, output_mode: str, audio_file_path: str | None) -> str | None:
+    """Return the API resource for a generated audio file without exposing its path."""
+    if not audio_file_path:
+        return None
+    return (
+        f"/video/intervention/{quote(intervention_id, safe='')}/audio"
+        f"?output_mode={quote(output_mode, safe='')}"
+    )
 
 
 def calculate_category_counts(interventions: List) -> CategoryCounts:
@@ -121,18 +207,90 @@ def calculate_category_counts(interventions: List) -> CategoryCounts:
     return counts
 
 
+
+
+# ============================================================================
+# Endpoint: Search YouTube Lectures
+# ============================================================================
+
+@router.get("/search", response_model=List[VideoSearchResult])
+def search_videos(
+    q: str = Query(..., min_length=1, max_length=200, description="YouTube lecture search query"),
+    search_service: YouTubeSearchService = Depends(get_youtube_search_service),
+):
+    """
+    Search YouTube for public embeddable lectures <= 600s in length.
+
+    Queries official YouTube Data API v3 using server-side YOUTUBE_API_KEY.
+    Returns normalized objects: video_id, title, channel_name, thumbnail_url,
+    duration_seconds, duration_formatted, canonical_url.
+    """
+    clean_query = q.strip()
+    if not clean_query:
+        raise HTTPException(status_code=400, detail="Search query must not be empty.")
+    if len(clean_query) > 200:
+        raise HTTPException(status_code=400, detail="Search query exceeds maximum length of 200 characters.")
+
+    try:
+        return search_service.search(clean_query)
+    except YouTubeSearchNotConfiguredError as exc:
+        logger.warning("YouTube search service not configured: %s", exc)
+        raise HTTPException(status_code=503, detail="YouTube search is not configured.")
+    except YouTubeSearchTimeoutError as exc:
+        logger.warning("YouTube search provider timeout")
+        raise HTTPException(status_code=504, detail="YouTube search request timed out.")
+    except YouTubeSearchRateLimitError as exc:
+        logger.warning("YouTube search rate limit or quota exceeded")
+        raise HTTPException(status_code=429, detail="YouTube search rate limit or quota exceeded.")
+    except YouTubeSearchUnavailableError as exc:
+        logger.warning("YouTube search provider unavailable: %s", exc)
+        raise HTTPException(status_code=503, detail="YouTube search provider is currently unavailable.")
+    except YouTubeSearchProviderError as exc:
+        logger.warning("YouTube search provider error: %s", exc)
+        raise HTTPException(status_code=502, detail="YouTube search provider returned an error.")
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception as exc:
+        logger.exception("Unexpected error during YouTube search")
+        raise HTTPException(status_code=500, detail="Search failed.")
+
+
 # ============================================================================
 # Endpoint 1: Get Video Metadata
 # ============================================================================
 
 @router.get("/meta/{video_id}", response_model=VideoMetaResponse)
-async def get_video_metadata(video_id: str, db: Session = Depends(get_db)):
+async def get_video_metadata(
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    db: Session = Depends(get_db),
+    data_dir: str = Depends(get_data_dir),
+):
     """
     Get video metadata and thumbnail.
 
     Checks if video exists in database and returns metadata.
     If not found, checks if the video directory exists on disk.
     """
+    video_dir = os.path.join(data_dir, video_id)
+    meta = {}
+    meta_path = os.path.join(video_dir, "video_meta.json")
+    if os.path.isfile(meta_path):
+        try:
+            with open(meta_path, "r", encoding="utf-8") as handle:
+                loaded_meta = json.load(handle)
+            if isinstance(loaded_meta, dict):
+                meta = loaded_meta
+        except (OSError, ValueError):
+            logger.warning("Could not read video metadata for %s", video_id, exc_info=True)
+
+    channel_name = (
+        meta.get("channel_name")
+        or meta.get("channel")
+        or meta.get("uploader")
+        or meta.get("author")
+    )
+    canonical_thumbnail = f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg"
+
     # Check database first
     video = db.query(Video).filter(Video.id == video_id).first()
 
@@ -140,32 +298,30 @@ async def get_video_metadata(video_id: str, db: Session = Depends(get_db)):
         return VideoMetaResponse(
             video_id=video.id,
             title=video.title,
+            channel_name=channel_name,
             duration_seconds=video.duration_seconds,
             duration_formatted=video.duration_formatted,
-            thumbnail_url=video.thumbnail_url,
+            thumbnail_url=video.thumbnail_url or meta.get("thumbnail_url") or canonical_thumbnail,
             exists=True,
             processed=True
         )
 
     # Check if video directory exists on disk
-    video_dir = f"data/{video_id}"
     if os.path.exists(video_dir):
-        # Try to load metadata from file
-        meta_path = os.path.join(video_dir, "video_meta.json")
-        if os.path.exists(meta_path):
-            with open(meta_path, "r") as f:
-                meta = json.load(f)
+        if meta:
             return VideoMetaResponse(
-                video_id=meta.get("video_id", video_id),
+                video_id=video_id,
                 title=meta.get("title"),
+                channel_name=channel_name,
                 duration_seconds=meta.get("duration_seconds"),
                 duration_formatted=meta.get("duration_formatted"),
-                thumbnail_url=meta.get("thumbnail_url"),
+                thumbnail_url=meta.get("thumbnail_url") or canonical_thumbnail,
                 exists=True,
                 processed=False  # Not yet in DB
             )
         return VideoMetaResponse(
             video_id=video_id,
+            thumbnail_url=canonical_thumbnail,
             exists=True,
             processed=False
         )
@@ -182,114 +338,104 @@ async def get_video_metadata(video_id: str, db: Session = Depends(get_db)):
 # Endpoint 2: Process Video (Detection-Only)
 # ============================================================================
 
-def save_to_database_task(video_id: str, result: dict, video_dir: str):
-    """
-    Background task to save video data to database and JSON.
+def _processed_video_response(db: Session, video_id: str) -> ProcessVideoResponse:
+    db.expire_all()
+    video = db.get(Video, video_id)
+    if video is None:
+        raise HTTPException(status_code=500, detail="Processed video cache is unavailable.")
+    interventions = (
+        db.query(Intervention)
+        .filter(Intervention.video_id == video_id)
+        .order_by(Intervention.timestamp)
+        .all()
+    )
+    return ProcessVideoResponse(
+        video_id=video_id,
+        title=video.title,
+        duration_seconds=video.duration_seconds,
+        duration_formatted=video.duration_formatted,
+        total_keyframes=video.total_keyframes,
+        total_interventions=len(interventions),
+        interventions=[InterventionResponse.model_validate(item) for item in interventions],
+        category_counts=calculate_category_counts(interventions),
+    )
 
-    Args:
-        video_id: YouTube video ID
-        result: Result from orchestrator.process_detection_only()
-        video_dir: Video directory path
-    """
-    from api.database import SessionLocal
 
-    db = SessionLocal()
+@router.post(
+    "/processing-jobs",
+    response_model=ProcessingJobResponse,
+    status_code=202,
+)
+def create_or_join_processing_job(
+    request_body: ProcessVideoRequest,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Create work for a video, or join its existing durable job/cache."""
     try:
-        # Check if video already exists
-        existing_video = db.query(Video).filter(Video.id == video_id).first()
-        if existing_video:
-            return  # Skip if already processed
-
-        # Create video record
-        video = Video(
-            id=video_id,
-            title=f"Video {video_id}",
-            source_url=result.get("source_url", f"https://www.youtube.com/watch?v={video_id}"),
-            duration_seconds=result.get("duration_seconds"),
-            duration_formatted=result.get("duration_formatted"),
-            total_keyframes=result.get("metadata", {}).get("total_keyframes", 0),
-            subject=result.get("subject")
+        manager = _processing_manager(request, db, preparation_manager)
+        snapshot = manager.create_or_join(
+            request_body.youtube_url, request_body.output_mode
         )
-        db.add(video)
-        db.flush()  # Get video.id without committing
+        if snapshot["status"] == "succeeded":
+            response.status_code = 200
+        return ProcessingJobResponse(**snapshot)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    except Exception:
+        logger.exception("Could not create or join a processing job")
+        raise HTTPException(status_code=500, detail="Processing job could not be created.")
 
-        # Save transcript segments
-        transcript_data = result.get("transcript", {})
-        if transcript_data and "entries" in transcript_data:
-            for entry in transcript_data["entries"]:
-                transcript = Transcript(
-                    video_id=video_id,
-                    start_time=entry.get("start", 0.0),
-                    end_time=entry.get("start", 0.0) + entry.get("duration", 0.0),
-                    text=entry.get("text", "")
-                )
-                db.add(transcript)
 
-        # Save intervention points
-        intervention_points = result.get("intervention_points", [])
-        intervention_responses = []
-        for point in intervention_points:
-            # Use the pre-generated ID from the point object
-            intervention_id = getattr(point, 'id', str(uuid.uuid4()))
-            intervention = Intervention(
-                id=intervention_id,
-                video_id=video_id,
-                timestamp=point.timestamp,
-                timestamp_formatted=f"{int(point.timestamp // 60):02d}:{int(point.timestamp % 60):02d}",
-                frame_path=point.frame_path,
-                content_type=point.content_type,
-                complexity_score=point.complexity_score,
-                clip_confidence=point.clip_confidence,
-                trigger_reason=point.trigger_reason,
-                confidence=point.confidence,
-                transcript_context=point.transcript_context
-            )
-            db.add(intervention)
+@router.get(
+    "/processing-jobs/{job_id}",
+    response_model=ProcessingJobResponse,
+)
+def get_processing_job_status(
+    job_id: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Return persisted status and the latest real pipeline stage."""
+    try:
+        manager = _processing_manager(request, db, preparation_manager)
+        return ProcessingJobResponse(**manager.get(job_id))
+    except (ProcessingJobNotFoundError, ValueError):
+        raise HTTPException(status_code=404, detail="Processing job not found.")
 
-            # Build response for JSON
-            intervention_responses.append({
-                "id": intervention_id,
-                "video_id": video_id,
-                "timestamp": point.timestamp,
-                "timestamp_formatted": f"{int(point.timestamp // 60):02d}:{int(point.timestamp % 60):02d}",
-                "frame_path": point.frame_path,
-                "content_type": point.content_type,
-                "complexity_score": point.complexity_score,
-                "clip_confidence": point.clip_confidence,
-                "trigger_reason": point.trigger_reason,
-                "confidence": point.confidence,
-                "transcript_context": point.transcript_context,
-                "is_bookmarked": False,
-                "created_at": datetime.now().isoformat()
-            })
 
-        db.commit()
-        print(f"[API] Saved video {video_id} with {len(intervention_points)} interventions to database")
-
-        # Save interventions to JSON file
-        interventions_json_path = os.path.join(video_dir, "interventions.json")
-        interventions_data = {
-            "video_id": video_id,
-            "total_interventions": len(intervention_responses),
-            "interventions": intervention_responses,
-            "created_at": datetime.now().isoformat()
-        }
-        with open(interventions_json_path, "w", encoding="utf-8") as f:
-            json.dump(interventions_data, f, indent=2, ensure_ascii=False)
-        print(f"[API] Saved interventions to JSON: {interventions_json_path}")
-
-    except Exception as e:
-        db.rollback()
-        print(f"[API] Error saving to database: {e}", exc_info=True)
-    finally:
-        db.close()
+@router.post(
+    "/processing-jobs/{job_id}/retry",
+    response_model=ProcessingJobResponse,
+    status_code=202,
+)
+def retry_processing_job(
+    job_id: str,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Retry failed work, recover a stale lease, or reuse a completed cache."""
+    try:
+        manager = _processing_manager(request, db, preparation_manager)
+        snapshot = manager.retry(job_id)
+        if snapshot["status"] == "succeeded":
+            response.status_code = 200
+        return ProcessingJobResponse(**snapshot)
+    except (ProcessingJobNotFoundError, ValueError):
+        raise HTTPException(status_code=404, detail="Processing job not found.")
 
 
 @router.post("/process", response_model=ProcessVideoResponse)
 def process_video(
-    request: ProcessVideoRequest,
-    background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
+    request_body: ProcessVideoRequest,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
 ):
     """
     Process video and detect intervention points.
@@ -300,79 +446,45 @@ def process_video(
     Input: { "youtube_url": "https://www.youtube.com/watch?v=..." }
     Output: Video metadata + list of intervention points
     """
+    temporary_manager = None
     try:
-        # Get orchestrator instance
-        orchestrator_instance = get_orchestrator()
-
-        # Extract video ID
-        video_id = orchestrator_instance._extract_video_id(request.youtube_url)
-
-        # Check if already processed
-        existing_video = db.query(Video).filter(Video.id == video_id).first()
-        if existing_video:
-            # Return existing interventions
-            interventions = db.query(Intervention).filter(
-                Intervention.video_id == video_id
-            ).order_by(Intervention.timestamp).all()
-
-            return ProcessVideoResponse(
-                video_id=video_id,
-                title=existing_video.title,
-                duration_seconds=existing_video.duration_seconds,
-                duration_formatted=existing_video.duration_formatted,
-                total_keyframes=existing_video.total_keyframes,
-                total_interventions=len(interventions),
-                interventions=[InterventionResponse.model_validate(i) for i in interventions],
-                category_counts=calculate_category_counts(interventions)
+        if getattr(request.app.state, "processing_jobs", None) is None:
+            temporary_manager = _processing_manager(
+                request, db, preparation_manager
             )
-
-        # Run detection-only pipeline
-        result = orchestrator_instance.process_detection_only(request.youtube_url)
-
-        if "error" in result:
-            raise HTTPException(status_code=500, detail=result["error"])
-
-        # Convert intervention points to response models and generate IDs
-        intervention_responses = []
-        for point in result.get("intervention_points", []):
-            # Generate UUID once - will be used in both response and database
-            intervention_id = str(uuid.uuid4())
-            # Store the ID on the point object so background task uses the same ID
-            point.id = intervention_id
-            intervention_responses.append(InterventionResponse(
-                id=intervention_id,
-                video_id=video_id,
-                timestamp=point.timestamp,
-                timestamp_formatted=f"{int(point.timestamp // 60):02d}:{int(point.timestamp % 60):02d}",
-                frame_path=point.frame_path,
-                content_type=point.content_type,
-                complexity_score=point.complexity_score,
-                clip_confidence=point.clip_confidence,
-                trigger_reason=point.trigger_reason,
-                confidence=point.confidence,
-                transcript_context=point.transcript_context,
-                is_bookmarked=False,
-                created_at=datetime.now()
-            ))
-
-        # Add background task to save to database
-        background_tasks.add_task(save_to_database_task, video_id, result, result.get("video_dir", f"data/{video_id}"))
-
-        return ProcessVideoResponse(
-            video_id=video_id,
-            title=result.get("title"),
-            duration_seconds=result.get("duration_seconds"),
-            duration_formatted=result.get("duration_formatted"),
-            total_keyframes=result.get("metadata", {}).get("total_keyframes", 0),
-            total_interventions=len(intervention_responses),
-            interventions=intervention_responses,
-            category_counts=calculate_category_counts(intervention_responses)
+        manager = _processing_manager(request, db, preparation_manager)
+        created = manager.create_or_join(
+            request_body.youtube_url, request_body.output_mode
         )
+        snapshot = manager.wait(created["job_id"])
+        if snapshot["status"] == "failed":
+            logger.error(
+                "Video processing job %s failed with code %s",
+                snapshot["job_id"],
+                snapshot["error_code"],
+            )
+            if snapshot["error_code"] == "persistence_failed":
+                detail = "Processing results could not be saved."
+            else:
+                detail = snapshot["error_message"] or "Video processing failed."
+            raise HTTPException(status_code=500, detail=detail)
 
+        video_id = snapshot["video_id"]
+        return _processed_video_response(db, video_id)
+    except ProcessingJobTimeoutError:
+        raise HTTPException(status_code=504, detail="Video processing is still running.")
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Processing failed: {str(e)}")
+    except Exception:
+        logger.exception("Video processing failed")
+        raise HTTPException(status_code=500, detail="Video processing failed.")
+    finally:
+        if temporary_manager is not None:
+            temporary_manager.shutdown()
+            if getattr(request.app.state, "processing_jobs", None) is temporary_manager:
+                del request.app.state.processing_jobs
 
 
 # ============================================================================
@@ -380,9 +492,11 @@ def process_video(
 # ============================================================================
 
 @router.post("/intervention/explain", response_model=GenerateExplanationResponse)
-async def generate_explanation(
+def generate_explanation(
     request: GenerateExplanationRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    data_dir: str = Depends(get_data_dir),
+    preparation_manager=Depends(get_preparation_manager),
 ):
     """
     Generate explanation for a specific intervention point.
@@ -406,95 +520,154 @@ async def generate_explanation(
     }
 
     Note: vlm_snapshot is NOT returned - frontend only needs final text/audio.
+    If background preparation already owns this key, the shared generation
+    lock makes this request wait and then reuse that job's validated cache.
     """
     try:
-        # 1. Validate video exists in database
-        video = db.query(Video).filter(Video.id == request.video_id).first()
-        if not video:
-            raise HTTPException(status_code=404, detail="Video not found")
-
-        # 2. Get intervention from database
-        intervention = db.query(Intervention).filter(
-            Intervention.id == request.intervention_id,
-            Intervention.video_id == request.video_id
-        ).first()
-
-        if not intervention:
-            raise HTTPException(status_code=404, detail="Intervention not found")
-
-        # 3. Check if explanation already exists for this mode (cache)
-        existing_explanation = db.query(Explanation).filter(
-            Explanation.intervention_id == request.intervention_id,
-            Explanation.output_mode == request.output_mode
-        ).first()
-
-        if existing_explanation:
-            print(f"[API] Returning cached explanation for {request.intervention_id}")
-            return GenerateExplanationResponse(
-                intervention_id=intervention.id,
-                text_explanation=existing_explanation.text_explanation,
-                audio_file_path=existing_explanation.audio_file_path,
-                text_file_path=existing_explanation.text_file_path,
-                vlm_snapshot_path=existing_explanation.vlm_snapshot_path,
-                output_mode=request.output_mode
+        # Bind fresh sessions to the same database as the request dependency,
+        # while never sharing the request-scoped Session with worker threads.
+        isolated_sessions = sessionmaker(bind=db.get_bind(), expire_on_commit=False)
+        if preparation_manager is not None:
+            result = preparation_manager.generate_manual(
+                request.video_id,
+                request.intervention_id,
+                request.output_mode,
             )
-
-        # 4. Get all transcripts for context (from file system, not database)
-        transcript_path = os.path.join(project_root, "data", request.video_id, "transcript.json")
-        all_transcripts = []
-        if os.path.exists(transcript_path):
-            with open(transcript_path, "r", encoding="utf-8") as f:
-                transcript_data = json.load(f)
-                all_transcripts = transcript_data.get("entries", [])
         else:
-            print(f"[API] Transcript file not found: {transcript_path}")
-
-        # 5. Call orchestrator function to generate explanation
-        orchestrator_instance = get_orchestrator()
-
-        # Check clip confidence and set content_type accordingly
-        content_type_to_use = intervention.content_type or "unknown"
-        if intervention.clip_confidence is not None and intervention.clip_confidence < 0.40:
-            content_type_to_use = "unknown"
-            print(f"[API] Low clip confidence ({intervention.clip_confidence:.2f}) - using 'unknown' content type")
-
-        result = orchestrator_instance.generate_intervention_explanation(
-            video_id=request.video_id,
-            intervention_id=intervention.id,
-            intervention_timestamp=intervention.timestamp,
-            frame_path=intervention.frame_path,
-            content_type=content_type_to_use,
-            trigger_reason=intervention.trigger_reason or "VLM Analysis",
-            transcript_entries=all_transcripts,
-            output_mode=request.output_mode
-        )
-
-        # 6. Save explanation to database for caching
-        new_explanation = Explanation(
-            intervention_id=intervention.id,
-            text_explanation=result["text_explanation"],
-            audio_file_path=result["audio_file_path"],
-            text_file_path=result.get("text_file_path"),
-            vlm_snapshot_path=result.get("vlm_snapshot_path"),
-            output_mode=result["output_mode"]
-        )
-        db.add(new_explanation)
-        db.commit()
-
-        # 7. Return response
+            result = generate_or_get_explanation(
+                session_factory=isolated_sessions,
+                orchestrator_factory=get_orchestrator,
+                data_dir=data_dir,
+                video_id=request.video_id,
+                intervention_id=request.intervention_id,
+                output_mode=request.output_mode,
+            )
         return GenerateExplanationResponse(
-            intervention_id=result["intervention_id"],
-            text_explanation=result["text_explanation"],
-            audio_file_path=result["audio_file_path"],
-            text_file_path=result.get("text_file_path"),
-            vlm_snapshot_path=result.get("vlm_snapshot_path"),
-            output_mode=result["output_mode"]
+            intervention_id=result.intervention_id,
+            text_explanation=result.text_explanation,
+            audio_file_path=result.audio_file_path,
+            audio_url=_audio_url(
+                result.intervention_id,
+                result.output_mode,
+                result.audio_file_path,
+            ),
+            text_file_path=result.text_file_path,
+            vlm_snapshot_path=result.vlm_snapshot_path,
+            output_mode=result.output_mode,
         )
-
+    except ExplanationTargetNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except PreparationRetryExhaustedError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "retry_exhausted",
+                "attempt_count": exc.attempt_count,
+            },
+        )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Explanation generation failed: {str(e)}")
+    except Exception:
+        logger.exception(
+            "Explanation generation failed for intervention %s",
+            request.intervention_id,
+        )
+        raise HTTPException(status_code=500, detail="Explanation generation failed.")
+
+
+# ============================================================================
+# Persistent Explanation Preparation Status and Retry
+# ============================================================================
+
+@router.get(
+    "/{video_id}/explanations/status",
+    response_model=ExplanationPreparationStatusResponse,
+)
+def get_explanation_preparation_status(
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    output_mode: str = Query(
+        default="explanatory",
+        pattern=r"^(brief|explanatory|detailed)$",
+    ),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Return compact, timestamp-ordered preparation state for one mode."""
+    if preparation_manager is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Explanation preparation is unavailable.",
+        )
+    try:
+        items = preparation_manager.get_status(video_id, output_mode)
+        return ExplanationPreparationStatusResponse(
+            video_id=video_id,
+            output_mode=output_mode,
+            items=[
+                ExplanationPreparationItem(
+                    intervention_id=item.intervention_id,
+                    timestamp=item.timestamp,
+                    status=item.status,
+                    error_code=item.error_code,
+                    attempt_count=item.attempt_count,
+                )
+                for item in items
+            ],
+        )
+    except ExplanationTargetNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+
+
+@router.post(
+    "/{video_id}/interventions/{intervention_id}/explanations/retry",
+    response_model=ExplanationRetryResponse,
+    status_code=202,
+    dependencies=[Depends(enforce_allowed_origin)],
+)
+def retry_explanation_preparation(
+    response: Response,
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    intervention_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9-]{1,64}$"),
+    output_mode: str = Query(
+        default="explanatory",
+        pattern=r"^(brief|explanatory|detailed)$",
+    ),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Requeue one failed preparation key without waiting for inference."""
+    if preparation_manager is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Explanation preparation is unavailable.",
+        )
+    try:
+        result = preparation_manager.retry(
+            video_id, intervention_id, output_mode
+        )
+        if not result.queued:
+            response.status_code = 200
+        return ExplanationRetryResponse(
+            video_id=video_id,
+            intervention_id=intervention_id,
+            output_mode=output_mode,
+            status=result.status,
+            error_code=result.error_code,
+            attempt_count=result.attempt_count,
+        )
+    except ExplanationTargetNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except PreparationNotRetryableError:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "not_failed"},
+        )
+    except PreparationRetryExhaustedError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "retry_exhausted",
+                "attempt_count": exc.attempt_count,
+            },
+        )
 
 
 # ============================================================================
@@ -531,46 +704,45 @@ async def toggle_bookmark(
 
 
 # ============================================================================
-# Endpoint 5: Get Interventions with Explanations
+# Endpoint 5: Get Interventions
 # ============================================================================
 
 @router.get("/{video_id}/interventions", response_model=ProcessVideoResponse)
-async def get_interventions_with_explanations(
+async def get_interventions(
     video_id: str,
     db: Session = Depends(get_db)
 ):
     """
-    Get all intervention points that have explanations for a video.
+    Get every persisted intervention point for a video.
 
-    Returns interventions in reverse chronological order (recent to old).
+    Returns interventions in educational playback order. Explanation records
+    are intentionally not part of this response model and are not required.
     Structure matches Endpoint 2's ProcessVideoResponse.
 
     Args:
         video_id: YouTube video ID
 
     Returns:
-        ProcessVideoResponse with video metadata and interventions with explanations
+        ProcessVideoResponse with video metadata and all interventions
     """
     # 1. Validate video exists
     video = db.query(Video).filter(Video.id == video_id).first()
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
 
-    # 2. Get interventions that have explanations (join with Explanation table)
-    interventions_with_explanations = db.query(Intervention).join(
-        Explanation,
-        Intervention.id == Explanation.intervention_id
-    ).filter(
+    # 2. Get all interventions, including those not yet explained.
+    interventions = db.query(Intervention).filter(
         Intervention.video_id == video_id
     ).order_by(
-        Intervention.created_at.desc()  # Recent to old
-    ).distinct().all()
+        Intervention.timestamp.asc(),
+        Intervention.id.asc()
+    ).all()
 
     # 3. Convert to response models
-    intervention_responses = [InterventionResponse.model_validate(i) for i in interventions_with_explanations]
+    intervention_responses = [InterventionResponse.model_validate(i) for i in interventions]
 
     # 4. Calculate category counts
-    category_counts = calculate_category_counts(interventions_with_explanations)
+    category_counts = calculate_category_counts(interventions)
 
     # 5. Return response matching Endpoint 2 structure
     return ProcessVideoResponse(
@@ -633,6 +805,11 @@ async def get_intervention_explanation(
         intervention_id=intervention_id,
         text_explanation=explanation.text_explanation,
         audio_file_path=explanation.audio_file_path,
+        audio_url=_audio_url(
+            intervention_id,
+            explanation.output_mode,
+            explanation.audio_file_path,
+        ),
         text_file_path=explanation.text_file_path,
         vlm_snapshot_path=explanation.vlm_snapshot_path,
         output_mode=explanation.output_mode
@@ -666,9 +843,37 @@ def get_answer_gate():
     return _answer_gate
 
 
-def get_data_dir() -> str:
-    """Root folder holding data/<video_id>/ (dependency, overridable in tests)."""
-    return os.path.join(project_root, "data")
+@router.get("/intervention/{intervention_id}/audio", name="get_explanation_audio")
+async def get_explanation_audio(
+    intervention_id: str,
+    output_mode: str = Query(
+        default="explanatory",
+        pattern=r"^(brief|explanatory|detailed)$",
+    ),
+    db: Session = Depends(get_db),
+    data_dir: str = Depends(get_data_dir),
+):
+    """Serve one generated explanation MP3 referenced by the explanation database."""
+    if not re.fullmatch(r"[A-Za-z0-9-]{1,64}", intervention_id):
+        raise HTTPException(status_code=422, detail="Invalid intervention identifier")
+
+    explanation = find_valid_cached_explanation(
+        db, intervention_id, output_mode, data_dir
+    )
+    if explanation is None:
+        raise HTTPException(status_code=404, detail="Explanation audio not found")
+
+    audio_path = resolve_explanation_audio_path(
+        data_dir, explanation.audio_file_path
+    )
+    if audio_path is None:
+        raise HTTPException(status_code=404, detail="Explanation audio not found")
+
+    return FileResponse(
+        path=audio_path,
+        media_type="audio/mpeg",
+        filename=f"{intervention_id}-{output_mode}.mp3",
+    )
 
 
 def _llm_http_error(exc: LLMProviderError) -> HTTPException:

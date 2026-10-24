@@ -47,6 +47,7 @@ Thumbs.db
 
 # Markdown files
 *.md
+!docs/database-foundation-and-final-erd.md
 
 # Data directory
 # data/
@@ -87,6 +88,8 @@ tests/*
 !tests/quiz/**
 !tests/llm_interface/
 !tests/llm_interface/**
+!tests/api/
+!tests/api/**
 tests/**/__pycache__/
 tests/**/*.py[cod]
 plans/

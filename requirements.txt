@@ -44,6 +44,8 @@ uvicorn[standard]>=0.30.0
 pydantic>=2.10.0
 pydantic-settings>=2.6.0
 sqlalchemy>=2.0.36
+alembic>=1.14.0
+psycopg[binary]>=3.2.0
 python-multipart>=0.0.12
 
 # Hosted LLM provider and environment loading for Q&A / quiz

@@ -10,7 +10,6 @@ import re
 import os
 import time
 from pathlib import Path
-from dataclasses import dataclass
 from typing import Dict, Union, Optional
 
 from PIL import Image
@@ -20,25 +19,10 @@ from qwen_vl_utils import process_vision_info
 
 # AutoAWQ removed - using standard transformers quantization instead
 
-
-@dataclass
-class VLMResponse:
-    """Response from VLM generation."""
-    text: str
-    model: str
-    total_duration_ms: int
-    prompt_eval_count: int
-    eval_count: int
-
-
-class VLMInterfaceError(Exception):
-    """Base exception for VLM Interface errors."""
-    pass
-
-
-class VLMTimeoutError(VLMInterfaceError):
-    """Timeout during VLM generation."""
-    pass
+# Import lightweight types from provider-neutral module (no heavy deps).
+# Re-exported here for full backward compatibility:
+#   from vlm_interface.vlm_interface import VLMResponse   # still works
+from vlm_interface.vlm_types import VLMResponse, VLMInterfaceError, VLMTimeoutError
 
 
 class Qwen2VLInterface:

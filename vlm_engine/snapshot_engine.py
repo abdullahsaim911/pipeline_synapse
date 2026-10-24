@@ -11,17 +11,18 @@ import os
 import re
 from typing import Dict, Optional
 
-# Import Qwen2VLInterface which handles transformers
-from vlm_interface import Qwen2VLInterface
-
-# Try to import GGUF engine for llama-cpp-python support
-try:
-    from .gguf_vlm_engine import GGUFVLMEngine, GGUFVLMDetectionError
-    GGUF_AVAILABLE = True
-except ImportError:
-    GGUF_AVAILABLE = False
-    GGUFVLMEngine = None
-    GGUFVLMDetectionError = Exception
+# Lightweight provider constants and response types (no PyTorch/Transformers eager load)
+from vlm_interface import (
+    PROVIDER_ENV_VAR,
+    PROVIDER_LOCAL,
+    PROVIDER_MODAL,
+    VALID_PROVIDERS,
+    VLMResponse,
+    VLMInterfaceError,
+    VLMAuthenticationError,
+    VLMTimeoutError,
+    VLMRemoteError,
+)
 
 
 class SnapshotEngine:
@@ -340,6 +341,31 @@ Provide in visual_analysis.text object:
         """
     }
 
+    def _create_failed_snapshot(self, error_msg: str, primary_type: str = "unknown") -> Dict:
+        """
+        Return a normalized failure snapshot dictionary.
+
+        Guarantees all required fields are present with correct types so that
+        downstream consumers (synthesizer, QA, orchestrator) can detect the failure
+        reliably without crashing or generating hallucinated visual evidence.
+        """
+        clean_type = primary_type if primary_type else "unknown"
+        return {
+            "_error": True,
+            "_error_detail": str(error_msg),
+            "content_type": clean_type,
+            "detected_types": [clean_type],
+            "visual_analysis": {},
+            "structural_description": "",
+            "reading_order": [],
+            "conceptual_hints": "",
+            "layout": "",
+            "text_readout": "",
+            "spatial_map": "",
+            "colors_styles": "",
+            "missing_elements": f"VLM analysis failed: {error_msg}",
+        }
+
     def __init__(
         self,
         model_path: str = "f:\\Prototyping\\Synapse\\models\\Qwen2-VL-7B-Instruct-GGUF",
@@ -348,33 +374,69 @@ Provide in visual_analysis.text object:
         use_flash_attention: bool = False,
         min_pixels: Optional[int] = None,
         max_pixels: Optional[int] = None,
-        use_gguf: bool = True,  # NEW: Use GGUF by default
-        n_gpu_layers: int = 24,  # NEW: For GGUF tuning
-        n_ctx: int = 4096,  # NEW: Context window
-        n_threads: int = 6  # NEW: CPU threads
+        use_gguf: bool = True,
+        n_gpu_layers: int = 24,
+        n_ctx: int = 4096,
+        n_threads: int = 6,
+        provider: Optional[str] = None,
+        endpoint_url: Optional[str] = None,
+        api_key: Optional[str] = None,
+        timeout_seconds: Optional[float] = None,
+        max_retries: Optional[int] = None,
+        max_tokens: Optional[int] = None,
     ):
         """
         Initialize VLM Engine.
 
-        Args:
-            model_path: Local path to Qwen2-VL model
-            device_map: Device allocation strategy (default: auto)
-            use_4bit: Enable 4-bit quantization
-            use_flash_attention: Enable Flash Attention 2
-            min_pixels: Minimum image resolution
-            use_gguf: Try GGUF backend first (default: True)
-            n_gpu_layers: Number of layers to offload to GPU for GGUF
-            n_ctx: Context window size for GGUF
-            n_threads: Number of CPU threads for GGUF
+        Supports:
+        - Remote Modal VLM backend (provider="modal")
+        - Local GGUF / Transformers backend (provider="local")
         """
-        self.model_name = model_path  # Store for logging
+        if provider is None:
+            provider = os.environ.get(PROVIDER_ENV_VAR, PROVIDER_MODAL).strip().lower()
+        else:
+            provider = provider.strip().lower()
+
+        if provider not in VALID_PROVIDERS:
+            raise ValueError(
+                f"Unsupported VLM provider '{provider}'. Must be one of: {sorted(VALID_PROVIDERS)}"
+            )
+
+        self.provider = provider
+
+        if self.provider == PROVIDER_MODAL:
+            from vlm_interface.modal_vlm_interface import ModalVLMInterface
+            print("[Snapshot Engine] Initializing remote Modal VLM backend...")
+            self.vlm_interface = ModalVLMInterface(
+                endpoint_url=endpoint_url,
+                api_key=api_key,
+                timeout_seconds=timeout_seconds,
+                max_retries=max_retries,
+                max_tokens=max_tokens,
+            )
+            self.model_name = self.vlm_interface.model_name
+            self.model_path = "modal"
+            self.use_gguf = False
+            print(f"[Snapshot Engine] VLM Engine initialized (Modal: {self.model_name})")
+            return
+
+        # Local provider initialization (lazy imports)
+        print("[Snapshot Engine] Initializing local VLM backend...")
+        try:
+            from .gguf_vlm_engine import GGUFVLMEngine, GGUFVLMDetectionError
+            gguf_available = True
+        except ImportError:
+            gguf_available = False
+            GGUFVLMEngine = None
+            GGUFVLMDetectionError = Exception
+
+        self.model_name = model_path
         self.model_path = model_path
         self.use_gguf = use_gguf
 
         # Try GGUF backend first if enabled
-        if use_gguf and GGUF_AVAILABLE:
+        if use_gguf and gguf_available:
             try:
-                # GGUF files should be directly in model_path directory
                 gguf_model_path = os.path.join(model_path, "Qwen2-VL-7B-Instruct-Q4_K_M.gguf")
                 mmproj_path = os.path.join(model_path, "mmproj-Qwen2-VL-7B-Instruct-f16.gguf")
 
@@ -386,7 +448,6 @@ Provide in visual_analysis.text object:
                         n_gpu_layers=n_gpu_layers,
                         n_ctx=n_ctx,
                         n_threads=n_threads
-                        # REMOVED: flash_attn=True (Let the engine use its safe default of False)
                     )
                     print("[Snapshot Engine] VLM Engine initialized (GGUF)")
                     return
@@ -397,7 +458,6 @@ Provide in visual_analysis.text object:
                 print(f"[Snapshot Engine] 7B GGUF initialization failed: {e}")
                 print("[Snapshot Engine] Falling back to 2B GGUF backend")
 
-                # Fallback: 2B GGUF model
                 fallback_dir = os.path.normpath(os.path.join(
                     os.path.dirname(model_path), "Qwen2-VL-2B-Instruct-GGUF"
                 ))
@@ -422,8 +482,19 @@ Provide in visual_analysis.text object:
                     print(f"[Snapshot Engine] 2B GGUF fallback also failed: {fallback_e}")
 
                 raise RuntimeError("Both 7B and 2B GGUF backends failed to initialize")
+
+        # Transformers backend fallback for local provider
+        from vlm_interface import Qwen2VLInterface
         print(f"[Snapshot Engine] 4-bit quantization: {use_4bit}")
         print(f"[Snapshot Engine] Flash Attention 2: {use_flash_attention}")
+        self.vlm_interface = Qwen2VLInterface(
+            model_name=model_path,
+            device_map=device_map,
+            use_4bit=use_4bit,
+            use_flash_attention=use_flash_attention,
+            min_pixels=min_pixels,
+            max_pixels=max_pixels
+        )
 
     def _build_prompt(self, primary_type: str) -> str:
         """
@@ -571,22 +642,29 @@ OUTPUT REQUIREMENTS:
             # GGUF engine has its own analyze_frame that returns parsed result
             return self.vlm_interface.analyze_frame(frame_path, primary_type)
 
-        # Transformers backend (uses vlm_interface.analyze method)
+        # Transformers or Modal backend
         # 1. Build prompt with category directive
         prompt = self._build_prompt(primary_type)
 
         # 2. Generate via VLM Interface
-        response = self.vlm_interface.analyze(
-            image_path_or_pil=frame_path,
-            prompt=prompt,
-            generation_params={
-                "max_new_tokens": 384,   # 512 peak VRAM not needed; 384 fits 6GB comfortably
-                "temperature": 0.1
-            }
-        )
-
-        # 3. Parse into structured JSON
-        result = self._parse_json_response(response.text)
+        try:
+            response = self.vlm_interface.analyze(
+                image_path_or_pil=frame_path,
+                prompt=prompt,
+                generation_params={
+                    "max_new_tokens": 384,   # 512 peak VRAM not needed; 384 fits 6GB comfortably
+                    "temperature": 0.1
+                }
+            )
+            # 3. Parse into structured JSON
+            result = self._parse_json_response(response.text)
+        except Exception as exc:
+            error_desc = f"{type(exc).__name__}: {exc}"
+            print(f"[Snapshot Engine] Frame analysis failed for {frame_path}: {error_desc}")
+            if self.provider == PROVIDER_MODAL:
+                # In Modal mode: NEVER fall back to local VLM!
+                return self._create_failed_snapshot(error_desc, primary_type)
+            raise
 
         # 4. Check for [ILLEGIBLE] text (OCR fallback placeholder)
         text_readout = result.get("text_readout", "")
@@ -609,5 +687,6 @@ OUTPUT REQUIREMENTS:
         Releases GPU memory and deletes model references.
         """
         print("[Snapshot Engine] Cleaning up...")
-        self.vlm_interface.cleanup()
+        if hasattr(self, "vlm_interface") and self.vlm_interface is not None:
+            self.vlm_interface.cleanup()
         print("[Snapshot Engine] Cleanup complete")

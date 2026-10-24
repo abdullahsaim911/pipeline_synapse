@@ -26,7 +26,10 @@ if project_root not in sys.path:
 from synchronizer import Synchronizer, TranscriptEntry
 from vlm_engine import SnapshotEngine
 from synthesizer import LLMSynthesizer
-from tts_engine import TTSEngine
+try:
+    from tts_engine import TTSEngine
+except ImportError:
+    TTSEngine = None
 from .gpu_memory_manager import (
     clear_gpu_memory,
     log_memory_state,
@@ -379,7 +382,53 @@ class PipelineOrchestrator:
         """
         print("[Orchestrator] Analyzing VLM snapshots (only intervention points)...")
 
-        # CRITICAL: Ensure GPU is clean and has enough memory before VLM loads
+        from vlm_interface import PROVIDER_ENV_VAR, PROVIDER_MODAL, PROVIDER_LOCAL, VALID_PROVIDERS
+        provider = os.environ.get(PROVIDER_ENV_VAR, PROVIDER_MODAL).strip().lower()
+        if provider not in VALID_PROVIDERS:
+            raise ValueError(
+                f"Unsupported VLM provider '{provider}'. Must be one of: {sorted(VALID_PROVIDERS)}"
+            )
+
+        vlm_engine = None
+        vlm_snapshots = {}
+        used_model = None
+
+        if provider == PROVIDER_MODAL:
+            print("[Orchestrator] Using remote Modal VLM backend (SYNAPSE_VLM_PROVIDER=modal)")
+            vlm_engine = SnapshotEngine(provider=PROVIDER_MODAL)
+            used_model = vlm_engine.model_name
+
+            try:
+                for intervention in intervention_points:
+                    try:
+                        vlm_data = vlm_engine.analyze_frame(
+                            intervention.frame_path,
+                            intervention.content_type
+                        )
+                        vlm_snapshots[intervention.timestamp] = vlm_data
+                        if vlm_data.get("_error"):
+                            print(
+                                f"[Orchestrator] Warning: Visual accessibility info unavailable "
+                                f"for timestamp {intervention.timestamp}"
+                            )
+                    except Exception as e:
+                        sanitized_err = f"{type(e).__name__}: {e}"
+                        print(
+                            f"[Orchestrator] Error analyzing frame {intervention.frame_path} "
+                            f"at timestamp {intervention.timestamp}: {sanitized_err}"
+                        )
+                        vlm_snapshots[intervention.timestamp] = vlm_engine._create_failed_snapshot(
+                            sanitized_err, intervention.content_type
+                        )
+
+                print(f"[Orchestrator] VLM analysis complete: {len(vlm_snapshots)} snapshots (using {used_model})")
+            finally:
+                vlm_engine.cleanup()
+
+            return vlm_snapshots
+
+        # Local provider path (GGUF / Transformers)
+        # CRITICAL: Ensure GPU is clean and has enough memory before local VLM loads
         try:
             ensure_gpu_free(5.0)
         except Exception as e:
@@ -387,7 +436,6 @@ class PipelineOrchestrator:
             print("[Orchestrator] Will try with CPU offloading or smaller model")
 
         # Model paths with fallback chain
-        # Main: GGUF 7B (2B transformers fallback disabled due to segfaults on this system)
         model_configs = [
             {
                 "path": os.path.join(project_root, "models", "Qwen2-VL-7B-Instruct-GGUF"),
@@ -397,10 +445,6 @@ class PipelineOrchestrator:
             }
         ]
 
-        vlm_engine = None
-        vlm_snapshots = {}
-        used_model = None
-
         for config in model_configs:
             try:
                 print(f"[Orchestrator] Attempting to load model: {config['name']}")
@@ -409,7 +453,8 @@ class PipelineOrchestrator:
                     model_path=config["path"],
                     use_gguf=config.get("use_gguf", False),
                     n_gpu_layers=config.get("n_gpu_layers", 24),
-                    use_4bit=config.get("use_4bit", True)
+                    use_4bit=config.get("use_4bit", True),
+                    provider=PROVIDER_LOCAL
                 )
 
                 used_model = config["name"]
@@ -446,8 +491,7 @@ class PipelineOrchestrator:
             # Cleanup VLM Engine
             vlm_engine.cleanup()
 
-            # CRITICAL: Clear GPU memory after VLM completes
-            # This ensures clean slate for TTS and any subsequent operations
+            # CRITICAL: Clear GPU memory after local VLM completes
             print("[Orchestrator] Cleaning GPU memory after VLM...")
             clear_gpu_memory()
 
@@ -801,7 +845,7 @@ class PipelineOrchestrator:
             }
 
         except Exception as e:
-            print(f"[Orchestrator] Error in detection-only pipeline: {e}", exc_info=True)
+            print(f"[Orchestrator] Error in detection-only pipeline: {e}")
             return {
                 "video_id": None,
                 "intervention_points": [],
@@ -938,7 +982,7 @@ class PipelineOrchestrator:
             return interventions
 
         except Exception as e:
-            print(f"[Orchestrator] Error synthesizing interventions: {e}", exc_info=True)
+            print(f"[Orchestrator] Error synthesizing interventions: {e}")
             return interventions
 
     def _find_transcript_segment(self, timestamp: float, transcript_entries: List) -> Optional[Any]:
@@ -978,7 +1022,7 @@ class PipelineOrchestrator:
                 return transcript_entries[0] if transcript_entries else None
 
         except Exception as e:
-            print(f"[Orchestrator] Error finding transcript segment: {e}", exc_info=True)
+            print(f"[Orchestrator] Error finding transcript segment: {e}")
             return transcript_entries[0] if transcript_entries else None
 
     def _find_frame_for_timestamp(self, timestamp: float, video_dir: str) -> Optional[str]:
@@ -1016,7 +1060,7 @@ class PipelineOrchestrator:
                 return None
 
         except Exception as e:
-            print(f"[Orchestrator] Error finding frame for timestamp: {e}", exc_info=True)
+            print(f"[Orchestrator] Error finding frame for timestamp: {e}")
             return None
 
     def process_video_intervention_only(self, youtube_url: str, output_mode: str = "explanatory") -> Dict:
@@ -1080,7 +1124,7 @@ class PipelineOrchestrator:
             }
 
         except Exception as e:
-            print(f"[Orchestrator] Error in intervention-only pipeline: {e}", exc_info=True)
+            print(f"[Orchestrator] Error in intervention-only pipeline: {e}")
             return {
                 "video_id": None,
                 "interventions": [],
@@ -1186,46 +1230,59 @@ class PipelineOrchestrator:
         vlm_engine = None
         used_model = None
 
-        # CRITICAL: Clear GPU before VLM load
-        clear_gpu_memory()
-        log_memory_state("Before VLM Load for Single Intervention")
+        from vlm_interface import PROVIDER_ENV_VAR, PROVIDER_MODAL, PROVIDER_LOCAL, VALID_PROVIDERS
+        provider = os.environ.get(PROVIDER_ENV_VAR, PROVIDER_MODAL).strip().lower()
+        if provider not in VALID_PROVIDERS:
+            raise ValueError(
+                f"Unsupported VLM provider '{provider}'. Must be one of: {sorted(VALID_PROVIDERS)}"
+            )
 
-        # Model paths with fallback chain (same as full pipeline)
-        # Main: GGUF 7B (2B transformers fallback disabled due to segfaults on this system)
-        model_configs = [
-            {
-                "path": os.path.join(project_root, "models", "Qwen2-VL-7B-Instruct-GGUF"),
-                "use_gguf": True,
-                "n_gpu_layers": 24,
-                "name": "Qwen2-VL-7B-GGUF"
-            }
-        ]
+        if provider == PROVIDER_MODAL:
+            print("[Orchestrator] Using remote Modal VLM backend for intervention explanation")
+            vlm_engine = SnapshotEngine(provider=PROVIDER_MODAL)
+            used_model = vlm_engine.model_name
+        else:
+            # Local provider path
+            # CRITICAL: Clear GPU before local VLM load
+            clear_gpu_memory()
+            log_memory_state("Before VLM Load for Single Intervention")
 
-        # Try to load VLM engine
-        for config in model_configs:
-            try:
-                print(f"[Orchestrator] Attempting to load model: {config['name']}")
-                vlm_engine = SnapshotEngine(
-                    model_path=config["path"],
-                    use_gguf=config.get("use_gguf", False),
-                    n_gpu_layers=config.get("n_gpu_layers", 24),
-                    use_4bit=config.get("use_4bit", True)
-                )
-                used_model = config["name"]
-                print(f"[Orchestrator] Successfully loaded: {used_model}")
-                break
-            except Exception as e:
-                print(f"[Orchestrator] Failed to load {config['name']}: {e}")
-                if vlm_engine:
-                    try:
-                        vlm_engine.cleanup()
-                    except:
-                        pass
-                    vlm_engine = None
-                continue
+            # Model paths with fallback chain (same as full pipeline)
+            model_configs = [
+                {
+                    "path": os.path.join(project_root, "models", "Qwen2-VL-7B-Instruct-GGUF"),
+                    "use_gguf": True,
+                    "n_gpu_layers": 24,
+                    "name": "Qwen2-VL-7B-GGUF"
+                }
+            ]
 
-        if vlm_engine is None:
-            raise RuntimeError("Failed to load any VLM model")
+            # Try to load VLM engine
+            for config in model_configs:
+                try:
+                    print(f"[Orchestrator] Attempting to load model: {config['name']}")
+                    vlm_engine = SnapshotEngine(
+                        model_path=config["path"],
+                        use_gguf=config.get("use_gguf", False),
+                        n_gpu_layers=config.get("n_gpu_layers", 24),
+                        use_4bit=config.get("use_4bit", True),
+                        provider=PROVIDER_LOCAL
+                    )
+                    used_model = config["name"]
+                    print(f"[Orchestrator] Successfully loaded: {used_model}")
+                    break
+                except Exception as e:
+                    print(f"[Orchestrator] Failed to load {config['name']}: {e}")
+                    if vlm_engine:
+                        try:
+                            vlm_engine.cleanup()
+                        except:
+                            pass
+                        vlm_engine = None
+                    continue
+
+            if vlm_engine is None:
+                raise RuntimeError("Failed to load any VLM model")
 
         # Verify frame exists
         if not os.path.exists(frame_path):
@@ -1251,19 +1308,29 @@ class PipelineOrchestrator:
 
         try:
             # Step 1: VLM Analysis (reuses existing SnapshotEngine with existing prompts)
-            log_memory_state("Before VLM Analysis")
+            if provider != PROVIDER_MODAL:
+                log_memory_state("Before VLM Analysis")
+
             vlm_snapshot = vlm_engine.analyze_frame(
                 frame_path,
                 content_type
             )
-            log_memory_state("After VLM Analysis")
+            if vlm_snapshot.get("_error"):
+                print(
+                    f"[Orchestrator] Warning: Visual accessibility info unavailable "
+                    f"for intervention {intervention_id}"
+                )
+
+            if provider != PROVIDER_MODAL:
+                log_memory_state("After VLM Analysis")
 
             print(f"[Orchestrator] VLM analysis complete (using {used_model})")
 
-            # CRITICAL: Cleanup VLM engine to free VRAM before Ollama starts
+            # Cleanup VLM engine before Ollama starts
             vlm_engine.cleanup()
-            clear_gpu_memory()
-            log_memory_state("After VLM Cleanup, Before Ollama Start")
+            if provider != PROVIDER_MODAL:
+                clear_gpu_memory()
+                log_memory_state("After VLM Cleanup, Before Ollama Start")
 
             # Create intervention directory early (for VLM snapshot)
             intervention_dir = os.path.join(
@@ -1354,7 +1421,7 @@ class PipelineOrchestrator:
             }
 
         except Exception as e:
-            print(f"[Orchestrator] Error generating explanation: {e}", exc_info=True)
+            print(f"[Orchestrator] Error generating explanation: {e}")
             raise
 
         finally:

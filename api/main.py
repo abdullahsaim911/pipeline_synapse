@@ -9,8 +9,11 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
-from api.database import engine, Base
-from api.routers import video_router
+from api.database import SessionLocal
+from api.explanation_preparation import ExplanationPreparationManager
+from api.processing_jobs import ProcessingJobManager
+from api.routers import learning_history_router, video_router
+from api.routers import video as video_module
 from api.routers.quiz import router as quiz_router
 from api.logging_setup import configure_ask_logging
 from api.security import configure_cors
@@ -19,15 +22,28 @@ load_dotenv()
 configure_ask_logging()
 
 
-# Create database tables on startup
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Lifespan context manager for startup/shutdown events."""
-    # Create tables
-    Base.metadata.create_all(bind=engine)
-    yield
-    # Cleanup (if needed)
-    pass
+    """Start background services after Alembic has provisioned the schema."""
+    preparation = ExplanationPreparationManager(
+        session_factory=SessionLocal,
+        orchestrator_factory=video_module.get_orchestrator,
+        data_dir=video_module.get_data_dir(),
+    )
+    preparation.start()
+    app.state.explanation_preparation = preparation
+    processing = ProcessingJobManager(
+        session_factory=SessionLocal,
+        orchestrator_factory=video_module.get_orchestrator,
+        preparation_manager=preparation,
+    )
+    processing.start()
+    app.state.processing_jobs = processing
+    try:
+        yield
+    finally:
+        processing.shutdown()
+        preparation.shutdown()
 
 
 # Initialize FastAPI app
@@ -45,6 +61,7 @@ configure_cors(app)
 # Include routers
 app.include_router(video_router)
 app.include_router(quiz_router)
+app.include_router(learning_history_router)
 
 
 # Health check endpoint
