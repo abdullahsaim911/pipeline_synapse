@@ -92,3 +92,10 @@ psutil>=5.9.0
 #   - Download: https://ollama.ai/download
 #   - Pull model: ollama pull mistral
 #   - Verify: ollama list
+
+# Voice control (docs/voice-control.md). av is pinned: faster-whisper breaks with PyAV 17+. nest_asyncio is needed by
+# tts_engine/providers.py, httpx by the API tests.
+edge-tts
+nest_asyncio
+httpx
+av>=11,<17

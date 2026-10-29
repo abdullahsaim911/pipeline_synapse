@@ -1,0 +1,1268 @@
+{
+  "language": "en",
+  "comment": "Held-out sentences: none may appear in ../examples/en.json. expect is an action id, or 'unsupported' for things the app cannot do. screen is where it was spoken; playing and pending are optional context.",
+  "items": [
+    {
+      "text": "bring me back to the home page",
+      "expect": "navigate_home",
+      "screen": "library"
+    },
+    {
+      "text": "I'd like to go to the main screen",
+      "expect": "navigate_home",
+      "screen": "notes"
+    },
+    {
+      "text": "return to the beginning of the app",
+      "expect": "navigate_home",
+      "screen": "explanation"
+    },
+    {
+      "text": "let me start something new",
+      "expect": "navigate_home",
+      "screen": "bookmarks"
+    },
+    {
+      "text": "show me what I listened to before",
+      "expect": "navigate_library",
+      "screen": "home"
+    },
+    {
+      "text": "go to my past explanations",
+      "expect": "navigate_library",
+      "screen": "bookmarks"
+    },
+    {
+      "text": "I want to open the library",
+      "expect": "navigate_library",
+      "screen": "explanation"
+    },
+    {
+      "text": "where is my listening history",
+      "expect": "navigate_library",
+      "screen": "home"
+    },
+    {
+      "text": "bring up the bookmarks",
+      "expect": "navigate_bookmarks",
+      "screen": "home"
+    },
+    {
+      "text": "show me the explanations I saved",
+      "expect": "navigate_bookmarks",
+      "screen": "library"
+    },
+    {
+      "text": "take me to where I keep my saved items",
+      "expect": "navigate_bookmarks",
+      "screen": "explanation"
+    },
+    {
+      "text": "could you open my bookmarks for me",
+      "expect": "navigate_bookmarks",
+      "screen": "notes"
+    },
+    {
+      "text": "show me the notes I made by voice",
+      "expect": "navigate_notes",
+      "screen": "home"
+    },
+    {
+      "text": "open the recordings I made during lectures",
+      "expect": "navigate_notes",
+      "screen": "library"
+    },
+    {
+      "text": "take me to my voice notes",
+      "expect": "navigate_notes",
+      "screen": "bookmarks"
+    },
+    {
+      "text": "show me every moment in this lecture",
+      "expect": "open_timeline",
+      "screen": "explanation"
+    },
+    {
+      "text": "open the timeline view",
+      "expect": "open_timeline",
+      "screen": "explanation"
+    },
+    {
+      "text": "I'd like an overview of the lecture moments",
+      "expect": "open_timeline",
+      "screen": "explanation"
+    },
+    {
+      "text": "give me a quiz about this lecture",
+      "expect": "start_practice",
+      "screen": "explanation"
+    },
+    {
+      "text": "I want to be tested on this",
+      "expect": "start_practice",
+      "screen": "explanation"
+    },
+    {
+      "text": "open the practice questions",
+      "expect": "start_practice",
+      "screen": "explanation"
+    },
+    {
+      "text": "change to the night theme",
+      "expect": "set_theme",
+      "args": {
+        "theme": "night"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "I'd like the sepia colours",
+      "expect": "set_theme",
+      "args": {
+        "theme": "sepia"
+      },
+      "screen": "library"
+    },
+    {
+      "text": "go back to the paper look",
+      "expect": "set_theme",
+      "args": {
+        "theme": "paper"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "turn on dark mode",
+      "expect": "set_theme",
+      "args": {
+        "theme": "night"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "find lectures on quantum mechanics",
+      "expect": "search_lectures",
+      "args": {
+        "query": "quantum mechanics"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "I'm looking for a video about matrices",
+      "expect": "search_lectures",
+      "args": {
+        "query": "matrices"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "search for organic chemistry",
+      "expect": "search_lectures",
+      "args": {
+        "query": "organic chemistry"
+      },
+      "screen": "subject"
+    },
+    {
+      "text": "do you have lectures about gradient descent",
+      "expect": "search_lectures",
+      "args": {
+        "query": "gradient descent"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "I'll take the second result",
+      "expect": "select_result",
+      "args": {
+        "index": 2
+      },
+      "screen": "home"
+    },
+    {
+      "text": "select the first lecture",
+      "expect": "select_result",
+      "args": {
+        "index": 1
+      },
+      "screen": "subject"
+    },
+    {
+      "text": "the third one looks good",
+      "expect": "select_result",
+      "args": {
+        "index": 3
+      },
+      "screen": "home"
+    },
+    {
+      "text": "choose number four",
+      "expect": "select_result",
+      "args": {
+        "index": 4
+      },
+      "screen": "subject"
+    },
+    {
+      "text": "okay, start it",
+      "expect": "start_lecture",
+      "screen": "home"
+    },
+    {
+      "text": "go ahead and begin studying this lecture",
+      "expect": "start_lecture",
+      "screen": "subject"
+    },
+    {
+      "text": "prepare this video for me",
+      "expect": "start_lecture",
+      "screen": "home"
+    },
+    {
+      "text": "show me chemistry lectures",
+      "expect": "explore_subject",
+      "args": {
+        "subject": "Chemistry"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "I'd like to explore mathematics",
+      "expect": "explore_subject",
+      "args": {
+        "subject": "Mathematics"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "open the biology lectures",
+      "expect": "explore_subject",
+      "args": {
+        "subject": "Biology"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "browse computer science topics",
+      "expect": "explore_subject",
+      "args": {
+        "subject": "Computer Science"
+      },
+      "screen": "home"
+    },
+    {
+      "text": "keep studying the lecture from last time",
+      "expect": "continue_lecture",
+      "screen": "home"
+    },
+    {
+      "text": "take me back to the lecture I was on",
+      "expect": "continue_lecture",
+      "screen": "home"
+    },
+    {
+      "text": "resume where I stopped yesterday",
+      "expect": "continue_lecture",
+      "screen": "home"
+    },
+    {
+      "text": "start playing the video",
+      "expect": "play_lecture",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "okay, you can play the lecture now",
+      "expect": "play_lecture",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "carry on with the video",
+      "expect": "play_lecture",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "play",
+      "expect": "play_lecture",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "pause",
+      "expect": "pause_lecture",
+      "screen": "explanation",
+      "playing": "lecture"
+    },
+    {
+      "text": "stop the lecture for a second",
+      "expect": "pause_lecture",
+      "screen": "explanation",
+      "playing": "lecture"
+    },
+    {
+      "text": "can you pause the video please",
+      "expect": "pause_lecture",
+      "screen": "explanation",
+      "playing": "lecture"
+    },
+    {
+      "text": "hold it there",
+      "expect": "pause_lecture",
+      "screen": "explanation",
+      "playing": "lecture"
+    },
+    {
+      "text": "go forward twenty seconds",
+      "expect": "seek_lecture",
+      "args": {
+        "direction": "forward",
+        "seconds": 20
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "back up five seconds",
+      "expect": "seek_lecture",
+      "args": {
+        "direction": "backward",
+        "seconds": 5
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "skip ahead a minute",
+      "expect": "seek_lecture",
+      "args": {
+        "direction": "forward",
+        "seconds": 60
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "rewind by thirty seconds",
+      "expect": "seek_lecture",
+      "args": {
+        "direction": "backward",
+        "seconds": 30
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "listen to the explanation",
+      "expect": "play_explanation",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "could you read me the explanation",
+      "expect": "play_explanation",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "tell me about this moment out loud",
+      "expect": "play_explanation",
+      "screen": "explanation",
+      "playing": "none"
+    },
+    {
+      "text": "pause",
+      "expect": "pause_explanation",
+      "screen": "explanation",
+      "playing": "explanation"
+    },
+    {
+      "text": "stop the explanation audio",
+      "expect": "pause_explanation",
+      "screen": "explanation",
+      "playing": "explanation"
+    },
+    {
+      "text": "wait, pause the narration for a moment",
+      "expect": "pause_explanation",
+      "screen": "explanation",
+      "playing": "explanation"
+    },
+    {
+      "text": "play the explanation again from the beginning",
+      "expect": "replay_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "I didn't hear that, repeat the explanation",
+      "expect": "replay_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "start the explanation over",
+      "expect": "replay_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "move to the next explanation",
+      "expect": "next_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "what comes after this moment",
+      "expect": "next_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "skip this one and go forward",
+      "expect": "next_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "next",
+      "expect": "next_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "return to the moment before",
+      "expect": "previous_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "go back one explanation",
+      "expect": "previous_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "previous",
+      "expect": "previous_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "show me the one before this",
+      "expect": "previous_moment",
+      "screen": "explanation"
+    },
+    {
+      "text": "take me to moment six",
+      "expect": "go_to_moment",
+      "args": {
+        "index": 6
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "open explanation number two",
+      "expect": "go_to_moment",
+      "args": {
+        "index": 2
+      },
+      "screen": "timeline"
+    },
+    {
+      "text": "jump to the eighth point",
+      "expect": "go_to_moment",
+      "args": {
+        "index": 8
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "read faster please",
+      "expect": "change_listening_speed",
+      "args": {
+        "direction": "faster"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "the voice is too quick, slow it down",
+      "expect": "change_listening_speed",
+      "args": {
+        "direction": "slower"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "speed up the narration",
+      "expect": "change_listening_speed",
+      "args": {
+        "direction": "faster"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "talk more slowly",
+      "expect": "change_listening_speed",
+      "args": {
+        "direction": "slower"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "let me record a note",
+      "expect": "toggle_voice_note",
+      "screen": "explanation"
+    },
+    {
+      "text": "I'd like to say something and keep it as a note",
+      "expect": "toggle_voice_note",
+      "screen": "explanation"
+    },
+    {
+      "text": "finish recording my note",
+      "expect": "toggle_voice_note",
+      "screen": "explanation"
+    },
+    {
+      "text": "keep this explanation in my bookmarks",
+      "expect": "toggle_bookmark",
+      "screen": "explanation"
+    },
+    {
+      "text": "bookmark this",
+      "expect": "toggle_bookmark",
+      "screen": "explanation"
+    },
+    {
+      "text": "take this off my saved list",
+      "expect": "toggle_bookmark",
+      "screen": "explanation"
+    },
+    {
+      "text": "can I get this explanation as a PDF",
+      "expect": "export_pdf",
+      "screen": "explanation"
+    },
+    {
+      "text": "download a document of this explanation",
+      "expect": "export_pdf",
+      "screen": "explanation"
+    },
+    {
+      "text": "export to PDF",
+      "expect": "export_pdf",
+      "screen": "explanation"
+    },
+    {
+      "text": "show the video on screen",
+      "expect": "set_presentation_mode",
+      "args": {
+        "mode": "study"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "go to study mode",
+      "expect": "set_presentation_mode",
+      "args": {
+        "mode": "study"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "I don't need to see the video, use accessibility mode",
+      "expect": "set_presentation_mode",
+      "args": {
+        "mode": "accessibility"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "switch back to accessibility mode",
+      "expect": "set_presentation_mode",
+      "args": {
+        "mode": "accessibility"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "enlarge the text",
+      "expect": "change_text_size",
+      "args": {
+        "change": "larger"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "I can't read this, bigger letters please",
+      "expect": "change_text_size",
+      "args": {
+        "change": "larger"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "make the font smaller",
+      "expect": "change_text_size",
+      "args": {
+        "change": "smaller"
+      },
+      "screen": "explanation"
+    },
+    {
+      "text": "enable the high contrast display",
+      "expect": "toggle_high_contrast",
+      "screen": "explanation"
+    },
+    {
+      "text": "turn the contrast up",
+      "expect": "toggle_high_contrast",
+      "screen": "explanation"
+    },
+    {
+      "text": "disable high contrast",
+      "expect": "toggle_high_contrast",
+      "screen": "explanation"
+    },
+    {
+      "text": "open number two",
+      "expect": "open_item",
+      "args": {
+        "index": 2
+      },
+      "screen": "bookmarks"
+    },
+    {
+      "text": "I want to read the first bookmark",
+      "expect": "open_item",
+      "args": {
+        "index": 1
+      },
+      "screen": "bookmarks"
+    },
+    {
+      "text": "go into the third note",
+      "expect": "open_item",
+      "args": {
+        "index": 3
+      },
+      "screen": "notes"
+    },
+    {
+      "text": "open the second explanation",
+      "expect": "open_item",
+      "args": {
+        "index": 2
+      },
+      "screen": "library"
+    },
+    {
+      "text": "play the third one's audio",
+      "expect": "play_item_audio",
+      "args": {
+        "index": 3
+      },
+      "screen": "library"
+    },
+    {
+      "text": "let me listen to the first item",
+      "expect": "play_item_audio",
+      "args": {
+        "index": 1
+      },
+      "screen": "library"
+    },
+    {
+      "text": "read the second item to me",
+      "expect": "play_item_audio",
+      "args": {
+        "index": 2
+      },
+      "screen": "library"
+    },
+    {
+      "text": "delete the second one",
+      "expect": "remove_item",
+      "args": {
+        "index": 2
+      },
+      "screen": "bookmarks"
+    },
+    {
+      "text": "remove the first saved item",
+      "expect": "remove_item",
+      "args": {
+        "index": 1
+      },
+      "screen": "library"
+    },
+    {
+      "text": "I want to get rid of number three",
+      "expect": "remove_item",
+      "args": {
+        "index": 3
+      },
+      "screen": "bookmarks"
+    },
+    {
+      "text": "why does the curve flatten out at the end",
+      "expect": "ask_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "what is the instructor trying to show with this diagram",
+      "expect": "ask_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "how is the second equation derived from the first",
+      "expect": "ask_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "what's the next step in this derivation",
+      "expect": "ask_question",
+      "screen": "explanation",
+      "note": "contains 'next' but is a content question"
+    },
+    {
+      "text": "what did the teacher say about the limit earlier",
+      "expect": "ask_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "does this graph show a linear relationship",
+      "expect": "ask_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "be silent now",
+      "expect": "stop_speaking",
+      "screen": "explanation"
+    },
+    {
+      "text": "please stop talking",
+      "expect": "stop_speaking",
+      "screen": "library"
+    },
+    {
+      "text": "okay, quiet",
+      "expect": "stop_speaking",
+      "screen": "home"
+    },
+    {
+      "text": "could you say your last answer once more",
+      "expect": "repeat_last_response",
+      "screen": "explanation"
+    },
+    {
+      "text": "repeat that please",
+      "expect": "repeat_last_response",
+      "screen": "home"
+    },
+    {
+      "text": "I missed what you said",
+      "expect": "repeat_last_response",
+      "screen": "library"
+    },
+    {
+      "text": "forget what I asked",
+      "expect": "cancel",
+      "screen": "home"
+    },
+    {
+      "text": "cancel that",
+      "expect": "cancel",
+      "screen": "explanation"
+    },
+    {
+      "text": "never mind, do nothing",
+      "expect": "cancel",
+      "screen": "bookmarks"
+    },
+    {
+      "text": "what commands are available",
+      "expect": "help",
+      "screen": "home"
+    },
+    {
+      "text": "how can I control this with my voice",
+      "expect": "help",
+      "screen": "explanation"
+    },
+    {
+      "text": "tell me what I can say here",
+      "expect": "help",
+      "screen": "library"
+    },
+    {
+      "text": "yes, do that",
+      "expect": "confirm_yes",
+      "screen": "bookmarks",
+      "pending": "remove_item"
+    },
+    {
+      "text": "correct",
+      "expect": "confirm_yes",
+      "screen": "home",
+      "pending": "start_lecture"
+    },
+    {
+      "text": "yep go on",
+      "expect": "confirm_yes",
+      "screen": "library",
+      "pending": "remove_item"
+    },
+    {
+      "text": "no, leave it",
+      "expect": "confirm_no",
+      "screen": "bookmarks",
+      "pending": "remove_item"
+    },
+    {
+      "text": "actually don't",
+      "expect": "confirm_no",
+      "screen": "home",
+      "pending": "start_lecture"
+    },
+    {
+      "text": "no way",
+      "expect": "confirm_no",
+      "screen": "library",
+      "pending": "remove_item"
+    },
+    {
+      "text": "what's the weather like today",
+      "expect": "unsupported",
+      "screen": "home"
+    },
+    {
+      "text": "order me a pizza",
+      "expect": "unsupported",
+      "screen": "home"
+    },
+    {
+      "text": "tell me a joke",
+      "expect": "unsupported",
+      "screen": "explanation"
+    },
+    {
+      "text": "send an email to my teacher",
+      "expect": "unsupported",
+      "screen": "explanation"
+    },
+    {
+      "text": "delete my account",
+      "expect": "unsupported",
+      "screen": "home"
+    },
+    {
+      "text": "turn the volume of my computer up",
+      "expect": "unsupported",
+      "screen": "explanation"
+    },
+    {
+      "text": "let's do some practice questions",
+      "expect": "quiz_start",
+      "screen": "quiz"
+    },
+    {
+      "text": "build a quiz for this video",
+      "expect": "quiz_start",
+      "screen": "quiz"
+    },
+    {
+      "text": "I'll take option three",
+      "expect": "quiz_answer",
+      "screen": "quiz"
+    },
+    {
+      "text": "choose the second answer",
+      "expect": "quiz_answer",
+      "screen": "quiz"
+    },
+    {
+      "text": "did I get it right",
+      "expect": "quiz_check",
+      "screen": "quiz"
+    },
+    {
+      "text": "verify my answer",
+      "expect": "quiz_check",
+      "screen": "quiz"
+    },
+    {
+      "text": "can I get a little hint",
+      "expect": "quiz_hint",
+      "screen": "quiz"
+    },
+    {
+      "text": "give me a nudge on this one",
+      "expect": "quiz_hint",
+      "screen": "quiz"
+    },
+    {
+      "text": "could you read me the question again",
+      "expect": "quiz_read",
+      "screen": "quiz"
+    },
+    {
+      "text": "tell me the choices",
+      "expect": "quiz_read",
+      "screen": "quiz"
+    },
+    {
+      "text": "let's go to the next question",
+      "expect": "quiz_next",
+      "screen": "quiz"
+    },
+    {
+      "text": "next one please",
+      "expect": "quiz_next",
+      "screen": "quiz"
+    },
+    {
+      "text": "go to the question I just had",
+      "expect": "quiz_previous",
+      "screen": "quiz"
+    },
+    {
+      "text": "previous one",
+      "expect": "quiz_previous",
+      "screen": "quiz"
+    },
+    {
+      "text": "let me review before I finish",
+      "expect": "quiz_review",
+      "screen": "quiz"
+    },
+    {
+      "text": "list the questions I haven't answered",
+      "expect": "quiz_review",
+      "screen": "quiz"
+    },
+    {
+      "text": "I'm finished, submit everything",
+      "expect": "quiz_submit",
+      "screen": "quiz"
+    },
+    {
+      "text": "turn in my answers",
+      "expect": "quiz_submit",
+      "screen": "quiz"
+    },
+    {
+      "text": "take me back to the lecture",
+      "expect": "quiz_back",
+      "screen": "quiz"
+    },
+    {
+      "text": "close the quiz and go back to the video",
+      "expect": "quiz_back",
+      "screen": "quiz"
+    },
+    {
+      "text": "test me with questions about this video",
+      "expect": "quiz_start",
+      "screen": "quiz"
+    },
+    {
+      "text": "my choice is option one",
+      "expect": "quiz_answer",
+      "screen": "quiz"
+    },
+    {
+      "text": "was my answer correct",
+      "expect": "quiz_check",
+      "screen": "quiz"
+    },
+    {
+      "text": "any clue for this one",
+      "expect": "quiz_hint",
+      "screen": "quiz"
+    },
+    {
+      "text": "read out the choices",
+      "expect": "quiz_read",
+      "screen": "quiz"
+    },
+    {
+      "text": "go on to the following question",
+      "expect": "quiz_next",
+      "screen": "quiz"
+    },
+    {
+      "text": "back to the question before this one",
+      "expect": "quiz_previous",
+      "screen": "quiz"
+    },
+    {
+      "text": "take me to the review page",
+      "expect": "quiz_review",
+      "screen": "quiz"
+    },
+    {
+      "text": "I want to finish and submit my answers",
+      "expect": "quiz_submit",
+      "screen": "quiz"
+    },
+    {
+      "text": "stop the quiz and go back to the lecture",
+      "expect": "quiz_back",
+      "screen": "quiz"
+    },
+    {
+      "text": "how would I save this explanation for later",
+      "expect": "app_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "is it possible to change the theme by voice",
+      "expect": "app_question",
+      "screen": "home"
+    },
+    {
+      "text": "can I search for lectures by talking to you",
+      "expect": "app_question",
+      "screen": "home"
+    },
+    {
+      "text": "how do I check my answer",
+      "expect": "app_question",
+      "screen": "quiz"
+    },
+    {
+      "text": "what should I say to skip ahead",
+      "expect": "app_question",
+      "screen": "explanation"
+    },
+    {
+      "text": "what is a derivative",
+      "expect": "ask_question",
+      "screen": "home"
+    },
+    {
+      "text": "why does gradient descent converge",
+      "expect": "ask_question",
+      "screen": "library"
+    },
+    {
+      "text": "paste the video link here",
+      "expect": "paste_url",
+      "screen": "home"
+    },
+    {
+      "text": "put in the link I copied",
+      "expect": "paste_url",
+      "screen": "home"
+    },
+    {
+      "text": "paste it",
+      "expect": "paste_url",
+      "screen": "home"
+    },
+    {
+      "text": "skip that explanation please",
+      "expect": "skip_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "I'd like to skip the explanation",
+      "expect": "skip_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "forget the explanation and go on",
+      "expect": "skip_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "try preparing the explanation once more",
+      "expect": "retry_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "explanation did not load, retry",
+      "expect": "retry_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "check whether the explanation is ready now",
+      "expect": "retry_explanation",
+      "screen": "explanation"
+    },
+    {
+      "text": "open the structured tab",
+      "expect": "set_visual_tab",
+      "screen": "explanation"
+    },
+    {
+      "text": "switch to the visual view",
+      "expect": "set_visual_tab",
+      "screen": "explanation"
+    },
+    {
+      "text": "show the diagram description as text",
+      "expect": "set_visual_tab",
+      "screen": "explanation"
+    },
+    {
+      "text": "highlight the key area",
+      "expect": "toggle_focus",
+      "screen": "explanation"
+    },
+    {
+      "text": "switch the focus highlight off",
+      "expect": "toggle_focus",
+      "screen": "explanation"
+    },
+    {
+      "text": "show where I should look in the picture",
+      "expect": "toggle_focus",
+      "screen": "explanation"
+    },
+    {
+      "text": "download the narration",
+      "expect": "export_audio",
+      "screen": "explanation"
+    },
+    {
+      "text": "save the audio of this explanation",
+      "expect": "export_audio",
+      "screen": "explanation"
+    },
+    {
+      "text": "export explanation as audio",
+      "expect": "export_audio",
+      "screen": "explanation"
+    },
+    {
+      "text": "open the preferences",
+      "expect": "open_settings",
+      "screen": "home"
+    },
+    {
+      "text": "bring up settings",
+      "expect": "open_settings",
+      "screen": "home"
+    },
+    {
+      "text": "let me see the settings",
+      "expect": "open_settings",
+      "screen": "home"
+    },
+    {
+      "text": "close the preferences",
+      "expect": "close_settings",
+      "screen": "home"
+    },
+    {
+      "text": "hide the settings panel",
+      "expect": "close_settings",
+      "screen": "home"
+    },
+    {
+      "text": "finished with settings",
+      "expect": "close_settings",
+      "screen": "home"
+    },
+    {
+      "text": "which page is open",
+      "expect": "where_am_i",
+      "screen": "library"
+    },
+    {
+      "text": "tell me what screen I'm on",
+      "expect": "where_am_i",
+      "screen": "library"
+    },
+    {
+      "text": "where are we right now",
+      "expect": "where_am_i",
+      "screen": "library"
+    },
+    {
+      "text": "play the latest explanation",
+      "expect": "continue_lecture",
+      "screen": "library"
+    },
+    {
+      "text": "open my recent lecture",
+      "expect": "continue_lecture",
+      "screen": "library"
+    },
+    {
+      "text": "carry on with my last lecture",
+      "expect": "continue_lecture",
+      "screen": "library"
+    },
+    {
+      "text": "just the graphs please",
+      "expect": "filter_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "filter to equations",
+      "expect": "filter_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "bring back all the moments",
+      "expect": "filter_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "show me the charts",
+      "expect": "filter_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "open the selected moment in the lecture",
+      "expect": "open_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "go to the lecture at the second one",
+      "expect": "open_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "take me to that moment",
+      "expect": "open_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "read all the moments to me",
+      "expect": "read_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "what is listed here",
+      "expect": "read_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "say the moments out loud",
+      "expect": "read_moments",
+      "screen": "timeline"
+    },
+    {
+      "text": "which one is highlighted",
+      "expect": "describe_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "tell me what I selected",
+      "expect": "describe_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "what is the current selection",
+      "expect": "describe_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "next moment",
+      "expect": "next_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "go to the previous one",
+      "expect": "previous_moment",
+      "screen": "timeline"
+    },
+    {
+      "text": "move to the following moment",
+      "expect": "next_moment",
+      "screen": "timeline"
+    }
+  ]
+}
