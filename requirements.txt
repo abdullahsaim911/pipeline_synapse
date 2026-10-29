@@ -17,6 +17,17 @@ openai-clip>=1.0.0
 scikit-image>=0.21.0
 
 # =============================================================================
+# Synapse Interaction Module (writing / mouse-pointer / hand-pointing detection)
+# =============================================================================
+# Works on the frames the frame extractor already decodes: it never downloads or streams video itself, so it
+# needs no yt-dlp. numpy and opencv-python (listed above) are its core requirements.
+# Hand pointing is optional: it needs mediapipe plus one model file, downloaded once with
+#   python -m synapse_interaction.get_models
+# (without them the hand stage skips itself and says so in the log; SYNAPSE_HAND=0 switches it off).
+# System tool: ffmpeg must be on PATH (the frame extractor decodes with it).
+mediapipe>=0.10.14
+
+# =============================================================================
 # Transcription Module Dependencies
 # =============================================================================
 youtube-transcript-api>=0.6.0

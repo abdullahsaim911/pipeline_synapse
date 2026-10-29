@@ -4,20 +4,31 @@ Detects WRITING_DRAWING, MOUSE_POINTING and HAND_POINTING in lecture videos (CPU
 `interactions.json`. Everything for this feature lives in this folder.
 
 ## Commands (run from the project root, environment activated)
-    python -m synapse_interaction.run  <video.mp4|url> --out <dir> [--debug] [--dump-steps] [--no-hand]
-    python -m synapse_interaction.baseline "<youtube url>"             # existing pipeline up to M1 -> M1's "before" points
-    python -m synapse_interaction.preview data\<video_id> [--text]     # what the fusion rules would do
-    python -m synapse_interaction.review  data\<video_id>              # build the answer key (blind y/n review)
-    python -m synapse_interaction.eval_interventions --video-dir data\<video_id>   # M1 vs M1 + interactions
+    python -m synapse_interaction.run <video.mp4> --out <dir> [--dump-steps] [--no-hand]   # a file already on disk
+    python -m synapse_interaction.get_models                                                # one-off hand-model download
     pytest synapse_interaction/tests -q
 
 ## Layout
-    run.py detector.py motion.py classify.py hand.py   detection
-    fusion.py                                          merge with M1's points (until M1 itself is changed)
-    eval_interventions.py review.py baseline.py        evaluation tools
-    eval_data/ground_truth, eval_data/baseline         answer keys and M1 baselines (small JSON, commit these)
-    tests/                                             unit + synthetic-video tests
+    stream.py                                          InteractionStream: the pipeline entry point (frames in, interactions.json out)
+    motion.py classify.py hand.py                      detection (ink/motion scan, writing vs pointer, MediaPipe hands)
+    fusion.py novelty.py                               merge the events into M1's intervention points
+    schema.py config.py video_io.py                    data classes, thresholds, file helpers
+    detector.py run.py                                 video-file entry point for the command line and tests
+    tests/                                             unit, synthetic-video, extractor-tap and pipeline-integration tests
+
+## How it gets its frames (no video is opened or downloaded)
+In the pipeline the frame extractor decodes the lecture once and hands every decoded frame to this module:
+
+    stream = InteractionStream(Config(), out_path=".../interactions.json")
+    extract_pedagogical_keyframes(..., frame_tap=stream.feed)   # optional hook, off by default
+    stream.finish()                                             # writes interactions.json
+
+With the hook the video is decoded once at 2 fps and the extractor still receives every 4th frame (same frames, same
+timestamps and pixels), so its own keyframes are exactly the same as without it. A test runs the real extractor both ways.
+`detect_interactions(video)` (CLI / tests) opens a file and feeds the same code.
+Pictures for the detected events are taken from the pushed frames (spooled as small JPEGs, the unused ones deleted).
 
 ## HAND_POINTING (optional)
-Needs mediapipe plus two model files in `models/` (hand_landmarker.task, pose_landmarker_lite.task).
-Without them the hand stage skips itself.
+Needs `pip install mediapipe` and, with current mediapipe, one model file: run `python -m synapse_interaction.get_models`
+(saved in `synapse_interaction/models/`). Without them the hand stage skips itself and says so in the log.
+Set `SYNAPSE_HAND=0` to switch it off in the pipeline.

@@ -15,7 +15,7 @@ import cv2
 import numpy as np
 
 from .config import Config
-from .video_io import iter_frames
+from .video_io import iter_frames, _resize_to_width
 
 _K = np.ones((3, 3), np.uint8)
 
@@ -43,18 +43,30 @@ def _ink_mask(frame: np.ndarray, thr: int) -> np.ndarray:
     return (np.abs(frame.astype(np.int16) - bg).max(axis=2) > thr)
 
 
-def scan(stream: str, cfg: Config) -> Tuple[List[Step], dict]:
-    steps: List[Step] = []
-    prev: Optional[np.ndarray] = None
-    size = None
-    for t, frame in iter_frames(stream, cfg.scan_fps, cfg.scan_width):
+class Scanner:
+    """Frame-by-frame version of the scan: call push(t, bgr_frame) for each frame in time order.
+
+    Frames may come from anywhere (the frame extractor's stream, a video file); this class never opens a
+    video. Each frame is downscaled to cfg.scan_width before use."""
+
+    def __init__(self, cfg: Config):
+        self.cfg = cfg
+        self.steps: List[Step] = []
+        self.size = None
+        self._prev: Optional[np.ndarray] = None
+
+    def push(self, t: float, frame: np.ndarray) -> Step:
+        cfg = self.cfg
+        frame = _resize_to_width(frame, cfg.scan_width)
         mask = _ink_mask(frame, cfg.ink_thr)
         h, w = mask.shape
-        size = (w, h)
-        if prev is None:
-            steps.append(Step(t=t))
-            prev = mask
-            continue
+        self.size = (w, h)
+        prev = self._prev
+        self._prev = mask
+        if prev is None or prev.shape != mask.shape:
+            st = Step(t=t)
+            self.steps.append(st)
+            return st
 
         total = float(h * w)
         changed = mask ^ prev
@@ -79,6 +91,13 @@ def scan(stream: str, cfg: Config) -> Tuple[List[Step], dict]:
                 ys2, xs2 = np.nonzero(keep_mask)
                 st.bbox = (float(xs2.min()) / w, float(ys2.min()) / h,
                            float(xs2.max()) / w, float(ys2.max()) / h)
-        steps.append(st)
-        prev = mask
-    return steps, {"scan_size": size}
+        self.steps.append(st)
+        return st
+
+
+def scan(stream: str, cfg: Config) -> Tuple[List[Step], dict]:
+    """Scan a video file / URL (kept for the CLI and tests; the pipeline feeds frames to Scanner instead)."""
+    sc = Scanner(cfg)
+    for t, frame in iter_frames(stream, cfg.scan_fps, cfg.scan_width):
+        sc.push(t, frame)
+    return sc.steps, {"scan_size": sc.size}

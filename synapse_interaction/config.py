@@ -1,3 +1,4 @@
+import os
 from dataclasses import dataclass
 from typing import Optional
 
@@ -40,16 +41,17 @@ class Config:
     enable_hand: bool = True
     hand_fps: float = 2.0
     hand_width: int = 640
-    hand_probe_frames: int = 16      # evenly spaced frames used to check a person exists
     hand_gap_tol: float = 1.0
     hand_min_dur: float = 0.8
     hand_max_speed: float = 0.35     # fingertip speed limit (frame-fractions / s): waving != pointing
     use_arm_fallback: bool = False   # reserved (not implemented yet)
-    hand_model_path: str = "models/hand_landmarker.task"        # MediaPipe Tasks models (see README)
-    pose_model_path: str = "models/pose_landmarker_lite.task"
+    # MediaPipe Tasks model (python -m synapse_interaction.get_models). Found relative to this package, not to the
+    # working directory, so it works wherever the server is started from.
+    hand_model_path: str = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "hand_landmarker.task")
 
     # ---- output --------------------------------------------------------
     save_frames: bool = True
     jpeg_quality: int = 88
+    spool_interval: float = 1.0      # frame-fed mode: keep a picture at most this often (seconds) for the event frames
     max_trajectory_points: int = 20
     steps_csv: Optional[str] = None  # if set, per-step features + labels are dumped here (debugging)

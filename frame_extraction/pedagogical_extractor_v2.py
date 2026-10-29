@@ -655,7 +655,15 @@ def extract_pedagogical_keyframes(
     min_frame_gap: float = 4.0,
     max_frame_gap: float = 30.0,
     similarity_threshold: float = 0.92,
+    frame_tap=None,
+    tap_fps: float = 2.0,
 ) -> List[ExtractedKeyframe]:
+    # frame_tap (optional, off by default): callable(timestamp_seconds, bgr_frame). It is handed EVERY decoded frame
+    # as it streams past so the visual-interaction module can work on this same decoded video instead of opening or
+    # downloading it again. With a tap the stream is decoded at `tap_fps` and this function keeps every
+    # (tap_fps / sample_fps)-th frame for its own steps: the same frames and timestamps it would have used anyway
+    # (tap_fps is rounded up to a whole multiple of sample_fps so that this holds for any sample_fps).
+    # The tap's exceptions are swallowed. With frame_tap=None nothing below behaves differently.
 
     # Normalize path for Windows compatibility
     output_dir = os.path.normpath(output_dir)
@@ -684,7 +692,23 @@ def extract_pedagogical_keyframes(
     all_frames: List[FrameData] = []
     frame_count = 0
 
-    for timestamp, frame in stream_frames(stream_url, width, height, sample_fps):
+    stream_fps = sample_fps
+    tap_every = 1
+    if frame_tap is not None:
+        tap_every = max(1, int(-(-tap_fps // sample_fps)))        # ceil(tap_fps / sample_fps)
+        stream_fps = sample_fps * tap_every
+    streamed = 0
+
+    for timestamp, frame in stream_frames(stream_url, width, height, stream_fps):
+        if frame_tap is not None:
+            try:
+                frame_tap(timestamp, frame)
+            except Exception:
+                pass  # never let the tap break extraction
+            streamed += 1
+            if (streamed - 1) % tap_every != 0:
+                continue  # in-between frames are for the tap only
+
         # Skip blank frames
         if is_mostly_blank(frame):
             continue

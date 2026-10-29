@@ -99,3 +99,6 @@ data/
 
 
 /synapse-web/
+
+# models
+synapse_interaction/models/

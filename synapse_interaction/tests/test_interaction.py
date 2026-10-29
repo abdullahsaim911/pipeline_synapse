@@ -83,17 +83,6 @@ def test_dark_coloured_ink_is_writing_not_pointing():
     assert not any(_ov(s, 4, 9) > 2 for s in m)           # writing must not be reported as pointing
 
 
-def test_eval_matching_and_metrics():
-    from synapse_interaction.eval_interventions import match, prf, parse_time
-    assert parse_time("1:05.5") == 65.5 and parse_time(12) == 12.0 and parse_time("0:41") == 41.0
-    tp, fp, fn, m = match([10, 20, 30, 31], [11, 29, 60], tol=3)
-    assert (tp, fp, fn) == (2, 2, 1)                       # 10~11, 30~29 ; 20 & 31 unmatched ; 60 missed
-    tp, fp, fn, _ = match([10, 11], [10.5], tol=3)         # one gt can only be matched once
-    assert (tp, fp, fn) == (1, 1, 0)
-    p, r, f = prf(2, 2, 1)
-    assert abs(p - 0.5) < 1e-9 and abs(r - 2 / 3) < 1e-9
-
-
 def test_postprocess_merges_episodes():
     from synapse_interaction.classify import postprocess
     segs = [Interaction(WRITING_DRAWING, 0, 5, .9), Interaction(MOUSE_POINTING, 5, 6.5, .8),
@@ -123,56 +112,6 @@ def test_always_moving_pointer_cannot_create_points():
     lvl, _, create = _decide(ints[0], quiet=True, deictic=False, pointer_unreliable=True)
     assert create is False
     assert _decide(ints[0], quiet=False, deictic=True, pointer_unreliable=True)[2] is True
-
-
-def test_demo_report_builds():
-    import sys, types
-    from synapse_interaction.demo_report import build
-    d = tempfile.mkdtemp()
-    vd = os.path.join(d, "data", "V"); os.makedirs(os.path.join(vd, "keyframes"))
-    json.dump([{"start": 0, "end": 10, "duration": 10, "text": "intro"},
-               {"start": 38, "end": 45, "duration": 7, "text": "look at this point"}], open(os.path.join(vd, "transcript.json"), "w"))
-    json.dump([{"timestamp_seconds": 25.0, "frame_path": "k.jpg", "content_type": "text",
-                "complexity_score": .5, "clip_confidence": .6}], open(os.path.join(vd, "keyframes", "keyframes.json"), "w"))
-    save_interactions(os.path.join(vd, "interactions.json"),
-                      [Interaction(WRITING_DRAWING, 20, 26, .9, frame_path="x.jpg"), Interaction(MOUSE_POINTING, 40, 43, .7)], duration=60)
-    gt = os.path.join(d, "gt"); os.makedirs(gt); json.dump({"suffer_points": ["0:26", "0:41"]}, open(os.path.join(gt, "V.json"), "w"))
-
-    fake = types.ModuleType("synchronizer"); fake.InterventionPoint = P
-    class S:
-        def __init__(self, transcript_path, keyframes_path): pass
-        def detect_suffer_points(self):
-            return [P(41.0, "a.jpg", "graph", .4, .3, "look at this point", "Deictic Phrase", "low")]
-    fake.Synchronizer = S
-    sys.modules["synchronizer"] = fake
-    try:
-        path = build([vd], gt, os.path.join(d, "out"), 3.0)
-    finally:
-        del sys.modules["synchronizer"]
-    html_ = open(path, encoding="utf-8").read()
-    assert "Overall" in html_ and "<svg" in html_ and "added by the module" in html_.lower()
-
-
-def test_before_after_text():
-    import sys, types
-    from synapse_interaction.before_after import _report
-    d = tempfile.mkdtemp()
-    vd = os.path.join(d, "data", "V"); os.makedirs(os.path.join(vd, "keyframes"))
-    json.dump([{"start": 0, "end": 10, "duration": 10, "text": "intro"}], open(os.path.join(vd, "transcript.json"), "w"))
-    json.dump([{"timestamp_seconds": 25.0, "frame_path": "k.jpg", "content_type": "text",
-                "complexity_score": .5, "clip_confidence": .6}], open(os.path.join(vd, "keyframes", "keyframes.json"), "w"))
-    save_interactions(os.path.join(vd, "interactions.json"), [Interaction(WRITING_DRAWING, 8, 14, .9, frame_path="x.jpg")], duration=60)
-    fake = types.ModuleType("synchronizer"); fake.InterventionPoint = P
-    class S:
-        def __init__(self, transcript_path, keyframes_path): pass
-        def detect_suffer_points(self): return [P(41.0, "a.jpg", "graph", .4, .3, "ctx", "Unknown", "low")]
-    fake.Synchronizer = S
-    sys.modules["synchronizer"] = fake
-    try:
-        text, _ = _report(vd, None, 3.0)
-    finally:
-        del sys.modules["synchronizer"]
-    assert "BEFORE (original M1): 1 points" in text and "<-- NEW" in text and "1 -> 2 points" in text
 
 
 def test_fusion_is_rationed():

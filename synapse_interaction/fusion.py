@@ -8,6 +8,7 @@ Do NOT edit `transcript_context`: M3 locates the current transcript entry by mat
 """
 from __future__ import annotations
 import json
+import os
 import re
 from typing import List, Optional
 
@@ -133,6 +134,26 @@ def _decide(seg: Interaction, quiet: bool, deictic: bool, pointer_unreliable: bo
     return "medium", seg.type, seg.confidence >= 0.8
 
 
+def _is_gesture_frame(keyframe_time: float, seg: Interaction, tol: float = 0.25) -> bool:
+    """True when the extractor's keyframe shows the SAME moment as the event's picture, so there is nothing to choose.
+
+    Pointing (hand or mouse): the pointer is visible during the whole event, so any keyframe taken inside it is a
+    gesture frame. Writing: an episode can last minutes and its picture is the COMPLETE board taken just after the last
+    stroke, so only a keyframe at that moment is the same picture; a keyframe from the middle of the writing shows a
+    half-written board and has to compete on confidence like any other."""
+    if seg.type == WRITING_DRAWING:
+        return abs(keyframe_time - (seg.end + 0.3)) <= tol
+    return seg.start - tol <= keyframe_time <= seg.end + tol
+
+
+def _gesture_picture_wins(point_conf: float, seg: Interaction, keyframe_time: Optional[float] = None) -> bool:
+    """The picture with the higher confidence is the one the VLM should describe. A tie keeps the extractor's keyframe
+    (the behaviour before this rule existed). A keyframe that is itself a gesture frame always keeps its picture."""
+    if keyframe_time is not None and _is_gesture_frame(keyframe_time, seg):
+        return False
+    return bool(seg.frame_path) and os.path.exists(seg.frame_path) and seg.confidence > point_conf
+
+
 def _default_point_cls(points):
     for mod in ("synchronizer", "synchronizer.synchronizer"):
         try:
@@ -156,7 +177,7 @@ def fuse_interactions(points: list, interactions_path: str, transcript_path: Opt
                       keyframes_path: Optional[str] = None, point_cls=None,
                       match_slack: float = 2.0, seconds_per_new_point: float = 60.0,
                       min_new_gap: float = 20.0, min_new_score: float = 1.0,
-                      min_ink_px: int = 300, redundant_thr: float = 0.80) -> list:
+                      min_ink_px: int = 300, redundant_thr: float = 0.80, pic_window: float = 4.0) -> list:
     """Never raises: on any problem the original list is returned.
 
     Upgrades: an existing M1 point near an interaction gets a higher confidence + a reason.
@@ -166,6 +187,12 @@ def fuse_interactions(points: list, interactions_path: str, transcript_path: Opt
                         (M1's own frames count too) -> only visually different frames survive
       * content       : needs >= `min_ink_px` ink pixels (at 480 px width) so an empty page is never picked
       * spacing/budget: >= `min_new_gap` s from every other point; at most 1 new point per `seconds_per_new_point` s
+
+    Which PICTURE the VLM describes: the one with the higher confidence. A point's keyframe is scored by its
+    `clip_confidence`, a gesture picture by the event's `confidence`. For an existing point near an event the gesture
+    picture replaces the keyframe only if it scores higher; for a new point the nearest keyframe (within `pic_window`
+    seconds) competes with the gesture picture in the same way. Ties keep the keyframe. A keyframe taken while the event
+    was happening is itself a gesture frame: it keeps its picture without any comparison.
     """
     try:
         interactions = load_interactions(interactions_path)
@@ -173,13 +200,15 @@ def fuse_interactions(points: list, interactions_path: str, transcript_path: Opt
         return points
     try:
         return _fuse(points, interactions, interactions_path, transcript_path, keyframes_path, point_cls,
-                     match_slack, seconds_per_new_point, min_new_gap, min_new_score, min_ink_px, redundant_thr)
+                     match_slack, seconds_per_new_point, min_new_gap, min_new_score, min_ink_px, redundant_thr,
+                     pic_window)
     except Exception:
         return points
 
 
 def _fuse(points, interactions, interactions_path, transcript_path, keyframes_path, point_cls,
-          match_slack, seconds_per_new_point, min_new_gap, min_new_score, min_ink_px, redundant_thr):
+          match_slack, seconds_per_new_point, min_new_gap, min_new_score, min_ink_px, redundant_thr,
+          pic_window=4.0):
     from .novelty import load_mask, contained_fraction
     transcripts = load_transcript(transcript_path)
     keyframes = load_keyframes(keyframes_path)
@@ -187,6 +216,7 @@ def _fuse(points, interactions, interactions_path, transcript_path, keyframes_pa
     duration = _video_duration(interactions_path, interactions)
     unreliable = pointer_coverage(interactions, duration or None) > 0.40
     out = list(points)
+    pic_conf = {id(p): float(getattr(p, "clip_confidence", 0.0) or 0.0) for p in out}   # confidence of each point's picture
 
     cands = []        # dicts: seg, grid, ink, quiet, deictic
     for seg in interactions:
@@ -202,6 +232,9 @@ def _fuse(points, interactions, interactions_path, transcript_path, keyframes_pa
                     p.confidence = level
                 if reason not in (p.trigger_reason or ""):
                     p.trigger_reason = f"{p.trigger_reason} + {reason}" if p.trigger_reason else reason
+                if _gesture_picture_wins(pic_conf.get(id(p), 0.0), seg, p.timestamp):
+                    p.frame_path = seg.frame_path          # the better-scored picture is the one to describe
+                    pic_conf[id(p)] = seg.confidence
             continue
         if point_cls is None or (unreliable and seg.type == MOUSE_POINTING):
             continue
@@ -234,6 +267,10 @@ def _fuse(points, interactions, interactions_path, transcript_path, keyframes_pa
             continue
         kf = min(keyframes, key=lambda k: abs(k.get("timestamp_seconds", 0) - t)) if keyframes else {}
         frame_path = seg.frame_path or kf.get("frame_path", "")
+        kf_near = bool(kf) and abs(kf.get("timestamp_seconds", 0) - t) <= pic_window
+        if kf_near and kf.get("frame_path") and not _gesture_picture_wins(
+                float(kf.get("clip_confidence", 0.0) or 0.0), seg, kf.get("timestamp_seconds", 0)):
+            frame_path = kf["frame_path"]                  # the keyframe scores at least as high: describe that one
         if not frame_path:
             continue                                   # M2 needs an image
         ctx = ""

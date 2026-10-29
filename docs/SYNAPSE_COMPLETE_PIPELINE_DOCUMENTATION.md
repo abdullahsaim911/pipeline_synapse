@@ -2328,7 +2328,7 @@ This section documents the development journey from initial concept to working S
 1. **`classify.py`**: Classifies optical motion episodes into `WRITING_DRAWING` vs. `MOUSE_POINTING`. Tracks ink accumulation density over time and filters out transient cursor movements.
 2. **`hand.py`**: Detects hand presence and verifies whether the index finger is extended toward a diagram or board element (`index_pointing` rule).
 3. **`novelty.py`**: Evaluates stroke containment (`contained_fraction`). Distinguishes between ongoing progressive writing (which should be coalesced) and distinct page turns / slide transitions.
-4. **`before_after.py`**: Extracts pair frames: a "before" frame (clean board before writing starts) and an "after" frame (complete board when writing ceases).
+4. **`stream.py`**: `InteractionStream` receives the frames the frame extractor decodes (`frame_tap`), runs the motion scan and the hand scan on them, saves a picture for each event and writes `interactions.json`. The module never downloads or streams video itself.
 5. **`fusion.py`**: Fuses raw interaction episodes with M1 Synchronizer suffer points (`fuse_interactions`). Identifies "Silent Writing" moments where teacher writes without speech, and boosts confidence for deictic speech that coincides with physical pointing.
 
 **Output**:

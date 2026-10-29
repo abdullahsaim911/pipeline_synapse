@@ -260,14 +260,41 @@ class PipelineOrchestrator:
                 # Extract video ID from URL
                 video_id = self._extract_video_id(youtube_url)
 
-                # Call the extraction function
+                # Visual-interaction detection works on the SAME decoded frames the extractor streams, so the
+                # video is decoded once and is never opened or downloaded a second time.
+                interaction_stream = None
+                if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
+                    try:
+                        from synapse_interaction import Config, InteractionStream
+                        interaction_stream = InteractionStream(
+                            Config(enable_hand=os.environ.get("SYNAPSE_HAND") != "0"),
+                            out_path=os.path.join(video_dir, "interactions.json"),
+                            source_label=youtube_url,
+                            verbose=True,
+                        )
+                    except Exception as e:
+                        print(f"[Orchestrator] Interaction detection unavailable: {e}")
+
+                # Call the extraction function. The interaction module is handed each decoded frame (optional hook;
+                # the extractor's own keyframes are the same with or without it).
                 result = extract_pedagogical_keyframes(
                     video_id=video_id,
                     output_dir=f"{video_dir}/keyframes",
-                    verbose=False
+                    verbose=False,
+                    frame_tap=interaction_stream.feed if interaction_stream else None,
                 )
                 keyframes_result = {"keyframes": result}
                 print("[Orchestrator] Video extraction complete")
+
+                if interaction_stream is not None:
+                    try:
+                        events = interaction_stream.finish()
+                        print(
+                            f"[Orchestrator] Interaction detection complete: "
+                            f"{len(events)} events from {interaction_stream.frames_fed} frames"
+                        )
+                    except Exception as e:
+                        print(f"[Orchestrator] Interaction detection failed: {e}")
             except Exception as e:
                 print(f"[Orchestrator] Video extraction failed: {e}")
 
@@ -287,39 +314,6 @@ class PipelineOrchestrator:
         # Whisper runs in subprocess and doesn't clean up after exit
         print("[Orchestrator] Cleaning GPU memory after transcription...")
         clear_gpu_memory()
-
-        if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
-            try:
-                from synapse_interaction import Config, detect_interactions
-                out_path = os.path.join(video_dir, "interactions.json")
-                cfg = Config(enable_hand=False)
-                print("[Orchestrator] Detecting visual interactions...")
-                try:
-                    interactions = detect_interactions(
-                        youtube_url, out_path, cfg, verbose=True
-                    )
-                except Exception:
-                    # OpenCV often cannot decode a live YouTube stream; download
-                    # once into this video's existing data dir (not demo_videos).
-                    local_mp4 = os.path.join(video_dir, "video.mp4")
-                    if not os.path.exists(local_mp4):
-                        import yt_dlp
-                        with yt_dlp.YoutubeDL({
-                            "format": "bv*[height<=720]",
-                            "outtmpl": local_mp4,
-                            "quiet": True,
-                            "no_warnings": True,
-                        }) as ydl:
-                            ydl.download([youtube_url])
-                    interactions = detect_interactions(
-                        local_mp4, out_path, cfg, verbose=True
-                    )
-                print(
-                    f"[Orchestrator] Interaction detection complete: "
-                    f"{len(interactions)} events -> {out_path}"
-                )
-            except Exception as e:
-                print(f"[Orchestrator] Interaction detection failed: {e}")
 
         return transcript_result, keyframes_result
 
@@ -381,6 +375,13 @@ class PipelineOrchestrator:
             Dictionary mapping timestamp → VLM snapshot
         """
         print("[Orchestrator] Analyzing VLM snapshots (only intervention points)...")
+        # Remember which picture each point is described from. A point added by interaction fusion uses a frame that
+        # is not in keyframes.json, so the reference image saved later must be the point's own frame. Keyed by
+        # (video folder, timestamp) because one orchestrator instance serves several videos.
+        if not hasattr(self, "_point_frames"):
+            self._point_frames = {}
+        for _p in intervention_points:
+            self._point_frames[(os.path.normpath(video_dir), _p.timestamp)] = _p.frame_path
 
         from vlm_interface import PROVIDER_ENV_VAR, PROVIDER_MODAL, PROVIDER_LOCAL, VALID_PROVIDERS
         provider = os.environ.get(PROVIDER_ENV_VAR, PROVIDER_MODAL).strip().lower()
@@ -1037,6 +1038,10 @@ class PipelineOrchestrator:
             Path to closest keyframe image, or None if not found
         """
         try:
+            own = getattr(self, "_point_frames", {}).get((os.path.normpath(video_dir), timestamp))
+            if own and os.path.exists(own):
+                return own  # the picture this point was described from (may be an interaction frame)
+
             keyframes_path = os.path.join(video_dir, "keyframes", "keyframes.json")
 
             if not os.path.exists(keyframes_path):

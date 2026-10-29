@@ -8,33 +8,18 @@ import numpy as np
 
 
 def resolve_stream(source: str, max_height: int = 480) -> str:
-    """Return something cv2.VideoCapture can open.
+    """Return a local video file path for cv2.VideoCapture.
 
-    - existing local file  -> returned unchanged
-    - YouTube URL / 11-char video id -> direct stream URL via yt-dlp (nothing downloaded to disk)
-    NOTE: if M0 already has a helper that returns a stream URL, call that instead and
-    pass the result as `source` (it is then used as-is).
+    This module never downloads or streams video. In the pipeline it is given the frame extractor's frames
+    (InteractionStream.feed); the file path form exists only for the command line and the tests. A URL or a
+    YouTube id is refused on purpose.
     """
     if os.path.exists(source):
         return source
-    if re.fullmatch(r"[A-Za-z0-9_-]{11}", source):
-        source = "https://www.youtube.com/watch?v=" + source
-    if source.startswith("http"):
-        if "youtube.com" not in source and "youtu.be" not in source:
-            return source  # assume it is already a direct media URL
-        import yt_dlp  # lazy import
-        # YouTube often offers only separate video/audio streams, so ask for VIDEO-only
-        # (we never need audio) and fall back step by step.
-        opts = {"quiet": True, "no_warnings": True,
-                "format": f"bv*[height<={max_height}]/b[height<={max_height}]/bv*/b"}
-        with yt_dlp.YoutubeDL(opts) as ydl:
-            info = ydl.extract_info(source, download=False)
-        if info.get("url"):
-            return info["url"]
-        for f in info.get("requested_formats") or []:
-            if f.get("vcodec") not in (None, "none") and f.get("url"):
-                return f["url"]
-        raise RuntimeError("yt-dlp returned no playable video URL")
+    if re.match(r"^(https?://|[A-Za-z0-9_-]{11}$)", source):
+        raise ValueError(
+            "synapse_interaction does not download or stream video. Run the pipeline (the frame extractor hands "
+            "its frames to InteractionStream), or pass a video file that is already on disk.")
     raise FileNotFoundError(f"Cannot open video source: {source}")
 
 

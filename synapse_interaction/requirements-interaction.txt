@@ -1,5 +1,6 @@
+# Only this module (the project-wide list is the top-level requirements.txt).
 opencv-python>=4.8
 numpy
-yt-dlp            # only needed when the source is a YouTube URL / id
-mediapipe>=0.10   # optional: only for HAND_POINTING (see README: model files)
-pytest            # tests only
+mediapipe>=0.10.14   # optional: only for HAND_POINTING; then run: python -m synapse_interaction.get_models
+pytest               # tests only
+# No yt-dlp: the module never downloads or streams video; it is fed frames by the frame extractor.

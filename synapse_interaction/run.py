@@ -1,19 +1,18 @@
-"""CLI:  python -m synapse_interaction.run <video|url|id> --out <dir> [--no-hand] [--debug]"""
+"""CLI:  python -m synapse_interaction.run <video file> --out <dir> [--no-hand]
+(a file already on disk; the pipeline itself feeds frames and never uses this)"""
 import argparse
 import os
 
 from .config import Config
 from .detector import detect_interactions
-from .video_io import resolve_stream
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("source")
+    ap.add_argument("source", help="a video file on disk (no URLs: this module never downloads or streams video)")
     ap.add_argument("--out", default="interaction_out")
     ap.add_argument("--no-hand", action="store_true")
     ap.add_argument("--no-frames", action="store_true")
-    ap.add_argument("--debug", action="store_true", help="also write debug.mp4 with overlays")
     ap.add_argument("--dump-steps", action="store_true", help="write steps.csv (per-step features) for debugging")
     a = ap.parse_args()
 
@@ -26,10 +25,6 @@ def main():
     for s in res:
         print(f"{s.type:16s} {s.start:7.2f} -> {s.end:7.2f}  conf={s.confidence:.2f}  src={s.source}")
     print(f"{len(res)} interactions -> {out_json}")
-    if a.debug:
-        from .debug_render import render_debug
-        render_debug(resolve_stream(a.source, cfg.scan_height), res, os.path.join(a.out, "debug.mp4"))
-        print("debug video written")
 
 
 if __name__ == "__main__":
