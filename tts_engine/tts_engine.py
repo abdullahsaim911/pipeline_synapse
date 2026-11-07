@@ -15,9 +15,13 @@ from typing import Optional, List
 
 # Import shared exceptions
 try:
-    from .exceptions import TTSEngineError, TTSConnectionError, TTSTimeoutError
+    from .exceptions import (
+        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
+    )
 except ImportError:
-    from exceptions import TTSEngineError, TTSConnectionError, TTSTimeoutError
+    from exceptions import (
+        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
+    )
 
 # Handle both relative and absolute imports for providers
 try:
@@ -66,15 +70,15 @@ class TTSEngine:
         if preferred_provider:
             # Use only the preferred provider
             self._providers.append(get_provider(preferred_provider, voice=voice))
-            logger.info(f"[TTS Engine] Using preferred provider: {preferred_provider}")
+            logger.debug(f"[TTS Engine] Using preferred provider: {preferred_provider}")
         else:
             # Default: Edge-TTS first, then SpeechT5 if fallback enabled
             self._providers.append(EdgeTTSProvider(voice=voice))
             if fallback_enabled:
                 self._providers.append(SpeechT5Provider())
-                logger.info("[TTS Engine] Initialized with Edge-TTS + SpeechT5 fallback")
+                logger.debug("[TTS Engine] Initialized with Edge-TTS + SpeechT5 fallback")
             else:
-                logger.info("[TTS Engine] Initialized with Edge-TTS only (no fallback)")
+                logger.debug("[TTS Engine] Initialized with Edge-TTS only (no fallback)")
 
         # Track which provider was used for last generation
         self._last_provider_used = None
@@ -106,26 +110,35 @@ class TTSEngine:
 
         for provider in self._providers:
             try:
-                logger.info(f"[TTS Engine] Trying provider: {provider.name}")
+                logger.debug(f"[TTS Engine] Trying provider: {provider.name}")
                 result = provider.generate(text, output_path)
                 self._last_provider_used = provider.name
-                logger.info(f"[TTS Engine] Successfully generated with {provider.name}")
+                logger.debug(f"[TTS Engine] Successfully generated with {provider.name}")
                 return result
 
-            except (TTSConnectionError, TTSTimeoutError) as e:
-                logger.warning(f"[TTS Engine] {provider.name} failed (network/timeout): {e}")
+            except TTSEngineError as e:
+                logger.warning(
+                    "[TTS Engine] %s failed: code=%s retryable=%s",
+                    provider.name, e.code, e.retryable,
+                )
                 last_error = e
                 continue
 
             except Exception as e:
-                logger.warning(f"[TTS Engine] {provider.name} failed: {e}")
-                last_error = e
+                logger.error(
+                    "[TTS Engine] %s raised an unexpected provider error: error_type=%s",
+                    provider.name, type(e).__name__,
+                )
+                last_error = TTSPermanentError(
+                    "TTS provider failed unexpectedly",
+                    code="tts_unexpected_provider_error",
+                )
                 continue
 
         # All providers failed
-        error_msg = f"All TTS providers failed. Last error: {last_error}"
-        logger.error(error_msg)
-        raise TTSEngineError(error_msg)
+        code = getattr(last_error, "code", "tts_failed")
+        logger.error("All TTS providers failed: code=%s", code)
+        raise TTSEngineError("All TTS providers failed", code=code) from last_error
 
     @property
     def last_provider_used(self) -> Optional[str]:
@@ -143,7 +156,7 @@ class TTSEngine:
         Call this after all TTS generation is complete to ensure
         SpeechT5 models are removed from GPU/CPU memory.
         """
-        logger.info("[TTS Engine] Cleaning up providers...")
+        logger.debug("[TTS Engine] Cleaning up providers...")
 
         for provider in self._providers:
             try:
@@ -151,9 +164,12 @@ class TTSEngine:
                 if hasattr(provider, 'unload_models'):
                     provider.unload_models()
             except Exception as e:
-                logger.warning(f"[TTS Engine] Error cleaning up {provider.name}: {e}")
+                logger.warning(
+                    "[TTS Engine] Provider cleanup failed: provider=%s error_type=%s",
+                    provider.name, type(e).__name__,
+                )
 
-        logger.info("[TTS Engine] Cleanup complete")
+        logger.debug("[TTS Engine] Cleanup complete")
 
     @staticmethod
     def _run_async(coro):

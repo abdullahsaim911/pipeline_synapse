@@ -72,13 +72,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--max-tokens",
         type=int,
-        default=512,
-        help=f"Maximum generation tokens to output (clamped to {MAX_OUTPUT_TOKENS}).",
+        default=MAX_OUTPUT_TOKENS,
+        help=f"Maximum generation tokens to output (1-{MAX_OUTPUT_TOKENS}).",
     )
     parser.add_argument(
         "--temperature",
         type=float,
-        default=0.2,
+        default=0.1,
         help="Sampling temperature (lower = more deterministic).",
     )
     parser.add_argument(
@@ -144,7 +144,14 @@ def send_inference_request(
     data_uri = f"data:{detected_mime};base64,{b64_data}"
 
     # 3. Construct OpenAI-Compatible Multimodal Payload
-    bounded_tokens = min(max(1, max_tokens), MAX_OUTPUT_TOKENS)
+    if not 1 <= max_tokens <= MAX_OUTPUT_TOKENS:
+        print(
+            f"[Error] max_tokens must be between 1 and {MAX_OUTPUT_TOKENS}; "
+            f"received {max_tokens}.",
+            file=sys.stderr,
+        )
+        return None
+    bounded_tokens = max_tokens
     payload = {
         "model": MODEL_ID,
         "messages": [

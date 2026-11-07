@@ -1,65 +1,155 @@
 {
+  "_error": true,
+  "_error_detail": "VLMInterfaceError: Remote inference failed after 4 attempt(s).",
   "content_type": "diagram",
-  "visual_analysis": {
-    "elements": [
-      {
-        "shape": "plane",
-        "text": "50,000kg",
-        "position": "top-left"
-      },
-      {
-        "shape": "car",
-        "text": "2000kg",
-        "position": "top-right"
-      },
-      {
-        "shape": "arrow",
-        "text": "1m/s",
-        "position": "top-center-left"
-      },
-      {
-        "shape": "arrow",
-        "text": "30m/s",
-        "position": "top-center-right"
-      },
-      {
-        "shape": "equation",
-        "text": "Momentum = MV",
-        "position": "bottom-left"
-      }
-    ],
-    "relationships": [
-      {
-        "start": "plane",
-        "end": "arrow",
-        "label": "50,000kg",
-        "direction": "left"
-      },
-      {
-        "start": "car",
-        "end": "arrow",
-        "label": "2000kg",
-        "direction": "right"
-      }
-    ],
-    "spatial_layout": "Linear",
-    "colors_styles": "Black background, white text, blue arrows"
-  },
-  "structural_description": "The diagram consists of a plane and a car, each with a mass and velocity. The plane has a mass of 50,000kg and a velocity of 1m/s, while the car has a mass of 2000kg and a velocity of 30m/s. The plane's mass and velocity are connected by a blue arrow pointing to the right, and the car's mass and velocity are connected by a blue arrow pointing to the left. The equation 'Momentum = MV' is written at the bottom left.",
-  "reading_order": [
-    "plane",
-    "arrow",
-    "car",
-    "arrow",
-    "equation"
-  ],
-  "layout": "Linear",
-  "text_readout": "50,000kg 1m/s 2000kg 30m/s Momentum = MV",
-  "colors_styles": "Black background, white text, blue arrows",
   "detected_types": [
     "diagram"
   ],
+  "visual_analysis": {},
+  "structural_description": "",
+  "reading_order": [],
   "conceptual_hints": "",
+  "layout": "",
+  "text_readout": "",
   "spatial_map": "",
-  "missing_elements": null
+  "colors_styles": "",
+  "missing_elements": "VLM analysis failed: VLMInterfaceError: Remote inference failed after 4 attempt(s).",
+  "visual_evidence": {
+    "schema_version": "1.1.0",
+    "extraction_status": "failed",
+    "evidence_status": "unavailable_or_unreadable",
+    "category_ids": [],
+    "regions": [],
+    "relations": [],
+    "uncertainties": [],
+    "structural_description": {
+      "overview": "",
+      "component_ids": [],
+      "relation_ids": [],
+      "reading_order": [],
+      "hierarchy_notes": [],
+      "topology_notes": [],
+      "uncertainties": [],
+      "orientation": null
+    },
+    "validation_diagnostics": [
+      {
+        "code": "legacy.extraction_failed",
+        "message": "VLMInterfaceError: Remote inference failed after 4 attempt(s).",
+        "target_id": "scene"
+      },
+      {
+        "code": "category.unresolved_raw_label",
+        "message": "A diagram may be scientific, procedural, geometric, or illustrative.",
+        "target_id": "scene"
+      }
+    ],
+    "frame_id": "a8884a92-88e4-4152-acca-978ea32ef8f9",
+    "timestamp_seconds": 164.0,
+    "raw_category_labels": [
+      "diagram"
+    ],
+    "reading_order": [],
+    "provenance": {
+      "provider": "modal",
+      "model": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+      "frame_path": "data\\vKsxswK3RFg\\keyframes\\frame_0002_02_44.jpg",
+      "observation_format": "legacy_snapshot",
+      "confidence_semantics": "legacy_complexity",
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "output_token_limit": 2048,
+      "context_budget": {
+        "model_id": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+        "max_model_len": 8192,
+        "requested_output_tokens": 2048,
+        "exact": true,
+        "processor_available": true,
+        "input_tokens": 2148,
+        "prompt_text_tokens": 1258,
+        "chat_template_tokens": 1268,
+        "common_prompt_tokens": 1237,
+        "category_directive_tokens": 21,
+        "image_tokens": 880,
+        "special_token_overhead": 10,
+        "remaining_context_tokens": 3996,
+        "fits": true,
+        "image_size": [
+          1280,
+          720
+        ],
+        "image_token_method": "image_grid_thw / merge_size^2",
+        "uncertainty": null
+      },
+      "possible_truncation": false,
+      "truncation_detection": "no_response"
+    },
+    "exact_content": [],
+    "legacy_snapshot": {
+      "_error": true,
+      "_error_detail": "VLMInterfaceError: Remote inference failed after 4 attempt(s).",
+      "content_type": "diagram",
+      "detected_types": [
+        "diagram"
+      ],
+      "visual_analysis": {},
+      "structural_description": "",
+      "reading_order": [],
+      "conceptual_hints": "",
+      "layout": "",
+      "text_readout": "",
+      "spatial_map": "",
+      "colors_styles": "",
+      "missing_elements": "VLM analysis failed: VLMInterfaceError: Remote inference failed after 4 attempt(s)."
+    }
+  },
+  "_vlm_metrics": {
+    "model": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+    "latency_ms": null,
+    "prompt_tokens": 0,
+    "completion_tokens": 0,
+    "output_token_limit": 2048,
+    "context_budget": {
+      "model_id": "Qwen/Qwen3-VL-8B-Instruct-FP8",
+      "max_model_len": 8192,
+      "requested_output_tokens": 2048,
+      "exact": true,
+      "processor_available": true,
+      "input_tokens": 2148,
+      "prompt_text_tokens": 1258,
+      "chat_template_tokens": 1268,
+      "common_prompt_tokens": 1237,
+      "category_directive_tokens": 21,
+      "image_tokens": 880,
+      "special_token_overhead": 10,
+      "remaining_context_tokens": 3996,
+      "fits": true,
+      "image_size": [
+        1280,
+        720
+      ],
+      "image_token_method": "image_grid_thw / merge_size^2",
+      "uncertainty": null
+    },
+    "possible_truncation": false,
+    "finish_reason": null,
+    "truncation_detection": "no_response"
+  },
+  "coverage_plan": {
+    "schema": "synapse_transcript_visual_coverage_v1",
+    "frame_id": "a8884a92-88e4-4152-acca-978ea32ef8f9",
+    "method": "deterministic_conservative_v1",
+    "fact_count": 0,
+    "coverage_counts": {
+      "not_usable": 0,
+      "spoken_explicit": 0,
+      "spoken_partial": 0,
+      "uncertain_match": 0,
+      "unspoken": 0
+    },
+    "facts": [],
+    "truncated": false,
+    "omitted_fact_count": 0,
+    "total_fact_count": 0
+  }
 }

@@ -38,6 +38,9 @@ class VLMResponse:
     total_duration_ms: int
     prompt_eval_count: int
     eval_count: int
+    # OpenAI-compatible completion metadata. Optional/defaulted so existing
+    # local providers and positional consumers remain backward compatible.
+    finish_reason: str | None = None
 
 
 class VLMInterfaceError(Exception):
@@ -57,5 +60,10 @@ class VLMAuthenticationError(VLMInterfaceError):
 
 class VLMRemoteError(VLMInterfaceError):
     """Non-retryable error from a remote VLM endpoint."""
+    pass
+
+
+class VLMContextBudgetError(VLMInterfaceError):
+    """The multimodal prompt plus requested output exceeds model context."""
     pass
 

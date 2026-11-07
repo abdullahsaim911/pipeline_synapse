@@ -11,7 +11,13 @@ from alembic import command
 from sqlalchemy import text
 
 from api.database import PROJECT_ROOT, create_database_engine, normalize_database_url
-from api.migrations import get_alembic_config, upgrade_database
+from api.migrations import (
+    DatabaseSchemaError,
+    create_verified_sqlite_backup,
+    get_alembic_config,
+    require_current_schema,
+    upgrade_database,
+)
 from api.models import LOCAL_DEVELOPMENT_USER_ID, LOCAL_DEVELOPMENT_PROFILE_KEY
 
 
@@ -48,6 +54,57 @@ def snapshot_records(path: Path) -> dict[str, tuple[int, tuple]]:
         return snapshot
 
 
+def create_legacy_database(path: Path) -> None:
+    """Build a disposable pre-Alembic copy of the five shared cache tables."""
+    with closing(sqlite3.connect(path)) as connection:
+        connection.executescript(
+            """
+            CREATE TABLE videos (
+                id TEXT PRIMARY KEY, title TEXT NOT NULL, duration_seconds INTEGER,
+                duration_formatted TEXT, total_keyframes INTEGER, subject TEXT,
+                source_url TEXT NOT NULL, date_processed DATETIME, thumbnail_url TEXT
+            );
+            CREATE TABLE transcripts (
+                id INTEGER PRIMARY KEY, video_id TEXT NOT NULL, start_time REAL NOT NULL,
+                end_time REAL NOT NULL, text TEXT NOT NULL
+            );
+            CREATE TABLE interventions (
+                id TEXT PRIMARY KEY, video_id TEXT NOT NULL, timestamp REAL NOT NULL,
+                timestamp_formatted TEXT, frame_path TEXT NOT NULL, content_type TEXT,
+                complexity_score REAL, clip_confidence REAL, trigger_reason TEXT,
+                confidence TEXT, transcript_context TEXT, is_bookmarked BOOLEAN,
+                created_at DATETIME
+            );
+            CREATE TABLE explanations (
+                id INTEGER PRIMARY KEY, intervention_id TEXT NOT NULL,
+                text_explanation TEXT NOT NULL, audio_file_path TEXT,
+                text_file_path TEXT, vlm_snapshot_path TEXT, output_mode TEXT,
+                vlm_snapshot TEXT, created_at DATETIME
+            );
+            CREATE TABLE explanation_preparations (
+                id INTEGER PRIMARY KEY, video_id TEXT NOT NULL, intervention_id TEXT NOT NULL,
+                output_mode TEXT NOT NULL, status TEXT NOT NULL, attempt_count INTEGER NOT NULL,
+                error_code TEXT, lease_owner TEXT, lease_started_at DATETIME,
+                created_at DATETIME, updated_at DATETIME, ready_at DATETIME, failed_at DATETIME
+            );
+            INSERT INTO videos (id, title, source_url, total_keyframes)
+                VALUES ('LegacyVideo1', 'Legacy lecture', 'https://youtu.be/LegacyVideo1', 1);
+            INSERT INTO transcripts (id, video_id, start_time, end_time, text)
+                VALUES (1, 'LegacyVideo1', 0, 5, 'Legacy transcript');
+            INSERT INTO interventions (
+                id, video_id, timestamp, frame_path, content_type, clip_confidence, is_bookmarked
+            ) VALUES ('legacy-point', 'LegacyVideo1', 2, 'frames/2.jpg', 'diagram', 0.75, 0);
+            INSERT INTO explanations (
+                id, intervention_id, text_explanation, output_mode
+            ) VALUES (1, 'legacy-point', 'Legacy explanation', 'brief');
+            INSERT INTO explanation_preparations (
+                id, video_id, intervention_id, output_mode, status, attempt_count
+            ) VALUES (1, 'LegacyVideo1', 'legacy-point', 'brief', 'ready', 1);
+            """
+        )
+        connection.commit()
+
+
 class DatabaseMigrationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -76,7 +133,7 @@ class DatabaseMigrationTests(unittest.TestCase):
             self.assertTrue(set(HISTORY_TABLES).issubset(tables))
             self.assertEqual(
                 connection.execute("SELECT version_num FROM alembic_version").fetchone()[0],
-                "20261024_0004",
+                "20261105_0007",
             )
             self.assertEqual(
                 connection.execute(
@@ -88,8 +145,8 @@ class DatabaseMigrationTests(unittest.TestCase):
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM user_preferences").fetchone()[0], 1)
 
     def test_upgrade_of_existing_database_copy_preserves_every_existing_record(self):
-        source = ROOT / "synapse.db"
-        self.assertTrue(source.exists(), "The migration preservation test requires synapse.db")
+        source = self.temp_path / "legacy.sqlite"
+        create_legacy_database(source)
         database_path = self.temp_path / "synapse-backup.sqlite"
         shutil.copy2(source, database_path)
         before = snapshot_records(database_path)
@@ -103,14 +160,17 @@ class DatabaseMigrationTests(unittest.TestCase):
         after_second = snapshot_records(database_path)
         upgrade_database(sqlite_url(database_path), "20261024_0004")
         after_history = snapshot_records(database_path)
-        upgrade_database(sqlite_url(database_path), "20261024_0004")
-        after_repeated_history = snapshot_records(database_path)
+        upgrade_database(sqlite_url(database_path), "head")
+        after_category_metadata = snapshot_records(database_path)
+        upgrade_database(sqlite_url(database_path), "head")
+        after_repeated_head = snapshot_records(database_path)
 
         self.assertEqual(after_foundation, before)
         self.assertEqual(after_first, before)
         self.assertEqual(after_second, before)
         self.assertEqual(after_history, before)
-        self.assertEqual(after_repeated_history, before)
+        self.assertEqual(after_category_metadata, before)
+        self.assertEqual(after_repeated_head, before)
         with closing(sqlite3.connect(database_path)) as connection:
             self.assertEqual(connection.execute("PRAGMA integrity_check").fetchone()[0], "ok")
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM users").fetchone()[0], 1)
@@ -118,6 +178,59 @@ class DatabaseMigrationTests(unittest.TestCase):
             self.assertEqual(connection.execute("SELECT COUNT(*) FROM processing_jobs").fetchone()[0], 0)
             for table in HISTORY_TABLES:
                 self.assertEqual(connection.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0], 0)
+            category_columns = {
+                row[1] for row in connection.execute("PRAGMA table_info(interventions)")
+            }
+            self.assertIn("canonical_categories_json", category_columns)
+            self.assertEqual(
+                connection.execute(
+                    "SELECT confidence_semantics FROM interventions WHERE id = 'legacy-point'"
+                ).fetchone()[0],
+                "legacy_complexity",
+            )
+
+    def test_verified_backup_is_a_distinct_integrity_checked_copy(self):
+        source = self.temp_path / "legacy.sqlite"
+        create_legacy_database(source)
+
+        backup = create_verified_sqlite_backup(sqlite_url(source))
+
+        self.assertIsNotNone(backup)
+        self.assertNotEqual(backup, source)
+        self.assertEqual(snapshot_records(backup), snapshot_records(source))
+        with closing(sqlite3.connect(backup)) as connection:
+            self.assertEqual(connection.execute("PRAGMA integrity_check").fetchone()[0], "ok")
+
+    def test_schema_preflight_rejects_unversioned_database_with_actionable_error(self):
+        database_path = self.temp_path / "unversioned.sqlite"
+        create_legacy_database(database_path)
+        engine = create_database_engine(sqlite_url(database_path))
+        self.addCleanup(engine.dispose)
+
+        with self.assertRaisesRegex(DatabaseSchemaError, "python -m api.setup"):
+            require_current_schema(engine)
+
+    def test_schema_preflight_accepts_fully_migrated_database(self):
+        database_path = self.temp_path / "current.sqlite"
+        url = sqlite_url(database_path)
+        upgrade_database(url)
+        engine = create_database_engine(url)
+        self.addCleanup(engine.dispose)
+
+        require_current_schema(engine)
+
+    def test_schema_preflight_detects_head_stamp_with_missing_structure(self):
+        database_path = self.temp_path / "incomplete.sqlite"
+        url = sqlite_url(database_path)
+        upgrade_database(url)
+        with closing(sqlite3.connect(database_path)) as connection:
+            connection.execute("DROP TABLE processing_jobs")
+            connection.commit()
+        engine = create_database_engine(url)
+        self.addCleanup(engine.dispose)
+
+        with self.assertRaisesRegex(DatabaseSchemaError, "missing tables: processing_jobs"):
+            require_current_schema(engine)
 
     def test_requested_modes_migration_backfills_existing_processing_jobs(self):
         database_path = self.temp_path / "requested-modes.sqlite"

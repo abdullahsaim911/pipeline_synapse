@@ -174,13 +174,18 @@ All UUID PKs below are backend-generated. Every personal table has a required `u
 
 ```powershell
 # Uses DATABASE_URL from .env/environment, or the repository-root SQLite default.
-.\synapse-env\Scripts\python.exe -m alembic upgrade head
-
-# Equivalent setup/verification helper:
+# Preferred: creates and verifies a timestamped SQLite backup before upgrading,
+# then verifies every mapped table after the upgrade.
 .\synapse-env\Scripts\python.exe -m api.setup
+
+# Direct Alembic invocation is intended for fresh/disposable databases or
+# deployment systems that already provide a verified snapshot/rollback path.
+.\synapse-env\Scripts\python.exe -m alembic upgrade head
 ```
 
-Revision `20261024_0001` is the additive legacy-aware foundation. Revision `20261024_0002` adds `processing_jobs` without rebuilding shared cache tables. Revision `20261024_0003` adds the requested-mode registry and backfills every existing job's compatibility mode. Revision `20261024_0004` adds the four Task 6A personal-history tables without changing shared cache tables. On an existing database all revisions leave shared cache rows untouched, and repeated `upgrade head` calls are no-ops. Downgrades are deliberately blocked because these migrations must not delete user, job, or legacy data.
+`api.setup` writes SQLite backups under `backups/` beside the configured database and refuses to migrate if the backup fails its integrity check. To roll back, stop every API/worker process, preserve the failed database for diagnosis, verify the selected backup with `PRAGMA integrity_check`, and copy that backup over the configured database path. Do not restore while a process has the database open. PostgreSQL deployments must use the platform's snapshot/restore mechanism before running the migration.
+
+Revision `20261024_0001` is the additive legacy-aware foundation. Revision `20261024_0002` adds `processing_jobs` without rebuilding shared cache tables. Revision `20261024_0003` adds the requested-mode registry and backfills every existing job's compatibility mode. Revision `20261024_0004` adds the four Task 6A personal-history tables without changing shared cache tables. Revision `20261025_0005` adds explicit visual-category and confidence metadata without rewriting historical confidence values. On an existing database all revisions leave shared cache rows untouched, and repeated `upgrade head` calls are no-ops. Downgrades are deliberately blocked because these migrations must not delete user, job, or legacy data.
 
 For PostgreSQL, set a `postgresql+psycopg://` URL, provision the empty database, and run the same upgrade command. Do not point two independently starting application processes at an unmigrated database; migrations are a deployment step.
 

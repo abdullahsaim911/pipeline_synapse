@@ -55,11 +55,18 @@ STARTUP_TIMEOUT_SECONDS: Final[int] = 600
 # ---------------------------------------------------------------------------
 # Runtime & Inference Boundaries
 # ---------------------------------------------------------------------------
+# Initial L4 profile. These values are configuration targets and are not proof
+# that the model has successfully initialized within the available VRAM.
 # Maximum total model context length (prompt tokens + image tokens + completion tokens)
-MAX_MODEL_LEN: Final[int] = 4096
+MAX_MODEL_LEN: Final[int] = 8192
 
 # Maximum generation output tokens
 MAX_OUTPUT_TOKENS: Final[int] = 2048
+
+# Structured extraction generation default. Kept separate from the ceiling so
+# future callers may explicitly request smaller completions.
+DEFAULT_STRUCTURED_MAX_TOKENS: Final[int] = 2048
+DEFAULT_TEMPERATURE: Final[float] = 0.1
 
 # Maximum number of images allowed per prompt
 MAX_IMAGES_PER_PROMPT: Final[int] = 1
@@ -76,8 +83,20 @@ MAX_NUM_SEQS: Final[int] = 1
 # Maximum concurrent requests routed into the container by Modal proxy
 MAX_CONCURRENT_INPUTS: Final[int] = 1
 
-# Reserve 15% for CUDA, PyTorch, vision-encoder activations, and transient workspaces.
-GPU_MEMORY_UTILIZATION: Final[float] = 0.85
+# vLLM-managed GPU memory fraction for the initial L4 profile. The remaining
+# 10% is outside the vLLM allocator; live startup validation is still required.
+GPU_MEMORY_UTILIZATION: Final[float] = 0.90
+
+# Synapse performs dimension-preserving thumbnailing before remote dispatch.
+MAX_IMAGE_DIMENSION: Final[int] = 1344
+MAX_IMAGE_PIXELS: Final[int] = MAX_IMAGE_DIMENSION * MAX_IMAGE_DIMENSION
+
+# vLLM reads these JSON values as server defaults. In vLLM 0.19.1,
+# max_new_tokens in generation config is a server-wide output-token limit.
+VLLM_GENERATION_CONFIG_JSON: Final[str] = (
+    '{"max_new_tokens":2048,"temperature":0.1}'
+)
+VLLM_MM_PROCESSOR_KWARGS_JSON: Final[str] = '{"max_pixels":1806336}'
 
 # Image payload size bounds (bytes)
 # 10 MB maximum per image payload to protect against memory exhaustion

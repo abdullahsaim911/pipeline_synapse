@@ -108,7 +108,13 @@ class ControlledOrchestrator:
         self.started = threading.Event()
         self.release = threading.Event()
 
-    def generate_intervention_explanation(self, **kwargs):
+    def extract_visual_evidence(self, **kwargs):
+        return {
+            "snapshot": None, "snapshot_path": None, "usable": True,
+            "reused": True, "failure": None,
+        }
+
+    def synthesize_intervention_explanation(self, **kwargs):
         self.calls += 1
         self.started.set()
         self.release.wait(3.0)
@@ -204,7 +210,12 @@ class PersistentPreparationTests(unittest.TestCase):
         self.assertTrue(generator.started.wait(1.0))
         current = self.states()
         self.assertEqual(current["point-1-10"][0], "generating")
-        self.assertEqual(current["point-1-20"][0], "pending")
+        # Two workers: the next job is claimed while the first is in Mistral.
+        # Polling clients see "generating" for it, which they already handle.
+        self.assertTrue(wait_until(
+            lambda: self.states()["point-1-20"][0] == "generating"
+        ))
+        self.assertEqual(generator.calls, ["point-1-10"])
         generator.release.set()
 
         self.assertTrue(wait_until(

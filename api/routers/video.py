@@ -33,15 +33,16 @@ from api.database import get_db
 from api.explanation_service import (
     ExplanationTargetNotFoundError,
     find_valid_cached_explanation,
-    generate_or_get_explanation,
     resolve_explanation_audio_path,
 )
 from api.explanation_preparation import (
+    ExplanationPreparationManager,
     PreparationNotRetryableError,
     PreparationRetryExhaustedError,
 )
 from api.models import Video, Intervention, Transcript, Explanation
 from api.processing_jobs import (
+    ProcessingJobBusyError,
     ProcessingJobManager,
     ProcessingJobNotFoundError,
     ProcessingJobTimeoutError,
@@ -384,6 +385,12 @@ def create_or_join_processing_job(
         return ProcessingJobResponse(**snapshot)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "video_processing_busy", "active_video_id": exc.video_id,
+                    "active_job_id": exc.job_id},
+        )
     except Exception:
         logger.exception("Could not create or join a processing job")
         raise HTTPException(status_code=500, detail="Processing job could not be created.")
@@ -426,6 +433,64 @@ def retry_processing_job(
         if snapshot["status"] == "succeeded":
             response.status_code = 200
         return ProcessingJobResponse(**snapshot)
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "video_processing_busy", "active_video_id": exc.video_id,
+                    "active_job_id": exc.job_id},
+        )
+    except (ProcessingJobNotFoundError, ValueError):
+        raise HTTPException(status_code=404, detail="Processing job not found.")
+
+
+@router.post(
+    "/processing-jobs/{job_id}/cancel",
+    response_model=ProcessingJobResponse,
+    status_code=202,
+)
+def cancel_processing_job(
+    job_id: str,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Durably request cancellation of all unfinished work for the job's video."""
+    try:
+        manager = _processing_manager(request, db, preparation_manager)
+        snapshot = manager.cancel(job_id)
+        if snapshot["status"] in {"cancelled", "succeeded"}:
+            response.status_code = 200
+        return ProcessingJobResponse(**snapshot)
+    except (ProcessingJobNotFoundError, ValueError):
+        raise HTTPException(status_code=404, detail="Processing job not found.")
+
+
+@router.post(
+    "/processing-jobs/{job_id}/resume",
+    response_model=ProcessingJobResponse,
+    status_code=202,
+)
+def resume_processing_job(
+    job_id: str,
+    response: Response,
+    request: Request,
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Idempotently start a fresh attempt for a cancelled video."""
+    try:
+        manager = _processing_manager(request, db, preparation_manager)
+        snapshot = manager.resume(job_id)
+        if snapshot["status"] == "succeeded":
+            response.status_code = 200
+        return ProcessingJobResponse(**snapshot)
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "video_processing_busy", "active_video_id": exc.video_id,
+                    "active_job_id": exc.job_id},
+        )
     except (ProcessingJobNotFoundError, ValueError):
         raise HTTPException(status_code=404, detail="Processing job not found.")
 
@@ -468,11 +533,19 @@ def process_video(
             else:
                 detail = snapshot["error_message"] or "Video processing failed."
             raise HTTPException(status_code=500, detail=detail)
+        if snapshot["status"] == "cancelled":
+            raise HTTPException(status_code=409, detail="Video processing was cancelled.")
 
         video_id = snapshot["video_id"]
         return _processed_video_response(db, video_id)
     except ProcessingJobTimeoutError:
         raise HTTPException(status_code=504, detail="Video processing is still running.")
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "video_processing_busy", "active_video_id": exc.video_id,
+                    "active_job_id": exc.job_id},
+        )
     except HTTPException:
         raise
     except ValueError as e:
@@ -523,25 +596,26 @@ def generate_explanation(
     If background preparation already owns this key, the shared generation
     lock makes this request wait and then reuse that job's validated cache.
     """
+    temporary_manager = None
     try:
-        # Bind fresh sessions to the same database as the request dependency,
-        # while never sharing the request-scoped Session with worker threads.
-        isolated_sessions = sessionmaker(bind=db.get_bind(), expire_on_commit=False)
-        if preparation_manager is not None:
-            result = preparation_manager.generate_manual(
-                request.video_id,
-                request.intervention_id,
-                request.output_mode,
+        if preparation_manager is None:
+            # Router-only/test apps still use the admission-capable path; they
+            # must not fall back to direct provider invocation.
+            isolated_sessions = sessionmaker(
+                bind=db.get_bind(), expire_on_commit=False
             )
-        else:
-            result = generate_or_get_explanation(
+            temporary_manager = ExplanationPreparationManager(
                 session_factory=isolated_sessions,
                 orchestrator_factory=get_orchestrator,
                 data_dir=data_dir,
-                video_id=request.video_id,
-                intervention_id=request.intervention_id,
-                output_mode=request.output_mode,
             )
+            temporary_manager.start()
+            preparation_manager = temporary_manager
+        result = preparation_manager.generate_manual(
+            request.video_id,
+            request.intervention_id,
+            request.output_mode,
+        )
         return GenerateExplanationResponse(
             intervention_id=result.intervention_id,
             text_explanation=result.text_explanation,
@@ -565,6 +639,17 @@ def generate_explanation(
                 "attempt_count": exc.attempt_count,
             },
         )
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "video_processing_busy",
+                "active_video_id": exc.video_id,
+                "active_job_id": exc.job_id,
+            },
+        )
+    except HTTPException:
+        raise
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     except Exception:
@@ -573,6 +658,9 @@ def generate_explanation(
             request.intervention_id,
         )
         raise HTTPException(status_code=500, detail="Explanation generation failed.")
+    finally:
+        if temporary_manager is not None:
+            temporary_manager.shutdown()
 
 
 # ============================================================================
@@ -666,6 +754,15 @@ def retry_explanation_preparation(
             detail={
                 "code": "retry_exhausted",
                 "attempt_count": exc.attempt_count,
+            },
+        )
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "video_processing_busy",
+                "active_video_id": exc.video_id,
+                "active_job_id": exc.job_id,
             },
         )
 

@@ -2,6 +2,18 @@
 Synthesizer Module
 """
 
-from .llm_synthesizer import LLMSynthesizer, SynthesizedTextResult
+from .llm_synthesizer import (
+    ExplanationSynthesisError,
+    LLMSynthesizer,
+    SynthesizedTextResult,
+    TextSynthesisUnavailableError,
+    VisualEvidenceUnavailableError,
+)
 
-__all__ = ["LLMSynthesizer", "SynthesizedTextResult"]
+__all__ = [
+    "ExplanationSynthesisError",
+    "LLMSynthesizer",
+    "SynthesizedTextResult",
+    "TextSynthesisUnavailableError",
+    "VisualEvidenceUnavailableError",
+]

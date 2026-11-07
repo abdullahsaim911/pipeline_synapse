@@ -73,6 +73,10 @@ class InterventionBase(BaseModel):
     content_type: Optional[str] = None
     complexity_score: Optional[float] = None
     clip_confidence: Optional[float] = None
+    classification_confidence: Optional[float] = None
+    confidence_semantics: Optional[str] = None
+    canonical_categories: List[str] = Field(default_factory=list)
+    category_mapping_notes: List[str] = Field(default_factory=list)
     trigger_reason: Optional[str] = None
     confidence: Optional[str] = None
     transcript_context: Optional[str] = None
@@ -182,12 +186,16 @@ class ProcessVideoResponse(BaseModel):
     category_counts: CategoryCounts
 
 
-ProcessingJobStatus = Literal["queued", "running", "succeeded", "failed"]
+ProcessingJobStatus = Literal[
+    "queued", "running", "cancelling", "cancelled", "succeeded", "failed"
+]
 ProcessingJobStage = Literal[
     "queued",
     "processing",
     "persisting",
     "preparing_explanations",
+    "cancelling",
+    "cancelled",
     "complete",
     "failed",
 ]
@@ -211,9 +219,11 @@ class ProcessingJobResponse(BaseModel):
     updated_at: datetime
     started_at: Optional[datetime] = None
     completed_at: Optional[datetime] = None
+    cancel_requested_at: Optional[datetime] = None
+    cancelled_at: Optional[datetime] = None
 
 
-PreparationStatus = Literal["pending", "generating", "ready", "failed"]
+PreparationStatus = Literal["pending", "generating", "cancelled", "ready", "failed"]
 
 
 class ExplanationPreparationItem(BaseModel):

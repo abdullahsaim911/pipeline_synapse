@@ -1,0 +1,67 @@
+"""Canonical single-frame visual evidence foundation."""
+
+from .assembler import (
+    COMPACT_OBSERVATION_SCHEMA,
+    ElementObservation,
+    EvidenceMetadata,
+    FrameObservation,
+    RegionObservation,
+    RelationObservation,
+    StructuralObservation,
+    UncertaintyObservation,
+    adapt_legacy_snapshot,
+    assemble_compact_qwen_observation,
+    assemble_visual_evidence,
+)
+from .models import (
+    SCHEMA_VERSION,
+    BoundingBox,
+    CanonicalCategory,
+    CategoryDetails,
+    Element,
+    EvidenceStatus,
+    ExactContent,
+    ExtractionStatus,
+    Region,
+    Relation,
+    StructuralDescription,
+    Uncertainty,
+    ValidationDiagnostic,
+    VisualEvidence,
+)
+from .usability import SnapshotAssessment, assess_snapshot, load_usable_snapshot
+from .validation import EvidenceValidationResult, validate_visual_evidence
+
+__all__ = [
+    "SnapshotAssessment",
+    "assess_snapshot",
+    "load_usable_snapshot",
+    "SCHEMA_VERSION",
+    "COMPACT_OBSERVATION_SCHEMA",
+    "BoundingBox",
+    "CanonicalCategory",
+    "CategoryDetails",
+    "Element",
+    "ElementObservation",
+    "EvidenceMetadata",
+    "EvidenceStatus",
+    "EvidenceValidationResult",
+    "ExactContent",
+    "ExtractionStatus",
+    "FrameObservation",
+    "Region",
+    "RegionObservation",
+    "Relation",
+    "RelationObservation",
+    "StructuralDescription",
+    "StructuralObservation",
+    "Uncertainty",
+    "UncertaintyObservation",
+    "ValidationDiagnostic",
+    "VisualEvidence",
+    "adapt_legacy_snapshot",
+    "assemble_compact_qwen_observation",
+    "assemble_visual_evidence",
+    "validate_visual_evidence",
+]
+

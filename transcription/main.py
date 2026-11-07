@@ -9,8 +9,12 @@ import argparse
 import sys
 import os
 
-# Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add the module and project roots for shared runtime helpers.
+module_root = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(module_root)
+for import_root in (module_root, project_root):
+    if import_root not in sys.path:
+        sys.path.insert(0, import_root)
 
 from transcriber import TranscriptionEngine
 

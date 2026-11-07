@@ -251,12 +251,14 @@ class WhisperRunner:
     def _download_audio(video_url: str, output_file: str):
         """Download audio from YouTube using yt-dlp."""
         import yt_dlp
+        from youtube_runtime import youtube_runtime_options
 
         ydl_opts = {
             "format": "m4a/bestaudio/best",
             "outtmpl": output_file.replace(".m4a", ""),
             "postprocessors": [{"key": "FFmpegExtractAudio", "preferredcodec": "m4a"}],
-            "quiet": True
+            "quiet": True,
+            **youtube_runtime_options(),
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:

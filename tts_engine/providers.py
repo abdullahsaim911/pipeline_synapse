@@ -9,6 +9,7 @@ Enables fallback chain: Edge-TTS → SpeechT5.
 import asyncio
 import os
 import threading
+import time
 from abc import ABC, abstractmethod
 from typing import Optional
 import logging
@@ -17,9 +18,13 @@ nest_asyncio.apply()
 
 # Import shared exceptions
 try:
-    from .exceptions import TTSEngineError, TTSConnectionError, TTSTimeoutError
+    from .exceptions import (
+        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
+    )
 except ImportError:
-    from exceptions import TTSEngineError, TTSConnectionError, TTSTimeoutError
+    from exceptions import (
+        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -79,10 +84,51 @@ class TTSProvider(ABC):
         pass
 
 
+def _edge_error(exc: Exception) -> TTSEngineError:
+    """Classify Edge failures without returning provider payloads or secrets."""
+    if isinstance(exc, TTSEngineError):
+        return exc
+    if isinstance(exc, (TimeoutError, asyncio.TimeoutError)):
+        return TTSTimeoutError("Edge TTS request timed out")
+    if isinstance(exc, (PermissionError, FileNotFoundError, IsADirectoryError)):
+        return TTSPermanentError(
+            "Edge TTS output configuration is invalid",
+            code="tts_invalid_output",
+        )
+    if isinstance(exc, (ConnectionError, OSError)):
+        return TTSConnectionError("Edge TTS connection was interrupted")
+    status = getattr(exc, "status", None) or getattr(exc, "status_code", None)
+    if status in {408, 425, 429, 500, 502, 503, 504}:
+        return TTSConnectionError(
+            "Edge TTS service is temporarily unavailable",
+            code="tts_service_unavailable",
+        )
+    if status in {400, 401, 403, 404, 405, 422}:
+        return TTSPermanentError(
+            "Edge TTS rejected the request",
+            code="tts_request_rejected",
+        )
+    if isinstance(exc, (TypeError, ValueError)):
+        return TTSPermanentError(
+            "Edge TTS configuration or input is invalid",
+            code="tts_invalid_request",
+        )
+    return TTSPermanentError(
+        "Edge TTS failed unexpectedly",
+        code="tts_unexpected_provider_error",
+    )
+
+
 class EdgeTTSProvider(TTSProvider):
     """Microsoft Edge-TTS provider (primary, requires internet)."""
 
-    def __init__(self, voice: str = "en-US-AndrewMultilingualNeural"):
+    def __init__(
+        self,
+        voice: str = "en-US-AndrewMultilingualNeural",
+        *,
+        max_attempts: int = 2,
+        retry_backoff_seconds: float = 0.25,
+    ):
         """Initialize Edge-TTS provider.
 
         Args:
@@ -90,6 +136,12 @@ class EdgeTTSProvider(TTSProvider):
         """
         self.voice = voice
         self._validate_voice(voice)
+        if max_attempts < 1:
+            raise ValueError("max_attempts must be at least one")
+        if retry_backoff_seconds < 0:
+            raise ValueError("retry_backoff_seconds cannot be negative")
+        self.max_attempts = max_attempts
+        self.retry_backoff_seconds = retry_backoff_seconds
 
     def _validate_voice(self, voice: str) -> None:
         """Validate voice format."""
@@ -132,26 +184,33 @@ class EdgeTTSProvider(TTSProvider):
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
 
-        try:
-            communicate = edge_tts.Communicate(text, self.voice)
-            self._run_async(communicate.save(output_path))
-            logger.info(f"[{self.name}] Generated: {output_path}")
-            return output_path
-
-        except Exception as first_error:
-            logger.warning(f"[{self.name}] First attempt failed: {first_error}, retrying...")
+        for attempt in range(1, self.max_attempts + 1):
             try:
                 communicate = edge_tts.Communicate(text, self.voice)
                 self._run_async(communicate.save(output_path))
-                logger.info(f"[{self.name}] Generated (retry): {output_path}")
+                logger.debug("[%s] Generated on attempt %s", self.name, attempt)
                 return output_path
-            except Exception as e:
-                logger.error(f"[{self.name}] Failed completely: {e}")
-                if "Connection" in str(e) or "network" in str(e).lower():
-                    raise TTSConnectionError(f"Network error: {e}")
-                elif "timeout" in str(e).lower():
-                    raise TTSTimeoutError(f"Timeout error: {e}")
-                raise TTSEngineError(f"Edge-TTS failed: {e}")
+            except Exception as exc:
+                classified = _edge_error(exc)
+                try:
+                    if os.path.isfile(output_path):
+                        os.remove(output_path)
+                except OSError:
+                    logger.debug("Could not remove partial Edge TTS output")
+                if not classified.retryable or attempt >= self.max_attempts:
+                    logger.warning(
+                        "[%s] Generation stopped: code=%s retryable=%s attempt=%s",
+                        self.name, classified.code, classified.retryable, attempt,
+                    )
+                    raise classified from exc
+                logger.warning(
+                    "[%s] Transient failure; retrying: code=%s attempt=%s",
+                    self.name, classified.code, attempt,
+                )
+                if self.retry_backoff_seconds:
+                    time.sleep(self.retry_backoff_seconds * attempt)
+
+        raise TTSEngineError("Edge TTS generation failed")
 
 
 class SpeechT5Provider(TTSProvider):
@@ -178,7 +237,7 @@ class SpeechT5Provider(TTSProvider):
             if self._model is not None:
                 return  # Already loaded
 
-            logger.info(f"[SpeechT5] Loading models on {self.device}...")
+            logger.debug(f"[SpeechT5] Loading models on {self.device}...")
 
             # Load models
             self._processor = SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
@@ -212,15 +271,18 @@ class SpeechT5Provider(TTSProvider):
                         x_vector = x_vector[:512]
 
                 self._speaker_embeddings = x_vector.unsqueeze(0).to(self.device)
-                logger.info("[SpeechT5] Speaker embeddings loaded successfully")
+                logger.debug("[SpeechT5] Speaker embeddings loaded successfully")
 
             except Exception as e:
-                logger.error(f"[SpeechT5] Failed to load speaker embeddings: {e}")
+                logger.error(
+                    "[SpeechT5] Speaker embedding load failed: error_type=%s",
+                    type(e).__name__,
+                )
                 # Fallback: use random embeddings
                 logger.warning("[SpeechT5] Using random speaker embeddings as fallback")
                 self._speaker_embeddings = torch.randn(1, 512).to(self.device)
 
-            logger.info("[SpeechT5] Models loaded successfully")
+            logger.debug("[SpeechT5] Models loaded successfully")
 
     def is_available(self) -> bool:
         """Check if SpeechT5 is available."""
@@ -243,7 +305,7 @@ class SpeechT5Provider(TTSProvider):
             if self._model is None:
                 return  # Not loaded, nothing to unload
 
-            logger.info(f"[SpeechT5] Unloading models from {self.device}...")
+            logger.debug(f"[SpeechT5] Unloading models from {self.device}...")
 
             try:
                 # Delete model references first
@@ -274,10 +336,12 @@ class SpeechT5Provider(TTSProvider):
                     torch.cuda.empty_cache()
                     torch.cuda.synchronize()
 
-                logger.info("[SpeechT5] Models unloaded successfully, GPU cache cleared")
+                logger.debug("[SpeechT5] Models unloaded successfully, GPU cache cleared")
 
             except Exception as e:
-                logger.error(f"[SpeechT5] Error during unload: {e}")
+                logger.error(
+                    "[SpeechT5] Unload failed: error_type=%s", type(e).__name__
+                )
 
 
     def _preprocess_text(self, text: str) -> str:
@@ -319,8 +383,12 @@ class SpeechT5Provider(TTSProvider):
         try:
             self._load_models()
         except Exception as e:
-            logger.error(f"[SpeechT5] Failed to load models: {e}")
-            raise TTSEngineError(f"SpeechT5 model loading failed: {e}")
+            logger.error(
+                "[SpeechT5] Model loading failed: error_type=%s", type(e).__name__
+            )
+            raise TTSEngineError(
+                "SpeechT5 model loading failed", code="tts_fallback_load_failed"
+            ) from e
 
         try:
             # Prepare inputs
@@ -347,7 +415,7 @@ class SpeechT5Provider(TTSProvider):
 
             sf.write(output_path, audio_numpy, samplerate=16000)
 
-            logger.info(f"[{self.name}] Generated: {output_path}")
+            logger.debug(f"[{self.name}] Generated: {output_path}")
             return output_path
 
         except torch.cuda.OutOfMemoryError:
@@ -359,8 +427,12 @@ class SpeechT5Provider(TTSProvider):
             else:
                 raise TTSEngineError("SpeechT5 ran out of memory on CPU")
         except Exception as e:
-            logger.error(f"[SpeechT5] Generation failed: {e}")
-            raise TTSEngineError(f"SpeechT5 generation failed: {e}")
+            logger.error(
+                "[SpeechT5] Generation failed: error_type=%s", type(e).__name__
+            )
+            raise TTSEngineError(
+                "SpeechT5 generation failed", code="tts_fallback_failed"
+            ) from e
 
 
 def get_provider(name: str, **kwargs) -> TTSProvider:

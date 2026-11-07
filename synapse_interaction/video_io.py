@@ -6,6 +6,8 @@ from typing import Iterator, Optional, Tuple
 import cv2
 import numpy as np
 
+from youtube_runtime import youtube_runtime_options
+
 
 def resolve_stream(source: str, max_height: int = 480) -> str:
     """Return something cv2.VideoCapture can open.
@@ -26,7 +28,8 @@ def resolve_stream(source: str, max_height: int = 480) -> str:
         # YouTube often offers only separate video/audio streams, so ask for VIDEO-only
         # (we never need audio) and fall back step by step.
         opts = {"quiet": True, "no_warnings": True,
-                "format": f"bv*[height<={max_height}]/b[height<={max_height}]/bv*/b"}
+                "format": f"bv*[height<={max_height}]/b[height<={max_height}]/bv*/b",
+                **youtube_runtime_options()}
         with yt_dlp.YoutubeDL(opts) as ydl:
             info = ydl.extract_info(source, download=False)
         if info.get("url"):

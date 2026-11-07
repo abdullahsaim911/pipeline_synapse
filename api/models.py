@@ -2,6 +2,7 @@
 SQLAlchemy models for Synapse database.
 """
 
+import json
 import uuid
 
 from sqlalchemy import (
@@ -128,13 +129,14 @@ class ProcessingJob(Base):
     __tablename__ = "processing_jobs"
     __table_args__ = (
         UniqueConstraint("video_id", name="uq_processing_jobs_video_id"),
+        UniqueConstraint("active_slot", name="uq_processing_jobs_active_slot"),
         CheckConstraint(
-            "status IN ('queued', 'running', 'succeeded', 'failed')",
+            "status IN ('queued', 'running', 'cancelling', 'cancelled', 'succeeded', 'failed')",
             name="ck_processing_jobs_status",
         ),
         CheckConstraint(
             "stage IN ('queued', 'processing', 'persisting', "
-            "'preparing_explanations', 'complete', 'failed')",
+            "'preparing_explanations', 'cancelling', 'cancelled', 'complete', 'failed')",
             name="ck_processing_jobs_stage",
         ),
         CheckConstraint(
@@ -156,6 +158,10 @@ class ProcessingJob(Base):
     error_message = Column(String(255))
     lease_owner = Column(String(64))
     lease_expires_at = Column(DateTime(timezone=True))
+    generation_id = Column(String(64))
+    active_slot = Column(Integer)
+    cancel_requested_at = Column(DateTime(timezone=True))
+    cancelled_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now()
@@ -196,7 +202,16 @@ class Intervention(Base):
     frame_path = Column(String, nullable=False)  # Relative path to keyframe
     content_type = Column(String)  # "graph", "chemistry", "equation", etc.
     complexity_score = Column(Float)
+    # Historical rows used this field for complexity.  New rows contain the
+    # genuine classifier score; confidence_semantics disambiguates the two.
     clip_confidence = Column(Float)
+    classification_confidence = Column(Float)
+    confidence_semantics = Column(
+        String(32), nullable=False, default="unknown", server_default="unknown"
+    )
+    raw_category_labels_json = Column(Text)
+    canonical_categories_json = Column(Text)
+    category_mapping_notes_json = Column(Text)
     trigger_reason = Column(String)  # "Deictic + High Complexity"
     confidence = Column(String)  # "high", "medium", "low"
     transcript_context = Column(Text)
@@ -206,6 +221,40 @@ class Intervention(Base):
     # Relationships
     video = relationship("Video", back_populates="interventions")
     explanations = relationship("Explanation", back_populates="intervention")
+
+    @staticmethod
+    def _decode_json_list(value):
+        if not value:
+            return []
+        try:
+            decoded = json.loads(value)
+        except (TypeError, ValueError):
+            return []
+        return decoded if isinstance(decoded, list) else []
+
+    @property
+    def raw_category_labels(self) -> list[str]:
+        """Return raw labels without changing the legacy content_type field."""
+        values = self._decode_json_list(self.raw_category_labels_json)
+        if values:
+            return [str(value) for value in values]
+        return [self.content_type] if self.content_type else []
+
+    @property
+    def canonical_categories(self) -> list[str]:
+        values = self._decode_json_list(self.canonical_categories_json)
+        if values:
+            return [str(value) for value in values]
+        from category_normalization import normalize_category_labels
+        return list(normalize_category_labels(self.raw_category_labels).canonical_categories)
+
+    @property
+    def category_mapping_notes(self) -> list[str]:
+        values = self._decode_json_list(self.category_mapping_notes_json)
+        if values:
+            return [str(value) for value in values]
+        from category_normalization import normalize_category_labels
+        return list(normalize_category_labels(self.raw_category_labels).notes)
 
 
 class Explanation(Base):
@@ -239,7 +288,7 @@ class ExplanationPreparation(Base):
             name="ck_explanation_preparation_mode",
         ),
         CheckConstraint(
-            "status IN ('pending', 'generating', 'ready', 'failed')",
+            "status IN ('pending', 'generating', 'cancelled', 'ready', 'failed')",
             name="ck_explanation_preparation_status",
         ),
     )
@@ -253,6 +302,10 @@ class ExplanationPreparation(Base):
     status = Column(String, nullable=False, default="pending", index=True)
     attempt_count = Column(Integer, nullable=False, default=0)
     error_code = Column(String)
+    # Internal progress inside the public status, and the classified cause
+    # behind a public error_code. Neither is part of the API response.
+    stage = Column(String)
+    failure_reason = Column(String)
     lease_owner = Column(String)
     lease_started_at = Column(DateTime)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)

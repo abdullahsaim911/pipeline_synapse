@@ -5,15 +5,44 @@ Audio Weaver" - Fuse teacher's spoken words with VLM's structural data into a si
 Enhanced with 3-mode intervention explanation system (brief, explanatory, detailed).
 """
 
+import copy
 import json
+import logging
 import time
-from typing import Dict, Optional, List
+from typing import Any, Dict, Optional, List
 from dataclasses import dataclass
 
 from llm_interface import OllamaClient, OllamaError
 from .math_linearizer import MathLinearizer
 from .knowledge_base import KnowledgeBase
 from .context_manager import ContextManager
+from stage_tracing import trace_stage
+
+
+logger = logging.getLogger(__name__)
+
+
+def print(*values, **_kwargs):  # noqa: A001
+    """Keep legacy synthesis diagnostics available only at DEBUG level."""
+    logger.debug(" ".join(str(value) for value in values))
+
+
+class ExplanationSynthesisError(RuntimeError):
+    """A visual explanation could not be produced without a misleading fallback."""
+
+    error_code = "generation_failed"
+
+
+class VisualEvidenceUnavailableError(ExplanationSynthesisError):
+    """The VLM did not provide usable visual evidence."""
+
+    error_code = "visual_evidence_unavailable"
+
+
+class TextSynthesisUnavailableError(ExplanationSynthesisError):
+    """The explanation model did not produce usable text."""
+
+    error_code = "text_synthesis_unavailable"
 
 
 @dataclass
@@ -39,6 +68,36 @@ class LLMSynthesizer:
         "top_k": 40,
         "top_p": 0.9,
         "repeat_penalty": 1.1
+    }
+
+    MAX_CANONICAL_PROMPT_CHARS = 18000
+    MAX_COVERAGE_PROMPT_CHARS = 14000
+    MAX_CONTEXT_PROMPT_CHARS = 6000
+    MAX_TRANSCRIPT_PROMPT_CHARS = 6000
+
+    CATEGORY_NARRATION_DIRECTIVES = {
+        "CT-01": "Charts: identify chart kind; name series, axes, units, and scale; report supported values and visible trends. Do not turn approximate geometry into exact values.",
+        "CT-02": "Mathematics: preserve exact operators and signs, bracket and fraction scope, superscripts, subscripts, bounds, and aligned transformations. Give a TTS-readable rendering without changing the expression.",
+        "CT-03": "Science and technical structures: name components and supported containment, bonds, directions, leader-line targets, and connectivity. Distinguish circuit junctions from wire crossings and do not invent component functions.",
+        "CT-04": "Flows, processes, and networks: identify node roles, directed edges, branch labels, loops, and reading order. Keep ambiguous arrow direction explicit.",
+        "CT-05": "Tables: preserve row and column headers, cell-to-header associations, and units. State priority comparisons instead of reciting an irrelevant full grid.",
+        "CT-06": "Instructional text: preserve exact headings, definitions, warning negation, list hierarchy, and meaningful emphasis; omit decorative text.",
+        "CT-07": "Geometry: name points, shapes, axes, markings, angles, conditions, and units. Do not infer measurements or relationships merely because a drawing appears to scale.",
+        "CT-08": "Programming: preserve exact tokens, operators, capitalization, and indentation; distinguish visible source code from displayed output and from predicted execution.",
+        "CT-09": "User interfaces: name controls, positions, and visible enabled, disabled, or selected states and results. Do not predict what a click would do.",
+        "CT-10": "Maps: state supported orientation, legend mappings, labeled places, and spatial relations. Do not invent distance or direction.",
+        "CT-11": "Observational images: describe visible attributes, contrasts, patterns, and uncertainty. Do not infer identity, hidden events, causes, or chronology.",
+        "CT-12": "Physical scenes: describe apparatus, objects, arrangement, arrows, and supported physical relations. A single frame does not establish motion or change over time.",
+    }
+
+    LEGACY_CATEGORY_IDS = {
+        "graph": "CT-01", "chart": "CT-01", "equation": "CT-02", "math": "CT-02",
+        "biology": "CT-03", "chemistry": "CT-03", "circuit": "CT-03", "diagram": "CT-03",
+        "flowchart": "CT-04", "process": "CT-04", "network": "CT-04", "table": "CT-05",
+        "text": "CT-06", "instructional_text": "CT-06", "geometry": "CT-07", "code": "CT-08",
+        "programming": "CT-08", "software_interface": "CT-09", "interface": "CT-09",
+        "map": "CT-10", "observational_image": "CT-11", "physical_illustration": "CT-12",
+        "physical_scene": "CT-12",
     }
 
     # Cross-domain mismatch mappings for hallucination detection
@@ -110,6 +169,13 @@ class LLMSynthesizer:
         Returns:
             True if hallucination detected
         """
+        evidence = vlm_snapshot.get("visual_evidence")
+        if isinstance(evidence, dict) and evidence.get("category_ids"):
+            # Canonical mixed-category evidence is stronger than the legacy
+            # keyword heuristic.  For example, a circuit can legitimately
+            # contain text labels and a code screenshot can include a graph.
+            return False
+
         if content_type not in self.CROSS_DOMAIN_MISMATCHES:
             return False
 
@@ -124,7 +190,8 @@ class LLMSynthesizer:
         vlm_snapshot: Dict,
         content_type: str,
         intervention_reason: str,
-        output_mode: Optional[str] = None
+        output_mode: Optional[str] = None,
+        require_visual_explanation: bool = False,
     ) -> str:
         """
         Fuse teacher's words with VLM's structural data.
@@ -143,14 +210,24 @@ class LLMSynthesizer:
         # Use provided output_mode or fall back to class output_mode
         mode = output_mode or self.output_mode
 
+        if vlm_snapshot.get("_error"):
+            if require_visual_explanation:
+                raise VisualEvidenceUnavailableError("Visual evidence extraction failed")
+            print("[Synthesizer] VLM extraction failed - transcript-only fallback")
+            return self._apply_output_mode(transcript_context, mode)
+
         # Safety Check 1: VLM missing_elements
         missing_elements = vlm_snapshot.get("missing_elements")
         if missing_elements and missing_elements not in ["null", "None", ""]:
+            if require_visual_explanation:
+                raise VisualEvidenceUnavailableError("Visual evidence is unavailable")
             print(f"[Synthesizer] VLM marked as missing: {missing_elements} - transcript-only fallback")
             return self._apply_output_mode(transcript_context, mode)
 
         # Safety Check 2: Cross-domain hallucination
         if self._detect_cross_domain_hallucination(vlm_snapshot, content_type):
+            if require_visual_explanation:
+                raise VisualEvidenceUnavailableError("Visual evidence failed domain validation")
             print(f"[Synthesizer] Cross-domain hallucination detected - transcript-only fallback")
             return self._apply_output_mode(transcript_context, mode)
 
@@ -161,10 +238,19 @@ class LLMSynthesizer:
                 vlm_snapshot=vlm_snapshot,
                 content_type=content_type,
                 intervention_reason=intervention_reason,
-                output_mode=mode
+                output_mode=mode,
+                require_visual_explanation=require_visual_explanation,
             )
+        except ExplanationSynthesisError:
+            raise
         except Exception as e:
-            print(f"[Synthesizer] Error generating enhanced explanation: {e}", exc_info=True)
+            logger.debug(
+                "Error generating enhanced explanation (%s)", type(e).__name__
+            )
+            if require_visual_explanation:
+                raise TextSynthesisUnavailableError(
+                    "Text explanation generation failed"
+                ) from e
             return self._apply_output_mode(transcript_context, mode)
 
     def _construct_prompt(
@@ -309,10 +395,21 @@ FINAL SCRIPT:
             audio_script = response.text.strip()
 
             print(f"[Synthesizer] LLM generated in {response.total_duration_ms}ms")
+            trace_stage(
+                "mistral_model", "response", started_at=start_time,
+                prompt_chars=len(prompt), response_chars=len(audio_script),
+                prompt_tokens=response.prompt_eval_count,
+                completion_tokens=response.eval_count,
+                model=response.model,
+            )
 
             return audio_script
 
         except OllamaError as e:
+            trace_stage(
+                "mistral_model", "failed", started_at=start_time,
+                error_type=type(e).__name__,
+            )
             print(f"[Synthesizer] LLM error: {e}")
             # Return transcript-only fallback (empty script)
             return ""
@@ -372,7 +469,9 @@ FINAL SCRIPT:
             return {}
 
         try:
-            linearized = vlm_snapshot.copy()
+            # Some legacy snapshots contain nested mutable lists.  A shallow
+            # copy would rewrite the persisted source while preparing a prompt.
+            linearized = copy.deepcopy(vlm_snapshot)
 
             # Linearize common text fields
             for field in ["text_readout", "layout", "spatial_map", "description"]:
@@ -393,7 +492,48 @@ FINAL SCRIPT:
             print(f"[Synthesizer] Error linearizing VLM data: {e}")
             return vlm_snapshot
 
-    def _build_brief_prompt(
+    def _format_canonical_evidence_legacy_baseline(self, vlm_snapshot: Dict) -> str:
+        """Return the complete canonical block without altering exact content."""
+
+        evidence = vlm_snapshot.get("visual_evidence")
+        if not isinstance(evidence, dict):
+            return "Not available; use the backward-compatible visual analysis."
+        prompt_evidence = dict(evidence)
+        # The raw model response is already retained in the persisted snapshot;
+        # repeating it here would duplicate the complete canonical content.
+        prompt_evidence.pop("legacy_snapshot", None)
+        return json.dumps(prompt_evidence, ensure_ascii=False, separators=(",", ":"))
+
+    def _canonical_evidence_rules_legacy_baseline(self) -> str:
+        return """
+CANONICAL EVIDENCE RULES:
+- Treat canonical elements and relationships as the machine-readable source of truth.
+- Preserve indispensable exact labels, values, units, symbols, code operators, grouping, branch labels, and connections.
+- Use the structural overview, component placement, hierarchy, topology, and reading order to build a coherent mental model.
+- State uncertainty specifically. Never upgrade partial, ambiguous, unreadable, or unavailable evidence to certainty.
+- Never infer a connection, cause, result, teacher intent, or temporal change that is not supported by the evidence or transcript.
+- Integrate five flexible functions where useful: orientation, structure, salient visual information, educational meaning, and lecture connection. They are not five compulsory paragraphs.
+"""
+
+    def _format_coverage_plan_legacy_baseline(self, vlm_snapshot: Dict) -> str:
+        """Return the compact reconciliation plan without duplicating evidence."""
+
+        plan = vlm_snapshot.get("coverage_plan")
+        if not isinstance(plan, dict):
+            return "Not available; compare transcript and evidence conservatively."
+        return json.dumps(plan, ensure_ascii=False, separators=(",", ":"))
+
+    def _coverage_plan_rules_legacy_baseline(self) -> str:
+        return """
+TRANSCRIPT-VISUAL COVERAGE RULES:
+- Prioritize critical unspoken facts. Supply only the missing part of spoken_partial facts.
+- Avoid repeating spoken_explicit facts unless a short reference is needed for coherence.
+- Treat uncertain_match as unresolved; do not omit essential information solely on that label.
+- Never state not_usable facts as true. Preserve their uncertainty or omit them.
+- The coverage plan selects content; canonical visual evidence remains the factual source of truth.
+"""
+
+    def _build_brief_prompt_legacy_baseline(
         self,
         transcript_context: str,
         context: Dict,
@@ -410,6 +550,7 @@ FINAL SCRIPT:
         visual_analysis = vlm_snapshot.get("visual_analysis", {})
         structural_description = vlm_snapshot.get("structural_description", "")
         conceptual_hints = vlm_snapshot.get("conceptual_hints", "")
+        canonical_evidence = self._format_canonical_evidence_legacy_baseline(vlm_snapshot)
 
         previous_concepts = context.get("previous_concepts", [])
 
@@ -433,16 +574,25 @@ INPUT DATA:
 4. CONCEPTUAL HINTS:
 {conceptual_hints}
 
-5. WHAT TEACHER IS SAYING:
+5. CANONICAL VISUAL EVIDENCE:
+{canonical_evidence}
+{self._canonical_evidence_rules_legacy_baseline()}
+
+6. TRANSCRIPT-VISUAL COVERAGE PLAN:
+{self._format_coverage_plan_legacy_baseline(vlm_snapshot)}
+{self._coverage_plan_rules_legacy_baseline()}
+
+7. WHAT TEACHER IS SAYING:
 "{transcript_context}"
 
-6. PREVIOUS CONCEPTS:
+8. PREVIOUS CONCEPTS:
 {', '.join(previous_concepts) if previous_concepts else 'None'}
 
 YOUR EXPLANATION - FOCUS ON THESE ELEMENTS:
 
 1. QUICK VISUAL SNAPSHOT (Surface Level):
 - Describe ONLY the most important visual elements
+- Include every indispensable exact fact or relation even in Brief mode
 - Use the structural_description for the essential layout
 - Use spatial language: "On the screen, you'll find..."
 - Build a basic mental image
@@ -473,7 +623,7 @@ DEPTH GUIDELINE:
 OUTPUT: Brief, surface-level explanation. No minimum or maximum length - let depth guide you naturally.
 """
 
-    def _build_explanatory_prompt(
+    def _build_explanatory_prompt_legacy_baseline(
         self,
         transcript_context: str,
         context: Dict,
@@ -491,6 +641,7 @@ OUTPUT: Brief, surface-level explanation. No minimum or maximum length - let dep
         structural_description = vlm_snapshot.get("structural_description", "")
         reading_order = vlm_snapshot.get("reading_order", [])
         conceptual_hints = vlm_snapshot.get("conceptual_hints", "")
+        canonical_evidence = self._format_canonical_evidence_legacy_baseline(vlm_snapshot)
 
         previous_concepts = context.get("previous_concepts", [])
         context_text = context.get("context_text", "")
@@ -519,13 +670,21 @@ INPUT DATA:
 5. CONCEPTUAL HINTS (from VLM):
 {conceptual_hints}
 
-6. WHAT TEACHER IS SAYING:
+6. CANONICAL VISUAL EVIDENCE:
+{canonical_evidence}
+{self._canonical_evidence_rules_legacy_baseline()}
+
+7. TRANSCRIPT-VISUAL COVERAGE PLAN:
+{self._format_coverage_plan_legacy_baseline(vlm_snapshot)}
+{self._coverage_plan_rules_legacy_baseline()}
+
+8. WHAT TEACHER IS SAYING:
 "{transcript_context}"
 
-7. SURROUNDING CONTEXT:
+9. SURROUNDING CONTEXT:
 "{context_text}"
 
-8. PREVIOUS CONCEPTS MENTIONED:
+10. PREVIOUS CONCEPTS MENTIONED:
 {', '.join(previous_concepts) if previous_concepts else 'None'}
 
 YOUR EXPLANATION - FOCUS ON THESE ELEMENTS:
@@ -579,7 +738,7 @@ DEPTH GUIDELINE:
 OUTPUT: Standard-depth explanation. Let the content determine the length naturally.
 """
 
-    def _build_detailed_prompt(
+    def _build_detailed_prompt_legacy_baseline(
         self,
         transcript_context: str,
         context: Dict,
@@ -602,6 +761,7 @@ OUTPUT: Standard-depth explanation. Let the content determine the length natural
         related_principles = context.get("related_principles", [])
         topic_timeline = context.get("topic_timeline", {})
         context_text = context.get("context_text", "")
+        canonical_evidence = self._format_canonical_evidence_legacy_baseline(vlm_snapshot)
 
         # Get cross-domain knowledge
         cross_domain = self._get_cross_domain_explanations(detected_types[0] if detected_types else "unknown", previous_concepts)
@@ -630,22 +790,30 @@ INPUT DATA:
 5. CONCEPTUAL HINTS (from VLM):
 {conceptual_hints}
 
-6. WHAT TEACHER IS SAYING:
+6. CANONICAL VISUAL EVIDENCE:
+{canonical_evidence}
+{self._canonical_evidence_rules_legacy_baseline()}
+
+7. TRANSCRIPT-VISUAL COVERAGE PLAN:
+{self._format_coverage_plan_legacy_baseline(vlm_snapshot)}
+{self._coverage_plan_rules_legacy_baseline()}
+
+8. WHAT TEACHER IS SAYING:
 "{transcript_context}"
 
-7. FULL LECTURE CONTEXT (±2 minutes):
+9. FULL LECTURE CONTEXT (±2 minutes):
 "{context_text}"
 
-8. PREVIOUS CONCEPTS MENTIONED:
+10. PREVIOUS CONCEPTS MENTIONED:
 {', '.join(previous_concepts) if previous_concepts else 'None'}
 
-9. RELATED PRINCIPLES:
+11. RELATED PRINCIPLES:
 {', '.join(related_principles) if related_principles != 'None' else 'various principles'}
 
-10. TOPIC TIMELINE:
+12. TOPIC TIMELINE:
 {topic_timeline}
 
-11. CROSS-DOMAIN CONNECTIONS:
+13. CROSS-DOMAIN CONNECTIONS:
 {cross_domain}
 
 YOUR EXPLANATION - FOCUS ON THESE ELEMENTS:
@@ -671,10 +839,10 @@ YOUR EXPLANATION - FOCUS ON THESE ELEMENTS:
 
 3. DEEP CONCEPTUAL FRAMEWORK:
 - Explain the underlying principle, law, or formula in depth
-- Use the conceptual_hints as foundation, then expand significantly
+- Use conceptual hints only when supported by canonical evidence or transcript
 - Include mathematical/physical meaning thoroughly
-- Explain historical context if relevant
-- Discuss boundary conditions, limitations, special cases
+- Include historical context only when it appears in the supplied lecture context
+- Discuss boundary conditions, limitations, or special cases only when supplied
 - Explain why this concept matters
 - Connect to related principles: {', '.join(related_principles) if related_principles != 'None' else 'various principles'}
 - Discuss the significance and applications
@@ -723,6 +891,397 @@ DEPTH GUIDELINE:
 OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the length naturally.
 """
 
+    @staticmethod
+    def _normalize_output_mode(output_mode: Optional[str]) -> str:
+        """Normalize legacy aliases without changing public API values."""
+
+        mode = (output_mode or "explanatory").strip().lower()
+        if mode in {"brief", "short"}:
+            return "brief"
+        if mode == "detailed":
+            return "detailed"
+        return "explanatory"
+
+    @classmethod
+    def _prune_empty(cls, value: Any) -> Any:
+        if isinstance(value, dict):
+            return {
+                key: cleaned
+                for key, item in value.items()
+                if (cleaned := cls._prune_empty(item)) not in (None, "", [], {})
+            }
+        if isinstance(value, list):
+            return [
+                cleaned for item in value
+                if (cleaned := cls._prune_empty(item)) not in (None, "", [], {})
+            ]
+        return value
+
+    @classmethod
+    def _limit_collections(cls, value: Any, item_limit: int) -> Any:
+        if isinstance(value, dict):
+            return {key: cls._limit_collections(item, item_limit) for key, item in value.items()}
+        if isinstance(value, list):
+            limited = [cls._limit_collections(item, item_limit) for item in value[:item_limit]]
+            if len(value) > item_limit:
+                limited.append({"_omitted_items": len(value) - item_limit})
+            return limited
+        if isinstance(value, str) and len(value) > 1200:
+            return value[:1200] + f" [TRUNCATED {len(value) - 1200} CHARS]"
+        return value
+
+    @classmethod
+    def _bounded_json(cls, value: Any, max_chars: int) -> str:
+        """Serialize deterministic valid JSON with explicit bounded omissions."""
+
+        cleaned = cls._prune_empty(value)
+        for item_limit in (64, 32, 16, 8, 4, 2, 1):
+            candidate = cls._limit_collections(cleaned, item_limit)
+            serialized = json.dumps(candidate, ensure_ascii=False, separators=(",", ":"))
+            if len(serialized) <= max_chars:
+                return serialized
+        raw = json.dumps(cleaned, ensure_ascii=False, separators=(",", ":"))
+        preview_size = max_chars // 2
+        while preview_size > 0:
+            fallback = json.dumps({
+                "payload_truncated": True,
+                "reason": "Prompt safety bound reached; do not claim exhaustive coverage.",
+                "preview": raw[:preview_size],
+            }, ensure_ascii=False, separators=(",", ":"))
+            if len(fallback) <= max_chars:
+                return fallback
+            preview_size //= 2
+        return '{"payload_truncated":true}'
+
+    @staticmethod
+    def _bounded_text(value: Any, max_chars: int) -> str:
+        text = str(value or "")
+        if len(text) <= max_chars:
+            return text
+        omitted = len(text) - max_chars
+        return text[:max_chars] + f" [TRANSCRIPT TRUNCATED: {omitted} CHARS OMITTED]"
+
+    def _compact_canonical_payload(self, evidence: Dict) -> Dict:
+        regions = []
+        for region in evidence.get("regions") or []:
+            if not isinstance(region, dict):
+                continue
+            elements = []
+            for element in region.get("elements") or []:
+                if not isinstance(element, dict):
+                    continue
+                elements.append({
+                    key: copy.deepcopy(element.get(key))
+                    for key in (
+                        "id", "kind", "evidence_status", "category_ids", "label",
+                        "exact_text", "description", "position", "source_ref", "attributes",
+                        "parent_id", "child_ids",
+                    )
+                    if element.get(key) not in (None, "", [], {})
+                })
+            regions.append({
+                "id": region.get("id"),
+                "category_ids": copy.deepcopy(region.get("category_ids")),
+                "position": region.get("position"),
+                "evidence_status": region.get("evidence_status"),
+                "attributes": copy.deepcopy(region.get("attributes")),
+                "elements": elements,
+            })
+
+        return self._prune_empty({
+            "schema_version": evidence.get("schema_version"),
+            "extraction_status": evidence.get("extraction_status"),
+            "evidence_status": evidence.get("evidence_status"),
+            "category_ids": copy.deepcopy(evidence.get("category_ids")),
+            "raw_category_labels": copy.deepcopy(evidence.get("raw_category_labels")),
+            "global_layout": evidence.get("global_layout"),
+            # Exact content and relations precede elements because they are the
+            # highest-risk facts for educational narration.
+            "exact_content": copy.deepcopy(evidence.get("exact_content")),
+            "relations": copy.deepcopy(evidence.get("relations")),
+            "structural_description": copy.deepcopy(evidence.get("structural_description")),
+            "regions": regions,
+            "category_details": copy.deepcopy(evidence.get("category_details")),
+            "uncertainties": copy.deepcopy(evidence.get("uncertainties")),
+            "validation_diagnostics": copy.deepcopy(evidence.get("validation_diagnostics")),
+        })
+
+    def _format_canonical_evidence(self, vlm_snapshot: Dict) -> str:
+        """Return bounded canonical evidence without mutating exact content."""
+
+        evidence = vlm_snapshot.get("visual_evidence")
+        if not isinstance(evidence, dict):
+            legacy = {
+                key: copy.deepcopy(vlm_snapshot.get(key))
+                for key in (
+                    "detected_types", "text_readout", "visual_analysis", "layout",
+                    "spatial_map", "structural_description", "reading_order",
+                )
+                if vlm_snapshot.get(key) not in (None, "", [], {})
+            }
+            return self._bounded_json({"legacy_visual_evidence": legacy}, self.MAX_CANONICAL_PROMPT_CHARS)
+        return self._bounded_json(
+            self._compact_canonical_payload(evidence), self.MAX_CANONICAL_PROMPT_CHARS
+        )
+
+    def _priority_coverage_payload(self, plan: Dict, prioritize: bool = True) -> Dict:
+        importance_rank = {"critical": 0, "important": 1, "supporting": 2}
+        coverage_rank = {
+            "unspoken": 0, "spoken_partial": 1, "uncertain_match": 2,
+            "spoken_explicit": 3, "not_usable": 4,
+        }
+        type_rank = {
+            "exact_content": 0, "relation": 1, "hierarchy": 2, "spatial": 3,
+            "structure": 4, "attribute": 5, "reading_order": 6, "component": 7,
+            "category_detail": 8,
+        }
+        facts = [fact for fact in (plan.get("facts") or []) if isinstance(fact, dict)]
+        if prioritize:
+            facts.sort(key=lambda fact: (
+                importance_rank.get(fact.get("importance"), 9),
+                coverage_rank.get(fact.get("transcript_coverage"), 9),
+                type_rank.get(fact.get("fact_type"), 9),
+                str(fact.get("fact_id", "")),
+            ))
+        compact_facts = [{
+            key: copy.deepcopy(fact.get(key))
+            for key in (
+                "fact_id", "fact_type", "description", "source_refs", "category_ids",
+                "importance", "evidence_reliability", "evidence_status",
+                "uncertainty_reasons", "transcript_coverage", "missing_information",
+            )
+            if fact.get(key) not in (None, "", [], {})
+        } for fact in facts]
+        return self._prune_empty({
+            "schema": plan.get("schema"),
+            "method": plan.get("method"),
+            "coverage_counts": copy.deepcopy(plan.get("coverage_counts")),
+            "truncated": plan.get("truncated"),
+            "omitted_fact_count": plan.get("omitted_fact_count"),
+            "total_fact_count": plan.get("total_fact_count"),
+            "priority_order": (
+                "critical missing/partial, exact and structural relations, supporting facts"
+                if prioritize else "original Task 4 fact order"
+            ),
+            "facts": compact_facts,
+        })
+
+    def _format_coverage_plan(self, vlm_snapshot: Dict, prioritize: bool = True) -> str:
+        """Return a bounded, priority-ordered Task 4 plan."""
+
+        plan = vlm_snapshot.get("coverage_plan")
+        if not isinstance(plan, dict):
+            return json.dumps({
+                "available": False,
+                "instruction": "Compare transcript and evidence conservatively; do not assume coverage.",
+            }, separators=(",", ":"))
+        return self._bounded_json(
+            self._priority_coverage_payload(plan, prioritize=prioritize),
+            self.MAX_COVERAGE_PROMPT_CHARS,
+        )
+
+    def _resolve_category_ids(self, vlm_snapshot: Dict, content_type: str = "") -> List[str]:
+        category_ids: List[str] = []
+        evidence = vlm_snapshot.get("visual_evidence")
+        if isinstance(evidence, dict):
+            category_ids.extend(evidence.get("category_ids") or [])
+        plan = vlm_snapshot.get("coverage_plan")
+        if isinstance(plan, dict):
+            for fact in plan.get("facts") or []:
+                if isinstance(fact, dict):
+                    category_ids.extend(fact.get("category_ids") or [])
+        legacy_labels = list(vlm_snapshot.get("detected_types") or []) + [content_type]
+        for label in legacy_labels:
+            mapped = self.LEGACY_CATEGORY_IDS.get(str(label).strip().lower())
+            if mapped:
+                category_ids.append(mapped)
+        return list(dict.fromkeys(
+            category for category in category_ids if category in self.CATEGORY_NARRATION_DIRECTIVES
+        ))
+
+    def _category_directives(self, category_ids: List[str]) -> str:
+        if not category_ids:
+            return "- Unknown/legacy category: narrate only facts explicitly present in the supplied evidence."
+        directives = [f"- {category}: {self.CATEGORY_NARRATION_DIRECTIVES[category]}" for category in category_ids]
+        if len(category_ids) > 1:
+            directives.append(
+                "- Mixed frame: preserve each category and explicitly describe supported cross-category relations; do not collapse the frame to one type."
+            )
+        return "\n".join(directives)
+
+    def _evidence_limitations(self, vlm_snapshot: Dict) -> str:
+        limitations: List[str] = []
+        evidence = vlm_snapshot.get("visual_evidence")
+        if isinstance(evidence, dict):
+            extraction_status = evidence.get("extraction_status")
+            evidence_status = evidence.get("evidence_status")
+            if extraction_status and extraction_status != "complete":
+                limitations.append(f"extraction_status={extraction_status}")
+            if evidence_status and evidence_status != "supported":
+                limitations.append(f"evidence_status={evidence_status}")
+            codes = [
+                item.get("code") for item in (evidence.get("validation_diagnostics") or [])
+                if isinstance(item, dict) and item.get("code")
+            ]
+            limitations.extend(codes)
+        metrics = vlm_snapshot.get("_vlm_metrics")
+        if isinstance(metrics, dict) and metrics.get("possible_truncation"):
+            limitations.append("vlm_output_possible_truncation")
+        plan = vlm_snapshot.get("coverage_plan")
+        if isinstance(plan, dict) and plan.get("truncated"):
+            limitations.append(
+                f"coverage_plan_omitted_facts={int(plan.get('omitted_fact_count') or 0)}"
+            )
+        if not limitations:
+            return "No recorded extraction limitation. This still does not permit unsupported inference."
+        return "; ".join(dict.fromkeys(limitations)) + ". Do not claim the description is exhaustive."
+
+    def _spoken_math_hints(self, vlm_snapshot: Dict) -> str:
+        evidence = vlm_snapshot.get("visual_evidence")
+        if not isinstance(evidence, dict):
+            return "None supplied."
+        hints = []
+        for item in evidence.get("exact_content") or []:
+            if not isinstance(item, dict) or item.get("notation") != "math" or not item.get("text"):
+                continue
+            exact = str(item["text"])
+            hints.append({"exact_source": exact, "spoken_hint": MathLinearizer.linearize(exact)})
+        return self._bounded_json(hints, 4000) if hints else "None supplied."
+
+    def _canonical_evidence_rules(self) -> str:
+        return """
+SOURCE AND GROUNDING RULES:
+- Canonical visual evidence is the authority for what was extracted from this frame. Teacher text is authority only for what the teacher said.
+- Use only supported visual facts or clearly attributed teacher speech. General knowledge must not become a visual observation.
+- Preserve exact labels, values, units, symbols, grouping, code tokens, indentation, branch labels, directions, hierarchy, and connectivity.
+- Say what is uncertain or incomplete. Never upgrade partial, ambiguous, unreadable, failed, or truncated evidence to certainty.
+- Do not infer causes, functions, teacher intentions, unseen states, execution results, or temporal change from a single frame.
+"""
+
+    def _coverage_plan_rules(self) -> str:
+        return """
+CONTENT-SELECTION RULES:
+- Prioritize critical unspoken facts and supply only the missing portion of critical spoken_partial facts.
+- Treat uncertain_match as unresolved. Include an essential fact cautiously when canonical evidence supports it.
+- Do not repeat spoken_explicit content unless a short reference is indispensable for orientation or a relationship.
+- Never assert not_usable facts. Omitted fact counts mean the plan is incomplete, not that omitted facts are unimportant.
+- The plan ranks content; canonical evidence remains the factual source of truth.
+"""
+
+    def _mode_directive(self, mode: str) -> str:
+        if mode == "brief":
+            return (
+                "BRIEF: lead with the immediate teaching point and include every indispensable exact symbolic, numeric, spatial, and structural fact. "
+                "Omit optional detail, but never simplify into a contradiction."
+            )
+        if mode == "detailed":
+            return (
+                "DETAILED: retain the same core facts as Brief and Standard, then add useful supported secondary structure, comparisons, values, and clarification for review. "
+                "Do not enumerate decoration or invent enrichment."
+            )
+        return (
+            "STANDARD: explain the main concept with essential layout, labels, units, relationships, and relevant comparisons using clear speech-first pacing."
+        )
+
+    def _build_task5_prompt(
+        self,
+        transcript_context: str,
+        context: Dict,
+        vlm_snapshot: Dict,
+        mode: str,
+        content_type: str = "",
+        intervention_reason: str = "",
+        prioritize_coverage: bool = True,
+    ) -> str:
+        normalized_mode = self._normalize_output_mode(mode)
+        category_ids = self._resolve_category_ids(vlm_snapshot, content_type)
+        transcript = self._bounded_text(
+            transcript_context, self.MAX_TRANSCRIPT_PROMPT_CHARS
+        )
+        surrounding = self._bounded_text(
+            context.get("context_text"), self.MAX_CONTEXT_PROMPT_CHARS
+        )
+        canonical = self._format_canonical_evidence(vlm_snapshot)
+        coverage = self._format_coverage_plan(vlm_snapshot, prioritize=prioritize_coverage)
+        selection_rules = self._coverage_plan_rules() if prioritize_coverage else """
+DIRECT SOURCE-GROUNDED SELECTION RULES:
+- Use the Task 4 statuses to avoid unsupported claims and unnecessary repetition.
+- Narrate supported essential facts directly without adding a separate priority-ranking policy.
+- Never assert not_usable evidence; retain explicit uncertainty.
+"""
+
+        return f"""SYSTEM ROLE
+You write accurate, conversational, speech-only educational descriptions for a learner who cannot see the current frame.
+
+NON-NEGOTIABLE CONTRACT
+{self._canonical_evidence_rules()}
+{selection_rules}
+
+Use five flexible functions only where useful; they are not five paragraphs and have no fixed order:
+1. Orientation — identify the subject when needed, without generic filler.
+2. Structure — convey essential parts, exact text or notation, values, spatial relations, hierarchy, connectivity, and reading order.
+3. Salient visual information — state supported trends, contrasts, states, patterns, or visible features, never invented temporal change.
+4. Educational meaning — interpret only when supported by the visual evidence or clearly attributed teacher speech.
+5. Lecture connection — connect to the teacher's specific point only when grounded and useful; never invent intent.
+
+Adapt the order to the teaching risk: for example, an operator, fraction scope, branch direction, or circuit connection may come first.
+
+DETAIL LEVEL
+{self._mode_directive(normalized_mode)}
+
+CATEGORY-SPECIFIC NARRATION
+{self._category_directives(category_ids)}
+
+EVIDENCE LIMITATIONS
+{self._evidence_limitations(vlm_snapshot)}
+
+CANONICAL VISUAL EVIDENCE (bounded, source text remains exact)
+{canonical}
+
+TRANSCRIPT-VISUAL COVERAGE PLAN — TASK 4 PRIORITY PLAN (bounded and priority ordered)
+{coverage}
+
+OPTIONAL SPOKEN-MATH HINTS
+{self._spoken_math_hints(vlm_snapshot)}
+The exact source expression remains authoritative. State grouping explicitly, such as “the quantity ... over the quantity ...”, when needed.
+
+LECTURE INPUT
+Current teacher transcript: {json.dumps(transcript, ensure_ascii=False)}
+Surrounding transcript context: {json.dumps(surrounding, ensure_ascii=False)}
+Intervention reason: {json.dumps(intervention_reason or 'not supplied', ensure_ascii=False)}
+
+OUTPUT REQUIREMENTS
+- Return only the learner-facing audio script: no heading, markdown, JSON, source IDs, confidence labels, or planning commentary.
+- Sound natural when spoken. Do not announce all five functions.
+- Resolve vague words such as “this” only with supported visual details.
+- Do not say “the image clearly shows” when evidence is partial or ambiguous.
+- If no safe visual fact is available, return a concise transcript-based explanation without inventing visual content.
+"""
+
+    def _build_brief_prompt(
+        self, transcript_context: str, context: Dict, vlm_snapshot: Dict,
+        content_type: str = "", intervention_reason: str = ""
+    ) -> str:
+        return self._build_task5_prompt(
+            transcript_context, context, vlm_snapshot, "brief", content_type, intervention_reason
+        )
+
+    def _build_explanatory_prompt(
+        self, transcript_context: str, context: Dict, vlm_snapshot: Dict,
+        content_type: str = "", intervention_reason: str = ""
+    ) -> str:
+        return self._build_task5_prompt(
+            transcript_context, context, vlm_snapshot, "explanatory", content_type, intervention_reason
+        )
+
+    def _build_detailed_prompt(
+        self, transcript_context: str, context: Dict, vlm_snapshot: Dict,
+        content_type: str = "", intervention_reason: str = ""
+    ) -> str:
+        return self._build_task5_prompt(
+            transcript_context, context, vlm_snapshot, "detailed", content_type, intervention_reason
+        )
+
     def _get_cross_domain_explanations(self, content_type: str, previous_concepts: List[str]) -> str:
         """
         Get cross-domain explanations for concepts.
@@ -759,7 +1318,8 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
         vlm_snapshot: Dict,
         content_type: str,
         intervention_reason: str,
-        output_mode: str
+        output_mode: str,
+        require_visual_explanation: bool = False,
     ) -> str:
         """
         Generate enhanced explanation for blind students using depth-based prompts.
@@ -775,14 +1335,35 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
             Enhanced explanation string
         """
         try:
+            normalized_mode = self._normalize_output_mode(output_mode)
+
             # Safety checks
+            if vlm_snapshot.get("_error"):
+                if require_visual_explanation:
+                    raise VisualEvidenceUnavailableError("Visual evidence extraction failed")
+                print("[Synthesizer] VLM extraction failed - transcript-only fallback")
+                return transcript_context
+
             missing_elements = vlm_snapshot.get("missing_elements")
             if missing_elements and missing_elements not in ["null", "None", ""]:
+                if require_visual_explanation:
+                    raise VisualEvidenceUnavailableError("Visual evidence is unavailable")
                 print(f"[Synthesizer] VLM marked as missing: {missing_elements} - transcript-only fallback")
                 return transcript_context
 
             if self._detect_cross_domain_hallucination(vlm_snapshot, content_type):
+                if require_visual_explanation:
+                    raise VisualEvidenceUnavailableError("Visual evidence failed domain validation")
                 print(f"[Synthesizer] Cross-domain hallucination detected - transcript-only fallback")
+                return transcript_context
+
+            evidence = vlm_snapshot.get("visual_evidence")
+            if isinstance(evidence, dict) and evidence.get("extraction_status") in {
+                "failed", "not_attempted"
+            }:
+                if require_visual_explanation:
+                    raise VisualEvidenceUnavailableError("Canonical visual evidence is unavailable")
+                print("[Synthesizer] Canonical visual evidence unavailable - transcript-only fallback")
                 return transcript_context
 
             # Find current transcript index for context
@@ -790,7 +1371,7 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
 
             # Gather context based on mode
             if self.context_manager:
-                context = self.context_manager.get_context(current_index, output_mode)
+                context = self.context_manager.get_context(current_index, normalized_mode)
             else:
                 context = {
                     "context_text": "",
@@ -803,23 +1384,29 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
             linearized_snapshot = self._linearize_vlm_data(vlm_snapshot)
 
             # Build mode-specific prompt (new signatures without content_type/intervention_reason)
-            if output_mode == "brief":
+            if normalized_mode == "brief":
                 prompt = self._build_brief_prompt(
                     transcript_context=transcript_context,
                     context=context,
-                    vlm_snapshot=linearized_snapshot
+                    vlm_snapshot=linearized_snapshot,
+                    content_type=content_type,
+                    intervention_reason=intervention_reason,
                 )
-            elif output_mode == "detailed":
+            elif normalized_mode == "detailed":
                 prompt = self._build_detailed_prompt(
                     transcript_context=transcript_context,
                     context=context,
-                    vlm_snapshot=linearized_snapshot
+                    vlm_snapshot=linearized_snapshot,
+                    content_type=content_type,
+                    intervention_reason=intervention_reason,
                 )
             else:  # explanatory
                 prompt = self._build_explanatory_prompt(
                     transcript_context=transcript_context,
                     context=context,
-                    vlm_snapshot=linearized_snapshot
+                    vlm_snapshot=linearized_snapshot,
+                    content_type=content_type,
+                    intervention_reason=intervention_reason,
                 )
 
             # Call LLM
@@ -827,6 +1414,8 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
 
             # Guard: if LLM returned nothing, fall back to transcript
             if not explanation:
+                if require_visual_explanation:
+                    raise TextSynthesisUnavailableError("Text explanation model returned no content")
                 print("[Synthesizer] LLM returned empty - transcript-only fallback")
                 return transcript_context
 
@@ -836,8 +1425,16 @@ OUTPUT: Comprehensive, deep explanation. Let the depth of content determine the 
             # No truncation - return full explanation as generated
             return explanation
 
+        except ExplanationSynthesisError:
+            raise
         except Exception as e:
-            print(f"[Synthesizer] Error generating enhanced explanation: {e}", exc_info=True)
+            logger.debug(
+                "Error generating enhanced explanation (%s)", type(e).__name__
+            )
+            if require_visual_explanation:
+                raise TextSynthesisUnavailableError(
+                    "Text explanation generation failed"
+                ) from e
             # Fallback to transcript-only on error
             return transcript_context
 

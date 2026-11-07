@@ -30,20 +30,16 @@ from modal_inference.config import (
     AUTH_ENV_VAR,
     CONTAINER_TIMEOUT_SECONDS,
     DEFAULT_GPU,
-    GPU_MEMORY_UTILIZATION,
     HF_CACHE_DIR,
     HF_CACHE_VOL_NAME,
     MAX_CONCURRENT_INPUTS,
     MAX_CONTAINERS,
     MAX_IMAGES_PER_PROMPT,
     MAX_MODEL_LEN,
-    MAX_NUM_SEQS,
+    MAX_OUTPUT_TOKENS,
     MIN_CONTAINERS,
     MODAL_SECRET_NAME,
-    MODEL_DTYPE,
     MODEL_ID,
-    MODEL_QUANTIZATION,
-    MULTIMODAL_LIMITS_JSON,
     SCALEDOWN_WINDOW_SECONDS,
     STARTUP_TIMEOUT_SECONDS,
     VLLM_CACHE_DIR,
@@ -51,6 +47,7 @@ from modal_inference.config import (
     VLLM_PORT,
     VLLM_VERSION,
 )
+from modal_inference.launch_config import build_vllm_serve_command
 
 # ---------------------------------------------------------------------------
 # 1. Container Image Definition
@@ -174,30 +171,7 @@ def serve():
     print(f"[Security] Authentication configured successfully via {AUTH_ENV_VAR}.")
 
     # 3. Build vLLM Launch Command with Strict Boundaries
-    cmd = [
-        "vllm",
-        "serve",
-        MODEL_ID,
-        "--host",
-        "0.0.0.0",
-        "--port",
-        str(VLLM_PORT),
-        "--api-key",
-        api_key.strip(),
-        "--dtype",
-        MODEL_DTYPE,
-        "--quantization",
-        MODEL_QUANTIZATION,
-        "--max-model-len",
-        str(MAX_MODEL_LEN),
-        "--limit-mm-per-prompt",
-        MULTIMODAL_LIMITS_JSON,
-        "--max-num-seqs",
-        str(MAX_NUM_SEQS),
-        "--gpu-memory-utilization",
-        str(GPU_MEMORY_UTILIZATION),
-        "--trust-remote-code",
-    ]
+    cmd = build_vllm_serve_command(api_key)
 
     print("[Launch] Invoking vLLM server:")
     # Print command with obfuscated API key for security
@@ -270,6 +244,7 @@ def serve():
     print(f"Model: {MODEL_ID}")
     print(f"Port: {VLLM_PORT}")
     print(f"Max Model Length: {MAX_MODEL_LEN} tokens")
+    print(f"Server Completion Ceiling: {MAX_OUTPUT_TOKENS} tokens")
     print(f"Max Images / Prompt: {MAX_IMAGES_PER_PROMPT}")
     print("=" * 72)
 

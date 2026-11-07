@@ -6,8 +6,17 @@ Ensures clean GPU state between model loads and provides diagnostic logging.
 """
 
 import gc
+import logging
 import platform
 from typing import Optional, Dict
+
+
+logger = logging.getLogger(__name__)
+
+
+def print(*values, **_kwargs):  # noqa: A001
+    """GPU snapshots are diagnostic detail, not default pipeline progress."""
+    logger.debug(" ".join(str(value) for value in values))
 
 
 # Try to import torch - optional for systems without GPU

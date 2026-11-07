@@ -1,0 +1,74 @@
+[
+  {
+    "id": "eval-mixed-chart-equation",
+    "mode": "brief",
+    "transcript": "This curve is the important result.",
+    "content_type": "graph",
+    "intervention_reason": "Deictic",
+    "categories": ["CT-01", "CT-02"],
+    "elements": [
+      {"id": "x-axis", "kind": "axis", "label": "Time", "category_ids": ["CT-01"], "attributes": {"unit": "s"}},
+      {"id": "curve", "kind": "series", "label": "Position", "category_ids": ["CT-01"]},
+      {"id": "equation", "kind": "equation", "exact_text": "d = 4t", "category_ids": ["CT-02"]}
+    ],
+    "relations": [
+      {"id": "r1", "source_id": "equation", "target_id": "curve", "relation": "corresponds_to", "directed": false, "cross_category": true, "evidence_status": "supported"}
+    ],
+    "exact_content": [{"text": "d = 4t", "status": "supported", "notation": "math", "source_ref": "equation"}],
+    "expected_essential_facts": ["horizontal axis is Time in seconds", "exact equation d = 4t"],
+    "expected_relationships": ["d = 4t corresponds to the Position curve"],
+    "prohibited_claims": ["the curve proves causation", "the teacher intends to derive velocity"]
+  },
+  {
+    "id": "eval-anatomy-leader-warning",
+    "mode": "explanatory",
+    "transcript": "Notice this region.",
+    "content_type": "biology",
+    "intervention_reason": "Deictic",
+    "categories": ["CT-03", "CT-06"],
+    "elements": [
+      {"id": "brain", "kind": "anatomical_structure", "label": "Brain", "category_ids": ["CT-03"]},
+      {"id": "medulla", "kind": "anatomical_part", "label": "Medulla", "position": "lower brainstem", "parent_id": "brain", "category_ids": ["CT-03"]},
+      {"id": "callout", "kind": "leader_line", "label": "Medulla label", "category_ids": ["CT-06"]}
+    ],
+    "relations": [
+      {"id": "r1", "source_id": "callout", "target_id": "medulla", "relation": "points_to", "label": "Medulla", "directed": true, "cross_category": true, "evidence_status": "supported"}
+    ],
+    "category_details": {"structured_text": {"annotations": ["Do not confuse with the spinal cord."]}},
+    "expected_essential_facts": ["Medulla is in the lower brainstem", "warning says not to confuse it with the spinal cord"],
+    "expected_relationships": ["Medulla label leader line points to the Medulla"],
+    "prohibited_claims": ["the Medulla controls breathing", "the leader line proves function"]
+  },
+  {
+    "id": "eval-code-operator-indentation",
+    "mode": "detailed",
+    "transcript": "This condition handles the top scores.",
+    "content_type": "code",
+    "intervention_reason": "High Complexity",
+    "categories": ["CT-08"],
+    "elements": [
+      {"id": "code", "kind": "code_block", "exact_text": "if score >= 90:\n    print(\"A\")", "category_ids": ["CT-08"]}
+    ],
+    "exact_content": [{"text": "if score >= 90:\n    print(\"A\")", "status": "supported", "notation": "code", "source_ref": "code"}],
+    "category_details": {"programming": {"language": "Python", "indentation_significant": true}},
+    "expected_essential_facts": ["operator is greater than or equal to", "print statement is indented inside the if block"],
+    "expected_relationships": ["the indented print statement belongs to the condition block"],
+    "prohibited_claims": ["the visible output is A", "the operator is strictly greater than"]
+  },
+  {
+    "id": "eval-uncertain-map",
+    "mode": "explanatory",
+    "transcript": "The route goes toward the old town.",
+    "content_type": "map",
+    "intervention_reason": "High Complexity",
+    "categories": ["CT-10"],
+    "evidence_status": "ambiguous_or_conflicting",
+    "elements": [
+      {"id": "route", "kind": "route", "label": "Route A", "position": "right of the river", "category_ids": ["CT-10"], "evidence_status": "ambiguous_or_conflicting"}
+    ],
+    "uncertainties": [{"target_id": "route", "reason": "The north-arrow label is blurred.", "impact": "Cardinal direction is uncertain."}],
+    "expected_essential_facts": ["Route A is shown to the right of the river", "north-arrow direction is uncertain"],
+    "expected_relationships": [],
+    "prohibited_claims": ["Route A is east of the river", "the route distance is known"]
+  }
+]

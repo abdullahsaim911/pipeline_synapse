@@ -9,6 +9,8 @@ import cv2
 import numpy as np
 import torch
 from PIL import Image
+from frame_extraction.ffmpeg_runtime import resolve_ffmpeg_executable
+from youtube_runtime import youtube_runtime_options
 from dataclasses import dataclass, asdict, field
 from typing import List, Tuple, Optional, Generator
 from collections import deque
@@ -41,6 +43,8 @@ class ScoredFrame:
     complexity_score: float = 0.0
     is_educational: bool = True
     content_label: str = "educational"
+    # Keep classifier confidence separate from the visual-complexity score.
+    classification_confidence: Optional[float] = None
 
 
 @dataclass
@@ -62,7 +66,8 @@ class ExtractedKeyframe:
     content_type: str
     timestamp_seconds: float
     complexity_score: float
-    clip_confidence: float
+    clip_confidence: Optional[float]
+    classification_confidence: Optional[float]
 
 
 # =============================================================================
@@ -375,6 +380,7 @@ def get_video_info(video_id: str) -> Tuple[str, int, str, int, int]:
         "format": "bestvideo[height<=720][ext=mp4]+bestaudio[ext=m4a]/best[height<=720][ext=mp4]/best",
         "quiet": True,
         "no_warnings": True,
+        **youtube_runtime_options(),
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -408,9 +414,7 @@ def stream_frames(
     Stream frames from video URL at specified FPS.
     Retries up to max_retries times if stream is interrupted or times out.
     """
-    ffmpeg_path = os.path.join(os.path.dirname(__file__), "ffmpeg", "bin", "ffmpeg.exe")
-    if not os.path.exists(ffmpeg_path):
-        ffmpeg_path = "ffmpeg"
+    ffmpeg_path = resolve_ffmpeg_executable()
 
     frame_size = width * height * 3
     frame_interval = 1.0 / fps
@@ -756,6 +760,7 @@ def extract_pedagogical_keyframes(
             complexity_score=complexity,
             is_educational=is_edu,
             content_label=label,
+            classification_confidence=confidence,
         )
         scored_frames.append(scored)
 
@@ -930,7 +935,19 @@ def extract_pedagogical_keyframes(
                 content_type=sf.content_label,
                 timestamp_seconds=sf.timestamp,
                 complexity_score=round(sf.complexity_score, 4),
-                clip_confidence=round(sf.is_educational * sf.complexity_score, 4),
+                # ``clip_confidence`` is retained for API compatibility, but
+                # newly generated records now contain the genuine classifier
+                # score.  Complexity remains independently available above.
+                clip_confidence=(
+                    round(sf.classification_confidence, 4)
+                    if sf.classification_confidence is not None
+                    else None
+                ),
+                classification_confidence=(
+                    round(sf.classification_confidence, 4)
+                    if sf.classification_confidence is not None
+                    else None
+                ),
             )
         )
 
@@ -942,7 +959,12 @@ def extract_pedagogical_keyframes(
         "frame_path": r.frame_path,
         "content_type": r.content_type,
         "complexity_score": r.complexity_score,
-        "clip_confidence": r.clip_confidence
+        "clip_confidence": r.clip_confidence,
+        "classification_confidence": r.classification_confidence,
+        "confidence_semantics": (
+            "classifier" if r.classification_confidence is not None else "unknown"
+        ),
+        "raw_category_labels": [r.content_type],
     } for r in results]
     report_path = os.path.join(output_dir, "keyframes.json")
     with open(report_path, "w") as f:

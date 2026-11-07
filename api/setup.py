@@ -13,7 +13,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from api.database import SessionLocal
-from api.migrations import upgrade_database
+from api.migrations import create_verified_sqlite_backup, upgrade_database
 from api.models import (
     Explanation,
     ExplanationPreparation,
@@ -33,6 +33,12 @@ from api.models import (
 
 def migrate_database():
     """Apply every pending non-destructive Alembic migration."""
+    backup_path = create_verified_sqlite_backup()
+    if backup_path is not None:
+        print(f"Verified pre-migration backup: {backup_path}")
+        print("Rollback: stop the API, preserve the failed database, then restore this backup in its place.")
+    else:
+        print("No existing SQLite database required a backup (fresh DB or non-SQLite backend).")
     print("Applying database migrations...")
     upgrade_database()
     print("✓ Database migrations applied successfully")
@@ -68,6 +74,7 @@ def verify_tables():
 
     except Exception as e:
         print(f"✗ Error verifying tables: {e}")
+        raise
     finally:
         db.close()
 

@@ -31,8 +31,21 @@ from typing import Any, Dict, Optional, Union
 
 from PIL import Image
 
+from modal_inference.config import (
+    DEFAULT_STRUCTURED_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
+    MAX_IMAGE_BYTES,
+    MAX_IMAGE_DIMENSION,
+    MAX_MODEL_LEN,
+    MAX_OUTPUT_TOKENS,
+    MODEL_ID,
+)
+from stage_tracing import trace_stage
+from visual_evidence.compact_schema import COMPACT_OBSERVATION_JSON_SCHEMA
+
 from vlm_interface.vlm_types import (
     VLMAuthenticationError,
+    VLMContextBudgetError,
     VLMInterfaceError,
     VLMRemoteError,
     VLMResponse,
@@ -46,13 +59,13 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 _DEFAULT_TIMEOUT_SECONDS: float = 120.0
 _DEFAULT_MAX_RETRIES: int = 3
-_DEFAULT_MAX_TOKENS: int = 1024
-_DEFAULT_MODEL_ID: str = "Qwen/Qwen3-VL-8B-Instruct-FP8"
+_DEFAULT_MAX_TOKENS: int = DEFAULT_STRUCTURED_MAX_TOKENS
+_DEFAULT_MODEL_ID: str = MODEL_ID
 
 # Image conversion limits
-_MAX_IMAGE_DIMENSION: int = 1344
+_MAX_IMAGE_DIMENSION: int = MAX_IMAGE_DIMENSION
 _JPEG_QUALITY: int = 85
-_MAX_IMAGE_BYTES: int = 10 * 1024 * 1024  # 10 MB
+_MAX_IMAGE_BYTES: int = MAX_IMAGE_BYTES
 
 # HTTP status codes that must NOT be retried
 _NON_RETRYABLE_STATUS_CODES: frozenset[int] = frozenset({400, 401, 403, 404, 405, 422})
@@ -86,7 +99,7 @@ class ModalVLMInterface:
     Optional environment variables:
         SYNAPSE_MODAL_TIMEOUT_SECONDS  — Per-request timeout (default 120).
         SYNAPSE_MODAL_MAX_RETRIES      — Retry ceiling for transient errors (default 3).
-        SYNAPSE_MODAL_MAX_TOKENS       — Maximum generation tokens (default 1024).
+        SYNAPSE_MODAL_MAX_TOKENS       — Maximum generation tokens (default 2048).
     """
 
     SUPPORTED_FORMATS: tuple[str, ...] = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
@@ -100,6 +113,8 @@ class ModalVLMInterface:
         max_retries: int | None = None,
         max_tokens: int | None = None,
         model_id: str | None = None,
+        context_budget_estimator: Any | None = None,
+        require_exact_context_budget: bool | None = None,
     ) -> None:
         # ----- endpoint -----
         self._endpoint_url = (
@@ -135,12 +150,32 @@ class ModalVLMInterface:
             if max_retries is not None
             else int(os.environ.get("SYNAPSE_MODAL_MAX_RETRIES", _DEFAULT_MAX_RETRIES))
         )
-        self._max_tokens = (
+        configured_max_tokens = (
             max_tokens
             if max_tokens is not None
             else int(os.environ.get("SYNAPSE_MODAL_MAX_TOKENS", _DEFAULT_MAX_TOKENS))
         )
+        self._max_tokens = self._validate_output_tokens(
+            configured_max_tokens, "configured max_tokens"
+        )
         self.model_name: str = model_id or _DEFAULT_MODEL_ID
+
+        if context_budget_estimator is None:
+            from vlm_interface.qwen_context_budget import QwenContextBudgetEstimator
+            context_budget_estimator = QwenContextBudgetEstimator(
+                model_id=self.model_name,
+                max_model_len=MAX_MODEL_LEN,
+            )
+        self._context_budget_estimator = context_budget_estimator
+        if require_exact_context_budget is None:
+            raw_required = os.environ.get(
+                "SYNAPSE_VLM_REQUIRE_EXACT_CONTEXT_BUDGET", "1"
+            )
+            require_exact_context_budget = raw_required.strip().lower() in {
+                "1", "true", "yes"
+            }
+        self._require_exact_context_budget = require_exact_context_budget
+        self.last_context_budget: dict[str, Any] | None = None
 
         # Re-usable SSL context — default CA bundle, no custom certs needed.
         self._ssl_ctx = ssl.create_default_context()
@@ -182,19 +217,63 @@ class ModalVLMInterface:
 
         # 2.  Build OpenAI-compatible request body
         gen = generation_params or {}
-        max_tokens = min(gen.get("max_new_tokens", self._max_tokens), 2048)
-        temperature = gen.get("temperature", 0.2)
+        max_tokens = self._validate_output_tokens(
+            gen.get("max_new_tokens", self._max_tokens), "requested max_new_tokens"
+        )
+        temperature = gen.get("temperature", DEFAULT_TEMPERATURE)
+
+        # Use the exact image sent to vLLM, not the pre-resize source image.
+        with Image.open(io.BytesIO(jpeg_bytes)) as encoded_image:
+            budget_image = encoded_image.convert("RGB")
+        budget_parts = gen.get("_context_budget_parts") or {}
+        try:
+            budget_report = self._context_budget_estimator.estimate(
+                image=budget_image,
+                prompt=prompt,
+                requested_output_tokens=max_tokens,
+                common_prompt=str(budget_parts.get("common_prompt") or ""),
+                category_directives=str(
+                    budget_parts.get("category_directives") or ""
+                ),
+            )
+            self.last_context_budget = budget_report.to_dict()
+        except VLMContextBudgetError:
+            report = getattr(self._context_budget_estimator, "last_report", None)
+            self.last_context_budget = report.to_dict() if report is not None else None
+            raise
+        if (
+            self._require_exact_context_budget
+            and not self.last_context_budget.get("exact", False)
+        ):
+            raise VLMContextBudgetError(
+                "Exact Qwen3-VL context accounting is required but the official "
+                "processor is unavailable."
+            )
 
         payload = self._build_payload(jpeg_bytes, prompt, max_tokens, temperature)
 
         # 3.  Send with retry
         start_ms = time.perf_counter()
+        trace_stage(
+            "modal_request", "dispatch", request_bytes=len(payload),
+            output_token_limit=max_tokens,
+        )
         response_data = self._send_with_retry(payload)
         total_duration_ms = int((time.perf_counter() - start_ms) * 1000)
 
         # 4.  Extract result
         text = self._extract_text(response_data)
+        finish_reason = self._extract_finish_reason(response_data)
         usage = response_data.get("usage", {})
+        trace_stage(
+            "modal_request",
+            "response",
+            started_at=start_ms,
+            finish_reason=finish_reason if finish_reason is not None else "missing",
+            prompt_tokens=usage.get("prompt_tokens", 0),
+            completion_tokens=usage.get("completion_tokens", 0),
+            model=self.model_name,
+        )
 
         return VLMResponse(
             text=text,
@@ -202,11 +281,25 @@ class ModalVLMInterface:
             total_duration_ms=total_duration_ms,
             prompt_eval_count=usage.get("prompt_tokens", 0),
             eval_count=usage.get("completion_tokens", 0),
+            finish_reason=finish_reason,
         )
 
     def cleanup(self) -> None:
         """No-op.  The remote endpoint manages its own lifecycle."""
         logger.debug("[ModalVLM] cleanup() called — no-op for remote adapter.")
+
+    @staticmethod
+    def _validate_output_tokens(value: Any, field_name: str) -> int:
+        """Reject invalid limits instead of silently clamping requests."""
+
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError(f"{field_name} must be an integer.")
+        if not 1 <= value <= MAX_OUTPUT_TOKENS:
+            raise ValueError(
+                f"{field_name} must be between 1 and {MAX_OUTPUT_TOKENS}; "
+                f"received {value}."
+            )
+        return value
 
     # ------------------------------------------------------------------
     # Image preparation
@@ -287,6 +380,9 @@ class ModalVLMInterface:
             "max_tokens": max_tokens,
             "temperature": temperature,
             "stream": False,
+            # vLLM 0.19 structured outputs constrain decoding to this compact
+            # contract instead of merely asking the model to produce JSON.
+            "structured_outputs": {"json": COMPACT_OBSERVATION_JSON_SCHEMA},
         }
 
         return json.dumps(body).encode("utf-8")
@@ -304,20 +400,43 @@ class ModalVLMInterface:
         last_exc: Exception | None = None
 
         for attempt in range(1 + self._max_retries):
+            attempt_started = time.monotonic()
             try:
-                return self._http_post(url, payload)
+                trace_stage(
+                    "modal_attempt", "dispatch", request_attempt=attempt + 1,
+                    max_attempts=1 + self._max_retries,
+                )
+                result = self._http_post(url, payload)
+                trace_stage(
+                    "modal_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="succeeded",
+                )
+                return result
 
             except VLMAuthenticationError:
+                trace_stage(
+                    "modal_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="authentication_failed",
+                )
                 raise  # never retry auth failures
 
             except VLMRemoteError:
+                trace_stage(
+                    "modal_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="permanent_failure",
+                )
                 raise  # never retry non-retryable server errors
 
             except (VLMTimeoutError, VLMInterfaceError) as exc:
+                trace_stage(
+                    "modal_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="transient_failure",
+                    error_type=type(exc).__name__, level=logging.WARNING,
+                )
                 last_exc = exc
                 if attempt < self._max_retries:
                     delay = min(_BACKOFF_BASE * (2 ** attempt), _BACKOFF_MAX)
-                    logger.warning(
+                    logger.debug(
                         "[ModalVLM] Attempt %d/%d failed (%s).  "
                         "Retrying in %.1fs …",
                         attempt + 1,
@@ -327,7 +446,7 @@ class ModalVLMInterface:
                     )
                     time.sleep(delay)
                 else:
-                    logger.error(
+                    logger.debug(
                         "[ModalVLM] All %d attempts exhausted.",
                         1 + self._max_retries,
                     )
@@ -427,6 +546,32 @@ class ModalVLMInterface:
             )
 
         return str(content).strip()
+
+    @staticmethod
+    def _extract_finish_reason(data: dict[str, Any]) -> str | None:
+        """Return validated OpenAI-compatible completion metadata.
+
+        Older compatible endpoints may omit the field or return null. A
+        present value must be a non-empty string; malformed metadata is a
+        remote protocol error rather than an implicit successful completion.
+        """
+
+        choices = data.get("choices")
+        if not choices or not isinstance(choices, list):
+            raise VLMRemoteError(
+                "Remote response missing 'choices' array or array is empty."
+            )
+        first = choices[0]
+        if not isinstance(first, dict):
+            raise VLMRemoteError("Remote response choices[0] must be an object.")
+        finish_reason = first.get("finish_reason")
+        if finish_reason is None:
+            return None
+        if not isinstance(finish_reason, str) or not finish_reason.strip():
+            raise VLMRemoteError(
+                "Remote response choices[0].finish_reason must be a non-empty string or null."
+            )
+        return finish_reason.strip()
 
     # ------------------------------------------------------------------
     # Security helpers

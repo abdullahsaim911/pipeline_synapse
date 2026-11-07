@@ -139,6 +139,9 @@ def modal_env_vars():
         "SYNAPSE_MODAL_API_KEY": "test-mock-api-key-12345",
         "SYNAPSE_MODAL_TIMEOUT_SECONDS": "10.0",
         "SYNAPSE_MODAL_MAX_RETRIES": "1",
+        # Transport/orchestrator tests run without cached processor assets;
+        # exact processor accounting has dedicated deterministic tests.
+        "SYNAPSE_VLM_REQUIRE_EXACT_CONTEXT_BUDGET": "0",
     }
     with mock.patch.dict(os.environ, env, clear=False):
         yield
@@ -169,8 +172,8 @@ class TestModalNeverImportsHeavy:
 
 class TestEducationalPromptsPreserved:
     def test_system_prompt_intact(self):
-        assert "expert Vision-Language Model analyst" in SnapshotEngine.SYSTEM_PROMPT
-        assert "Chain-of-Regions" in SnapshotEngine.SYSTEM_PROMPT
+        assert "Analyze ONLY the supplied single frame" in SnapshotEngine.SYSTEM_PROMPT
+        assert "distinct meaningful visual regions" in SnapshotEngine.SYSTEM_PROMPT
         assert "OUTPUT FORMAT (JSON only)" in SnapshotEngine.SYSTEM_PROMPT
 
     def test_all_category_directives_present(self):
@@ -282,15 +285,17 @@ class TestBothOrchestratorEntrypointsUseModal:
 
     @mock.patch("synthesizer.LLMSynthesizer.weave", return_value="Test woven explanation")
     @mock.patch("tts_engine.TTSEngine")
-    @mock.patch("orchestrator.orchestrator.start_ollama")
-    @mock.patch("orchestrator.orchestrator.stop_ollama")
+    @mock.patch("orchestrator.orchestrator.get_ollama_service")
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
     def test_generate_intervention_explanation_uses_modal(
-        self, mock_urlopen, mock_stop, mock_start, mock_tts_cls, mock_weave, tmp_path
+        self, mock_urlopen, mock_ollama, mock_tts_cls, mock_weave, tmp_path
     ):
         from orchestrator.orchestrator import PipelineOrchestrator
 
         mock_tts_instance = mock.MagicMock()
+        mock_tts_instance.generate.side_effect = (
+            lambda _text, path: Path(path).write_bytes(b"ID3-test-audio")
+        )
         mock_tts_cls.return_value = mock_tts_instance
 
         resp = _mock_modal_response()

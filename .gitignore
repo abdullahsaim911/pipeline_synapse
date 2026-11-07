@@ -48,6 +48,7 @@ Thumbs.db
 # Markdown files
 *.md
 !docs/database-foundation-and-final-erd.md
+!modal_inference/README.md
 
 # Data directory
 # data/
@@ -82,6 +83,12 @@ tests/
 !tests/
 tests/*
 !tests/__init__.py
+!tests/test_category_propagation.py
+!tests/test_visual_evidence.py
+!tests/test_structured_vlm_integration.py
+!tests/test_evidence_reconciliation.py
+!tests/test_task5_synthesis.py
+!tests/test_tts_reliability.py
 !tests/qa/
 !tests/qa/**
 !tests/quiz/
@@ -99,3 +106,4 @@ data/
 
 
 /synapse-web/
+/Synapse-Reference/

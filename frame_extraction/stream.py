@@ -4,6 +4,7 @@ import subprocess
 import numpy as np
 import cv2
 import yt_dlp
+from youtube_runtime import youtube_runtime_options
 from skimage.metrics import structural_similarity as ssim
 
 
@@ -31,6 +32,7 @@ def get_stream_info(youtube_url):
         "no_warnings": True,
         "skip_download": True,
         "noplaylist": True,
+        **youtube_runtime_options(),
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(youtube_url, download=False)

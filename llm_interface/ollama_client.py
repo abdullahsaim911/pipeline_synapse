@@ -6,10 +6,20 @@ Reuses Fusion Module's mistral_runner.py as base implementation.
 """
 
 import os
+import logging
 import time
 import requests
 from dataclasses import dataclass
 from typing import Optional
+from stage_tracing import trace_stage
+
+
+logger = logging.getLogger(__name__)
+
+
+def print(*values, **_kwargs):  # noqa: A001
+    """Keep legacy client diagnostics available only at DEBUG level."""
+    logger.debug(" ".join(str(value) for value in values))
 
 # Reuse existing function from Fusion Module
 # Import path needs to be verified at runtime
@@ -76,6 +86,35 @@ class OllamaClientError(OllamaError):
     pass
 
 
+def resolve_keep_alive():
+    """How long Ollama keeps the model loaded after a request.
+
+    A local VLM shares the GPU with Mistral, so VRAM is released immediately.
+    With the remote Modal VLM nothing competes for it, and unloading would force
+    a model reload for every intervention in a queue. Ollama still unloads the
+    model on its own once this idle window passes.
+    """
+    configured = os.environ.get("SYNAPSE_OLLAMA_KEEP_ALIVE", "").strip()
+    if configured:
+        return int(configured) if configured.lstrip("-").isdigit() else configured
+    provider = os.environ.get("SYNAPSE_VLM_PROVIDER", "modal").strip().lower()
+    return "5m" if provider == "modal" else 0
+
+
+def _resolve_int_option(name: str, default: int, minimum: int) -> int:
+    """Resolve a non-secret integer Ollama option from the environment."""
+    configured = os.environ.get(name, "").strip()
+    if not configured:
+        return default
+    try:
+        value = int(configured)
+    except ValueError as exc:
+        raise ValueError(f"{name} must be an integer") from exc
+    if value < minimum:
+        raise ValueError(f"{name} must be at least {minimum}")
+    return value
+
+
 class OllamaClient:
     """
     Ollama client wrapper with retry logic and error handling.
@@ -95,6 +134,8 @@ class OllamaClient:
     # Default generation options
     DEFAULT_GENERATION_PARAMS = {
         "num_predict": 512,
+        "num_gpu": 0,
+        "num_ctx": 2048,
         "temperature": 0.7,
         "top_k": 40,
         "top_p": 0.9,
@@ -156,11 +197,17 @@ class OllamaClient:
             "model": self.model,
             "prompt": prompt,
             "stream": stream,
-            "keep_alive": 0
+            "keep_alive": resolve_keep_alive()
         }
 
         # Merge with default options
         default_options = self.DEFAULT_GENERATION_PARAMS.copy()
+        default_options["num_gpu"] = _resolve_int_option(
+            "SYNAPSE_OLLAMA_NUM_GPU", default=0, minimum=0
+        )
+        default_options["num_ctx"] = _resolve_int_option(
+            "SYNAPSE_OLLAMA_NUM_CTX", default=2048, minimum=1
+        )
         if options:
             default_options.update(options)
 
@@ -328,14 +375,30 @@ class OllamaClient:
         payload = self._build_payload(prompt)
 
         for attempt in range(self.max_retries):
+            attempt_started = time.monotonic()
             try:
+                trace_stage(
+                    "mistral_attempt", "dispatch", request_attempt=attempt + 1,
+                    max_attempts=self.max_retries,
+                )
                 start_time = time.perf_counter()
                 response_json = self._make_request(payload)
                 duration_ms = int((time.perf_counter() - start_time) * 1000)
-
-                return self._parse_response(response_json)
+                response = self._parse_response(response_json)
+                trace_stage(
+                    "mistral_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="succeeded",
+                    prompt_tokens=response.prompt_eval_count,
+                    completion_tokens=response.eval_count,
+                )
+                return response
 
             except (OllamaTimeoutError, OllamaConnectionError, OllamaServerError) as e:
+                trace_stage(
+                    "mistral_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="transient_failure",
+                    error_type=type(e).__name__, level=logging.WARNING,
+                )
                 # Retry logic for retryable errors
                 if attempt < self.max_retries - 1:
                     wait_time = self.RETRY_DELAYS[attempt]
@@ -347,6 +410,11 @@ class OllamaClient:
                     raise
 
             except (OllamaClientError) as e:
+                trace_stage(
+                    "mistral_attempt", "response", started_at=attempt_started,
+                    request_attempt=attempt + 1, status="permanent_failure",
+                    error_type=type(e).__name__,
+                )
                 # Client errors don't retry
                 print(f"[LLM Interface] Client error (no retry): {e}")
                 raise

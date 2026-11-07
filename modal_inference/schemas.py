@@ -12,6 +12,8 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from modal_inference.config import (
+    DEFAULT_STRUCTURED_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
     MAX_IMAGE_BYTES,
     MAX_IMAGES_PER_PROMPT,
     MAX_OUTPUT_TOKENS,
@@ -134,16 +136,24 @@ def validate_and_parse_data_uri(
 def clamp_generation_tokens(
     requested_tokens: int | None,
     max_allowed: int = MAX_OUTPUT_TOKENS,
-    default_tokens: int = 1024,
+    default_tokens: int = DEFAULT_STRUCTURED_MAX_TOKENS,
 ) -> int:
     """
-    Ensure requested output tokens stay strictly within bounds [1, max_allowed].
+    Validate output-token requests within [1, max_allowed].
+
+    The historical name is retained for compatibility, but invalid values now
+    fail explicitly instead of being silently clamped.
     """
     if requested_tokens is None:
-        return min(default_tokens, max_allowed)
-    if requested_tokens < 1:
-        return 1
-    return min(requested_tokens, max_allowed)
+        requested_tokens = default_tokens
+    if isinstance(requested_tokens, bool) or not isinstance(requested_tokens, int):
+        raise ValueError("requested_tokens must be an integer.")
+    if not 1 <= requested_tokens <= max_allowed:
+        raise ValueError(
+            f"requested_tokens must be between 1 and {max_allowed}; "
+            f"received {requested_tokens}."
+        )
+    return requested_tokens
 
 
 def validate_auth_header(
@@ -218,8 +228,8 @@ class ChatCompletionRequest:
     """
     model: str = MODEL_ID
     messages: list[ChatMessage] = field(default_factory=list)
-    max_tokens: int = 1024
-    temperature: float = 0.2
+    max_tokens: int = DEFAULT_STRUCTURED_MAX_TOKENS
+    temperature: float = DEFAULT_TEMPERATURE
     top_p: float = 0.95
     stream: bool = False
 
@@ -275,8 +285,8 @@ class ChatCompletionRequest:
         mime_type: str,
         prompt: str,
         model: str = MODEL_ID,
-        max_tokens: int = 1024,
-        temperature: float = 0.2,
+        max_tokens: int = DEFAULT_STRUCTURED_MAX_TOKENS,
+        temperature: float = DEFAULT_TEMPERATURE,
     ) -> ChatCompletionRequest:
         """
         Convenience builder to construct a validated multimodal request from raw bytes and prompt.
@@ -321,8 +331,8 @@ try:
     class PydanticChatCompletionRequest(BaseModel):
         model: str = MODEL_ID
         messages: list[PydanticChatMessage]
-        max_tokens: int = Field(default=1024, ge=1, le=MAX_OUTPUT_TOKENS)
-        temperature: float = Field(default=0.2, ge=0.0, le=2.0)
+        max_tokens: int = Field(default=DEFAULT_STRUCTURED_MAX_TOKENS, ge=1, le=MAX_OUTPUT_TOKENS)
+        temperature: float = Field(default=DEFAULT_TEMPERATURE, ge=0.0, le=2.0)
         top_p: float = Field(default=0.95, ge=0.0, le=1.0)
         stream: bool = False
 

@@ -8,6 +8,7 @@ Enhanced with intervention-only workflow for 3-mode explanation system.
 
 import importlib.util
 import json
+import logging
 import os
 import re
 import shutil
@@ -23,13 +24,17 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from synchronizer import Synchronizer, TranscriptEntry
+from synchronizer import Synchronizer, TranscriptEntry, reconcile_visual_evidence
 from vlm_engine import SnapshotEngine
-from synthesizer import LLMSynthesizer
+from synthesizer import LLMSynthesizer, VisualEvidenceUnavailableError
+from visual_evidence import assess_snapshot, load_usable_snapshot
+from stage_tracing import current_trace, trace_stage
+from youtube_runtime import youtube_runtime_options
 try:
     from tts_engine import TTSEngine
 except ImportError:
     TTSEngine = None
+from .ollama_service import OllamaService, shared_ollama_service
 from .gpu_memory_manager import (
     clear_gpu_memory,
     log_memory_state,
@@ -38,6 +43,14 @@ from .gpu_memory_manager import (
     ensure_gpu_free,
     print_system_info
 )
+
+
+logger = logging.getLogger(__name__)
+
+
+def print(*values, **_kwargs):  # noqa: A001
+    """Route legacy operational banners to diagnostic logging."""
+    logger.debug(" ".join(str(value) for value in values))
 
 
 def import_module_from_path(module_name: str, file_path: str) -> Any:
@@ -59,40 +72,87 @@ def import_module_from_path(module_name: str, file_path: str) -> Any:
 
 
 # ============================================================================
-# Ollama Process Management (Per-Request Lifecycle)
+# Ollama Process Management (one shared server, see ollama_service.py)
 # ============================================================================
+
+OLLAMA_PATH_ENV_VAR = "SYNAPSE_OLLAMA_PATH"
+
+
+def resolve_ollama_executable() -> str:
+    """Resolve Ollama without requiring its install directory on ``PATH``.
+
+    An explicit configuration is authoritative: a bad ``SYNAPSE_OLLAMA_PATH``
+    fails clearly instead of silently selecting a different installation.
+    Otherwise use normal command discovery, followed by Ollama's standard
+    per-user Windows install locations.
+    """
+    configured = os.environ.get(OLLAMA_PATH_ENV_VAR, "").strip().strip('"')
+    if configured:
+        configured = os.path.abspath(os.path.expanduser(os.path.expandvars(configured)))
+        if os.path.isfile(configured):
+            return configured
+        raise RuntimeError(
+            f"{OLLAMA_PATH_ENV_VAR} does not point to an Ollama executable: "
+            f"{configured}"
+        )
+
+    discovered = shutil.which("ollama")
+    if discovered:
+        return discovered
+
+    if os.name == "nt":
+        local_app_data = os.environ.get("LOCALAPPDATA", "").strip()
+        program_files = os.environ.get("ProgramFiles", "").strip()
+        candidates = []
+        if local_app_data:
+            candidates.extend([
+                os.path.join(local_app_data, "Programs", "Ollama", "ollama.exe"),
+                os.path.join(local_app_data, "Ollama", "ollama.exe"),
+            ])
+        if program_files:
+            candidates.append(os.path.join(program_files, "Ollama", "ollama.exe"))
+        for candidate in candidates:
+            if os.path.isfile(candidate):
+                return candidate
+
+    raise RuntimeError(
+        "Ollama executable was not found. Set SYNAPSE_OLLAMA_PATH to the full "
+        "executable path or install Ollama with: winget install Ollama.Ollama"
+    )
+
 
 def start_ollama():
     """
-    Start Ollama as a subprocess for per-request execution.
-
-    Ollama is started fresh for each LLM request and terminated after
-    to avoid VRAM conflicts with VLM on 6GB GPU systems.
+    Start an Ollama server owned by this backend.
 
     Returns:
         subprocess.Popen: Ollama process handle
     """
     print("[Ollama] Starting Ollama server...")
     try:
+        executable = resolve_ollama_executable()
         process = subprocess.Popen(
-            ["ollama", "serve"],
+            [executable, "serve"],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0
         )
         print("[Ollama] Server started (PID: {})".format(process.pid))
         return process
-    except FileNotFoundError:
-        raise RuntimeError(
-            "Ollama not found. Install with: winget install Ollama.Ollama"
-        )
+    except RuntimeError:
+        raise
+    except FileNotFoundError as e:
+        raise RuntimeError(f"Resolved Ollama executable could not be started: {e}") from e
     except Exception as e:
         raise RuntimeError(f"Failed to start Ollama: {e}")
 
 
 def stop_ollama(process):
     """
-    Stop Ollama subprocess gracefully, then force kill if needed.
+    Stop an Ollama server this backend started, including its model runners.
+
+    Only the given process tree is touched, so an Ollama started independently
+    by the user keeps running.
 
     Args:
         process: subprocess.Popen handle from start_ollama()
@@ -103,33 +163,33 @@ def stop_ollama(process):
     print("[Ollama] Stopping Ollama server (PID: {})...".format(process.pid))
 
     try:
-        # Try graceful termination first
-        process.terminate()
+        if os.name == 'nt':
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(process.pid)],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL
+            )
+        else:
+            process.terminate()
         try:
             process.wait(timeout=5)
-            print("[Ollama] Server terminated gracefully")
+            print("[Ollama] Server stopped")
         except subprocess.TimeoutExpired:
-            # Force kill if graceful termination fails
             print("[Ollama] Force killing server...")
             process.kill()
             process.wait()
             print("[Ollama] Server killed")
-            
-        if os.name == 'nt':
-            print("[Ollama] Sweeping for orphaned VRAM child processes...")
-            subprocess.run(
-                ["taskkill", "/F", "/IM", "ollama_llama_server.exe"], 
-                stdout=subprocess.DEVNULL, 
-                stderr=subprocess.DEVNULL
-            )
-            subprocess.run(
-                ["taskkill", "/F", "/IM", "ollama.exe"], 
-                stdout=subprocess.DEVNULL, 
-                stderr=subprocess.DEVNULL
-            )
 
     except Exception as e:
         print(f"[Ollama] Error stopping server: {e}")
+
+
+def get_ollama_service() -> OllamaService:
+    """Return the process-wide Ollama service."""
+    return shared_ollama_service(
+        start=lambda: start_ollama(),
+        stop=lambda process: stop_ollama(process),
+    )
 
 
 class PipelineOrchestrator:
@@ -208,14 +268,19 @@ class PipelineOrchestrator:
             Tuple of (transcript_result, keyframes_result)
         """
         print("[Orchestrator] Starting parallel extraction...")
+        trace_context = current_trace()
 
         # Results containers
         transcript_result = None
         keyframes_result = None
+        audio_error = None
+        video_error = None
 
         # Define thread functions
         def extract_audio():
-            nonlocal transcript_result
+            nonlocal transcript_result, audio_error
+            stage_started = time.monotonic()
+            trace_stage("transcription", "started", context=trace_context)
             try:
                 # Use subprocess to run transcription module's main.py
                 # This avoids relative import issues
@@ -240,16 +305,28 @@ class PipelineOrchestrator:
                         with open(f"{video_dir}/transcript.json", "r") as f:
                             transcript_result = json.load(f)
                         print("[Orchestrator] Audio extraction complete")
+                        trace_stage(
+                            "transcription", "completed", started_at=stage_started,
+                            context=trace_context, status="success",
+                        )
                     else:
                         print(f"[Orchestrator] Transcript file not created")
                 else:
                     print(f"[Orchestrator] Audio extraction failed: {result.stderr}")
 
             except Exception as e:
+                audio_error = e
                 print(f"[Orchestrator] Audio extraction failed: {e}")
+                trace_stage(
+                    "transcription", "failed", started_at=stage_started,
+                    context=trace_context, level=logging.DEBUG,
+                    failure_type=type(e).__name__,
+                )
 
         def extract_video():
-            nonlocal keyframes_result
+            nonlocal keyframes_result, video_error
+            stage_started = time.monotonic()
+            trace_stage("frame_extraction", "started", context=trace_context)
             try:
                 # Import the frame extraction function
                 frame_extraction_pkg_path = os.path.join(project_root, "frame_extraction")
@@ -268,8 +345,18 @@ class PipelineOrchestrator:
                 )
                 keyframes_result = {"keyframes": result}
                 print("[Orchestrator] Video extraction complete")
+                trace_stage(
+                    "frame_extraction", "completed", started_at=stage_started,
+                    context=trace_context, status="success", frame_count=len(result),
+                )
             except Exception as e:
+                video_error = e
                 print(f"[Orchestrator] Video extraction failed: {e}")
+                trace_stage(
+                    "frame_extraction", "failed", started_at=stage_started,
+                    context=trace_context, level=logging.DEBUG,
+                    failure_type=type(e).__name__,
+                )
 
         # Run threads in parallel
         audio_thread = threading.Thread(target=extract_audio)
@@ -288,7 +375,18 @@ class PipelineOrchestrator:
         print("[Orchestrator] Cleaning GPU memory after transcription...")
         clear_gpu_memory()
 
+        if video_error is not None or keyframes_result is None:
+            raise RuntimeError(
+                "Video frame extraction failed before keyframe synchronization"
+            ) from video_error
+        if audio_error is not None or transcript_result is None:
+            raise RuntimeError(
+                "Audio transcription failed before keyframe synchronization"
+            ) from audio_error
+
         if os.environ.get("SYNAPSE_INTERACTIONS") != "0":
+            detection_started = time.monotonic()
+            trace_stage("intervention_detection", "started", context=trace_context)
             try:
                 from synapse_interaction import Config, detect_interactions
                 out_path = os.path.join(video_dir, "interactions.json")
@@ -309,6 +407,7 @@ class PipelineOrchestrator:
                             "outtmpl": local_mp4,
                             "quiet": True,
                             "no_warnings": True,
+                            **youtube_runtime_options(),
                         }) as ydl:
                             ydl.download([youtube_url])
                     interactions = detect_interactions(
@@ -318,8 +417,18 @@ class PipelineOrchestrator:
                     f"[Orchestrator] Interaction detection complete: "
                     f"{len(interactions)} events -> {out_path}"
                 )
+                trace_stage(
+                    "intervention_detection", "completed", started_at=detection_started,
+                    context=trace_context, status="success",
+                    interaction_count=len(interactions),
+                )
             except Exception as e:
                 print(f"[Orchestrator] Interaction detection failed: {e}")
+                trace_stage(
+                    "intervention_detection", "degraded", started_at=detection_started,
+                    context=trace_context, level=logging.WARNING,
+                    failure_type=type(e).__name__,
+                )
 
         return transcript_result, keyframes_result
 
@@ -403,7 +512,21 @@ class PipelineOrchestrator:
                     try:
                         vlm_data = vlm_engine.analyze_frame(
                             intervention.frame_path,
-                            intervention.content_type
+                            intervention.content_type,
+                            classification_confidence=getattr(
+                                intervention, "classification_confidence", None
+                            ),
+                            confidence_semantics=getattr(
+                                intervention, "confidence_semantics", "unknown"
+                            ),
+                            frame_id=os.path.basename(intervention.frame_path),
+                            timestamp_seconds=intervention.timestamp,
+                            raw_category_labels=getattr(
+                                intervention, "raw_category_labels", None
+                            ) or [intervention.content_type],
+                            canonical_category_ids=getattr(
+                                intervention, "canonical_categories", None
+                            ) or [],
                         )
                         vlm_snapshots[intervention.timestamp] = vlm_data
                         if vlm_data.get("_error"):
@@ -481,7 +604,21 @@ class PipelineOrchestrator:
             for intervention in intervention_points:
                 vlm_data = vlm_engine.analyze_frame(
                     intervention.frame_path,
-                    intervention.content_type
+                    intervention.content_type,
+                    classification_confidence=getattr(
+                        intervention, "classification_confidence", None
+                    ),
+                    confidence_semantics=getattr(
+                        intervention, "confidence_semantics", "unknown"
+                    ),
+                    frame_id=os.path.basename(intervention.frame_path),
+                    timestamp_seconds=intervention.timestamp,
+                    raw_category_labels=getattr(
+                        intervention, "raw_category_labels", None
+                    ) or [intervention.content_type],
+                    canonical_category_ids=getattr(
+                        intervention, "canonical_categories", None
+                    ) or [],
                 )
                 vlm_snapshots[intervention.timestamp] = vlm_data
 
@@ -527,6 +664,18 @@ class PipelineOrchestrator:
             return None
 
         return vlm_snapshots[closest_timestamp]
+
+    @staticmethod
+    def _attach_transcript_coverage(
+        vlm_snapshot: Dict,
+        transcript_context: str,
+    ) -> Dict:
+        """Attach post-VLM reconciliation without altering canonical evidence."""
+
+        vlm_snapshot["coverage_plan"] = reconcile_visual_evidence(
+            vlm_snapshot, transcript_context
+        )
+        return vlm_snapshot
 
     def _synthesize_and_generate_audio(
         self,
@@ -601,6 +750,7 @@ class PipelineOrchestrator:
 
             # Only process if there's an intervention (VLM match)
             if vlm_match:
+                self._attach_transcript_coverage(vlm_match, segment.text)
                 # Synthesize text for intervention
                 synthesized_text = synthesizer.weave(
                     transcript_context=segment.text,
@@ -765,7 +915,9 @@ class PipelineOrchestrator:
     # NEW METHODS: Detection-Only Workflow (for API Endpoint 2)
     # ========================================================================
 
-    def process_detection_only(self, youtube_url: str) -> Dict:
+    def process_detection_only(
+        self, youtube_url: str, should_continue: Optional[Any] = None
+    ) -> Dict:
         """
         Process video up to intervention point detection only.
 
@@ -786,7 +938,12 @@ class PipelineOrchestrator:
         print()
 
         try:
+            def require_active() -> None:
+                if should_continue is not None and not should_continue():
+                    raise RuntimeError("Video processing was cancelled")
+
             # Step 1: Ingest (extract video ID)
+            require_active()
             video_id = self._ingest(youtube_url)
             video_dir = f"{self.base_dir}/{video_id}"
 
@@ -799,9 +956,11 @@ class PipelineOrchestrator:
                 youtube_url,
                 video_dir
             )
+            require_active()
 
             # Step 3: Synchronization
             intervention_points = self._synchronize(video_dir)
+            require_active()
 
             # Extract metadata from keyframes result
             total_keyframes = len(keyframes_result.get("keyframes", [])) if keyframes_result else 0
@@ -894,6 +1053,8 @@ class PipelineOrchestrator:
                 content_type = vlm_data.get("content_type", "text")
                 intervention_reason = "VLM Analysis"  # Default reason
 
+                self._attach_transcript_coverage(vlm_data, transcript_context)
+
                 # Generate explanation
                 explanation = synthesizer.weave(
                     transcript_context=transcript_context,
@@ -941,7 +1102,7 @@ class PipelineOrchestrator:
                 metadata = {
                     "intervention_id": intervention_idx,
                     "timestamp": timestamp,
-                    "timestamp_formatted": f"{timestamp // 60:02d}:{timestamp % 60:02d}",
+                    "timestamp_formatted": f"{int(timestamp) // 60:02d}:{int(timestamp) % 60:02d}",
                     "frame_path": frame_dest,
                     "content_type": content_type,
                     "transcript_context": transcript_context,
@@ -961,7 +1122,7 @@ class PipelineOrchestrator:
                 interventions.append({
                     "intervention_id": intervention_idx,
                     "timestamp": timestamp,
-                    "timestamp_formatted": f"{timestamp // 60:02d}:{timestamp % 60:02d}",
+                    "timestamp_formatted": f"{int(timestamp) // 60:02d}:{int(timestamp) % 60:02d}",
                     "content_type": content_type,
                     "audio_path": audio_path,
                     "description_path": description_path,
@@ -1187,108 +1348,235 @@ class PipelineOrchestrator:
     # NEW METHODS: Single Intervention Explanation for Endpoint 3
     # ========================================================================
 
-    def generate_intervention_explanation(
+    def _intervention_dir(self, video_id: str, intervention_id: str) -> str:
+        return os.path.join(
+            self.base_dir, video_id, "interventions", intervention_id[:8]
+        )
+
+    @staticmethod
+    def _write_json_atomic(path: str, payload: Dict) -> None:
+        """Replace *path* whole so readers never see a half-written snapshot."""
+        temporary = f"{path}.tmp"
+        with open(temporary, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
+        # Windows refuses to replace a file another thread has open for reading.
+        for attempt in range(5):
+            try:
+                os.replace(temporary, path)
+                return
+            except PermissionError:
+                if attempt == 4:
+                    raise
+                time.sleep(0.05 * (attempt + 1))
+
+    @staticmethod
+    def _valid_mp3(path: str) -> bool:
+        try:
+            if not os.path.isfile(path) or os.path.getsize(path) < 3:
+                return False
+            with open(path, "rb") as handle:
+                header = handle.read(3)
+        except OSError:
+            return False
+        return header == b"ID3" or (
+            len(header) >= 2 and header[0] == 0xFF and (header[1] & 0xE0) == 0xE0
+        )
+
+    @staticmethod
+    def _create_intervention_vlm_engine(provider: str):
+        """Create the engine for one extraction. Returns (engine, model name)."""
+        from vlm_interface import PROVIDER_LOCAL, PROVIDER_MODAL
+
+        if provider == PROVIDER_MODAL:
+            print("[Orchestrator] Using remote Modal VLM backend for intervention explanation")
+            engine = SnapshotEngine(provider=PROVIDER_MODAL)
+            return engine, engine.model_name
+
+        # A local VLM needs the GPU, so release anything Mistral still holds.
+        get_ollama_service().shutdown()
+        clear_gpu_memory()
+        log_memory_state("Before VLM Load for Single Intervention")
+        name = "Qwen2-VL-7B-GGUF"
+        print(f"[Orchestrator] Attempting to load model: {name}")
+        engine = SnapshotEngine(
+            model_path=os.path.join(project_root, "models", "Qwen2-VL-7B-Instruct-GGUF"),
+            use_gguf=True,
+            n_gpu_layers=24,
+            use_4bit=True,
+            provider=PROVIDER_LOCAL,
+        )
+        print(f"[Orchestrator] Successfully loaded: {name}")
+        return engine, name
+
+    def extract_visual_evidence(
         self,
         video_id: str,
         intervention_id: str,
         intervention_timestamp: float,
         frame_path: str,
         content_type: str,
-        trigger_reason: str,
-        transcript_entries: List,
-        output_mode: str = "explanatory"
+        classification_confidence: Optional[float] = None,
+        confidence_semantics: str = "unknown",
+        raw_category_labels: Optional[List[str]] = None,
+        canonical_category_ids: Optional[List[str]] = None,
+        before_inference: Optional[Any] = None,
+        ownership_check: Optional[Any] = None,
+        checkpoint_commit: Optional[Any] = None,
     ) -> Dict:
         """
-        Generate explanation for a single intervention point.
+        Produce and persist the visual snapshot for one intervention.
 
-        This function is used by Endpoint 3 to generate explanations on-demand.
-        It reuses existing pipeline components (VLM, Synthesizer, TTS) without
-        running the full pipeline.
+        A saved snapshot that passes validation is reused, so every output mode
+        shares one VLM call. Failed evidence is persisted too, with its
+        diagnostics, but is reported as unusable.
 
         Args:
-            video_id: YouTube video ID
-            intervention_id: UUID of the intervention
-            intervention_timestamp: Timestamp of the intervention
-            frame_path: Path to the intervention's frame image
-            content_type: Type of visual content (equation, graph, etc.)
-            trigger_reason: Reason for intervention
-            transcript_entries: List of all transcript entries for context
-            output_mode: "brief", "explanatory", or "detailed"
+            before_inference: Optional callable run only when the model will
+                actually be called. Returning False skips the call.
 
         Returns:
-            Dictionary with:
-            - intervention_id: UUID of the intervention
-            - text_explanation: Generated text explanation
-            - audio_file_path: Path to generated MP3 (or None if failed)
-            - output_mode: Mode used for generation
+            Dictionary with snapshot, snapshot_path, usable, reused and failure
         """
-        print(f"[Orchestrator] Generating explanation for intervention {intervention_id}")
-        print(f"[Orchestrator] Mode: {output_mode}, Content Type: {content_type}")
+        intervention_dir = self._intervention_dir(video_id, intervention_id)
+        snapshot_path = os.path.join(intervention_dir, "vlm_snapshot.json")
 
-        # Initialize process handles to None for cleanup
-        ollama_process = None
-        vlm_engine = None
-        used_model = None
+        reusable = load_usable_snapshot(snapshot_path)
+        if reusable is not None:
+            trace_stage(
+                "snapshot_validation", "complete", usable=True, reused=True,
+                snapshot_path=snapshot_path,
+            )
+            print(f"[Orchestrator] Reusing validated VLM snapshot: {snapshot_path}")
+            return {
+                "snapshot": reusable,
+                "snapshot_path": snapshot_path,
+                "usable": True,
+                "reused": True,
+                "failure": None,
+            }
 
-        from vlm_interface import PROVIDER_ENV_VAR, PROVIDER_MODAL, PROVIDER_LOCAL, VALID_PROVIDERS
+        if not os.path.exists(frame_path):
+            raise FileNotFoundError(f"Frame not found: {frame_path}")
+
+        if ownership_check is not None:
+            ownership_check()
+        if before_inference is not None and not before_inference():
+            return {
+                "snapshot": None,
+                "snapshot_path": None,
+                "usable": False,
+                "reused": False,
+                "failure": {"code": "vlm_remote_unavailable", "retryable": True},
+            }
+
+        from vlm_interface import PROVIDER_ENV_VAR, PROVIDER_MODAL, VALID_PROVIDERS
         provider = os.environ.get(PROVIDER_ENV_VAR, PROVIDER_MODAL).strip().lower()
         if provider not in VALID_PROVIDERS:
             raise ValueError(
                 f"Unsupported VLM provider '{provider}'. Must be one of: {sorted(VALID_PROVIDERS)}"
             )
 
-        if provider == PROVIDER_MODAL:
-            print("[Orchestrator] Using remote Modal VLM backend for intervention explanation")
-            vlm_engine = SnapshotEngine(provider=PROVIDER_MODAL)
-            used_model = vlm_engine.model_name
+        extraction_started = time.monotonic()
+        trace_stage("vlm_inference", "start", provider=provider)
+        vlm_engine, used_model = self._create_intervention_vlm_engine(provider)
+        try:
+            snapshot = vlm_engine.analyze_frame(
+                frame_path,
+                content_type,
+                classification_confidence=classification_confidence,
+                confidence_semantics=confidence_semantics,
+                frame_id=intervention_id,
+                timestamp_seconds=intervention_timestamp,
+                raw_category_labels=raw_category_labels or [content_type],
+                canonical_category_ids=canonical_category_ids or [],
+            )
+        finally:
+            vlm_engine.cleanup()
+            if provider != PROVIDER_MODAL:
+                clear_gpu_memory()
+        if ownership_check is not None:
+            try:
+                ownership_check()
+            except Exception:
+                trace_stage("video_cancellation", "late_vlm_response_discarded")
+                raise
+        trace_stage(
+            "vlm_inference", "complete", started_at=extraction_started,
+            model=used_model,
+            finish_reason=(snapshot.get("_vlm_metrics") or {}).get("finish_reason", "missing"),
+            prompt_tokens=(snapshot.get("_vlm_metrics") or {}).get("prompt_tokens", 0),
+            completion_tokens=(snapshot.get("_vlm_metrics") or {}).get("completion_tokens", 0),
+        )
+
+        os.makedirs(intervention_dir, exist_ok=True)
+        persistence_started = time.monotonic()
+        trace_stage("snapshot_persistence", "start", snapshot_path=snapshot_path)
+        persist_snapshot = lambda: self._write_json_atomic(snapshot_path, snapshot)
+        if checkpoint_commit is not None:
+            checkpoint_commit(persist_snapshot)
         else:
-            # Local provider path
-            # CRITICAL: Clear GPU before local VLM load
-            clear_gpu_memory()
-            log_memory_state("Before VLM Load for Single Intervention")
+            persist_snapshot()
+        trace_stage(
+            "snapshot_persistence", "complete", started_at=persistence_started,
+            snapshot_path=snapshot_path,
+        )
+        assessment = assess_snapshot(snapshot)
+        trace_stage(
+            "snapshot_validation", "complete", usable=assessment.usable,
+            reason=assessment.reason, reused=False,
+            extraction_status=(snapshot.get("visual_evidence") or {}).get("extraction_status"),
+            evidence_status=(snapshot.get("visual_evidence") or {}).get("evidence_status"),
+        )
+        print(
+            f"[Orchestrator] VLM snapshot saved using {used_model}: {snapshot_path} "
+            f"(usable={assessment.usable}, reason={assessment.reason})"
+        )
+        return {
+            "snapshot": snapshot,
+            "snapshot_path": snapshot_path,
+            "usable": assessment.usable,
+            "reused": False,
+            "failure": snapshot.get("_failure") or (
+                None if assessment.usable else {"code": assessment.reason, "retryable": True}
+            ),
+        }
 
-            # Model paths with fallback chain (same as full pipeline)
-            model_configs = [
-                {
-                    "path": os.path.join(project_root, "models", "Qwen2-VL-7B-Instruct-GGUF"),
-                    "use_gguf": True,
-                    "n_gpu_layers": 24,
-                    "name": "Qwen2-VL-7B-GGUF"
-                }
-            ]
+    def synthesize_intervention_explanation(
+        self,
+        video_id: str,
+        intervention_id: str,
+        intervention_timestamp: float,
+        content_type: str,
+        trigger_reason: str,
+        transcript_entries: List,
+        output_mode: str = "explanatory",
+        vlm_snapshot: Optional[Dict] = None,
+        on_stage: Optional[Any] = None,
+        ownership_check: Optional[Any] = None,
+        checkpoint_commit: Optional[Any] = None,
+    ) -> Dict:
+        """
+        Reconcile saved evidence with the transcript, then run Mistral and TTS.
 
-            # Try to load VLM engine
-            for config in model_configs:
-                try:
-                    print(f"[Orchestrator] Attempting to load model: {config['name']}")
-                    vlm_engine = SnapshotEngine(
-                        model_path=config["path"],
-                        use_gguf=config.get("use_gguf", False),
-                        n_gpu_layers=config.get("n_gpu_layers", 24),
-                        use_4bit=config.get("use_4bit", True),
-                        provider=PROVIDER_LOCAL
-                    )
-                    used_model = config["name"]
-                    print(f"[Orchestrator] Successfully loaded: {used_model}")
-                    break
-                except Exception as e:
-                    print(f"[Orchestrator] Failed to load {config['name']}: {e}")
-                    if vlm_engine:
-                        try:
-                            vlm_engine.cleanup()
-                        except:
-                            pass
-                        vlm_engine = None
-                    continue
+        Args:
+            vlm_snapshot: Evidence already in memory from extraction. When
+                omitted, the saved snapshot is loaded and must validate.
+            on_stage: Optional callable receiving the next stage name
 
-            if vlm_engine is None:
-                raise RuntimeError("Failed to load any VLM model")
+        Returns:
+            Dictionary with intervention_id, text_explanation, audio_file_path,
+            text_file_path, vlm_snapshot_path and output_mode
+        """
+        intervention_dir = self._intervention_dir(video_id, intervention_id)
+        vlm_snapshot_path = os.path.join(intervention_dir, "vlm_snapshot.json")
+        fresh_snapshot = vlm_snapshot is not None
+        if vlm_snapshot is None:
+            vlm_snapshot = load_usable_snapshot(vlm_snapshot_path)
+        if vlm_snapshot is None:
+            raise VisualEvidenceUnavailableError("No usable visual evidence is saved")
+        if ownership_check is not None:
+            ownership_check()
 
-        # Verify frame exists
-        if not os.path.exists(frame_path):
-            raise FileNotFoundError(f"Frame not found: {frame_path}")
-
-        # Find transcript context
         from synchronizer import TranscriptEntry
         transcript_entries = [
             e if isinstance(e, TranscriptEntry) else TranscriptEntry(
@@ -1298,159 +1586,204 @@ class PipelineOrchestrator:
             )
             for e in transcript_entries
         ]
-
-        # Find matching transcript segment
         transcript_segment = self._find_transcript_segment(
             intervention_timestamp,
             transcript_entries
         )
         transcript_context = transcript_segment.text if transcript_segment else ""
 
+        # Reconcile canonical visual facts with the matched teacher speech
+        # after VLM extraction and before synthesis.
+        reconciliation_started = time.monotonic()
+        trace_stage("reconciliation", "start")
+        self._attach_transcript_coverage(vlm_snapshot, transcript_context)
+        # A reused canonical snapshot is immutable cache evidence. Reconcile it
+        # in memory for this mode without rewriting a previously valid file.
+        if fresh_snapshot:
+            commit_reconciliation = lambda: self._write_json_atomic(
+                vlm_snapshot_path, vlm_snapshot
+            )
+            if checkpoint_commit is not None:
+                checkpoint_commit(commit_reconciliation)
+            else:
+                commit_reconciliation()
+        trace_stage(
+            "reconciliation", "complete", started_at=reconciliation_started,
+            fact_count=(vlm_snapshot.get("coverage_plan") or {}).get("fact_count", 0),
+        )
+
+        ollama_started = time.monotonic()
+        if ownership_check is not None:
+            ownership_check()
+        trace_stage("ollama_readiness", "start")
+        get_ollama_service().ensure_ready()
+        trace_stage("ollama_readiness", "complete", started_at=ollama_started)
+
+        from synthesizer import LLMSynthesizer
+        synthesizer = LLMSynthesizer(
+            ollama_url="http://localhost:11434",
+            model="mistral",
+            timeout=120,
+            max_retries=3,
+            transcripts=transcript_entries,
+            output_mode=output_mode
+        )
+        text_file_path = os.path.join(intervention_dir, f"{output_mode}.txt")
+        explanation = ""
         try:
-            # Step 1: VLM Analysis (reuses existing SnapshotEngine with existing prompts)
-            if provider != PROVIDER_MODAL:
-                log_memory_state("Before VLM Analysis")
-
-            vlm_snapshot = vlm_engine.analyze_frame(
-                frame_path,
-                content_type
-            )
-            if vlm_snapshot.get("_error"):
-                print(
-                    f"[Orchestrator] Warning: Visual accessibility info unavailable "
-                    f"for intervention {intervention_id}"
+            if os.path.isfile(text_file_path):
+                with open(text_file_path, "r", encoding="utf-8") as handle:
+                    explanation = handle.read().strip()
+            if explanation:
+                trace_stage("mistral_generation", "reused", text_chars=len(explanation))
+            else:
+                mistral_started = time.monotonic()
+                if ownership_check is not None:
+                    ownership_check()
+                trace_stage("mistral_generation", "request")
+                explanation = synthesizer.weave(
+                    transcript_context=transcript_context,
+                    vlm_snapshot=vlm_snapshot,
+                    content_type=content_type,
+                    intervention_reason=trigger_reason,
+                    output_mode=output_mode,
+                    require_visual_explanation=True,
                 )
-
-            if provider != PROVIDER_MODAL:
-                log_memory_state("After VLM Analysis")
-
-            print(f"[Orchestrator] VLM analysis complete (using {used_model})")
-
-            # Cleanup VLM engine before Ollama starts
-            vlm_engine.cleanup()
-            if provider != PROVIDER_MODAL:
-                clear_gpu_memory()
-                log_memory_state("After VLM Cleanup, Before Ollama Start")
-
-            # Create intervention directory early (for VLM snapshot)
-            intervention_dir = os.path.join(
-                self.base_dir,
-                video_id,
-                "interventions",
-                intervention_id[:8]
-            )
-            os.makedirs(intervention_dir, exist_ok=True)
-
-            # Save VLM snapshot to disk
-            vlm_snapshot_path = os.path.join(
-                intervention_dir,
-                f"vlm_snapshot.json"
-            )
-            with open(vlm_snapshot_path, "w", encoding="utf-8") as f:
-                json.dump(vlm_snapshot, f, indent=2, ensure_ascii=False)
-            print(f"[Orchestrator] VLM snapshot saved: {vlm_snapshot_path}")
-
-            # Step 2: Start Ollama for LLM Synthesis
-            ollama_process = start_ollama()
-
-            # Wait for Ollama to be ready
-            print("[Orchestrator] Waiting for Ollama to be ready...")
-            time.sleep(3)  # Give Ollama time to start up
-
-            # Step 3: Text Synthesis (reuses existing LLMSynthesizer with existing prompts)
-            from synthesizer import LLMSynthesizer
-            synthesizer = LLMSynthesizer(
-                ollama_url="http://localhost:11434",
-                model="mistral",
-                timeout=120,
-                max_retries=3,
-                transcripts=transcript_entries,
-                output_mode=output_mode
-            )
-
-            explanation = synthesizer.weave(
-                transcript_context=transcript_context,
-                vlm_snapshot=vlm_snapshot,
-                content_type=content_type,
-                intervention_reason=trigger_reason,
-                output_mode=output_mode
-            )
-
-            print(f"[Orchestrator] Text synthesis complete")
-
-            # Cleanup synthesizer local caches
-            synthesizer.cleanup()
-
-            # Step 4: TTS Generation (reuses existing TTSEngine)
-            from tts_engine import TTSEngine
-            tts_engine = TTSEngine()
-
-            # intervention_dir already created earlier for VLM snapshot
-
-            audio_file_path = os.path.join(
-                intervention_dir,
-                f"{output_mode}.mp3"
-            )
-
-            tts_engine.generate(explanation, audio_file_path)
-            tts_engine.cleanup()
-
-            print(f"[Orchestrator] Audio generated: {audio_file_path}")
-
-            # Save text explanation to disk
-            text_file_path = os.path.join(
-                intervention_dir,
-                f"{output_mode}.txt"
-            )
-            with open(text_file_path, "w", encoding="utf-8") as f:
-                f.write(explanation)
-            print(f"[Orchestrator] Text explanation saved: {text_file_path}")
-
-            # Stop Ollama immediately after successful completion
-            stop_ollama(ollama_process)
-            log_memory_state("After Ollama Stop (success path)")
-
-            # Return result
-            return {
-                "intervention_id": intervention_id,
-                "text_explanation": explanation,
-                "audio_file_path": audio_file_path,
-                "text_file_path": text_file_path,
-                "vlm_snapshot_path": vlm_snapshot_path,
-                "output_mode": output_mode
-            }
-
-        except Exception as e:
-            print(f"[Orchestrator] Error generating explanation: {e}")
-            raise
-
+                trace_stage(
+                    "mistral_generation", "response", started_at=mistral_started,
+                    text_chars=len(explanation),
+                )
+                if ownership_check is not None:
+                    try:
+                        ownership_check()
+                    except Exception:
+                        trace_stage("video_cancellation", "late_mistral_response_discarded")
+                        raise
+                temporary_text = f"{text_file_path}.tmp"
+                try:
+                    with open(temporary_text, "w", encoding="utf-8") as handle:
+                        handle.write(explanation)
+                    commit_text = lambda: os.replace(temporary_text, text_file_path)
+                    if checkpoint_commit is not None:
+                        checkpoint_commit(commit_text)
+                    else:
+                        commit_text()
+                finally:
+                    if os.path.exists(temporary_text):
+                        try:
+                            os.remove(temporary_text)
+                        except OSError:
+                            pass
+                trace_stage(
+                    "explanation_text_persistence", "complete",
+                    text_path=text_file_path, text_chars=len(explanation),
+                )
         finally:
-            # Cleanup Ollama (if it was started)
-            # Use 'in locals()' to avoid NameError if ollama_process was never defined
-            if 'ollama_process' in locals() and ollama_process is not None:
-                try:
-                    stop_ollama(ollama_process)
-                except Exception as cleanup_error:
-                    print(f"[Orchestrator] Error stopping Ollama during cleanup: {cleanup_error}")
+            synthesizer.cleanup()
+        print("[Orchestrator] Text synthesis complete")
 
-            # Cleanup VLM engine
-            if vlm_engine is not None:
-                try:
-                    vlm_engine.cleanup()
-                except Exception as cleanup_error:
-                    print(f"[Orchestrator] Error cleaning up VLM: {cleanup_error}")
+        if on_stage is not None:
+            on_stage("generating_tts")
+        if ownership_check is not None:
+            ownership_check()
 
-            # Clear GPU memory (wrap to ensure logging happens even if this fails)
+        from tts_engine import TTSEngine
+        tts_engine = TTSEngine()
+        audio_file_path = os.path.join(intervention_dir, f"{output_mode}.mp3")
+        if self._valid_mp3(audio_file_path):
+            trace_stage(
+                "tts_creation", "reused", audio_path=audio_file_path,
+                audio_bytes=os.path.getsize(audio_file_path),
+            )
+            tts_engine.cleanup()
+        else:
+            tts_started = time.monotonic()
+            temporary_audio = f"{audio_file_path}.tmp.mp3"
+            trace_stage("tts_creation", "start", audio_path=audio_file_path)
             try:
-                clear_gpu_memory()
-            except Exception as cleanup_error:
-                print(f"[Orchestrator] Error clearing GPU memory: {cleanup_error}")
+                tts_engine.generate(explanation, temporary_audio)
+                if not self._valid_mp3(temporary_audio):
+                    raise RuntimeError("TTS provider did not create a valid MP3 artifact")
+                if ownership_check is not None:
+                    ownership_check()
+                commit_audio = lambda: os.replace(temporary_audio, audio_file_path)
+                if checkpoint_commit is not None:
+                    checkpoint_commit(commit_audio)
+                else:
+                    commit_audio()
+            finally:
+                tts_engine.cleanup()
+                try:
+                    if os.path.exists(temporary_audio):
+                        os.remove(temporary_audio)
+                        trace_stage("tts_creation", "temporary_artifact_removed")
+                except OSError:
+                    pass
+            trace_stage(
+                "tts_creation", "complete", started_at=tts_started,
+                audio_path=audio_file_path, audio_bytes=os.path.getsize(audio_file_path),
+            )
+        print(f"[Orchestrator] Audio generated: {audio_file_path}")
+        print(f"[Orchestrator] Text explanation saved: {text_file_path}")
 
-            # Log final state (wrap to ensure it doesn't fail)
-            try:
-                log_memory_state("After Single Intervention Cleanup")
-            except Exception as cleanup_error:
-                print(f"[Orchestrator] Error logging memory state: {cleanup_error}")
+        return {
+            "intervention_id": intervention_id,
+            "text_explanation": explanation,
+            "audio_file_path": audio_file_path,
+            "text_file_path": text_file_path,
+            "vlm_snapshot_path": vlm_snapshot_path,
+            "output_mode": output_mode
+        }
+
+    def generate_intervention_explanation(
+        self,
+        video_id: str,
+        intervention_id: str,
+        intervention_timestamp: float,
+        frame_path: str,
+        content_type: str,
+        trigger_reason: str,
+        transcript_entries: List,
+        output_mode: str = "explanatory",
+        classification_confidence: Optional[float] = None,
+        confidence_semantics: str = "unknown",
+        raw_category_labels: Optional[List[str]] = None,
+        canonical_category_ids: Optional[List[str]] = None,
+    ) -> Dict:
+        """
+        Run both stages for one intervention in the calling thread.
+
+        Raises:
+            VisualEvidenceUnavailableError: if extraction gave no usable evidence
+        """
+        print(f"[Orchestrator] Generating explanation for intervention {intervention_id}")
+        print(f"[Orchestrator] Mode: {output_mode}, Content Type: {content_type}")
+
+        evidence = self.extract_visual_evidence(
+            video_id=video_id,
+            intervention_id=intervention_id,
+            intervention_timestamp=intervention_timestamp,
+            frame_path=frame_path,
+            content_type=content_type,
+            classification_confidence=classification_confidence,
+            confidence_semantics=confidence_semantics,
+            raw_category_labels=raw_category_labels,
+            canonical_category_ids=canonical_category_ids,
+        )
+        if not evidence["usable"]:
+            error = VisualEvidenceUnavailableError("Visual evidence is unavailable")
+            error.failure = evidence["failure"]
+            raise error
+        return self.synthesize_intervention_explanation(
+            video_id=video_id,
+            intervention_id=intervention_id,
+            intervention_timestamp=intervention_timestamp,
+            content_type=content_type,
+            trigger_reason=trigger_reason,
+            transcript_entries=transcript_entries,
+            output_mode=output_mode,
+            vlm_snapshot=None if evidence["reused"] else evidence["snapshot"],
+        )
 
 
 # Example usage

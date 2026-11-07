@@ -16,8 +16,11 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from api.database import Base, get_db
-from api.explanation_preparation import ExplanationPreparationManager
-from api.models import Explanation, Intervention, Transcript, Video
+from api.explanation_preparation import (
+    ExplanationPreparationManager,
+    PreparationRetryExhaustedError,
+)
+from api.models import Explanation, ExplanationPreparation, Intervention, Transcript, Video
 from api.routers import video as video_module
 
 
@@ -39,7 +42,13 @@ class FakeExplanationOrchestrator:
         self.calls = []
         self.data_dir = Path(data_dir)
 
-    def generate_intervention_explanation(self, **kwargs):
+    def extract_visual_evidence(self, **kwargs):
+        return {
+            "snapshot": None, "snapshot_path": None, "usable": True,
+            "reused": True, "failure": None,
+        }
+
+    def synthesize_intervention_explanation(self, **kwargs):
         self.calls.append(kwargs)
         mode = kwargs["output_mode"]
         intervention_id = kwargs["intervention_id"]
@@ -189,6 +198,37 @@ class ExplanationPreparationTests(unittest.TestCase):
         manager.shutdown(timeout=0.05)
         self.assertLess(time.monotonic() - before, 0.5)
         release.set()
+
+    def test_failed_generation_never_creates_ready_cache_and_honors_retry_limit(self):
+        self.seed((10.0,))
+        calls = []
+
+        def unavailable(**kwargs):
+            calls.append(kwargs["intervention_id"])
+            raise RuntimeError("controlled unavailable visual explanation")
+
+        manager = self.manager(unavailable)
+        self.assertEqual(manager.schedule_video(VIDEO_ID, "brief"), 1)
+
+        def failed_at(attempts):
+            statuses = manager.get_status(VIDEO_ID, "brief")
+            return statuses[0].status == "failed" and statuses[0].attempt_count == attempts
+
+        self.assertTrue(wait_until(lambda: failed_at(1)))
+        self.assertEqual(self._explanation_count(), 0)
+        self.assertTrue(manager.retry(VIDEO_ID, "point-10", "brief").queued)
+        self.assertTrue(wait_until(lambda: failed_at(2)))
+        self.assertTrue(manager.retry(VIDEO_ID, "point-10", "brief").queued)
+        self.assertTrue(wait_until(lambda: failed_at(3)))
+        with self.assertRaises(PreparationRetryExhaustedError):
+            manager.retry(VIDEO_ID, "point-10", "brief")
+
+        self.assertEqual(calls, ["point-10", "point-10", "point-10"])
+        self.assertEqual(self._explanation_count(), 0)
+        with self.Session() as db:
+            state = db.query(ExplanationPreparation).one()
+            self.assertEqual(state.status, "failed")
+            self.assertEqual(state.error_code, "retry_exhausted")
 
     def test_manual_endpoint_generates_once_and_keeps_response_contract(self):
         self.seed((10.0,))

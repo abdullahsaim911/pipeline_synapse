@@ -7,7 +7,9 @@ Provides text-to-speech functionality with automatic fallback:
 """
 
 # Import exceptions from the new exceptions module
-from .exceptions import TTSEngineError, TTSConnectionError, TTSTimeoutError
+from .exceptions import (
+    TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
+)
 # Import main engine
 from .tts_engine import TTSEngine
 # Import providers (for advanced usage)
@@ -25,6 +27,7 @@ __all__ = [
     "TTSEngineError",
     "TTSConnectionError",
     "TTSTimeoutError",
+    "TTSPermanentError",
     # Providers (for advanced usage)
     "TTSProvider",
     "EdgeTTSProvider",

@@ -10,6 +10,8 @@ import os
 import re
 import sys
 
+from youtube_runtime import youtube_runtime_options
+
 
 def _vid(url: str) -> str:
     m = re.search(r"(?:v=|youtu\.be/|shorts/)([A-Za-z0-9_-]{11})", url)
@@ -30,7 +32,13 @@ def prepare_video(url: str) -> str:
     if not os.path.exists(mp4):
         print("[1/3] downloading video ...")
         import yt_dlp
-        with yt_dlp.YoutubeDL({"format": "bv*[height<=720]", "outtmpl": mp4, "quiet": True, "no_warnings": True}) as ydl:
+        with yt_dlp.YoutubeDL({
+            "format": "bv*[height<=720]",
+            "outtmpl": mp4,
+            "quiet": True,
+            "no_warnings": True,
+            **youtube_runtime_options(),
+        }) as ydl:
             ydl.download([url])
     else:
         print("[1/3] video already downloaded")

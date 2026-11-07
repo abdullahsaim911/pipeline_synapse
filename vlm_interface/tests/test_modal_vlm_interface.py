@@ -37,11 +37,13 @@ from vlm_interface.vlm_types import (
     PROVIDER_MODAL,
     VALID_PROVIDERS,
     VLMAuthenticationError,
+    VLMContextBudgetError,
     VLMInterfaceError,
     VLMRemoteError,
     VLMResponse,
     VLMTimeoutError,
 )
+from vlm_interface.qwen_context_budget import ContextBudgetReport
 from vlm_interface.modal_vlm_interface import (
     ModalVLMInterface,
     _DEFAULT_MODEL_ID,
@@ -58,6 +60,7 @@ def _make_openai_response(
     content: str = "Test response text",
     prompt_tokens: int = 100,
     completion_tokens: int = 42,
+    finish_reason: str | None = "stop",
 ) -> dict[str, Any]:
     """Build a minimal OpenAI-compatible chat completion response dict."""
     return {
@@ -69,7 +72,7 @@ def _make_openai_response(
             {
                 "index": 0,
                 "message": {"role": "assistant", "content": content},
-                "finish_reason": "stop",
+                "finish_reason": finish_reason,
             }
         ],
         "usage": {
@@ -121,6 +124,32 @@ class _FakeHTTPResponse:
         pass
 
 
+class _FakeBudgetEstimator:
+    def __init__(self, *, exact=True):
+        self.exact = exact
+        self.calls = []
+        self.last_report = None
+
+    def estimate(self, **kwargs):
+        self.calls.append(kwargs)
+        self.last_report = ContextBudgetReport(
+            model_id=_DEFAULT_MODEL_ID,
+            max_model_len=8192,
+            requested_output_tokens=kwargs["requested_output_tokens"],
+            exact=self.exact,
+            processor_available=self.exact,
+            input_tokens=1024 if self.exact else None,
+            remaining_context_tokens=(
+                8192 - 1024 - kwargs["requested_output_tokens"]
+                if self.exact else None
+            ),
+            fits=True if self.exact else None,
+            image_size=kwargs["image"].size,
+            uncertainty=None if self.exact else "processor unavailable",
+        )
+        return self.last_report
+
+
 @pytest.fixture()
 def adapter() -> ModalVLMInterface:
     """Return a ModalVLMInterface with test credentials."""
@@ -130,7 +159,14 @@ def adapter() -> ModalVLMInterface:
         timeout_seconds=5.0,
         max_retries=2,
         max_tokens=512,
+        require_exact_context_budget=False,
     )
+
+
+@pytest.fixture(autouse=True)
+def allow_unavailable_processor_for_transport_unit_tests(monkeypatch):
+    """Transport tests run without model assets; exact accounting is tested separately."""
+    monkeypatch.setenv("SYNAPSE_VLM_REQUIRE_EXACT_CONTEXT_BUDGET", "0")
 
 
 # =========================================================================
@@ -198,6 +234,20 @@ class TestConstruction:
         )
         assert not a._endpoint_url.endswith("/")
 
+    def test_default_generation_limit_is_2048(self):
+        a = ModalVLMInterface(
+            endpoint_url="https://x.modal.run",
+            api_key="k",
+        )
+        assert a._max_tokens == 2048
+
+    @pytest.mark.parametrize("invalid", [0, 2049, -1])
+    def test_invalid_configured_generation_limit_is_rejected(self, invalid):
+        with pytest.raises(ValueError, match="between 1 and 2048"):
+            ModalVLMInterface(
+                endpoint_url="https://x.modal.run", api_key="k", max_tokens=invalid
+            )
+
 
 # =========================================================================
 # 2.  URL, Headers and Model Name in Request
@@ -249,6 +299,43 @@ class TestRequestFormat:
         req = mock_urlopen.call_args[0][0]
         assert req.get_header("Content-type") == "application/json"
 
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_context_budget_is_calculated_before_dispatch(self, mock_urlopen):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response())
+        )
+        estimator = _FakeBudgetEstimator()
+        adapter = ModalVLMInterface(
+            endpoint_url="https://x.modal.run",
+            api_key="k",
+            context_budget_estimator=estimator,
+        )
+        adapter.analyze(
+            _make_pil_image(),
+            "prompt",
+            generation_params={
+                "max_new_tokens": 256,
+                "_context_budget_parts": {
+                    "common_prompt": "common",
+                    "category_directives": "CT-01 and CT-02",
+                },
+            },
+        )
+        assert len(estimator.calls) == 1
+        assert estimator.calls[0]["requested_output_tokens"] == 256
+        assert estimator.calls[0]["category_directives"] == "CT-01 and CT-02"
+        assert adapter.last_context_budget["exact"] is True
+
+    def test_required_exact_budget_rejects_unavailable_processor(self):
+        adapter = ModalVLMInterface(
+            endpoint_url="https://x.modal.run",
+            api_key="k",
+            context_budget_estimator=_FakeBudgetEstimator(exact=False),
+            require_exact_context_budget=True,
+        )
+        with pytest.raises(VLMContextBudgetError, match="processor is unavailable"):
+            adapter.analyze(_make_pil_image(), "prompt")
+
 
 # =========================================================================
 # 3.  Image / Prompt Request Format
@@ -292,6 +379,19 @@ class TestImagePromptFormat:
         assert body["stream"] is False
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_compact_json_schema_constrains_server_decoding(self, mock_urlopen, adapter):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response())
+        )
+        adapter.analyze(_make_pil_image(), "Hello")
+
+        body = json.loads(mock_urlopen.call_args[0][0].data)
+        schema = body["structured_outputs"]["json"]
+        assert schema["properties"]["schema"]["const"] == "synapse_visual_observation_v1"
+        assert schema["additionalProperties"] is False
+        assert "regions" in schema["required"]
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
     def test_generation_params_override(self, mock_urlopen, adapter):
         mock_urlopen.return_value = _FakeHTTPResponse(
             _json_bytes(_make_openai_response())
@@ -307,18 +407,44 @@ class TestImagePromptFormat:
         assert body["temperature"] == 0.7
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
-    def test_max_tokens_clamped_to_2048(self, mock_urlopen, adapter):
+    def test_max_tokens_above_server_ceiling_is_rejected(self, mock_urlopen, adapter):
         mock_urlopen.return_value = _FakeHTTPResponse(
             _json_bytes(_make_openai_response())
         )
-        adapter.analyze(
-            _make_pil_image(),
-            "Hello",
-            generation_params={"max_new_tokens": 9999},
-        )
+        with pytest.raises(ValueError, match="between 1 and 2048"):
+            adapter.analyze(
+                _make_pil_image(),
+                "Hello",
+                generation_params={"max_new_tokens": 9999},
+            )
+        mock_urlopen.assert_not_called()
 
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_default_temperature_is_point_one(self, mock_urlopen):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response())
+        )
+        adapter = ModalVLMInterface(
+            endpoint_url="https://x.modal.run", api_key="k", max_retries=0
+        )
+        adapter.analyze(_make_pil_image(), "Hello")
         body = json.loads(mock_urlopen.call_args[0][0].data)
         assert body["max_tokens"] == 2048
+        assert body["temperature"] == 0.1
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_explicit_smaller_output_limit_is_not_clamped(self, mock_urlopen):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response())
+        )
+        adapter = ModalVLMInterface(
+            endpoint_url="https://x.modal.run", api_key="k", max_retries=0
+        )
+        adapter.analyze(
+            _make_pil_image(), "Hello", generation_params={"max_new_tokens": 128}
+        )
+        body = json.loads(mock_urlopen.call_args[0][0].data)
+        assert body["max_tokens"] == 128
 
 
 # =========================================================================
@@ -479,6 +605,41 @@ class TestSuccessfulResponse:
         result = adapter.analyze(_make_pil_image(), "Hello")
         assert result.prompt_eval_count == 0
         assert result.eval_count == 0
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_normal_finish_reason_is_preserved(self, mock_urlopen, adapter):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response(finish_reason="stop"))
+        )
+        result = adapter.analyze(_make_pil_image(), "Hello")
+        assert result.finish_reason == "stop"
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_length_finish_reason_is_preserved(self, mock_urlopen, adapter):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response(finish_reason="length"))
+        )
+        result = adapter.analyze(_make_pil_image(), "Hello")
+        assert result.finish_reason == "length"
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_missing_finish_reason_is_explicitly_none(self, mock_urlopen, adapter):
+        response = _make_openai_response()
+        del response["choices"][0]["finish_reason"]
+        mock_urlopen.return_value = _FakeHTTPResponse(_json_bytes(response))
+        result = adapter.analyze(_make_pil_image(), "Hello")
+        assert result.finish_reason is None
+
+    @pytest.mark.parametrize("malformed", [123, "", [], {}])
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_malformed_finish_reason_raises_protocol_error(
+        self, mock_urlopen, adapter, malformed
+    ):
+        response = _make_openai_response()
+        response["choices"][0]["finish_reason"] = malformed
+        mock_urlopen.return_value = _FakeHTTPResponse(_json_bytes(response))
+        with pytest.raises(VLMRemoteError, match="finish_reason"):
+            adapter.analyze(_make_pil_image(), "Hello")
 
 
 # =========================================================================
@@ -768,12 +929,15 @@ class TestVLMResponseCompat:
         assert hasattr(result, "prompt_eval_count")
         assert hasattr(result, "eval_count")
 
-    def test_vlm_response_fields_match_original(self):
-        """VLMResponse from vlm_types must have the same 5 fields as the original."""
+    def test_vlm_response_preserves_original_fields_and_adds_optional_metadata(self):
+        """The five original fields remain and finish_reason is optional."""
         import dataclasses
         fields = {f.name for f in dataclasses.fields(VLMResponse)}
-        expected = {"text", "model", "total_duration_ms", "prompt_eval_count", "eval_count"}
-        assert fields == expected
+        original = {"text", "model", "total_duration_ms", "prompt_eval_count", "eval_count"}
+        assert original <= fields
+        assert fields == original | {"finish_reason"}
+        legacy = VLMResponse("text", "model", 1, 2, 3)
+        assert legacy.finish_reason is None
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
     def test_response_consumed_like_local(self, mock_urlopen, adapter):

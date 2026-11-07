@@ -7,9 +7,24 @@ Supports both transformers and GGUF backends.
 """
 
 import json
+import logging
 import os
 import re
-from typing import Dict, Optional
+import time
+from typing import Any, Dict, Optional
+
+from category_normalization import normalize_category_labels, prompt_category_for
+from modal_inference.config import (
+    DEFAULT_STRUCTURED_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
+    MAX_OUTPUT_TOKENS,
+)
+from visual_evidence import (
+    COMPACT_OBSERVATION_SCHEMA,
+    adapt_legacy_snapshot,
+    assemble_compact_qwen_observation,
+)
+from stage_tracing import trace_stage
 
 # Lightweight provider constants and response types (no PyTorch/Transformers eager load)
 from vlm_interface import (
@@ -20,9 +35,18 @@ from vlm_interface import (
     VLMResponse,
     VLMInterfaceError,
     VLMAuthenticationError,
+    VLMContextBudgetError,
     VLMTimeoutError,
     VLMRemoteError,
 )
+
+
+logger = logging.getLogger(__name__)
+
+
+def print(*values, **_kwargs):  # noqa: A001
+    """Keep legacy VLM diagnostics available only at DEBUG level."""
+    logger.debug(" ".join(str(value) for value in values))
 
 
 class SnapshotEngine:
@@ -341,6 +365,151 @@ Provide in visual_analysis.text object:
         """
     }
 
+    # One compact observation contract is used for every Task 2B category.
+    # These assignments replace the active legacy prompt while local GGUF code
+    # remains isolated in gguf_vlm_engine.py.
+    SYSTEM_PROMPT = f"""
+Analyze ONLY the supplied single frame of an educational video. Return ONLY JSON
+conforming to the existing {COMPACT_OBSERVATION_SCHEMA} contract. First identify
+distinct meaningful visual regions across the entire image and their reading order;
+do not force the image into arbitrary quadrants. Extract visible facts, not a
+learner-facing explanation. For each region capture its applicable CT categories,
+important elements, exact readable labels, symbols, numbers and units, positions,
+and supported relations. Describe structural organization with a short overview,
+orientation, containment, hierarchy, topology and directional relations. Use short
+local IDs consistently, including for critical relation or arrow labels and exact
+associations.
+
+Do not assert a connection from proximity or causation from co-location. Report
+unreadable or ambiguous labels, intersections and attachments explicitly and
+preserve partial evidence. Do not claim previous or future states, motion, or an
+action's success from one frame. Never fabricate ticks, measurements, words,
+operators, anatomical labels, teacher intent, hierarchy, junctions, arrows or
+connections. Use [ILLEGIBLE] only when text is visible but unreadable. Avoid
+duplicate prose when structured fields already encode a fact. Put the most
+educationally consequential supported evidence first; do not pad decorative facts.
+
+OUTPUT FORMAT (JSON only): return exactly one object on a single line as minified
+JSON: no indentation, no newlines between tokens and no spaces after ":" or ",".
+Required keys are shown below. Omit every other key whose value would be null, an
+empty array or an empty object; an omitted key means null or empty.
+{{"schema":"{COMPACT_OBSERVATION_SCHEMA}","status":"complete|partial|failed","evidence_status":"supported|partially_supported|ambiguous_or_conflicting|unavailable_or_unreadable","categories":["CT-01"],"regions":[{{"ref":"r1","categories":["CT-01"],"evidence_status":"supported","elements":[{{"ref":"e1","kind":"specific visible kind","evidence_status":"supported"}},{{"ref":"e2","kind":"specific visible kind","evidence_status":"supported"}}]}}],"relations":[{{"ref":"q1","source":"e1","target":"e2","type":"left_of|right_of|above|below|contains|inside|grouped_with|connected_to|points_to|leads_to|branches_to|depends_on|corresponds_to|parent_of|child_of|precedes|follows|intersects|parallel_to|perpendicular_to|bonded_to|labels|custom:specific_semantic","evidence_status":"supported"}}],"structure":{{"overview":"grounded structural overview"}},"exact":[{{"text":"exact visible content","status":"supported","notation":"plain|math|code|chemical|other","source_ref":"e1"}}]}}
+
+Optional keys, included only when they carry a value:
+root: layout, details, uncertainties[{{target:"e1|r1|scene",reason,impact}}], missing[].
+region: position, bbox, reading_order_index, description.
+element: categories, label, text, description, position, bbox, source_ref, attributes,
+parent_ref, child_refs. relation: label, directed, cross_category, source_refs.
+structure: orientation, components, relations, reading_order, hierarchy, topology,
+uncertainties.
+
+Rules: refs are short local references, not backend IDs. Every relation endpoint,
+structure reference, parent/child reference, exact source_ref and uncertainty target
+must name a declared ref (or "scene" where allowed). Put each grounded relationship
+in root relations once; structure.relations contains only its relation refs. Use bbox
+only for grounded normalized [x_min,y_min,x_max,y_max] values in [0,1], otherwise
+null. Keep exact math, code, labels, values, units, signs, indentation, branch labels,
+and connector direction. Exact text must point to the element or region that visibly
+contains it. Preserve partial evidence instead of guessing. Under output pressure
+prioritize: valid JSON/status, essential regions/elements, exact critical content,
+essential topology/spatial relations, category details, then secondary context.
+Never call truncated or materially incomplete evidence complete. Do not repeat a
+fact across fields. Output minified JSON only, with no markdown.
+"""
+
+    CANONICAL_CATEGORY_DIRECTIVES = {
+        "CT-01": (
+            "In details.chart capture chart type; every meaningful x/y axis label and unit; "
+            "only visible tick scales or ranges; series-to-legend associations; visible "
+            "points, intersections, thresholds, annotations and trends. Do not infer values "
+            "without readable scales; line direction is spatial, not temporal motion."
+        ),
+        "CT-02": (
+            "In details.mathematics preserve exact notation (=, ≠, ≤, ≥, −, "
+            "superscripts/subscripts), grouping, fraction numerator/denominator, integral or "
+            "sum bounds, matrix rows, every visible derivation line and its order. Do not "
+            "silently correct suspicious mathematics."
+        ),
+        "CT-03": (
+            "In details.scientific_structure inventory labeled components and orientation, "
+            "leader-line label targets, containment and only confirmed contact/connectivity. "
+            "For circuits preserve terminals, wires, junctions versus crossings, branches, "
+            "switch state and visible values; for chemistry preserve atoms, bond types and "
+            "charges; for biology preserve compartments, parts and label associations. "
+            "Distinguish adjacency, custom:part_of, diagram arrows and electrical connections. Do "
+            "not invent biological function or current direction."
+        ),
+        "CT-04": (
+            "In details.flow_network capture node labels/shapes, start/end, each directed "
+            "edge source and target, exact Yes/No or other branch labels, merges, cycles and "
+            "grouping. If arrow orientation or attachment is unclear, record uncertainty "
+            "instead of an edge."
+        ),
+        "CT-05": (
+            "In details.table capture headers and multi-level headers, row/column indexes and "
+            "units, and important cells with correct header associations. Preserve merged "
+            "cells and distinguish blank or illegible cells from zero; prioritize association "
+            "correctness over row quantity."
+        ),
+        "CT-06": (
+            "CRITICAL: OCR handwritten content and structured text exactly. In "
+            "details.structured_text preserve exact headings, bullets or steps and their "
+            "hierarchy/order, highlighted terms, formulas, warnings, negation, quotes and "
+            "meaningful punctuation."
+        ),
+        "CT-07": (
+            "In details.geometry capture labeled points, segments, lines and vertices; explicit "
+            "right-angle, parallel and equality marks; lengths, angle values, containment and "
+            "incidence. Never infer exact measures from apparent proportions."
+        ),
+        "CT-08": (
+            "In details.programming preserve exact displayed code, line breaks, indentation, "
+            "names, punctuation and operator variants such as > versus >= and = versus ==; "
+            "record the displayed language and terminal output separately. Do not assert that "
+            "the code caused the output without supporting evidence."
+        ),
+        "CT-09": (
+            "In details.interface capture visible controls, labels, panels, selections, status "
+            "badges, dialogs, typed values and toggle states. Do not fabricate click history, "
+            "save success or network results."
+        ),
+        "CT-10": (
+            "In details.map capture labeled places, marked compass orientation, legend-to-symbol "
+            "associations, routes, adjacency, scale labels and qualitative relative positions. "
+            "Do not invent distances or coordinates."
+        ),
+        "CT-11": (
+            "In details.observational_image capture observable form, texture, color, distribution "
+            "and comparisons between co-present regions, while marking identity uncertainty. "
+            "Do not add diagnoses or inferred mechanisms."
+        ),
+        "CT-12": (
+            "In details.physical_scene capture objects, supports and contacts, positions, arrows "
+            "or force labels, orientations, and distinguish a depicted action symbol from an "
+            "observed change. Do not invent dynamics from a static frame."
+        ),
+    }
+
+    CATEGORY_DIRECTIVES = {
+        "graph": CANONICAL_CATEGORY_DIRECTIVES["CT-01"],
+        "equation": CANONICAL_CATEGORY_DIRECTIVES["CT-02"],
+        "circuit": CANONICAL_CATEGORY_DIRECTIVES["CT-03"],
+        "biology": CANONICAL_CATEGORY_DIRECTIVES["CT-03"],
+        "chemistry": CANONICAL_CATEGORY_DIRECTIVES["CT-03"],
+        "physics": CANONICAL_CATEGORY_DIRECTIVES["CT-03"],
+        "diagram": "Use the generic contract; do not force an ambiguous diagram into one category.",
+        "flowchart": CANONICAL_CATEGORY_DIRECTIVES["CT-04"],
+        "table": CANONICAL_CATEGORY_DIRECTIVES["CT-05"],
+        "text": CANONICAL_CATEGORY_DIRECTIVES["CT-06"],
+        "handwritten_notes": CANONICAL_CATEGORY_DIRECTIVES["CT-06"],
+        "geometry": CANONICAL_CATEGORY_DIRECTIVES["CT-07"],
+        "code": CANONICAL_CATEGORY_DIRECTIVES["CT-08"],
+        "software_interface": CANONICAL_CATEGORY_DIRECTIVES["CT-09"],
+        "map": CANONICAL_CATEGORY_DIRECTIVES["CT-10"],
+        "observational_image": CANONICAL_CATEGORY_DIRECTIVES["CT-11"],
+        "physical_illustration": CANONICAL_CATEGORY_DIRECTIVES["CT-12"],
+    }
+
     def _create_failed_snapshot(self, error_msg: str, primary_type: str = "unknown") -> Dict:
         """
         Return a normalized failure snapshot dictionary.
@@ -350,7 +519,7 @@ Provide in visual_analysis.text object:
         reliably without crashing or generating hallucinated visual evidence.
         """
         clean_type = primary_type if primary_type else "unknown"
-        return {
+        snapshot = {
             "_error": True,
             "_error_detail": str(error_msg),
             "content_type": clean_type,
@@ -365,6 +534,8 @@ Provide in visual_analysis.text object:
             "colors_styles": "",
             "missing_elements": f"VLM analysis failed: {error_msg}",
         }
+        snapshot["visual_evidence"] = adapt_legacy_snapshot(snapshot).to_schema_dict()
+        return snapshot
 
     def __init__(
         self,
@@ -407,12 +578,29 @@ Provide in visual_analysis.text object:
         if self.provider == PROVIDER_MODAL:
             from vlm_interface.modal_vlm_interface import ModalVLMInterface
             print("[Snapshot Engine] Initializing remote Modal VLM backend...")
+            configured_tokens = max_tokens
+            if configured_tokens is None:
+                configured_tokens = int(
+                    os.environ.get(
+                        "SYNAPSE_VLM_STRUCTURED_MAX_TOKENS",
+                        os.environ.get(
+                            "SYNAPSE_MODAL_MAX_TOKENS",
+                            str(DEFAULT_STRUCTURED_MAX_TOKENS),
+                        ),
+                    )
+                )
+            if not 1 <= configured_tokens <= MAX_OUTPUT_TOKENS:
+                raise ValueError(
+                    "Structured VLM output token limit must be between 1 and "
+                    f"{MAX_OUTPUT_TOKENS}; received {configured_tokens}."
+                )
+            self.structured_max_tokens = configured_tokens
             self.vlm_interface = ModalVLMInterface(
                 endpoint_url=endpoint_url,
                 api_key=api_key,
                 timeout_seconds=timeout_seconds,
                 max_retries=max_retries,
-                max_tokens=max_tokens,
+                max_tokens=self.structured_max_tokens,
             )
             self.model_name = self.vlm_interface.model_name
             self.model_path = "modal"
@@ -496,39 +684,68 @@ Provide in visual_analysis.text object:
             max_pixels=max_pixels
         )
 
-    def _build_prompt(self, primary_type: str) -> str:
-        """
-        Build complete prompt for VLM analysis with unified output format.
+    def _build_prompt(
+        self,
+        primary_type: str,
+        category_uncertainty: Optional[str] = None,
+        canonical_category_ids: Optional[list[str]] = None,
+    ) -> str:
+        """Build the common compact contract plus only relevant category rules."""
+        category_ids = list(canonical_category_ids or [])
+        if not category_ids:
+            category_ids = list(
+                normalize_category_labels(primary_type).canonical_categories
+            )
+        category_ids = [
+            category for category in category_ids
+            if category in self.CANONICAL_CATEGORY_DIRECTIVES
+        ]
+        category_directives = "\n".join(
+            f"- {category}: {self.CANONICAL_CATEGORY_DIRECTIVES[category]}"
+            for category in category_ids
+        )
+        if not category_directives:
+            category_directives = (
+                "- No unambiguous canonical hint is available. Use the generic "
+                "contract and classify only what is clearly visible."
+            )
 
-        Args:
-            primary_type: Content classification (equation, graph, circuit, etc.)
-
-        Returns:
-            Complete prompt string with system, user, and category directives
-        """
-        category_directive = self.CATEGORY_DIRECTIVES.get(
-            primary_type.lower(),
-            ""
+        uncertainty_note = (
+            f"\nCATEGORY HINT UNCERTAINTY:\n{category_uncertainty}\n"
+            if category_uncertainty
+            else ""
         )
 
         user_prompt = f"""
-Analyze this STEM lecture frame and provide a structured description.
+Analyze this educational frame and return the compact structured observation.
 
+RAW CATEGORY HINT: {primary_type}
 PRIMARY CONTENT TYPE: {primary_type}
+CANONICAL CATEGORY HINTS: {', '.join(category_ids) if category_ids else 'none'}
+{uncertainty_note}
 
-IMPORTANT: Even though {primary_type} is specified as the primary type,
-YOU MUST DETECT AND DESCRIBE ALL content types present in the frame.
+Hints are not facts. Verify them from the frame and include additional clearly
+visible categories. Do not force an ambiguous hint into a CT category.
 
-CATEGORY-SPECIFIC DIRECTIVES for {primary_type}:
-{category_directive}
+CATEGORY-SPECIFIC REQUIREMENTS:
+{category_directives}
 
 OUTPUT REQUIREMENTS:
-- Scan ENTIRE frame using Chain-of-Regions (2x2 grid approach)
-- Detect ALL content types (equations, graphs, text, diagrams, etc.)
-- Provide unified JSON output format with visual_analysis object
-- Include structural_description, reading_order, and conceptual_hints
-- Output ONLY valid JSON (no markdown, no filler)
+- Scan the entire frame and create meaningful regions rather than arbitrary quadrants.
+- Preserve exact visible content and its source association.
+- Encode supported containment, hierarchy, topology, label targets, spatial arrangement,
+  connector direction, reading order and cross-category relationships with local refs.
+- Treat intersections, wire crossings, arrow attachments and label targets as uncertain
+  unless their visual attachment is clear.
+- A partial or uncertain result must be labeled partial or ambiguous.
+- Output only the single JSON object defined above.
 """
+        self._last_prompt_budget_parts = {
+            "common_prompt": self.SYSTEM_PROMPT + user_prompt.replace(
+                category_directives, "", 1
+            ),
+            "category_directives": category_directives,
+        }
         return self.SYSTEM_PROMPT + user_prompt
 
     def _parse_json_response(self, text: str) -> Dict:
@@ -548,35 +765,82 @@ OUTPUT REQUIREMENTS:
         Returns:
             Parsed dictionary with required keys (old + new format)
         """
-        # Strip markdown blocks
-        text = re.sub(r'```(?:json)?\s*\n?', '', text)
-        text = re.sub(r'```\s*\n?', '', text)
-
-        # Find JSON object
+        parse_started = time.monotonic()
         text = text.strip()
-
-        # Remove trailing commas before closing brace
-        text = re.sub(r',\s*}', '}', text)
-
+        trace_stage("vlm_json_parsing", "start", output_chars=len(text))
         try:
             result = json.loads(text)
-        except json.JSONDecodeError as e:
-            print(f"[Snapshot Engine] Failed to parse JSON: {e}")
-            print(f"[Snapshot Engine] Raw output: {text}")
-            # Return fallback structure with new format
+        except json.JSONDecodeError:
+            # Repair only documented wrapper noise, and only after a strict
+            # parse failed, so exact code or math inside valid JSON is untouched.
+            repaired = re.sub(r"^```(?:json)?\s*", "", text)
+            repaired = re.sub(r"\s*```$", "", repaired)
+            repaired = re.sub(
+                r'("(?:[^"\\]|\\.)*")|,(\s*[}\]])',
+                lambda match: match.group(1) or match.group(2),
+                repaired,
+            )
+            try:
+                result = json.loads(repaired)
+            except json.JSONDecodeError as exc:
+                print(
+                    f"[Snapshot Engine] Failed to parse JSON: {exc} "
+                    f"(output length {len(text)} characters)"
+                )
+                # The raw output is kept once, for debugging only. It must never
+                # reach the fields downstream consumers read as visual facts.
+                trace_stage(
+                    "vlm_json_parsing", "failed", started_at=parse_started,
+                    output_chars=len(text), error_type=type(exc).__name__,
+                    error_position=exc.pos,
+                )
+                return {
+                    "_error": True,
+                    "_error_detail": f"Invalid JSON: {exc}",
+                    "_raw_response": text,
+                    "content_type": "unknown",
+                    "detected_types": ["unknown"],
+                    "visual_analysis": {},
+                    "structural_description": "",
+                    "reading_order": [],
+                    "conceptual_hints": "",
+                    "layout": "",
+                    "text_readout": "",
+                    "spatial_map": "",
+                    "colors_styles": "",
+                    "missing_elements": "Parse error",
+                }
+
+        if not isinstance(result, dict):
+            trace_stage(
+                "vlm_json_parsing", "failed", started_at=parse_started,
+                output_chars=len(text), error_type="non_object",
+            )
             return {
+                "_error": True,
+                "_error_detail": "Model output was JSON but not an object",
+                "_raw_response": text,
                 "content_type": "unknown",
                 "detected_types": ["unknown"],
                 "visual_analysis": {},
-                "structural_description": text,
+                "structural_description": "",
                 "reading_order": [],
                 "conceptual_hints": "",
-                "layout": text,
-                "text_readout": text,
-                "spatial_map": text,
-                "colors_styles": text,
-                "missing_elements": "Parse error"
+                "layout": "",
+                "text_readout": "",
+                "spatial_map": "",
+                "colors_styles": "",
+                "missing_elements": "Parse error",
             }
+
+        # Task 2B responses are normalized after deterministic canonical
+        # assembly so their compact structure is not polluted with legacy keys.
+        if result.get("schema") == COMPACT_OBSERVATION_SCHEMA:
+            trace_stage(
+                "vlm_json_parsing", "complete", started_at=parse_started,
+                output_chars=len(text), schema=COMPACT_OBSERVATION_SCHEMA,
+            )
+            return result
 
         # Ensure new unified format fields exist
         new_required_fields = [
@@ -622,9 +886,250 @@ OUTPUT REQUIREMENTS:
         if result.get("missing_elements") == "null":
             result["missing_elements"] = None
 
+        trace_stage(
+            "vlm_json_parsing", "complete", started_at=parse_started,
+            output_chars=len(text), schema="legacy",
+        )
         return result
 
-    def analyze_frame(self, frame_path: str, primary_type: str) -> Dict:
+    @staticmethod
+    def _assess_truncation(
+        response: Optional[VLMResponse], token_limit: Optional[int]
+    ) -> tuple[bool, str, str | None]:
+        """Prefer server completion metadata and explicitly classify fallback use."""
+
+        if response is None:
+            return False, "no_response", None
+        finish_reason = getattr(response, "finish_reason", None)
+        if finish_reason == "length":
+            return True, "finish_reason", finish_reason
+        if finish_reason == "stop":
+            return False, "finish_reason", finish_reason
+        if finish_reason is not None:
+            # This extraction path does not request tools or content filters.
+            # Unknown terminal states must not upgrade evidence to complete.
+            return True, "unknown_finish_reason", finish_reason
+
+        token_count_at_limit = bool(
+            token_limit
+            and getattr(response, "eval_count", 0) > 0
+            and getattr(response, "eval_count", 0) >= token_limit
+        )
+        return token_count_at_limit, "token_count_fallback", None
+
+    @staticmethod
+    def _failure_from_exception(exc: Exception) -> Dict[str, Any]:
+        """Classify a request failure; ``retryable`` means a retry may help."""
+
+        if isinstance(exc, VLMAuthenticationError):
+            return {"code": "vlm_authentication_failed", "retryable": False}
+        if isinstance(exc, VLMContextBudgetError):
+            return {"code": "vlm_context_budget_exceeded", "retryable": False}
+        if isinstance(exc, VLMRemoteError):
+            return {"code": "vlm_remote_rejected", "retryable": False}
+        if isinstance(exc, (VLMTimeoutError, VLMInterfaceError)):
+            return {"code": "vlm_remote_unavailable", "retryable": True}
+        return {"code": "vlm_request_failed", "retryable": True}
+
+    def _apply_parse_failure(
+        self,
+        snapshot: Dict[str, Any],
+        response: VLMResponse,
+        token_limit: Optional[int],
+    ) -> None:
+        """Separate genuine truncation from malformed output using metadata."""
+
+        truncated, detection, finish_reason = self._assess_truncation(
+            response, token_limit
+        )
+        tokens = getattr(response, "eval_count", 0)
+        if truncated and detection != "unknown_finish_reason":
+            code = "vlm_output_truncated"
+            summary = (
+                f"Qwen output was cut off at {tokens} of {token_limit} tokens "
+                f"(finish_reason={finish_reason})"
+            )
+        else:
+            code = "vlm_output_malformed"
+            summary = (
+                f"Qwen returned malformed JSON after {tokens} tokens "
+                f"(finish_reason={finish_reason})"
+            )
+        snapshot["_error_detail"] = f"{summary}: {snapshot.get('_error_detail')}"
+        snapshot["_failure"] = {
+            "code": code,
+            "retryable": True,
+            "finish_reason": finish_reason,
+            "completion_tokens": tokens,
+        }
+
+    def _attach_visual_evidence(
+        self,
+        snapshot: Dict[str, Any],
+        *,
+        primary_type: str,
+        frame_path: str,
+        frame_id: Optional[str],
+        timestamp_seconds: Optional[float],
+        raw_category_labels: Optional[list[str]],
+        canonical_category_ids: Optional[list[str]],
+        classification_confidence: Optional[float],
+        confidence_semantics: str,
+        response: Optional[VLMResponse] = None,
+        token_limit: Optional[int] = None,
+    ) -> Dict[str, Any]:
+        """Attach canonical evidence while retaining the legacy snapshot API."""
+
+        metrics = {
+            "model": getattr(response, "model", getattr(self, "model_name", None)),
+            "latency_ms": getattr(response, "total_duration_ms", None),
+            "prompt_tokens": getattr(response, "prompt_eval_count", 0),
+            "completion_tokens": getattr(response, "eval_count", 0),
+            "output_token_limit": token_limit,
+            "context_budget": getattr(
+                getattr(self, "vlm_interface", None),
+                "last_context_budget",
+                None,
+            ),
+        }
+        possible_truncation, truncation_detection, finish_reason = (
+            self._assess_truncation(response, token_limit)
+        )
+        metrics["possible_truncation"] = possible_truncation
+        metrics["finish_reason"] = finish_reason
+        metrics["truncation_detection"] = truncation_detection
+        provenance = {
+            "provider": self.provider,
+            "model": metrics["model"],
+            "frame_path": frame_path,
+            "classification_confidence": classification_confidence,
+            "confidence_semantics": confidence_semantics,
+            "latency_ms": metrics["latency_ms"],
+            "prompt_tokens": metrics["prompt_tokens"],
+            "completion_tokens": metrics["completion_tokens"],
+            "output_token_limit": token_limit,
+            "context_budget": metrics["context_budget"],
+            "possible_truncation": possible_truncation,
+            "finish_reason": finish_reason,
+            "truncation_detection": truncation_detection,
+        }
+
+        if snapshot.get("schema") == COMPACT_OBSERVATION_SCHEMA:
+            compact = dict(snapshot)
+            try:
+                evidence = assemble_compact_qwen_observation(
+                    compact,
+                    frame_id=frame_id,
+                    timestamp_seconds=timestamp_seconds,
+                    category_ids=canonical_category_ids or [],
+                    raw_category_labels=raw_category_labels or [primary_type],
+                    provenance=provenance,
+                    possible_truncation=possible_truncation,
+                )
+            except Exception as exc:
+                error_desc = f"{type(exc).__name__}: {exc}"
+                fallback = {
+                    "_error": True,
+                    "_error_detail": error_desc,
+                    "content_type": primary_type,
+                    "detected_types": [primary_type],
+                    "visual_analysis": {},
+                    "structural_description": "",
+                    "reading_order": [],
+                    "conceptual_hints": "",
+                    "layout": "",
+                    "text_readout": "",
+                    "spatial_map": "",
+                    "colors_styles": "",
+                    "missing_elements": f"Structured evidence validation failed: {error_desc}",
+                    "_failure": {
+                        "code": "vlm_contract_invalid",
+                        "retryable": True,
+                        "finish_reason": finish_reason,
+                    },
+                    "_structured_observation": compact,
+                    "_vlm_metrics": metrics,
+                }
+                evidence = adapt_legacy_snapshot(
+                    fallback,
+                    frame_id=frame_id,
+                    timestamp_seconds=timestamp_seconds,
+                    category_ids=canonical_category_ids or [],
+                    raw_category_labels=raw_category_labels or [primary_type],
+                    provenance=provenance,
+                )
+                fallback["visual_evidence"] = evidence.to_schema_dict()
+                return fallback
+
+            evidence_dict = evidence.to_schema_dict()
+            structure = evidence_dict["structural_description"]
+            exact_text = "\n".join(
+                item["text"] for item in evidence_dict.get("exact_content", [])
+                if item.get("text")
+            )
+            visual_analysis = {
+                "regions": evidence_dict.get("regions", []),
+                "relations": evidence_dict.get("relations", []),
+                "category_details": evidence_dict.get("category_details", {}),
+                "uncertainties": evidence_dict.get("uncertainties", []),
+            }
+            unavailable = evidence_dict["extraction_status"] in {"failed", "not_attempted"}
+            failure_fields: Dict[str, Any] = {}
+            if unavailable:
+                failure_fields = {
+                    "_error_detail": "The model reported this frame as unreadable",
+                    "_failure": {
+                        "code": "evidence_reported_unavailable",
+                        "retryable": False,
+                        "finish_reason": finish_reason,
+                    },
+                }
+            return {
+                **failure_fields,
+                "content_type": primary_type,
+                "detected_types": evidence_dict.get("raw_category_labels", [])
+                or evidence_dict.get("category_ids", []),
+                "visual_analysis": visual_analysis,
+                "structural_description": structure.get("overview") or "",
+                "reading_order": structure.get("reading_order", []),
+                "conceptual_hints": "",
+                "layout": evidence_dict.get("global_layout") or "",
+                "text_readout": exact_text,
+                "spatial_map": structure.get("orientation") or "",
+                "colors_styles": "",
+                "missing_elements": "Structured visual evidence unavailable" if unavailable else None,
+                "_error": unavailable,
+                "_structured_observation": compact,
+                "_vlm_metrics": metrics,
+                "visual_evidence": evidence_dict,
+            }
+
+        legacy_source = dict(snapshot)
+        legacy_source.pop("visual_evidence", None)
+        legacy_source.pop("_vlm_metrics", None)
+        evidence = adapt_legacy_snapshot(
+            legacy_source,
+            frame_id=frame_id,
+            timestamp_seconds=timestamp_seconds,
+            category_ids=canonical_category_ids or [],
+            raw_category_labels=raw_category_labels or [primary_type],
+            provenance=provenance,
+        )
+        snapshot["visual_evidence"] = evidence.to_schema_dict()
+        snapshot["_vlm_metrics"] = metrics
+        return snapshot
+
+    def analyze_frame(
+        self,
+        frame_path: str,
+        primary_type: str,
+        classification_confidence: Optional[float] = None,
+        confidence_semantics: str = "unknown",
+        frame_id: Optional[str] = None,
+        timestamp_seconds: Optional[float] = None,
+        raw_category_labels: Optional[list[str]] = None,
+        canonical_category_ids: Optional[list[str]] = None,
+    ) -> Dict:
         """
         Analyze a STEM lecture frame and extract structured information.
 
@@ -644,16 +1149,40 @@ OUTPUT REQUIREMENTS:
 
         # Transformers or Modal backend
         # 1. Build prompt with category directive
-        prompt = self._build_prompt(primary_type)
+        # Keep the existing directive vocabulary while normalizing known
+        # legacy aliases (for example ``notes`` -> ``handwritten_notes``).
+        # Ambiguous labels remain unchanged so the model still receives the
+        # original hint rather than an invented category.
+        prompt_type = prompt_category_for(primary_type)
+        uncertainty = None
+        if (
+            confidence_semantics == "classifier"
+            and classification_confidence is not None
+            and classification_confidence < 0.40
+        ):
+            uncertainty = (
+                f"The supplied '{prompt_type}' category is tentative; classifier "
+                f"confidence is {classification_confidence:.3f}. Verify the frame "
+                "and describe other applicable categories if present."
+            )
+        prompt = self._build_prompt(
+            prompt_type,
+            uncertainty,
+            canonical_category_ids=canonical_category_ids,
+        )
 
         # 2. Generate via VLM Interface
+        token_limit = getattr(self, "structured_max_tokens", 384)
         try:
             response = self.vlm_interface.analyze(
                 image_path_or_pil=frame_path,
                 prompt=prompt,
                 generation_params={
-                    "max_new_tokens": 384,   # 512 peak VRAM not needed; 384 fits 6GB comfortably
-                    "temperature": 0.1
+                    "max_new_tokens": token_limit,
+                    "temperature": DEFAULT_TEMPERATURE,
+                    "_context_budget_parts": getattr(
+                        self, "_last_prompt_budget_parts", {}
+                    ),
                 }
             )
             # 3. Parse into structured JSON
@@ -663,8 +1192,24 @@ OUTPUT REQUIREMENTS:
             print(f"[Snapshot Engine] Frame analysis failed for {frame_path}: {error_desc}")
             if self.provider == PROVIDER_MODAL:
                 # In Modal mode: NEVER fall back to local VLM!
-                return self._create_failed_snapshot(error_desc, primary_type)
+                failed = self._create_failed_snapshot(error_desc, primary_type)
+                failed["_failure"] = self._failure_from_exception(exc)
+                return self._attach_visual_evidence(
+                    failed,
+                    primary_type=primary_type,
+                    frame_path=frame_path,
+                    frame_id=frame_id,
+                    timestamp_seconds=timestamp_seconds,
+                    raw_category_labels=raw_category_labels,
+                    canonical_category_ids=canonical_category_ids,
+                    classification_confidence=classification_confidence,
+                    confidence_semantics=confidence_semantics,
+                    token_limit=token_limit,
+                )
             raise
+
+        if result.get("_error"):
+            self._apply_parse_failure(result, response, token_limit)
 
         # 4. Check for [ILLEGIBLE] text (OCR fallback placeholder)
         text_readout = result.get("text_readout", "")
@@ -678,7 +1223,19 @@ OUTPUT REQUIREMENTS:
                 result["missing_elements"] = "OCR fallback required"
                 print(f"[Snapshot Engine] High [ILLEGIBLE] content detected for {primary_type}")
 
-        return result
+        return self._attach_visual_evidence(
+            result,
+            primary_type=primary_type,
+            frame_path=frame_path,
+            frame_id=frame_id,
+            timestamp_seconds=timestamp_seconds,
+            raw_category_labels=raw_category_labels,
+            canonical_category_ids=canonical_category_ids,
+            classification_confidence=classification_confidence,
+            confidence_semantics=confidence_semantics,
+            response=response,
+            token_limit=token_limit,
+        )
 
     def cleanup(self):
         """

@@ -7,7 +7,7 @@ youtube-transcript-api>=0.6.0
 faster-whisper>=1.0.0
 
 # Video Download & Audio Extraction
-yt-dlp>=2024.0.0
+yt-dlp[default]>=2026.03.17
 
 # Hardware Detection (CUDA/CPU)
 torch>=2.0.0

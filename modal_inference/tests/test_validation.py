@@ -9,10 +9,13 @@ import json
 import unittest
 
 from modal_inference.config import (
+    DEFAULT_STRUCTURED_MAX_TOKENS,
+    DEFAULT_TEMPERATURE,
     DEFAULT_GPU,
     GPU_MEMORY_UTILIZATION,
     MAX_CONCURRENT_INPUTS,
     MAX_IMAGE_BYTES,
+    MAX_IMAGE_DIMENSION,
     MAX_IMAGES_PER_PROMPT,
     MAX_MODEL_LEN,
     MAX_NUM_SEQS,
@@ -23,7 +26,11 @@ from modal_inference.config import (
     MODEL_QUANTIZATION,
     MULTIMODAL_LIMITS_JSON,
     SCALEDOWN_WINDOW_SECONDS,
+    VLLM_GENERATION_CONFIG_JSON,
+    VLLM_MM_PROCESSOR_KWARGS_JSON,
+    VLLM_VERSION,
 )
+from modal_inference.launch_config import build_vllm_serve_command
 from modal_inference.schemas import (
     ChatCompletionRequest,
     ChatMessage,
@@ -104,16 +111,19 @@ class TestTokenAndAuthValidation(unittest.TestCase):
     """Test token clamping and HTTP authorization logic."""
 
     def test_clamp_generation_tokens_none(self):
-        tokens = clamp_generation_tokens(None, max_allowed=2048, default_tokens=1024)
-        self.assertEqual(tokens, 1024)
+        tokens = clamp_generation_tokens(None, max_allowed=2048)
+        self.assertEqual(tokens, 2048)
 
     def test_clamp_generation_tokens_underflow(self):
-        tokens = clamp_generation_tokens(-5, max_allowed=2048)
-        self.assertEqual(tokens, 1)
+        with self.assertRaises(ValueError):
+            clamp_generation_tokens(-5, max_allowed=2048)
 
     def test_clamp_generation_tokens_overflow(self):
-        tokens = clamp_generation_tokens(50000, max_allowed=MAX_OUTPUT_TOKENS)
-        self.assertEqual(tokens, MAX_OUTPUT_TOKENS)
+        with self.assertRaises(ValueError):
+            clamp_generation_tokens(50000, max_allowed=MAX_OUTPUT_TOKENS)
+
+    def test_explicit_smaller_generation_limit_is_preserved(self):
+        self.assertEqual(clamp_generation_tokens(384), 384)
 
     def test_validate_auth_header_success(self):
         secret = "synapse-test-secret-key-123"
@@ -203,24 +213,44 @@ class TestL4DeploymentConfiguration(unittest.TestCase):
 
     def test_l4_single_request_boundaries(self):
         self.assertEqual(DEFAULT_GPU, "L4")
-        self.assertEqual(MAX_MODEL_LEN, 4096)
+        self.assertEqual(MAX_MODEL_LEN, 8192)
         self.assertEqual(MAX_NUM_SEQS, 1)
         self.assertEqual(MAX_CONCURRENT_INPUTS, 1)
         self.assertEqual(MAX_IMAGES_PER_PROMPT, 1)
         self.assertEqual(MAX_VIDEOS_PER_PROMPT, 0)
         self.assertEqual(SCALEDOWN_WINDOW_SECONDS, 300)
-        self.assertLessEqual(GPU_MEMORY_UTILIZATION, 0.85)
+        self.assertEqual(GPU_MEMORY_UTILIZATION, 0.90)
+        self.assertEqual(DEFAULT_STRUCTURED_MAX_TOKENS, 2048)
+        self.assertEqual(MAX_OUTPUT_TOKENS, 2048)
+        self.assertEqual(DEFAULT_TEMPERATURE, 0.1)
+        self.assertEqual(MAX_IMAGE_DIMENSION, 1344)
 
     def test_official_fp8_checkpoint_is_explicit(self):
         self.assertEqual(MODEL_ID, "Qwen/Qwen3-VL-8B-Instruct-FP8")
         self.assertEqual(MODEL_DTYPE, "bfloat16")
         self.assertEqual(MODEL_QUANTIZATION, "fp8")
+        self.assertEqual(VLLM_VERSION, "0.19.1")
 
     def test_multimodal_cli_limit_is_valid_json(self):
         limits = json.loads(MULTIMODAL_LIMITS_JSON)
         self.assertEqual(limits, {"image": 1, "video": 0})
         self.assertEqual(limits["image"], MAX_IMAGES_PER_PROMPT)
         self.assertEqual(limits["video"], MAX_VIDEOS_PER_PROMPT)
+
+    def test_vllm_generation_and_image_processor_config(self):
+        generation = json.loads(VLLM_GENERATION_CONFIG_JSON)
+        mm_kwargs = json.loads(VLLM_MM_PROCESSOR_KWARGS_JSON)
+        self.assertEqual(generation, {"max_new_tokens": 2048, "temperature": 0.1})
+        self.assertEqual(mm_kwargs, {"max_pixels": 1344 * 1344})
+
+    def test_vllm_command_contains_single_l4_profile_and_server_ceiling(self):
+        command = build_vllm_serve_command("test-key")
+        self.assertIn("--max-model-len", command)
+        self.assertEqual(command[command.index("--max-model-len") + 1], "8192")
+        self.assertEqual(command[command.index("--max-num-seqs") + 1], "1")
+        self.assertEqual(command[command.index("--gpu-memory-utilization") + 1], "0.9")
+        self.assertEqual(command[command.index("--override-generation-config") + 1], VLLM_GENERATION_CONFIG_JSON)
+        self.assertEqual(command[command.index("--mm-processor-kwargs") + 1], VLLM_MM_PROCESSOR_KWARGS_JSON)
 
 
 if __name__ == "__main__":
