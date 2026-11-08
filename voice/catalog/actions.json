@@ -1,0 +1,910 @@
+{
+  "version": 1,
+  "comment": "Language-neutral. Example sentences live in examples/<lang>.json. binding is the frontend handler the action will call; binding_status is existing (handler already there), wrapper (needs a small wrapper around existing state or player calls) or voice (handled by the voice layer itself).",
+  "actions": [
+    {
+      "id": "navigate_home",
+      "category": "navigation",
+      "description": "Go to the Home screen where a new lecture can be searched for or started.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "App.handleNavigate('home')",
+      "binding_status": "existing"
+    },
+    {
+      "id": "navigate_library",
+      "category": "navigation",
+      "description": "Open the Library, the list of explanations the learner has read or listened to before.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "App.handleNavigate('library')",
+      "binding_status": "existing"
+    },
+    {
+      "id": "navigate_bookmarks",
+      "category": "navigation",
+      "description": "Open Bookmarks, the explanations the learner saved to come back to.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "App.handleNavigate('bookmarks')",
+      "binding_status": "existing"
+    },
+    {
+      "id": "navigate_notes",
+      "category": "navigation",
+      "description": "Open Voice notes, the audio notes the learner recorded during lectures.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "App.handleNavigate('notes')",
+      "binding_status": "existing"
+    },
+    {
+      "id": "open_timeline",
+      "category": "navigation",
+      "description": "From the lecture, show the timeline of all the moments found in this lecture.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.onOpenTimeline(activePointId)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "start_practice",
+      "category": "navigation",
+      "description": "From the lecture, open the practice quiz that tests the learner on this lecture.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.onStartPractice",
+      "binding_status": "existing"
+    },
+    {
+      "id": "set_theme",
+      "category": "settings",
+      "description": "Change the colour theme of the app to paper, night or sepia.",
+      "screens": [
+        "*"
+      ],
+      "params": {
+        "theme": {
+          "type": "enum",
+          "values": [
+            "paper",
+            "night",
+            "sepia"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "App.setTheme(theme)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "search_lectures",
+      "category": "discovery",
+      "description": "Search for lectures about a topic that the learner names.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {
+        "query": {
+          "type": "string",
+          "max_length": 200,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useLectureSearch.runSearch(query)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "select_result",
+      "category": "discovery",
+      "description": "Pick one of the lecture search results by its position in the list.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 50,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "LectureResultsList.onSelect(result)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "start_lecture",
+      "category": "discovery",
+      "description": "Start learning the selected or pasted lecture, which prepares it for explanations.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useLectureSearch.handleSubmit",
+      "binding_status": "existing"
+    },
+    {
+      "id": "explore_subject",
+      "category": "discovery",
+      "description": "Browse lectures for one school subject such as physics or chemistry.",
+      "screens": [
+        "home"
+      ],
+      "params": {
+        "subject": {
+          "type": "enum",
+          "values": [
+            "Mathematics",
+            "Physics",
+            "Computer Science",
+            "Chemistry",
+            "Biology"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "App.handleExploreSubject(subject)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "continue_lecture",
+      "category": "discovery",
+      "description": "Continue the lecture the learner was last studying.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Home.resumeContinueLecture",
+      "binding_status": "existing"
+    },
+    {
+      "id": "play_lecture",
+      "category": "lecture",
+      "description": "Start or resume playing the lecture video.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleLectureToggle (when not playing)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "pause_lecture",
+      "category": "lecture",
+      "description": "Pause the lecture video.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleLectureToggle (when playing)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "seek_lecture",
+      "category": "lecture",
+      "description": "Jump the lecture video forward or backward by a number of seconds.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "direction": {
+          "type": "enum",
+          "values": [
+            "forward",
+            "backward"
+          ],
+          "required": true
+        },
+        "seconds": {
+          "type": "int",
+          "min": 1,
+          "max": 600,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "playerRef.seekTo(currentTime +/- seconds)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "play_explanation",
+      "category": "lecture",
+      "description": "Listen to the spoken explanation of the current moment.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.togglePlay (when not playing)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "pause_explanation",
+      "category": "lecture",
+      "description": "Pause the spoken explanation audio.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.togglePlay (when playing)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "replay_explanation",
+      "category": "lecture",
+      "description": "Play the spoken explanation of the current moment again from the beginning.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "audioRef.currentTime = 0 then togglePlay",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "next_moment",
+      "category": "lecture",
+      "description": "Go to the next moment in the lecture that has an explanation.",
+      "screens": [
+        "explanation",
+        "timeline"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.selectPointManually(nextPoint.id)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "previous_moment",
+      "category": "lecture",
+      "description": "Go back to the previous moment in the lecture that has an explanation.",
+      "screens": [
+        "explanation",
+        "timeline"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.selectPointManually(prevPoint.id)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "go_to_moment",
+      "category": "lecture",
+      "description": "Jump to a particular moment of the lecture by its number in the list of moments.",
+      "screens": [
+        "explanation",
+        "timeline"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 200,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.selectPointManually(points[index - 1].id)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "change_listening_speed",
+      "category": "lecture",
+      "description": "Make the spoken explanation faster or slower.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "direction": {
+          "type": "enum",
+          "values": [
+            "faster",
+            "slower"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.stepRate(+1 or -1)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "toggle_voice_note",
+      "category": "lecture",
+      "description": "Start or stop recording a personal voice note at this point of the lecture.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voiceControlRef.current.toggle()",
+      "binding_status": "existing"
+    },
+    {
+      "id": "toggle_bookmark",
+      "category": "lecture",
+      "description": "Save the current explanation as a bookmark, or remove it from the bookmarks.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleBookmark",
+      "binding_status": "existing"
+    },
+    {
+      "id": "export_pdf",
+      "category": "lecture",
+      "description": "Download the current explanation as a PDF document.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleExportPDF",
+      "binding_status": "existing"
+    },
+    {
+      "id": "set_presentation_mode",
+      "category": "lecture",
+      "description": "Switch the lecture screen between accessibility mode, which hides the video, and study mode, which shows it.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "mode": {
+          "type": "enum",
+          "values": [
+            "accessibility",
+            "study"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.setPresentationMode(mode)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "change_text_size",
+      "category": "lecture",
+      "description": "Make the text on the lecture screen larger or smaller.",
+      "screens": [
+        "explanation",
+        "quiz"
+      ],
+      "params": {
+        "change": {
+          "type": "enum",
+          "values": [
+            "larger",
+            "smaller"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.setTextScale(+/- 0.15)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "toggle_high_contrast",
+      "category": "lecture",
+      "description": "Turn the high contrast display on or off on the lecture screen.",
+      "screens": [
+        "explanation",
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.setHighContrast(!highContrast)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "open_item",
+      "category": "collections",
+      "description": "Open one saved item, bookmark or voice note by its position in the list.",
+      "screens": [
+        "bookmarks",
+        "library",
+        "notes"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 500,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "onOpenBookmark / onOpenExplanation / onOpenNote",
+      "binding_status": "existing"
+    },
+    {
+      "id": "play_item_audio",
+      "category": "collections",
+      "description": "Open a Library item and play its spoken explanation right away.",
+      "screens": [
+        "library"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 500,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "LibraryScreen.onPlayAudio",
+      "binding_status": "existing"
+    },
+    {
+      "id": "remove_item",
+      "category": "collections",
+      "description": "Delete one saved item or bookmark from its list.",
+      "screens": [
+        "bookmarks",
+        "library"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 500,
+          "required": true
+        }
+      },
+      "risk": "confirm",
+      "binding": "handleRemove(id)",
+      "binding_status": "existing"
+    },
+    {
+      "id": "ask_question",
+      "category": "question",
+      "description": "Ask a question about a lecture or about the topic being studied. Used for anything that is a question about the content and not a command for the app.",
+      "screens": [
+        "*"
+      ],
+      "params": {
+        "question": {
+          "type": "string",
+          "max_length": 500,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "askQuestion({videoId, question, currentTimeSeconds, interventionId})",
+      "binding_status": "existing"
+    },
+    {
+      "id": "stop_speaking",
+      "category": "voice",
+      "description": "Stop whatever the assistant is saying out loud right now.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "repeat_last_response",
+      "category": "voice",
+      "description": "Say the assistant's last reply again.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "cancel",
+      "category": "voice",
+      "description": "Forget the current request and do nothing.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "help",
+      "category": "voice",
+      "description": "Explain what the learner can ask for by voice on this screen.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "confirm_yes",
+      "category": "dialog",
+      "description": "Answer yes to the question the assistant just asked.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer (only while a confirmation is pending)",
+      "binding_status": "voice"
+    },
+    {
+      "id": "confirm_no",
+      "category": "dialog",
+      "description": "Answer no to the question the assistant just asked.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer (only while a confirmation is pending)",
+      "binding_status": "voice"
+    },
+    {
+      "id": "quiz_start",
+      "category": "lecture",
+      "description": "On the practice setup, create a practice set of questions for this lecture.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "QuizSetup.session.generate",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_answer",
+      "category": "lecture",
+      "description": "Choose one answer for the current practice question by its number or letter (option 1 or A, 2 or B, ...). Does not check or submit.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 10,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "session.select",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_check",
+      "category": "lecture",
+      "description": "Check whether the chosen answer to the current practice question is right.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.check",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_hint",
+      "category": "lecture",
+      "description": "Give a hint for the current practice question.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.revealHint",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_read",
+      "category": "lecture",
+      "description": "Read the current practice question and its answer choices aloud.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.announce",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_next",
+      "category": "lecture",
+      "description": "Go to the next practice question.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.goTo(current + 1)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_previous",
+      "category": "lecture",
+      "description": "Go back to the previous practice question.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.goTo(current - 1)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_review",
+      "category": "lecture",
+      "description": "Open the review page that lists unanswered questions before finishing.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "session.openReview",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_submit",
+      "category": "lecture",
+      "description": "Finish the practice set and submit all answers. Answers cannot be changed afterwards.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "confirm",
+      "binding": "session.submitAttempt",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "quiz_back",
+      "category": "lecture",
+      "description": "Leave the practice screen and go back to the lecture.",
+      "screens": [
+        "quiz"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "QuizScreen.onBack",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "app_question",
+      "category": "voice",
+      "description": "Ask HOW to do something in the app or whether the app can do something (for example 'how do I bookmark this', 'can I change the text size'). Answered from the list of actions.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "paste_url",
+      "category": "discovery",
+      "description": "Paste the link that was copied to the clipboard into the lecture link field.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useLectureSearch.setUrl(clipboard)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "skip_explanation",
+      "category": "lecture",
+      "description": "Skip the explanation that is being prepared or shown and carry on with the lecture.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleSkipExplanation",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "retry_explanation",
+      "category": "lecture",
+      "description": "Try again to prepare the explanation for this moment when it failed or is not ready.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleRetryPreparation",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "set_visual_tab",
+      "category": "lecture",
+      "description": "In study mode, switch between the picture of the moment and its structured text description.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "tab": {
+          "type": "enum",
+          "values": [
+            "visual",
+            "structured"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.setVisualTab",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "toggle_focus",
+      "category": "lecture",
+      "description": "Highlight or stop highlighting the important region of the picture.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleToggleFocus",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "export_audio",
+      "category": "lecture",
+      "description": "Download the explanation as an audio file.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Explanation.handleExportAudio",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "open_settings",
+      "category": "settings",
+      "description": "Open the settings panel.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Navbar.setOpen(true)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "close_settings",
+      "category": "settings",
+      "description": "Close the settings panel.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Navbar.setOpen(false)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "where_am_i",
+      "category": "voice",
+      "description": "Say which screen the learner is on and what is on it.",
+      "screens": [
+        "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "filter_moments",
+      "category": "lecture",
+      "description": "On the timeline, show only the moments of one kind (graphs, equations, charts, diagrams, code, tables), or all of them.",
+      "screens": [
+        "timeline"
+      ],
+      "params": {
+        "category": {
+          "type": "enum",
+          "values": [
+            "graph",
+            "equation",
+            "chart",
+            "diagram",
+            "code",
+            "table",
+            "all"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Timeline.setActiveCategory",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "open_moment",
+      "category": "lecture",
+      "description": "On the timeline, open a moment in the lecture: the selected one, or the one with the given number in the list.",
+      "screens": [
+        "timeline"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 200,
+          "required": false
+        }
+      },
+      "risk": "low",
+      "binding": "Timeline.onOpenPoint",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "read_moments",
+      "category": "lecture",
+      "description": "On the timeline, read out the moments in the list with their kind and time.",
+      "screens": [
+        "timeline"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Timeline.announce",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "describe_moment",
+      "category": "lecture",
+      "description": "On the timeline, say which moment is selected: its title, kind and time.",
+      "screens": [
+        "timeline"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Timeline.announce",
+      "binding_status": "wrapper"
+    }
+  ]
+}

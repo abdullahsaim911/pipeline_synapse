@@ -1,0 +1,587 @@
+{
+  "language": "en",
+  "complete": true,
+  "comment": "Prototype sentences per action. The matcher compares meaning, so these are not patterns. Held-out test sentences live in ../eval/en.json and must not appear here.",
+  "examples": {
+    "navigate_home": [
+      "go to the home screen",
+      "take me back to the start",
+      "I want to start a new lecture",
+      "back to the main page",
+      "open home",
+      "can you bring me to the beginning"
+    ],
+    "navigate_library": [
+      "open my library",
+      "show me the explanations I have already heard",
+      "take me to the library",
+      "I would like to see my history",
+      "go to previously listened items",
+      "library please"
+    ],
+    "navigate_bookmarks": [
+      "open bookmarks",
+      "show me my saved explanations",
+      "can you take me to my bookmarks",
+      "go to the things I saved",
+      "I want to look at my bookmarked items",
+      "bookmarks"
+    ],
+    "navigate_notes": [
+      "open my voice notes",
+      "show the notes I recorded",
+      "take me to my audio notes",
+      "go to the recordings I made",
+      "where are my spoken notes",
+      "notes screen"
+    ],
+    "open_timeline": [
+      "show the timeline",
+      "open the list of moments in this lecture",
+      "take me to the lecture timeline",
+      "I want to see all the moments",
+      "give me an overview of this lecture",
+      "timeline please"
+    ],
+    "start_practice": [
+      "start the practice quiz",
+      "quiz me on this lecture",
+      "I want to practise what I learned",
+      "open the questions for this lecture",
+      "test my understanding",
+      "can I take a quiz"
+    ],
+    "set_theme": [
+      "switch to night mode",
+      "change the theme to sepia",
+      "make the screen dark",
+      "use the paper theme",
+      "I prefer a warmer colour scheme",
+      "set the colours to night",
+      "go back to the light look",
+      "night mode",
+      "dark mode please",
+      "turn on night mode",
+      "switch to dark theme",
+      "knight theme",
+      "knight mode",
+      "dark theme",
+      "use dark colours",
+      "switch to the sepia theme",
+      "sepia mode",
+      "warm colours please",
+      "light mode",
+      "switch to the paper theme",
+      "make the background white"
+    ],
+    "search_lectures": [
+      "search for lectures about eigenvalues",
+      "find me a video on photosynthesis",
+      "look up thermodynamics lectures",
+      "I want to learn about integration by parts",
+      "are there any lectures on the Fourier transform",
+      "search linear algebra",
+      "find me lectures about the heat equation",
+      "are there videos on organic reactions",
+      "look for a lecture on probability",
+      "I need a video about vectors"
+    ],
+    "select_result": [
+      "choose the first result",
+      "pick the third one",
+      "select number two",
+      "I want the second lecture",
+      "go with the last one in the list",
+      "the fourth video please"
+    ],
+    "start_lecture": [
+      "start learning",
+      "begin this lecture",
+      "process this video",
+      "go ahead and prepare the lecture",
+      "start the lecture now",
+      "let's get going with this one"
+    ],
+    "explore_subject": [
+      "show me physics lectures",
+      "I want to browse chemistry",
+      "open the biology section",
+      "explore computer science",
+      "let me look at mathematics lectures",
+      "go to the physics subject"
+    ],
+    "continue_lecture": [
+      "continue where I left off",
+      "resume my last lecture",
+      "carry on with the lecture I was studying",
+      "pick up my previous lecture",
+      "keep going with the last one",
+      "continue learning",
+      "play my most recent explanation",
+      "open the last explanation I listened to",
+      "resume the latest lecture",
+      "go back to what I was learning",
+      "play the recent lecture"
+    ],
+    "play_lecture": [
+      "play the lecture",
+      "start the video",
+      "resume the lecture",
+      "continue playing",
+      "let the lecture run",
+      "press play on the video",
+      "let the video go",
+      "begin playback",
+      "continue the video",
+      "play the video",
+      "play the video please",
+      "hit play on the video",
+      "play it",
+      "resume the video"
+    ],
+    "pause_lecture": [
+      "pause the lecture",
+      "stop the video for a moment",
+      "hold on, pause the video",
+      "pause the lecture playback",
+      "freeze the video",
+      "wait, stop the lecture",
+      "hang on, stop the video",
+      "freeze the lecture",
+      "pause the video",
+      "pause it",
+      "hold the video"
+    ],
+    "seek_lecture": [
+      "skip forward thirty seconds",
+      "go back ten seconds",
+      "rewind the video a minute",
+      "jump ahead by two minutes",
+      "move the lecture back fifteen seconds",
+      "fast forward forty five seconds"
+    ],
+    "play_explanation": [
+      "read the explanation to me",
+      "play the explanation",
+      "I want to hear the explanation",
+      "listen to this explanation",
+      "explain this moment out loud",
+      "start the spoken explanation"
+    ],
+    "pause_explanation": [
+      "pause the explanation",
+      "stop reading the explanation",
+      "hold the explanation audio",
+      "stop the explanation for now",
+      "be quiet for a second, pause the explanation",
+      "pause the narration"
+    ],
+    "replay_explanation": [
+      "read that explanation again",
+      "repeat the explanation",
+      "play the explanation from the start",
+      "say that again, the whole explanation",
+      "replay the explanation",
+      "I missed that, start the explanation over",
+      "I didn't catch that, play the explanation once more",
+      "go over the explanation again"
+    ],
+    "next_moment": [
+      "go to the next moment",
+      "next explanation",
+      "skip to the next one",
+      "move on to the following moment",
+      "take me to what comes next",
+      "next point please"
+    ],
+    "previous_moment": [
+      "go back to the previous moment",
+      "previous explanation",
+      "take me to the moment before this one",
+      "go to the last explanation",
+      "back one moment",
+      "show me the earlier point",
+      "the one before this",
+      "select the earlier moment",
+      "move to the preceding moment"
+    ],
+    "go_to_moment": [
+      "go to moment five",
+      "jump to explanation number three",
+      "open moment two",
+      "take me to the seventh moment",
+      "I want moment ten",
+      "go to point four",
+      "open explanation number three"
+    ],
+    "change_listening_speed": [
+      "speak faster",
+      "slow down the explanation",
+      "make the voice slower",
+      "increase the listening speed",
+      "can you read it a bit quicker",
+      "decrease the reading speed",
+      "speed up the voice",
+      "make the narrator go faster",
+      "slow the reading speed down"
+    ],
+    "toggle_voice_note": [
+      "record a voice note",
+      "start a note here",
+      "I want to leave myself a note",
+      "stop recording the note",
+      "save my voice note",
+      "take a note at this moment",
+      "I want to say something and save it as a note",
+      "let me dictate a note",
+      "start my note",
+      "record myself at this point"
+    ],
+    "toggle_bookmark": [
+      "bookmark this explanation",
+      "save this one for later",
+      "remove the bookmark from this explanation",
+      "add this to my bookmarks",
+      "I want to keep this explanation",
+      "unsave this explanation"
+    ],
+    "export_pdf": [
+      "export this as a PDF",
+      "download the explanation as a document",
+      "save this explanation as a PDF file",
+      "give me a PDF of this",
+      "make a printable copy of this explanation",
+      "download the PDF"
+    ],
+    "set_presentation_mode": [
+      "switch to study mode",
+      "show me the video",
+      "turn on accessibility mode",
+      "hide the video",
+      "change to accessibility mode",
+      "I want to see the video in study mode"
+    ],
+    "change_text_size": [
+      "make the text bigger",
+      "increase the font size",
+      "the letters are too big, make them smaller",
+      "reduce the text size",
+      "I need larger text",
+      "shrink the text a little"
+    ],
+    "toggle_high_contrast": [
+      "turn on high contrast",
+      "switch off high contrast",
+      "make the screen higher contrast",
+      "I can't see well, increase the contrast",
+      "enable high contrast mode",
+      "toggle contrast"
+    ],
+    "open_item": [
+      "open the first one",
+      "open the second bookmark",
+      "show me item number three",
+      "I want to read the fourth saved explanation",
+      "open the latest note",
+      "go into number five",
+      "let me read the third bookmark",
+      "open bookmark number one"
+    ],
+    "play_item_audio": [
+      "play the audio of the first item",
+      "listen to the second explanation in my library",
+      "read item number three out loud",
+      "play number four",
+      "play the first one's audio",
+      "I want to hear the second item"
+    ],
+    "remove_item": [
+      "delete the first bookmark",
+      "remove item number two",
+      "get rid of the third one",
+      "I don't want the second saved item any more",
+      "erase the last bookmark",
+      "remove number four from the list"
+    ],
+    "ask_question": [
+      "what does the axis on this graph represent",
+      "why is the derivative negative here",
+      "can you explain what the instructor meant by eigenvector",
+      "what is the formula on the screen",
+      "how did we get from the second line to the third",
+      "what was said in the last five minutes",
+      "why does the graph level off near the end",
+      "what did the instructor say about limits a bit ago",
+      "what is this diagram showing",
+      "explain why the second term disappears",
+      "what does the speaker mean by that"
+    ],
+    "stop_speaking": [
+      "stop talking",
+      "be quiet",
+      "stop speaking",
+      "that's enough, stop",
+      "silence",
+      "shush"
+    ],
+    "repeat_last_response": [
+      "say that again",
+      "repeat what you just said",
+      "what did you say",
+      "come again",
+      "can you repeat your answer",
+      "I didn't catch that"
+    ],
+    "cancel": [
+      "cancel",
+      "never mind",
+      "forget it",
+      "scratch that",
+      "ignore that request",
+      "don't do anything"
+    ],
+    "help": [
+      "help",
+      "what can I say",
+      "what can you do on this screen",
+      "how do I use voice control",
+      "list the commands I can use",
+      "I'm lost, tell me my options"
+    ],
+    "confirm_yes": [
+      "yes",
+      "yes please",
+      "go ahead",
+      "that's right",
+      "sure, do it",
+      "yeah"
+    ],
+    "confirm_no": [
+      "no",
+      "no thanks",
+      "don't do that",
+      "that's wrong",
+      "not that one",
+      "nope",
+      "no, leave it as it is",
+      "no, don't",
+      "cancel that, no"
+    ],
+    "quiz_start": [
+      "start the practice questions",
+      "make me a quiz on this lecture",
+      "create the practice set",
+      "begin practicing",
+      "generate some questions for me",
+      "I want to test myself"
+    ],
+    "quiz_answer": [
+      "option two",
+      "I choose answer B",
+      "select the third choice",
+      "my answer is C",
+      "pick the first one",
+      "go with option four",
+      "answer a"
+    ],
+    "quiz_check": [
+      "check my answer",
+      "is that right",
+      "am I correct",
+      "tell me if this is correct",
+      "check it",
+      "see if my answer is right"
+    ],
+    "quiz_hint": [
+      "give me a hint",
+      "I need a clue",
+      "can you help me with this question",
+      "hint please",
+      "I am stuck, help me",
+      "show a hint"
+    ],
+    "quiz_read": [
+      "read the question",
+      "read the question and the choices again",
+      "what is the question",
+      "repeat the question",
+      "say the answers again",
+      "what are my options"
+    ],
+    "quiz_next": [
+      "next question",
+      "go to the next question",
+      "move on to the next one",
+      "skip to the following question",
+      "continue to the next question"
+    ],
+    "quiz_previous": [
+      "previous question",
+      "go back to the last question",
+      "take me to the question before",
+      "back one question",
+      "return to the earlier question"
+    ],
+    "quiz_review": [
+      "review my answers",
+      "show me which ones I skipped",
+      "open the review page",
+      "which questions are unanswered",
+      "I want to look over my answers before finishing"
+    ],
+    "quiz_submit": [
+      "submit my answers",
+      "I am done, finish the quiz",
+      "hand in the practice set",
+      "finish and show my score",
+      "end the quiz and grade it"
+    ],
+    "quiz_back": [
+      "go back to the lecture",
+      "leave the practice and return to the video",
+      "stop practicing and take me back",
+      "return to the lecture",
+      "exit the quiz"
+    ],
+    "app_question": [
+      "how do I bookmark this",
+      "can I change the text size by voice",
+      "is there a way to export a PDF",
+      "how can I record a voice note",
+      "can you turn on high contrast",
+      "how do I go to the next moment",
+      "is it possible to make the audio faster",
+      "how does the practice quiz work",
+      "can I delete a bookmark with my voice",
+      "how would I open my library",
+      "can I do that by talking to you",
+      "how can I switch to a different theme",
+      "is there a way to jump to a specific moment",
+      "what do I say to skip forward",
+      "does this app let me take notes by voice",
+      "how do I search for lectures",
+      "how do I check my own answer in the quiz",
+      "tell me how to pause the video"
+    ],
+    "paste_url": [
+      "paste the link",
+      "paste the url",
+      "paste the copied link here",
+      "put the link from my clipboard in the box",
+      "paste what I copied",
+      "insert the youtube link I copied"
+    ],
+    "skip_explanation": [
+      "skip this explanation",
+      "skip the explanation",
+      "I don't want to hear this explanation",
+      "move past the explanation",
+      "never mind the explanation, continue the video"
+    ],
+    "retry_explanation": [
+      "try the explanation again",
+      "retry preparing the explanation",
+      "the explanation failed, try again",
+      "check again if the explanation is ready",
+      "reload the explanation"
+    ],
+    "set_visual_tab": [
+      "show me the picture",
+      "switch to the structured description",
+      "show the text version of the diagram",
+      "go to the visual tab",
+      "show the structured view"
+    ],
+    "toggle_focus": [
+      "highlight the important part",
+      "show the focus area",
+      "turn off the highlight",
+      "point out the key region of the image",
+      "toggle the focus highlight",
+      "show me where to look in the image",
+      "mark the important area in the picture",
+      "highlight the region the explanation is about"
+    ],
+    "export_audio": [
+      "download the audio",
+      "save the explanation as an audio file",
+      "export the audio",
+      "give me the mp3 of this explanation",
+      "download the explanation audio",
+      "save the audio file to my computer",
+      "download this explanation as sound",
+      "save the narration as an audio file",
+      "I want an audio copy of this explanation"
+    ],
+    "open_settings": [
+      "open settings",
+      "show me the settings",
+      "open the settings panel",
+      "I want to change the settings",
+      "take me to the appearance settings"
+    ],
+    "close_settings": [
+      "close settings",
+      "close the settings panel",
+      "hide the settings",
+      "I am done with settings",
+      "dismiss the settings"
+    ],
+    "where_am_i": [
+      "where am I",
+      "which screen is this",
+      "what page am I on",
+      "what is on this screen",
+      "tell me where I am"
+    ],
+    "filter_moments": [
+      "show only the graphs",
+      "show me just the equations",
+      "filter by charts",
+      "only show diagrams",
+      "show the code moments",
+      "display all moments again",
+      "go to the graphs",
+      "I want to see the equations",
+      "show everything",
+      "list the charts only",
+      "switch to the table moments",
+      "bring back everything",
+      "reset the filter",
+      "remove the filter and show all",
+      "clear the category filter",
+      "show all moments",
+      "show all the moments",
+      "display every moment",
+      "remove the filter"
+    ],
+    "open_moment": [
+      "open this moment",
+      "open it in the lecture",
+      "take me to this explanation",
+      "play the selected moment",
+      "go to the lecture at this point",
+      "take me to that one",
+      "open that moment in the video",
+      "go there in the lecture"
+    ],
+    "read_moments": [
+      "read the list",
+      "what moments are there",
+      "read out all the moments",
+      "list the moments",
+      "tell me what is on the timeline",
+      "read the graphs"
+    ],
+    "describe_moment": [
+      "what is selected",
+      "which moment is this",
+      "read the selected moment",
+      "tell me about the current moment",
+      "what am I on right now",
+      "which one is highlighted right now",
+      "what did I select",
+      "what is the current choice"
+    ]
+  }
+}

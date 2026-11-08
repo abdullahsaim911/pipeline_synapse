@@ -23,6 +23,8 @@ from api.routers.quiz import router as quiz_router
 from api.logging_setup import configure_ask_logging
 from api.security import configure_cors
 from stage_tracing import trace_stage
+from voice.lifecycle import VoiceWarmup
+from voice.routes import router as voice_router, shutdown_voice_runtime
 
 load_dotenv()
 configure_ask_logging()
@@ -54,6 +56,9 @@ async def lifespan(app: FastAPI):
     )
     processing.start()
     app.state.processing_jobs = processing
+    voice_warmup = VoiceWarmup()
+    voice_warmup.start()
+    app.state.voice_warmup = voice_warmup
     trace_stage("backend", "ready", started_at=startup_started)
     try:
         yield
@@ -62,9 +67,12 @@ async def lifespan(app: FastAPI):
         trace_stage("backend", "shutdown_started")
         preparation.begin_shutdown()
         warmup.request_stop()
+        voice_warmup.request_stop()
         processing.shutdown()
         preparation.shutdown()
         warmup.stop()
+        voice_warmup.stop()
+        shutdown_voice_runtime()
         # Loaded only if an explanation ran; stops only a server Synapse started.
         ollama = sys.modules.get("orchestrator.ollama_service")
         if ollama is not None:
@@ -88,6 +96,7 @@ configure_cors(app)
 app.include_router(video_router)
 app.include_router(quiz_router)
 app.include_router(learning_history_router)
+app.include_router(voice_router)
 
 
 # Health check endpoint
