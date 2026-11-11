@@ -23,6 +23,7 @@ from visual_evidence import (
     COMPACT_OBSERVATION_SCHEMA,
     adapt_legacy_snapshot,
     assemble_compact_qwen_observation,
+    normalize_compact_relations,
 )
 from stage_tracing import trace_stage
 
@@ -980,20 +981,26 @@ OUTPUT REQUIREMENTS:
     ) -> Dict[str, Any]:
         """Attach canonical evidence while retaining the legacy snapshot API."""
 
+        context_budget = getattr(
+            getattr(self, "vlm_interface", None),
+            "last_context_budget",
+            None,
+        )
+        effective_token_limit = (
+            context_budget.get("effective_output_tokens", token_limit)
+            if isinstance(context_budget, dict) else token_limit
+        )
         metrics = {
             "model": getattr(response, "model", getattr(self, "model_name", None)),
             "latency_ms": getattr(response, "total_duration_ms", None),
             "prompt_tokens": getattr(response, "prompt_eval_count", 0),
             "completion_tokens": getattr(response, "eval_count", 0),
-            "output_token_limit": token_limit,
-            "context_budget": getattr(
-                getattr(self, "vlm_interface", None),
-                "last_context_budget",
-                None,
-            ),
+            "configured_output_token_limit": token_limit,
+            "output_token_limit": effective_token_limit,
+            "context_budget": context_budget,
         }
         possible_truncation, truncation_detection, finish_reason = (
-            self._assess_truncation(response, token_limit)
+            self._assess_truncation(response, effective_token_limit)
         )
         metrics["possible_truncation"] = possible_truncation
         metrics["finish_reason"] = finish_reason
@@ -1007,7 +1014,8 @@ OUTPUT REQUIREMENTS:
             "latency_ms": metrics["latency_ms"],
             "prompt_tokens": metrics["prompt_tokens"],
             "completion_tokens": metrics["completion_tokens"],
-            "output_token_limit": token_limit,
+            "configured_output_token_limit": token_limit,
+            "output_token_limit": effective_token_limit,
             "context_budget": metrics["context_budget"],
             "possible_truncation": possible_truncation,
             "finish_reason": finish_reason,
@@ -1015,7 +1023,8 @@ OUTPUT REQUIREMENTS:
         }
 
         if snapshot.get("schema") == COMPACT_OBSERVATION_SCHEMA:
-            compact = dict(snapshot)
+            compact, relation_normalization_count = normalize_compact_relations(snapshot)
+            metrics["relation_normalization_count"] = relation_normalization_count
             try:
                 evidence = assemble_compact_qwen_observation(
                     compact,
@@ -1223,7 +1232,7 @@ OUTPUT REQUIREMENTS:
                 result["missing_elements"] = "OCR fallback required"
                 print(f"[Snapshot Engine] High [ILLEGIBLE] content detected for {primary_type}")
 
-        return self._attach_visual_evidence(
+        attached = self._attach_visual_evidence(
             result,
             primary_type=primary_type,
             frame_path=frame_path,
@@ -1236,6 +1245,59 @@ OUTPUT REQUIREMENTS:
             response=response,
             token_limit=token_limit,
         )
+        failure_code = (attached.get("_failure") or {}).get("code")
+        if (
+            self.provider == PROVIDER_MODAL
+            and failure_code in {"vlm_contract_invalid", "vlm_output_malformed"}
+        ):
+            corrective_prompt = (
+                prompt
+                + "\nCORRECTION: Return one JSON object matching the supplied schema "
+                  "exactly. Use only listed relation types; prefix any other "
+                  "relation with 'custom:'."
+            )
+            try:
+                corrective_response = self.vlm_interface.analyze(
+                    image_path_or_pil=frame_path,
+                    prompt=corrective_prompt,
+                    generation_params={
+                        "max_new_tokens": token_limit,
+                        "temperature": DEFAULT_TEMPERATURE,
+                        "_context_budget_parts": getattr(
+                            self, "_last_prompt_budget_parts", {}
+                        ),
+                    },
+                )
+                corrective_result = self._parse_json_response(corrective_response.text)
+                if corrective_result.get("_error"):
+                    self._apply_parse_failure(
+                        corrective_result, corrective_response, token_limit
+                    )
+                corrected = self._attach_visual_evidence(
+                    corrective_result,
+                    primary_type=primary_type,
+                    frame_path=frame_path,
+                    frame_id=frame_id,
+                    timestamp_seconds=timestamp_seconds,
+                    raw_category_labels=raw_category_labels,
+                    canonical_category_ids=canonical_category_ids,
+                    classification_confidence=classification_confidence,
+                    confidence_semantics=confidence_semantics,
+                    response=corrective_response,
+                    token_limit=token_limit,
+                )
+                corrected.setdefault("_vlm_metrics", {})[
+                    "corrective_retry_count"
+                ] = 1
+                return corrected
+            except Exception as exc:
+                attached.setdefault("_vlm_metrics", {})[
+                    "corrective_retry_count"
+                ] = 1
+                attached["_vlm_metrics"]["corrective_retry_error_type"] = (
+                    type(exc).__name__
+                )
+        return attached
 
     def cleanup(self):
         """

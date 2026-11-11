@@ -230,6 +230,27 @@ class ExplanationPreparationTests(unittest.TestCase):
             self.assertEqual(state.status, "failed")
             self.assertEqual(state.error_code, "retry_exhausted")
 
+    def test_historical_context_budget_failure_can_be_explicitly_retried(self):
+        self.seed((10.0,))
+        calls = []
+        manager = self.manager(lambda **kwargs: calls.append(kwargs["intervention_id"]))
+        with self.Session() as db:
+            db.add(ExplanationPreparation(
+                video_id=VIDEO_ID,
+                intervention_id="point-10",
+                output_mode="brief",
+                status="failed",
+                stage="failed",
+                attempt_count=1,
+                error_code="vlm_context_budget_exceeded",
+                failure_reason="vlm_context_budget_exceeded",
+            ))
+            db.commit()
+
+        result = manager.retry(VIDEO_ID, "point-10", "brief")
+        self.assertTrue(result.queued)
+        self.assertTrue(wait_until(lambda: calls == ["point-10"]))
+
     def test_manual_endpoint_generates_once_and_keeps_response_contract(self):
         self.seed((10.0,))
         orchestrator = FakeExplanationOrchestrator(self.data_dir)

@@ -41,7 +41,7 @@ def migrate_database():
         print("No existing SQLite database required a backup (fresh DB or non-SQLite backend).")
     print("Applying database migrations...")
     upgrade_database()
-    print("✓ Database migrations applied successfully")
+    print("[OK] Database migrations applied successfully")
 
 
 def verify_tables():
@@ -68,12 +68,12 @@ def verify_tables():
         ]
         for table in tables:
             count = db.query(table).count()
-            print(f"✓ {table.__tablename__}: {count} records")
+            print(f"[OK] {table.__tablename__}: {count} records")
 
-        print("\n✓ All tables verified successfully")
+        print("\n[OK] All tables verified successfully")
 
     except Exception as e:
-        print(f"✗ Error verifying tables: {e}")
+        print(f"[ERROR] Error verifying tables: {e}")
         raise
     finally:
         db.close()

@@ -134,13 +134,13 @@ class _FakeBudgetEstimator:
         self.calls.append(kwargs)
         self.last_report = ContextBudgetReport(
             model_id=_DEFAULT_MODEL_ID,
-            max_model_len=8192,
+            max_model_len=12288,
             requested_output_tokens=kwargs["requested_output_tokens"],
             exact=self.exact,
             processor_available=self.exact,
             input_tokens=1024 if self.exact else None,
             remaining_context_tokens=(
-                8192 - 1024 - kwargs["requested_output_tokens"]
+                12288 - 1024 - kwargs["requested_output_tokens"]
                 if self.exact else None
             ),
             fits=True if self.exact else None,
@@ -234,16 +234,16 @@ class TestConstruction:
         )
         assert not a._endpoint_url.endswith("/")
 
-    def test_default_generation_limit_is_2048(self):
+    def test_default_generation_limit_is_8192(self):
         a = ModalVLMInterface(
             endpoint_url="https://x.modal.run",
             api_key="k",
         )
-        assert a._max_tokens == 2048
+        assert a._max_tokens == 8192
 
-    @pytest.mark.parametrize("invalid", [0, 2049, -1])
+    @pytest.mark.parametrize("invalid", [0, 8193, -1])
     def test_invalid_configured_generation_limit_is_rejected(self, invalid):
-        with pytest.raises(ValueError, match="between 1 and 2048"):
+        with pytest.raises(ValueError, match="between 1 and 8192"):
             ModalVLMInterface(
                 endpoint_url="https://x.modal.run", api_key="k", max_tokens=invalid
             )
@@ -325,6 +325,45 @@ class TestRequestFormat:
         assert estimator.calls[0]["requested_output_tokens"] == 256
         assert estimator.calls[0]["category_directives"] == "CT-01 and CT-02"
         assert adapter.last_context_budget["exact"] is True
+
+    @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
+    def test_exact_budget_uses_available_output_tail_with_safety_reserve(
+        self, mock_urlopen
+    ):
+        mock_urlopen.return_value = _FakeHTTPResponse(
+            _json_bytes(_make_openai_response())
+        )
+
+        class TightBudgetEstimator:
+            def __init__(self):
+                self.last_report = None
+
+            def estimate(self, **kwargs):
+                self.last_report = ContextBudgetReport(
+                    model_id=_DEFAULT_MODEL_ID,
+                    max_model_len=12288,
+                    requested_output_tokens=kwargs["requested_output_tokens"],
+                    exact=True,
+                    processor_available=True,
+                    input_tokens=5000,
+                    remaining_context_tokens=-904,
+                    fits=False,
+                    image_size=kwargs["image"].size,
+                )
+                raise VLMContextBudgetError("request exceeds exact context budget")
+
+        adapter = ModalVLMInterface(
+            endpoint_url="https://x.modal.run",
+            api_key="k",
+            context_budget_estimator=TightBudgetEstimator(),
+            require_exact_context_budget=True,
+        )
+        adapter.analyze(_make_pil_image(), "prompt")
+        body = json.loads(mock_urlopen.call_args[0][0].data)
+        assert body["max_tokens"] == 12288 - 5000 - 32
+        assert adapter.last_context_budget["configured_output_tokens"] == 8192
+        assert adapter.last_context_budget["effective_output_tokens"] == 7256
+        assert adapter.last_context_budget["safety_reserve_tokens"] == 32
 
     def test_required_exact_budget_rejects_unavailable_processor(self):
         adapter = ModalVLMInterface(
@@ -411,7 +450,7 @@ class TestImagePromptFormat:
         mock_urlopen.return_value = _FakeHTTPResponse(
             _json_bytes(_make_openai_response())
         )
-        with pytest.raises(ValueError, match="between 1 and 2048"):
+        with pytest.raises(ValueError, match="between 1 and 8192"):
             adapter.analyze(
                 _make_pil_image(),
                 "Hello",
@@ -429,7 +468,7 @@ class TestImagePromptFormat:
         )
         adapter.analyze(_make_pil_image(), "Hello")
         body = json.loads(mock_urlopen.call_args[0][0].data)
-        assert body["max_tokens"] == 2048
+        assert body["max_tokens"] == 8192
         assert body["temperature"] == 0.1
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")

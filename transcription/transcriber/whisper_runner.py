@@ -71,11 +71,15 @@ class WhisperRunner:
 
         # Auto-detect hardware
         if device is None:
-            device = "cuda" if torch.cuda.is_available() else "cpu"
+            configured_device = os.environ.get("SYNAPSE_TRANSCRIPTION_DEVICE", "").strip()
+            device = configured_device or ("cuda" if torch.cuda.is_available() else "cpu")
 
         # Auto-detect compute type
         if compute_type is None:
-            compute_type = "float16" if device == "cuda" else "int8"
+            configured_compute = os.environ.get(
+                "SYNAPSE_TRANSCRIPTION_COMPUTE_TYPE", ""
+            ).strip()
+            compute_type = configured_compute or ("float16" if device == "cuda" else "int8")
 
         self.model_size = model_size
         self.device = device

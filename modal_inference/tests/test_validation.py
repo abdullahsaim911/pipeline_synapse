@@ -30,7 +30,10 @@ from modal_inference.config import (
     VLLM_MM_PROCESSOR_KWARGS_JSON,
     VLLM_VERSION,
 )
-from modal_inference.launch_config import build_vllm_serve_command
+from modal_inference.launch_config import (
+    build_vllm_serve_command,
+    redact_sensitive_text,
+)
 from modal_inference.schemas import (
     ChatCompletionRequest,
     ChatMessage,
@@ -111,8 +114,8 @@ class TestTokenAndAuthValidation(unittest.TestCase):
     """Test token clamping and HTTP authorization logic."""
 
     def test_clamp_generation_tokens_none(self):
-        tokens = clamp_generation_tokens(None, max_allowed=2048)
-        self.assertEqual(tokens, 2048)
+        tokens = clamp_generation_tokens(None, max_allowed=8192)
+        self.assertEqual(tokens, 8192)
 
     def test_clamp_generation_tokens_underflow(self):
         with self.assertRaises(ValueError):
@@ -213,15 +216,15 @@ class TestL4DeploymentConfiguration(unittest.TestCase):
 
     def test_l4_single_request_boundaries(self):
         self.assertEqual(DEFAULT_GPU, "L4")
-        self.assertEqual(MAX_MODEL_LEN, 8192)
+        self.assertEqual(MAX_MODEL_LEN, 12288)
         self.assertEqual(MAX_NUM_SEQS, 1)
         self.assertEqual(MAX_CONCURRENT_INPUTS, 1)
         self.assertEqual(MAX_IMAGES_PER_PROMPT, 1)
         self.assertEqual(MAX_VIDEOS_PER_PROMPT, 0)
         self.assertEqual(SCALEDOWN_WINDOW_SECONDS, 300)
         self.assertEqual(GPU_MEMORY_UTILIZATION, 0.90)
-        self.assertEqual(DEFAULT_STRUCTURED_MAX_TOKENS, 2048)
-        self.assertEqual(MAX_OUTPUT_TOKENS, 2048)
+        self.assertEqual(DEFAULT_STRUCTURED_MAX_TOKENS, 8192)
+        self.assertEqual(MAX_OUTPUT_TOKENS, 8192)
         self.assertEqual(DEFAULT_TEMPERATURE, 0.1)
         self.assertEqual(MAX_IMAGE_DIMENSION, 1344)
 
@@ -240,17 +243,25 @@ class TestL4DeploymentConfiguration(unittest.TestCase):
     def test_vllm_generation_and_image_processor_config(self):
         generation = json.loads(VLLM_GENERATION_CONFIG_JSON)
         mm_kwargs = json.loads(VLLM_MM_PROCESSOR_KWARGS_JSON)
-        self.assertEqual(generation, {"max_new_tokens": 2048, "temperature": 0.1})
+        self.assertEqual(generation, {"max_new_tokens": 8192, "temperature": 0.1})
         self.assertEqual(mm_kwargs, {"max_pixels": 1344 * 1344})
 
     def test_vllm_command_contains_single_l4_profile_and_server_ceiling(self):
         command = build_vllm_serve_command("test-key")
+        self.assertNotIn("test-key", command)
+        self.assertNotIn("--api-key", command)
         self.assertIn("--max-model-len", command)
-        self.assertEqual(command[command.index("--max-model-len") + 1], "8192")
+        self.assertEqual(command[command.index("--max-model-len") + 1], "12288")
         self.assertEqual(command[command.index("--max-num-seqs") + 1], "1")
         self.assertEqual(command[command.index("--gpu-memory-utilization") + 1], "0.9")
         self.assertEqual(command[command.index("--override-generation-config") + 1], VLLM_GENERATION_CONFIG_JSON)
         self.assertEqual(command[command.index("--mm-processor-kwargs") + 1], VLLM_MM_PROCESSOR_KWARGS_JSON)
+
+    def test_third_party_startup_diagnostics_redact_runtime_key(self):
+        line = "non-default args: {'api_key': ['private-runtime-key']}"
+        redacted = redact_sensitive_text(line, "private-runtime-key")
+        self.assertNotIn("private-runtime-key", redacted)
+        self.assertIn("[REDACTED]", redacted)
 
 
 if __name__ == "__main__":

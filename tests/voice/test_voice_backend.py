@@ -3,6 +3,7 @@
 import io
 import os
 import sys
+import types
 import wave
 
 import numpy as np
@@ -19,6 +20,60 @@ from voice.catalog import ActionCatalog  # noqa: E402
 from voice.interpret import Interpreter, extract_args  # noqa: E402
 from voice.schemas import InterpretRequest, VoiceContext  # noqa: E402
 from voice.stt import MAX_BYTES, AudioError, Recognizer, decode_wav  # noqa: E402
+
+
+def test_default_intent_model_uses_local_cache_without_network(monkeypatch):
+    captured = {}
+
+    class FakeSentenceTransformer:
+        def __init__(self, model, **kwargs):
+            captured.update(model=model, **kwargs)
+
+        def encode(self, items, **kwargs):
+            return np.ones((len(items), 2), dtype=np.float32)
+
+    monkeypatch.setenv("SYNAPSE_LOCAL_MODELS_ONLY", "1")
+    monkeypatch.setitem(
+        sys.modules,
+        "sentence_transformers",
+        types.SimpleNamespace(SentenceTransformer=FakeSentenceTransformer),
+    )
+
+    Interpreter()._encode(["pause"])
+
+    assert captured["device"] == "cpu"
+    assert captured["local_files_only"] is True
+
+
+def test_background_warmup_initializes_intent_before_stt(monkeypatch):
+    calls = []
+
+    class FakeModel:
+        def __init__(self, name):
+            self.name = name
+
+        def warm(self):
+            calls.append(self.name)
+
+    monkeypatch.setattr(routes, "get_interpreter", lambda: FakeModel("intent"))
+    monkeypatch.setattr(routes, "get_recognizer", lambda: FakeModel("stt"))
+
+    assert routes.warm_up()
+    assert calls == ["intent", "stt"]
+
+
+def test_http_warmup_initializes_intent_before_stt():
+    calls = []
+
+    class FakeModel:
+        def __init__(self, name):
+            self.name = name
+
+        def warm(self):
+            calls.append(self.name)
+
+    routes.warmup(FakeModel("stt"), FakeModel("intent"))
+    assert calls == ["intent", "stt"]
 
 CATALOG = ActionCatalog.load()
 

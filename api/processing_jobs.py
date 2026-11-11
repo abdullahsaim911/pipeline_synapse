@@ -450,6 +450,8 @@ class ProcessingJobManager:
         orchestrator_factory: Callable,
         preparation_manager=None,
         *,
+        video_id_extractor: Optional[Callable[[str], str]] = None,
+        admission_guard: Optional[Callable[[], None]] = None,
         max_workers: int = 1,
         lease_seconds: float = 120.0,
         heartbeat_seconds: float = 30.0,
@@ -482,6 +484,8 @@ class ProcessingJobManager:
         self.session_factory = session_factory
         self.orchestrator_factory = orchestrator_factory
         self.preparation_manager = preparation_manager
+        self.video_id_extractor = video_id_extractor
+        self.admission_guard = admission_guard
         self.lease_seconds = lease_seconds
         self.heartbeat_seconds = min(heartbeat_seconds, max(lease_seconds / 3, 0.05))
         self.recovery_interval_seconds = recovery_interval
@@ -624,8 +628,10 @@ class ProcessingJobManager:
             raise RuntimeError("Processing job manager is shutting down")
         if output_mode not in VALID_OUTPUT_MODES:
             raise ValueError(f"Unsupported explanation mode: {output_mode}")
-        orchestrator = self.orchestrator_factory()
-        video_id = orchestrator._extract_video_id(youtube_url)
+        if self.video_id_extractor is None:
+            video_id = self.orchestrator_factory()._extract_video_id(youtube_url)
+        else:
+            video_id = self.video_id_extractor(youtube_url)
         now = _utcnow()
         should_submit = False
         joined = False
@@ -650,6 +656,8 @@ class ProcessingJobManager:
             if active is not None:
                 raise ProcessingJobBusyError(active.video_id, str(active.id))
             cache = inspect_video_cache(db, video_id)
+            if not cache.valid and self.admission_guard is not None:
+                self.admission_guard()
             job = db.query(ProcessingJob).filter(ProcessingJob.video_id == video_id).first()
             if job is not None and job.status in {"cancelling", "cancelled"}:
                 return serialize_job(

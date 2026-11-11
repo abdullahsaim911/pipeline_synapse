@@ -8,7 +8,7 @@ and explanation generation.
 import sys
 import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response, status
 from contextlib import asynccontextmanager
 from dotenv import load_dotenv
 
@@ -17,6 +17,7 @@ from api.explanation_preparation import ExplanationPreparationManager
 from api.migrations import require_current_schema
 from api.model_warmup import ModalWarmup
 from api.processing_jobs import ProcessingJobManager
+from api.resource_guard import require_processing_headroom
 from api.routers import learning_history_router, video_router
 from api.routers import video as video_module
 from api.routers.quiz import router as quiz_router
@@ -25,6 +26,8 @@ from api.security import configure_cors
 from stage_tracing import trace_stage
 from voice.lifecycle import VoiceWarmup
 from voice.routes import router as voice_router, shutdown_voice_runtime
+from transcription.lifecycle import TranscriptionWarmup
+from youtube_runtime import extract_youtube_video_id
 
 load_dotenv()
 configure_ask_logging()
@@ -45,7 +48,7 @@ async def lifespan(app: FastAPI):
         session_factory=SessionLocal,
         orchestrator_factory=video_module.get_orchestrator,
         data_dir=video_module.get_data_dir(),
-        before_inference=warmup.ensure_ready,
+        before_inference=warmup.ensure_ready_for_inference,
     )
     preparation.start()
     app.state.explanation_preparation = preparation
@@ -53,12 +56,17 @@ async def lifespan(app: FastAPI):
         session_factory=SessionLocal,
         orchestrator_factory=video_module.get_orchestrator,
         preparation_manager=preparation,
+        video_id_extractor=extract_youtube_video_id,
+        admission_guard=require_processing_headroom,
     )
     processing.start()
     app.state.processing_jobs = processing
     voice_warmup = VoiceWarmup()
     voice_warmup.start()
     app.state.voice_warmup = voice_warmup
+    transcription_warmup = TranscriptionWarmup()
+    transcription_warmup.start()
+    app.state.transcription_warmup = transcription_warmup
     trace_stage("backend", "ready", started_at=startup_started)
     try:
         yield
@@ -68,15 +76,22 @@ async def lifespan(app: FastAPI):
         preparation.begin_shutdown()
         warmup.request_stop()
         voice_warmup.request_stop()
+        transcription_warmup.request_stop()
         processing.shutdown()
         preparation.shutdown()
         warmup.stop()
         voice_warmup.stop()
+        transcription_warmup.stop()
         shutdown_voice_runtime()
         # Loaded only if an explanation ran; stops only a server Synapse started.
         ollama = sys.modules.get("orchestrator.ollama_service")
         if ollama is not None:
             ollama.shutdown_shared_ollama()
+        # SpeechT5 stays resident across interventions and is released only at
+        # backend shutdown. Edge-TTS itself has no resident model to unload.
+        tts = sys.modules.get("tts_engine.tts_engine")
+        if tts is not None:
+            tts.shutdown_shared_tts_engine()
         trace_stage("backend", "shutdown_complete", started_at=shutdown_started)
 
 
@@ -112,8 +127,29 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy"}
+    """Liveness only: this process can answer HTTP requests."""
+    return {"status": "alive"}
+
+
+@app.get("/ready")
+async def readiness_check(response: Response):
+    """Report whether latency-critical local workers finished warming."""
+    voice_status = getattr(app.state.voice_warmup, "status", "unavailable")
+    transcription_status = getattr(
+        app.state.transcription_warmup, "status", "unavailable"
+    )
+    ready = voice_status == "ready" and transcription_status == "ready"
+    if not ready:
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
+    return {
+        "status": "ready" if ready else "warming",
+        "components": {
+            "api": "ready",
+            "voice": voice_status,
+            "transcription": transcription_status,
+            "modal": getattr(app.state.model_warmup, "status", "unavailable"),
+        },
+    }
 
 
 if __name__ == "__main__":

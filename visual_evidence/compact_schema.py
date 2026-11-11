@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from .assembler import COMPACT_OBSERVATION_SCHEMA
+from .models import CORE_RELATION_TYPES
 
 
 EVIDENCE_STATUSES = [
@@ -71,7 +72,12 @@ RELATION = {
         "ref": {"type": "string"},
         "source": {"type": "string"},
         "target": {"type": "string"},
-        "type": {"type": "string"},
+        "type": {
+            "anyOf": [
+                {"enum": sorted(CORE_RELATION_TYPES)},
+                {"type": "string", "pattern": "^custom:[a-z0-9_:-]+$"},
+            ]
+        },
         "evidence_status": {"enum": EVIDENCE_STATUSES},
         "label": NULLABLE_STRING,
         "directed": {"type": "boolean"},

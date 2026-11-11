@@ -58,14 +58,15 @@ STARTUP_TIMEOUT_SECONDS: Final[int] = 600
 # Initial L4 profile. These values are configuration targets and are not proof
 # that the model has successfully initialized within the available VRAM.
 # Maximum total model context length (prompt tokens + image tokens + completion tokens)
-MAX_MODEL_LEN: Final[int] = 8192
+MAX_MODEL_LEN: Final[int] = 12288
 
-# Maximum generation output tokens
-MAX_OUTPUT_TOKENS: Final[int] = 2048
+# Maximum generation output tokens. The total request still cannot exceed
+# MAX_MODEL_LEN after prompt and image tokens are accounted for.
+MAX_OUTPUT_TOKENS: Final[int] = 8192
 
 # Structured extraction generation default. Kept separate from the ceiling so
 # future callers may explicitly request smaller completions.
-DEFAULT_STRUCTURED_MAX_TOKENS: Final[int] = 2048
+DEFAULT_STRUCTURED_MAX_TOKENS: Final[int] = 8192
 DEFAULT_TEMPERATURE: Final[float] = 0.1
 
 # Maximum number of images allowed per prompt
@@ -94,7 +95,7 @@ MAX_IMAGE_PIXELS: Final[int] = MAX_IMAGE_DIMENSION * MAX_IMAGE_DIMENSION
 # vLLM reads these JSON values as server defaults. In vLLM 0.19.1,
 # max_new_tokens in generation config is a server-wide output-token limit.
 VLLM_GENERATION_CONFIG_JSON: Final[str] = (
-    '{"max_new_tokens":2048,"temperature":0.1}'
+    '{"max_new_tokens":8192,"temperature":0.1}'
 )
 VLLM_MM_PROCESSOR_KWARGS_JSON: Final[str] = '{"max_pixels":1806336}'
 

@@ -1,6 +1,7 @@
 """Shared Ollama lifecycle: reuse, ownership and diagnostics."""
 
 from types import SimpleNamespace
+import threading
 
 import pytest
 import requests
@@ -142,3 +143,71 @@ def test_keep_alive_policy(monkeypatch, provider, configured, expected):
     else:
         monkeypatch.setenv("SYNAPSE_OLLAMA_KEEP_ALIVE", configured)
     assert resolve_keep_alive() == expected
+
+
+def test_predictive_warmup_uses_cpu_context_policy(monkeypatch):
+    server = FakeServer(up=True)
+    svc, calls = service(monkeypatch, server)
+    posted = []
+
+    class Response:
+        @staticmethod
+        def raise_for_status():
+            return None
+
+    monkeypatch.setattr(
+        ollama_service.requests,
+        "post",
+        lambda url, json, timeout: posted.append((url, json, timeout)) or Response(),
+    )
+    monkeypatch.setenv("SYNAPSE_OLLAMA_NUM_GPU", "0")
+    monkeypatch.setenv("SYNAPSE_OLLAMA_NUM_CTX", "2048")
+    monkeypatch.setenv("SYNAPSE_OLLAMA_KEEP_ALIVE", "5m")
+
+    svc.warm_model()
+    svc.warm_model()
+
+    assert calls.started == []
+    assert len(posted) == 1
+    assert posted[0][1]["options"] == {
+        "num_gpu": 0, "num_ctx": 2048, "num_predict": 0,
+    }
+    assert posted[0][1]["keep_alive"] == "5m"
+    assert posted[0][1]["model"] == "mistral:latest"
+
+
+def test_concurrent_warmup_dispatches_only_once(monkeypatch):
+    svc, _ = service(monkeypatch, FakeServer(up=True))
+    entered = threading.Event()
+    release = threading.Event()
+    posted = []
+
+    class Response:
+        @staticmethod
+        def raise_for_status():
+            return None
+
+    def post(*args, **kwargs):
+        posted.append((args, kwargs))
+        entered.set()
+        assert release.wait(1)
+        return Response()
+
+    monkeypatch.setattr(ollama_service.requests, "post", post)
+    threads = [threading.Thread(target=svc.warm_model) for _ in range(2)]
+    for thread in threads:
+        thread.start()
+    assert entered.wait(1)
+    release.set()
+    for thread in threads:
+        thread.join(1)
+    assert len(posted) == 1
+
+
+def test_invalid_predictive_warmup_options_do_not_dispatch(monkeypatch):
+    svc, _ = service(monkeypatch, FakeServer(up=True))
+    post = monkeypatch.setattr(ollama_service.requests, "post", lambda *a, **k: None)
+    monkeypatch.setenv("SYNAPSE_OLLAMA_NUM_GPU", "gpu")
+
+    with pytest.raises(ValueError, match="SYNAPSE_OLLAMA_NUM_GPU"):
+        svc.warm_model()

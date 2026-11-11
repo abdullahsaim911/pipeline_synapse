@@ -25,9 +25,12 @@ from api.explanation_preparation import (
     STAGE_FAILED,
     STAGE_READY,
     STAGE_TTS,
+    STAGE_WAITING_FOR_VLM,
 )
 from api.explanation_service import VLM_EXTRACTION_LOCK
-from api.models import Explanation, ExplanationPreparation, Intervention, Video
+from api.models import (
+    Explanation, ExplanationPreparation, Intervention, ProcessingJob, Video,
+)
 from api.routers import video as video_module
 
 VIDEO_ID = "Overlap1234"
@@ -356,13 +359,112 @@ class OverlapTests(unittest.TestCase):
         self.assertEqual(self.statuses(manager)["ip1"].attempt_count, 2)
         self.assertIsNone(self.state("ip1").failure_reason)
 
-    def test_unavailable_modal_fails_fast_without_calling_the_model(self):
+    def test_unavailable_modal_waits_without_consuming_attempt_or_calling_model(self):
         self.seed(2)
-        manager = self.manager(before_inference=lambda: False)
+        calls = []
+        manager = self.manager(
+            before_inference=lambda: calls.append(1) or False,
+            vlm_retry_seconds=0.2,
+            vlm_max_wait_seconds=1.0,
+            maintenance_interval_seconds=0.01,
+        )
         manager.schedule_video(VIDEO_ID, "explanatory")
-        self.assertTrue(wait_until(lambda: self.all_settled(manager)))
+        self.assertTrue(wait_until(lambda: all(
+            item.status == "pending" and item.error_code == "vlm_remote_unavailable"
+            for item in self.statuses(manager).values()
+        )))
         self.assertEqual(self.orchestrator.vlm_calls, [])
         self.assertEqual(self.state("ip1").failure_reason, "vlm_remote_unavailable")
+        self.assertEqual(self.state("ip1").stage, STAGE_WAITING_FOR_VLM)
+        self.assertEqual(self.state("ip1").attempt_count, 0)
+        self.assertEqual(self.state("ip2").attempt_count, 0)
+        self.assertEqual(len(calls), 1)
+
+    def test_modal_recovery_resumes_automatically_and_preserves_overlap_pipeline(self):
+        self.seed(2)
+        readiness = iter((False, True, True))
+        manager = self.manager(
+            before_inference=lambda: next(readiness, True),
+            vlm_retry_seconds=0.03,
+            vlm_max_wait_seconds=1.0,
+            maintenance_interval_seconds=0.01,
+        )
+        manager.schedule_video(VIDEO_ID, "explanatory")
+
+        self.assertTrue(wait_until(lambda: self.all_settled(manager)))
+        self.assertEqual(self.orchestrator.vlm_calls, ["ip1", "ip2"])
+        self.assertEqual(
+            [name for name, _mode in self.orchestrator.mistral_calls],
+            ["ip1", "ip2"],
+        )
+        self.assertEqual(self.state("ip1").attempt_count, 1)
+
+    def test_waiting_for_modal_survives_manager_restart(self):
+        self.seed(1)
+        first = self.manager(
+            before_inference=lambda: False,
+            vlm_retry_seconds=0.03,
+            vlm_max_wait_seconds=1.0,
+            maintenance_interval_seconds=0.01,
+        )
+        first.schedule_video(VIDEO_ID, "explanatory")
+        self.assertTrue(wait_until(
+            lambda: self.state("ip1").stage == STAGE_WAITING_FOR_VLM
+        ))
+        self.assertTrue(first.shutdown(1.0))
+        time.sleep(0.04)
+
+        second = self.manager(
+            before_inference=lambda: True,
+            vlm_retry_seconds=0.03,
+            vlm_max_wait_seconds=1.0,
+            maintenance_interval_seconds=0.01,
+        )
+        self.assertTrue(wait_until(
+            lambda: self.statuses(second)["ip1"].status == "ready"
+        ))
+        self.assertEqual(self.state("ip1").attempt_count, 1)
+
+    def test_modal_wait_deadline_fails_retryably_without_using_attempts(self):
+        self.seed(1)
+        readiness = {"ready": False}
+        with self.Session() as db:
+            db.add(ProcessingJob(
+                id="00000000-0000-0000-0000-000000000001",
+                video_id=VIDEO_ID,
+                source_url="https://youtu.be/x",
+                requested_output_mode="explanatory",
+                status="succeeded",
+                stage="complete",
+                active_slot=1,
+            ))
+            db.commit()
+        manager = self.manager(
+            before_inference=lambda: readiness["ready"],
+            vlm_retry_seconds=0.02,
+            vlm_max_wait_seconds=0.05,
+            maintenance_interval_seconds=0.01,
+        )
+        manager.schedule_video(VIDEO_ID, "explanatory")
+
+        self.assertTrue(wait_until(
+            lambda: self.statuses(manager)["ip1"].status == "failed"
+        ))
+        state = self.state("ip1")
+        self.assertEqual(state.error_code, "vlm_remote_unavailable")
+        self.assertEqual(state.attempt_count, 0)
+        self.assertIsNone(state.deferred_until)
+        with self.Session() as db:
+            self.assertIsNone(db.query(ProcessingJob).one().active_slot)
+
+        readiness["ready"] = True
+        self.assertTrue(manager.retry(VIDEO_ID, "ip1", "explanatory").queued)
+        self.assertTrue(wait_until(
+            lambda: self.statuses(manager)["ip1"].status == "ready"
+        ))
+        recovered = self.state("ip1")
+        self.assertEqual(recovered.attempt_count, 1)
+        self.assertIsNone(recovered.provider_wait_started_at)
 
     def test_mistral_failure_keeps_evidence_and_retry_skips_the_vlm(self):
         self.seed(1)

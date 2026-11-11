@@ -245,7 +245,7 @@ def test_structured_output_budget_is_configurable_and_conservatively_bounded(mon
     assert engine.vlm_interface._max_tokens == 1024
 
 
-def test_structured_output_budget_defaults_to_2048(monkeypatch):
+def test_structured_output_budget_defaults_to_8192(monkeypatch):
     monkeypatch.delenv("SYNAPSE_VLM_STRUCTURED_MAX_TOKENS", raising=False)
     monkeypatch.delenv("SYNAPSE_MODAL_MAX_TOKENS", raising=False)
     engine = SnapshotEngine(
@@ -253,14 +253,14 @@ def test_structured_output_budget_defaults_to_2048(monkeypatch):
         endpoint_url="https://example.test",
         api_key="not-a-real-key",
     )
-    assert engine.structured_max_tokens == 2048
-    assert engine.vlm_interface._max_tokens == 2048
+    assert engine.structured_max_tokens == 8192
+    assert engine.vlm_interface._max_tokens == 8192
 
 
-@pytest.mark.parametrize("configured", [0, 2049])
+@pytest.mark.parametrize("configured", [0, 8193])
 def test_invalid_structured_output_budget_is_rejected_not_clamped(monkeypatch, configured):
     monkeypatch.setenv("SYNAPSE_VLM_STRUCTURED_MAX_TOKENS", str(configured))
-    with pytest.raises(ValueError, match="between 1 and 2048"):
+    with pytest.raises(ValueError, match="between 1 and 8192"):
         SnapshotEngine(
             provider=PROVIDER_MODAL,
             endpoint_url="https://example.test",
@@ -347,6 +347,67 @@ def test_labeled_brain_diagram_preserves_anatomy_hierarchy_and_leader_lines():
     assert evidence["regions"][0]["elements"][2]["position"] == "lower rear"
     assert "CT-03" in engine.vlm_interface.prompt
     assert engine.vlm_interface.generation_params["max_new_tokens"] == 768
+
+
+@pytest.mark.parametrize("relation_type", ["on", "surrounds"])
+def test_unknown_relation_is_preserved_as_custom_before_strict_validation(
+    relation_type,
+):
+    payload = _base_payload(["CT-03"])
+    payload["regions"] = [_region("diagram", "CT-03", [
+        _element("source", "shape", category="CT-03"),
+        _element("target", "shape", category="CT-03"),
+    ])]
+    payload["relations"] = [{
+        "ref": "relation", "source": "source", "target": "target",
+        "type": relation_type, "label": None, "directed": False,
+        "cross_category": False, "evidence_status": "supported",
+        "source_refs": [],
+    }]
+    _, snapshot = _analyze(payload, "diagram", ["CT-03"])
+    assert snapshot["_error"] is False
+    assert snapshot["visual_evidence"]["relations"][0]["relation"] == (
+        f"custom:{relation_type}"
+    )
+    assert snapshot["_vlm_metrics"]["relation_normalization_count"] == 1
+
+
+def test_malformed_structured_output_gets_exactly_one_internal_correction():
+    invalid = _base_payload(["CT-04"])
+    invalid["regions"] = [_region("flow", "CT-04", [
+        _element("start", "node", category="CT-04")
+    ])]
+    invalid["relations"] = [{
+        "ref": "bad", "source": "start", "target": "missing",
+        "type": "leads_to", "label": None, "directed": True,
+        "cross_category": False, "evidence_status": "supported",
+        "source_refs": [],
+    }]
+    corrected = _base_payload(["CT-04"])
+    corrected["regions"] = invalid["regions"]
+
+    class CorrectingVLM:
+        def __init__(self):
+            self.calls = []
+            self.payloads = [invalid, corrected]
+
+        def analyze(self, image_path_or_pil, prompt, generation_params):
+            self.calls.append(prompt)
+            payload = self.payloads.pop(0)
+            return VLMResponse(
+                text=json.dumps(payload), model="mock", total_duration_ms=1,
+                prompt_eval_count=10, eval_count=20, finish_reason="stop",
+            )
+
+    engine = _engine(invalid)
+    engine.vlm_interface = CorrectingVLM()
+    snapshot = engine.analyze_frame(
+        "unused.jpg", "flowchart", canonical_category_ids=["CT-04"]
+    )
+    assert snapshot["_error"] is False
+    assert len(engine.vlm_interface.calls) == 2
+    assert "CORRECTION:" in engine.vlm_interface.calls[1]
+    assert snapshot["_vlm_metrics"]["corrective_retry_count"] == 1
 
 
 def test_graph_with_axes_values_and_equation_preserves_cross_category_evidence():
@@ -787,6 +848,7 @@ def test_on_demand_flow_supplies_canonical_evidence_and_preserves_mode(tmp_path,
     monkeypatch.setattr("synthesizer.LLMSynthesizer", FakeSynthesizer)
     fake_tts_module = types.ModuleType("tts_engine")
     fake_tts_module.TTSEngine = FakeTTS
+    fake_tts_module.get_shared_tts_engine = lambda: FakeTTS()
     monkeypatch.setitem(sys.modules, "tts_engine", fake_tts_module)
 
     orchestrator = PipelineOrchestrator(base_dir=str(tmp_path))

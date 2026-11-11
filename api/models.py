@@ -308,6 +308,8 @@ class ExplanationPreparation(Base):
     failure_reason = Column(String)
     lease_owner = Column(String)
     lease_started_at = Column(DateTime)
+    provider_wait_started_at = Column(DateTime)
+    deferred_until = Column(DateTime, index=True)
     created_at = Column(DateTime, server_default=func.now(), nullable=False)
     updated_at = Column(
         DateTime, server_default=func.now(), onupdate=func.now(), nullable=False

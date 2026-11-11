@@ -11,6 +11,7 @@ import asyncio
 import edge_tts
 import os
 import logging
+import threading
 from typing import Optional, List
 
 # Import shared exceptions
@@ -75,7 +76,11 @@ class TTSEngine:
             # Default: Edge-TTS first, then SpeechT5 if fallback enabled
             self._providers.append(EdgeTTSProvider(voice=voice))
             if fallback_enabled:
-                self._providers.append(SpeechT5Provider())
+                # Keep the fallback off the GPU. This avoids competing with
+                # VLM/Ollama allocations and makes it usable on CPU-only hosts.
+                self._providers.append(
+                    SpeechT5Provider(device=os.environ.get("SYNAPSE_TTS_DEVICE", "cpu"))
+                )
                 logger.debug("[TTS Engine] Initialized with Edge-TTS + SpeechT5 fallback")
             else:
                 logger.debug("[TTS Engine] Initialized with Edge-TTS only (no fallback)")
@@ -190,59 +195,60 @@ class TTSEngine:
 
     @staticmethod
     def list_available_voices():
-        """
-        Development tool to audition available Edge-TTS voices.
-
-        Fetches all voices, filters for English, and prints them.
-        """
-        # Fetch all voices
+        """List the currently advertised English Edge voices."""
         voices = TTSEngine._run_async(edge_tts.list_voices())
-
-        # Filter for English voices
         english_voices = [
-            v for v in voices
-            if v['Locale'].startswith('en-')
+            voice for voice in voices if voice["Locale"].startswith("en-")
         ]
-
         print("\n=== Available English Voices ===\n")
         for voice in english_voices:
             print(f"Name: {voice['Name']}")
             print(f"  ID: {voice['ShortName']}")
             print(f"  Gender: {voice['Gender']}")
             print(f"  Locale: {voice['Locale']}")
-            print()
 
     def list_available_providers(self):
-        """
-        List all available TTS providers.
-
-        Shows which providers are installed and available for use.
-        """
-        print("\n=== Available TTS Providers ===\n")
-
-        # Check Edge-TTS
+        """List installed TTS providers and the current fallback policy."""
         try:
-            import edge_tts
+            import edge_tts as _edge_tts  # noqa: F401
             edge_available = True
         except ImportError:
             edge_available = False
+        print("\n=== Available TTS Providers ===\n")
         print(f"Edge-TTS: {'[OK] Available' if edge_available else '[X] Not installed'}")
 
-        # Check SpeechT5
         try:
-            from transformers import SpeechT5Processor
-            import soundfile
+            from transformers import SpeechT5Processor as _processor  # noqa: F401
+            import soundfile as _soundfile  # noqa: F401
             speech_t5_available = True
         except ImportError:
             speech_t5_available = False
         print(f"SpeechT5: {'[OK] Available' if speech_t5_available else '[X] Not installed'}")
-
-        # Show current configuration
-        print(f"\nCurrent Configuration:")
-        print(f"  Primary: Edge-TTS")
+        print("\nCurrent Configuration:")
+        print("  Primary: Edge-TTS")
         print(f"  Fallback enabled: {self.fallback_enabled}")
         print(f"  Last provider used: {self._last_provider_used or 'None'}")
-        print()
+
+
+_shared_engine = None
+_shared_engine_lock = threading.Lock()
+
+
+def get_shared_tts_engine() -> TTSEngine:
+    """Return one process-wide engine so SpeechT5 weights remain resident."""
+    global _shared_engine
+    with _shared_engine_lock:
+        if _shared_engine is None:
+            _shared_engine = TTSEngine()
+        return _shared_engine
+
+
+def shutdown_shared_tts_engine() -> None:
+    global _shared_engine
+    with _shared_engine_lock:
+        engine, _shared_engine = _shared_engine, None
+    if engine is not None:
+        engine.cleanup()
 
 
 # Example usage

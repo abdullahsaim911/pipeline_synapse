@@ -15,14 +15,15 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from api.security import enforce_allowed_origin
-from voice.interpret import Interpreter
+from voice.process_runtime import ProcessInterpreter, ProcessRecognizer, VoiceProcessRuntime
 from voice.schemas import InterpretRequest, InterpretResponse, TranscribeResponse
-from voice.stt import MAX_BYTES, AudioError, Recognizer
+from voice.stt import MAX_BYTES, AudioError
 
 router = APIRouter(prefix="/voice", tags=["voice"], dependencies=[Depends(enforce_allowed_origin)])
 
-_recognizer: Optional[Recognizer] = None
-_interpreter: Optional[Interpreter] = None
+_runtime: Optional[VoiceProcessRuntime] = None
+_recognizer: Optional[ProcessRecognizer] = None
+_interpreter: Optional[ProcessInterpreter] = None
 _tts = None
 _instance_lock = threading.Lock()
 _voice_turn_gate = threading.BoundedSemaphore(1)
@@ -45,19 +46,32 @@ def _work_slot(gate: threading.BoundedSemaphore, detail: str):
         gate.release()
 
 
-def get_recognizer() -> Recognizer:
+def _get_runtime_locked() -> VoiceProcessRuntime:
+    global _runtime
+    if _runtime is None:
+        _runtime = VoiceProcessRuntime()
+    return _runtime
+
+
+def start_voice_runtime() -> None:
+    """Spawn the native-model worker before the warm-up thread is created."""
+    with _instance_lock:
+        _get_runtime_locked().start()
+
+
+def get_recognizer() -> ProcessRecognizer:
     global _recognizer
     with _instance_lock:
         if _recognizer is None:
-            _recognizer = Recognizer()
+            _recognizer = ProcessRecognizer(_get_runtime_locked())
     return _recognizer
 
 
-def get_interpreter() -> Interpreter:
+def get_interpreter() -> ProcessInterpreter:
     global _interpreter
     with _instance_lock:
         if _interpreter is None:
-            _interpreter = Interpreter()
+            _interpreter = ProcessInterpreter(_get_runtime_locked())
     return _interpreter
 
 
@@ -134,7 +148,7 @@ class SpeakRequest(BaseModel):
 
 @router.post("/transcribe", response_model=TranscribeResponse)
 def transcribe(file: UploadFile = File(...), language: Optional[str] = Form(None),
-               recognizer: Recognizer = Depends(get_recognizer)):
+               recognizer: ProcessRecognizer = Depends(get_recognizer)):
     with _work_slot(_voice_turn_gate, "Another voice request is already running."):
         try:
             data = file.file.read(MAX_BYTES + 1)
@@ -149,7 +163,7 @@ def transcribe(file: UploadFile = File(...), language: Optional[str] = Form(None
 
 
 @router.post("/interpret", response_model=InterpretResponse)
-def interpret(request: InterpretRequest, interpreter: Interpreter = Depends(get_interpreter)):
+def interpret(request: InterpretRequest, interpreter: ProcessInterpreter = Depends(get_interpreter)):
     with _work_slot(_voice_turn_gate, "Another voice request is already running."):
         bad = interpreter.catalog.unknown_actions(request.context.available_actions)
         if bad:
@@ -180,12 +194,12 @@ def speak(request: SpeakRequest, tts=Depends(get_tts)):
 
 
 @router.post("/warmup", status_code=204)
-def warmup(recognizer: Recognizer = Depends(get_recognizer), interpreter: Interpreter = Depends(get_interpreter)):
+def warmup(recognizer: ProcessRecognizer = Depends(get_recognizer), interpreter: ProcessInterpreter = Depends(get_interpreter)):
     """Load both models now so the first spoken command is not slow."""
     with _work_slot(_voice_turn_gate, "Another voice request is already running."):
         try:
-            recognizer.warm()
             interpreter.warm()
+            recognizer.warm()
         except Exception as exc:
             logger.warning("Voice warm-up failed: %s", type(exc).__name__)
             raise HTTPException(status_code=503, detail="Voice models are not available right now.") from exc
@@ -198,10 +212,12 @@ def warm_up(stop_event: Optional[threading.Event] = None) -> bool:
     try:
         if stop_event is not None and stop_event.is_set():
             return False
-        get_recognizer().warm()
+        # Load sentence-transformers/PyArrow before faster-whisper/CTranslate2.
+        # Reversing this order can terminate Python with 0xC0000005 on Windows.
+        get_interpreter().warm()
         if stop_event is not None and stop_event.is_set():
             return False
-        get_interpreter().warm()
+        get_recognizer().warm()
         return True
     except Exception as exc:  # noqa: BLE001
         logger.warning("Background voice warm-up failed: %s", type(exc).__name__)
@@ -212,25 +228,15 @@ def warm_up(stop_event: Optional[threading.Event] = None) -> bool:
 
 def shutdown_voice_runtime(timeout: float = 1.0) -> bool:
     """Release lazy voice models without waiting indefinitely for active work."""
-    global _recognizer, _interpreter, _tts
+    global _runtime, _recognizer, _interpreter, _tts
     complete = True
 
-    if _voice_turn_gate.acquire(timeout=max(0.0, timeout)):
-        try:
-            with _instance_lock:
-                recognizer, interpreter = _recognizer, _interpreter
-                _recognizer = _interpreter = None
-            for instance in (recognizer, interpreter):
-                close = getattr(instance, "close", None)
-                if close is not None:
-                    try:
-                        close()
-                    except Exception as exc:  # noqa: BLE001
-                        complete = False
-                        logger.warning("Voice model cleanup failed: %s", type(exc).__name__)
-        finally:
-            _voice_turn_gate.release()
-    else:
+    # Detach and stop the owned process even when a warm-up/request still holds
+    # the turn gate. VoiceProcessRuntime.stop() preempts an in-flight call.
+    with _instance_lock:
+        runtime = _runtime
+        _recognizer = _interpreter = _runtime = None
+    if runtime is not None and not runtime.stop(timeout):
         complete = False
         logger.warning("Voice model cleanup exceeded shutdown grace")
 

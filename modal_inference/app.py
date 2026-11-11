@@ -47,7 +47,7 @@ from modal_inference.config import (
     VLLM_PORT,
     VLLM_VERSION,
 )
-from modal_inference.launch_config import build_vllm_serve_command
+from modal_inference.launch_config import build_vllm_serve_command, redact_sensitive_text
 
 # ---------------------------------------------------------------------------
 # 1. Container Image Definition
@@ -96,13 +96,15 @@ modal_secret = modal.Secret.from_name(MODAL_SECRET_NAME)
 # ---------------------------------------------------------------------------
 # 4. Helper: Background Log Streamer
 # ---------------------------------------------------------------------------
-def _stream_process_output(pipe, prefix: str = "[vLLM]") -> None:
+def _stream_process_output(
+    pipe, prefix: str = "[vLLM]", secrets: tuple[str, ...] = ()
+) -> None:
     """Stream process stdout/stderr line-by-line to container stdout."""
     try:
         for line in iter(pipe.readline, ""):
             if not line:
                 break
-            sys.stdout.write(f"{prefix} {line}")
+            sys.stdout.write(f"{prefix} {redact_sensitive_text(line, *secrets)}")
             sys.stdout.flush()
     except Exception as exc:
         sys.stderr.write(f"[LogStreamer] Error streaming output: {exc}\n")
@@ -174,16 +176,14 @@ def serve():
     cmd = build_vllm_serve_command(api_key)
 
     print("[Launch] Invoking vLLM server:")
-    # Print command with obfuscated API key for security
-    safe_cmd = [
-        arg if arg != api_key.strip() else "[REDACTED_API_KEY]"
-        for arg in cmd
-    ]
-    print(f"[Launch] Command: {' '.join(safe_cmd)}")
+    print(f"[Launch] Command: {' '.join(cmd)}")
 
     # 4. Spawn vLLM Subprocess
+    child_environment = os.environ.copy()
+    child_environment["VLLM_API_KEY"] = api_key.strip()
     process = subprocess.Popen(
         cmd,
+        env=child_environment,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
@@ -193,7 +193,7 @@ def serve():
     # Launch background thread to stream vLLM logs to stdout
     log_thread = threading.Thread(
         target=_stream_process_output,
-        args=(process.stdout,),
+        args=(process.stdout, "[vLLM]", (api_key.strip(),)),
         daemon=True,
     )
     log_thread.start()

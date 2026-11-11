@@ -2,15 +2,20 @@
 
 import tempfile
 import unittest
+import os
 from pathlib import Path
 from unittest import mock
+
+import numpy as np
+import torch
 
 from tts_engine.exceptions import (
     TTSEngineError,
     TTSPermanentError,
     TTSTimeoutError,
 )
-from tts_engine.providers import EdgeTTSProvider
+from tts_engine.providers import EdgeTTSProvider, SpeechT5Provider
+from tts_engine import tts_engine as tts_module
 from tts_engine.tts_engine import TTSEngine
 
 
@@ -38,6 +43,19 @@ class TTSReliabilityTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.output = str(Path(self.temp.name) / "audio.mp3")
+        previous = EdgeTTSProvider._available_voices
+        EdgeTTSProvider._available_voices = {
+            "en-US-AndrewMultilingualNeural", "en-US-AriaNeural"
+        }
+        self.addCleanup(
+            setattr, EdgeTTSProvider, "_available_voices", previous
+        )
+
+    def test_default_speecht5_fallback_uses_cpu(self):
+        with mock.patch.dict(os.environ, {"SYNAPSE_TTS_DEVICE": "cpu"}):
+            engine = TTSEngine()
+        fallback = next(provider for provider in engine._providers if provider.name.startswith("SpeechT5"))
+        self.assertEqual(fallback.device, "cpu")
 
     @mock.patch("tts_engine.providers.edge_tts.Communicate")
     @mock.patch("tts_engine.providers.time.sleep")
@@ -84,6 +102,71 @@ class TTSReliabilityTests(unittest.TestCase):
             provider.generate("hello", self.output)
         self.assertEqual(communicate.call_count, 2)
         sleep.assert_called_once_with(0.02)
+
+    @mock.patch("tts_engine.providers.edge_tts.Communicate")
+    def test_unavailable_preferred_voice_uses_stable_edge_fallback(self, communicate):
+        EdgeTTSProvider._available_voices = {"en-US-AriaNeural"}
+        provider = EdgeTTSProvider(voice="en-US-MissingNeural")
+        provider._run_async = mock.Mock(return_value=None)
+        provider.generate("hello", self.output)
+        communicate.assert_called_once_with("hello", "en-US-AriaNeural")
+
+    def test_long_speecht5_text_is_split_without_dropping_words(self):
+        provider = SpeechT5Provider(device="cpu")
+
+        class Tokenizer:
+            def __call__(self, text, **_kwargs):
+                return {"input_ids": text.split()}
+
+        provider._processor = mock.Mock(tokenizer=Tokenizer())
+        text = " ".join(f"word-{index}" for index in range(1300))
+        chunks = provider._split_chunks(text)
+        self.assertGreater(len(chunks), 2)
+        self.assertEqual(" ".join(chunks), text)
+        self.assertTrue(all(provider._token_count(chunk) <= 540 for chunk in chunks))
+
+    def test_speecht5_joins_every_chunk_and_normalizes_once(self):
+        provider = SpeechT5Provider(device="cpu")
+        provider._load_models = mock.Mock()
+        provider._split_chunks = mock.Mock(return_value=["first", "second"])
+
+        class Batch(dict):
+            def to(self, _device):
+                return self
+
+        provider._processor = mock.Mock(return_value=Batch(input_ids=torch.tensor([[1]])))
+        provider._model = mock.Mock(generate=mock.Mock(return_value=torch.ones(1, 2)))
+        provider._vocoder = mock.Mock(side_effect=[torch.tensor([[2.0, -2.0]]), torch.tensor([[1.0]])])
+        provider._speaker_embeddings = torch.zeros(1, 512)
+        written = {}
+
+        def capture_write(path, audio, samplerate):
+            written.update(path=path, audio=audio, samplerate=samplerate)
+
+        with mock.patch.object(provider, "is_available", return_value=True), mock.patch(
+            "tts_engine.providers.sf.write", side_effect=capture_write
+        ):
+            provider.generate("long text", self.output)
+
+        expected_silence = int(16000 * provider.CHUNK_SILENCE_SECONDS)
+        self.assertEqual(len(written["audio"]), 2 + expected_silence + 1)
+        self.assertEqual(written["samplerate"], 16000)
+        self.assertAlmostEqual(float(np.max(np.abs(written["audio"]))), 0.9)
+
+    def test_shared_engine_is_reused_and_unloaded_only_at_shutdown(self):
+        previous = tts_module._shared_engine
+        tts_module._shared_engine = None
+        self.addCleanup(setattr, tts_module, "_shared_engine", previous)
+        fake = mock.Mock()
+        with mock.patch.object(tts_module, "TTSEngine", return_value=fake) as factory:
+            first = tts_module.get_shared_tts_engine()
+            second = tts_module.get_shared_tts_engine()
+            self.assertIs(first, second)
+            factory.assert_called_once_with()
+            fake.cleanup.assert_not_called()
+            tts_module.shutdown_shared_tts_engine()
+            fake.cleanup.assert_called_once_with()
+            self.assertIsNone(tts_module._shared_engine)
 
     def test_permanent_primary_failure_uses_existing_fallback_once(self):
         primary = FakeProvider("edge", [TTSPermanentError(

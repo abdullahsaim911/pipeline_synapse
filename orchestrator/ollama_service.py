@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import atexit
 import logging
+import os
 import threading
 import time
 from typing import Any, Callable, Optional
@@ -22,7 +23,7 @@ from stage_tracing import trace_stage
 logger = logging.getLogger(__name__)
 
 DEFAULT_OLLAMA_URL = "http://localhost:11434"
-DEFAULT_OLLAMA_MODEL = "mistral"
+DEFAULT_OLLAMA_MODEL = "mistral:latest"
 DEFAULT_STARTUP_TIMEOUT_SECONDS = 30.0
 
 _shared: Optional["OllamaService"] = None
@@ -52,6 +53,8 @@ class OllamaService:
         self._poll_interval = poll_interval
         self._owned_process: Any = None
         self._model_confirmed = False
+        self._model_warmed = False
+        self._warm_thread: Optional[threading.Thread] = None
         self._lock = threading.Lock()
 
     @property
@@ -137,11 +140,78 @@ class OllamaService:
                 owns_process=self.owns_process,
             )
 
+    @staticmethod
+    def _configured_int(name: str, default: int, minimum: int) -> int:
+        raw = os.environ.get(name, "").strip()
+        try:
+            value = int(raw) if raw else default
+        except ValueError as exc:
+            raise ValueError(f"{name} must be an integer") from exc
+        if value < minimum:
+            raise ValueError(f"{name} must be at least {minimum}")
+        return value
+
+    def warm_model(self) -> None:
+        """Load Mistral with the same safe CPU/context policy used for inference."""
+        self.ensure_ready()
+        with self._lock:
+            if self._model_warmed:
+                return
+            payload = {
+                "model": self._model,
+                "prompt": "",
+                "stream": False,
+                "keep_alive": os.environ.get("SYNAPSE_OLLAMA_KEEP_ALIVE", "5m"),
+                "options": {
+                    "num_gpu": self._configured_int("SYNAPSE_OLLAMA_NUM_GPU", 0, 0),
+                    "num_ctx": self._configured_int("SYNAPSE_OLLAMA_NUM_CTX", 2048, 1),
+                    "num_predict": 0,
+                },
+            }
+            response = requests.post(
+                f"{self._base_url}/api/generate",
+                json=payload,
+                timeout=(5, 120),
+            )
+            response.raise_for_status()
+            self._model_warmed = True
+        trace_stage(
+            "ollama_model", "warmed", model=self._model,
+            num_gpu=payload["options"]["num_gpu"],
+            num_ctx=payload["options"]["num_ctx"],
+        )
+
+    def begin_warmup(self) -> None:
+        """Start at most one best-effort predictive model load."""
+        with self._lock:
+            if self._model_warmed or (
+                self._warm_thread is not None and self._warm_thread.is_alive()
+            ):
+                return
+            thread = threading.Thread(
+                target=self._warm_safely,
+                name="synapse-mistral-warmup",
+                daemon=True,
+            )
+            self._warm_thread = thread
+            thread.start()
+
+    def _warm_safely(self) -> None:
+        try:
+            self.warm_model()
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("Predictive Mistral warm-up failed: %s", type(exc).__name__)
+        finally:
+            with self._lock:
+                if self._warm_thread is threading.current_thread():
+                    self._warm_thread = None
+
     def shutdown(self) -> None:
         """Stop only a server this service started."""
         with self._lock:
             process, self._owned_process = self._owned_process, None
             self._model_confirmed = False
+            self._model_warmed = False
         if process is not None:
             self._stop(process)
 

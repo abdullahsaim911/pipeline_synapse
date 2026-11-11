@@ -99,7 +99,7 @@ class ModalVLMInterface:
     Optional environment variables:
         SYNAPSE_MODAL_TIMEOUT_SECONDS  — Per-request timeout (default 120).
         SYNAPSE_MODAL_MAX_RETRIES      — Retry ceiling for transient errors (default 3).
-        SYNAPSE_MODAL_MAX_TOKENS       — Maximum generation tokens (default 2048).
+        SYNAPSE_MODAL_MAX_TOKENS       — Maximum generation tokens (default 8192).
     """
 
     SUPPORTED_FORMATS: tuple[str, ...] = (".jpg", ".jpeg", ".png", ".bmp", ".webp")
@@ -226,6 +226,7 @@ class ModalVLMInterface:
         with Image.open(io.BytesIO(jpeg_bytes)) as encoded_image:
             budget_image = encoded_image.convert("RGB")
         budget_parts = gen.get("_context_budget_parts") or {}
+        requested_max_tokens = max_tokens
         try:
             budget_report = self._context_budget_estimator.estimate(
                 image=budget_image,
@@ -240,7 +241,18 @@ class ModalVLMInterface:
         except VLMContextBudgetError:
             report = getattr(self._context_budget_estimator, "last_report", None)
             self.last_context_budget = report.to_dict() if report is not None else None
-            raise
+            # Exact accounting can safely reduce only the impossible unused
+            # tail of a request. The configured capability remains available
+            # whenever prompt + image tokens leave enough context for it.
+            input_tokens = (
+                self.last_context_budget.get("input_tokens")
+                if self.last_context_budget else None
+            )
+            if input_tokens is None:
+                raise
+            max_tokens = MAX_MODEL_LEN - int(input_tokens) - 32
+            if max_tokens < 512:
+                raise
         if (
             self._require_exact_context_budget
             and not self.last_context_budget.get("exact", False)
@@ -250,12 +262,23 @@ class ModalVLMInterface:
                 "processor is unavailable."
             )
 
+        self.last_context_budget["configured_output_tokens"] = requested_max_tokens
+        self.last_context_budget["effective_output_tokens"] = max_tokens
+        self.last_context_budget["safety_reserve_tokens"] = 32
+        self.last_context_budget["remaining_context_tokens"] = (
+            MAX_MODEL_LEN
+            - int(self.last_context_budget.get("input_tokens") or 0)
+            - max_tokens
+        )
+        self.last_context_budget["fits"] = True
+
         payload = self._build_payload(jpeg_bytes, prompt, max_tokens, temperature)
 
         # 3.  Send with retry
         start_ms = time.perf_counter()
         trace_stage(
             "modal_request", "dispatch", request_bytes=len(payload),
+            configured_output_token_limit=requested_max_tokens,
             output_token_limit=max_tokens,
         )
         response_data = self._send_with_retry(payload)

@@ -65,6 +65,20 @@ class ModalWarmupTests(unittest.TestCase):
         ))
 
     @mock.patch("api.model_warmup.urllib.request.urlopen")
+    def test_background_warmup_logs_start_and_ready_state(self, urlopen):
+        urlopen.side_effect = [response(), models_response()]
+        with self._environment(), self.assertLogs("api.model_warmup", level="INFO") as logs:
+            warmup = self.warmup()
+            warmup.start()
+            warmup._thread.join(timeout=1)
+
+        self.assertEqual(warmup.status, "ready")
+        output = "\n".join(logs.output)
+        self.assertIn("Modal VLM warm-up started", output)
+        self.assertIn("Modal VLM status: ready", output)
+        self.assertNotIn("secret-key", output)
+
+    @mock.patch("api.model_warmup.urllib.request.urlopen")
     def test_later_check_probes_again_because_modal_may_have_scaled_to_zero(self, urlopen):
         urlopen.side_effect = [response(), models_response(), response()]
         with self._environment():
@@ -173,6 +187,17 @@ class ModalWarmupTests(unittest.TestCase):
             warmup.start()
             self.assertIsNone(warmup._thread)
             self.assertFalse(warmup.ensure_ready(timeout=0.01))
+
+    def test_job_readiness_does_not_wait_for_the_full_startup_probe(self):
+        with self._environment(SYNAPSE_VLM_READINESS_ATTEMPT_SECONDS="0.03"):
+            warmup = self.warmup()
+            warmup._probe_lock.acquire()
+            try:
+                started = time.monotonic()
+                self.assertFalse(warmup.ensure_ready_for_inference())
+                self.assertLess(time.monotonic() - started, 0.2)
+            finally:
+                warmup._probe_lock.release()
 
     @mock.patch("api.model_warmup.urllib.request.urlopen")
     def test_blocked_probe_stop_is_bounded_and_eventually_cleans_lock(self, urlopen):

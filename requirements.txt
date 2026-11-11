@@ -57,6 +57,7 @@ python-dotenv
 # Additional Dependencies for Pipeline
 # =============================================================================
 transformers>=4.40.0
+sentencepiece>=0.2.0
 qwen-vl-utils>=0.0.8
 accelerate>=0.30.0
 bitsandbytes>=0.43.0

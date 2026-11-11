@@ -20,8 +20,21 @@ from modal_inference.config import (
 )
 
 
+def redact_sensitive_text(text: str, *secrets: str) -> str:
+    """Remove exact runtime credentials from third-party diagnostics."""
+    redacted = text
+    for secret in secrets:
+        if secret:
+            redacted = redacted.replace(secret, "[REDACTED]")
+    return redacted
+
+
 def build_vllm_serve_command(api_key: str) -> list[str]:
-    """Return the pinned single-L4 vLLM server command."""
+    """Return the pinned command without placing credentials in argv.
+
+    vLLM reads ``VLLM_API_KEY`` from its environment. Keeping the secret out
+    of argv prevents vLLM's startup argument diagnostics from exposing it.
+    """
 
     if not api_key or not api_key.strip():
         raise ValueError("A non-empty API key is required to build the vLLM command.")
@@ -33,8 +46,6 @@ def build_vllm_serve_command(api_key: str) -> list[str]:
         "0.0.0.0",
         "--port",
         str(VLLM_PORT),
-        "--api-key",
-        api_key.strip(),
         "--dtype",
         MODEL_DTYPE,
         "--quantization",

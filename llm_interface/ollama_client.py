@@ -124,7 +124,7 @@ class OllamaClient:
 
     # Default configuration
     BASE_URL = "http://localhost:11434"
-    DEFAULT_MODEL = "mistral"
+    DEFAULT_MODEL = "mistral:latest"
     DEFAULT_TIMEOUT = 120  # seconds (read timeout)
     DEFAULT_CONNECT_TIMEOUT = 5  # seconds (connect timeout)
     MAX_RETRIES = 3

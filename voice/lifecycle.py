@@ -7,7 +7,7 @@ import os
 import threading
 from typing import Optional
 
-from voice.routes import warm_up
+from voice.routes import start_voice_runtime, warm_up
 
 logger = logging.getLogger(__name__)
 
@@ -47,7 +47,14 @@ class VoiceWarmup:
         with self._lock:
             if self._thread is not None or self._stop.is_set():
                 return
+            try:
+                start_voice_runtime()
+            except (OSError, RuntimeError) as exc:
+                self.status = "unavailable"
+                logger.warning("Voice model worker could not start: %s", type(exc).__name__)
+                return
             self.status = "warming"
+            logger.info("Voice model warm-up started")
             self._thread = threading.Thread(
                 target=self._run,
                 name="synapse-voice-warmup",
@@ -64,9 +71,11 @@ class VoiceWarmup:
         try:
             ready = warm_up(self._stop)
         except Exception as exc:  # noqa: BLE001
-            logger.warning("Voice warm-up failed unexpectedly: %s", type(exc).__name__)
+            logger.warning("Voice warm-up failed: %s", str(exc))
             ready = False
         self.status = "ready" if ready else ("stopped" if self._stop.is_set() else "unavailable")
+        if ready:
+            logger.info("Voice models are ready")
 
     def request_stop(self) -> None:
         self._stop.set()

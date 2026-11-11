@@ -11,6 +11,7 @@ from .assembler import (
     UncertaintyObservation,
     adapt_legacy_snapshot,
     assemble_compact_qwen_observation,
+    normalize_compact_relations,
     assemble_visual_evidence,
 )
 from .models import (
@@ -61,6 +62,7 @@ __all__ = [
     "VisualEvidence",
     "adapt_legacy_snapshot",
     "assemble_compact_qwen_observation",
+    "normalize_compact_relations",
     "assemble_visual_evidence",
     "validate_visual_evidence",
 ]

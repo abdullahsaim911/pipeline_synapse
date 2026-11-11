@@ -44,7 +44,7 @@ _STAGE_TAGS = {
 _SYNAPSE_NAMESPACES = (
     "synapse", "api", "orchestrator", "vlm_interface", "vlm_engine",
     "synthesizer", "llm_interface", "tts_engine", "frame_extraction",
-    "transcription", "synchronizer", "qa", "quiz",
+    "transcription", "synchronizer", "qa", "quiz", "voice",
 )
 
 

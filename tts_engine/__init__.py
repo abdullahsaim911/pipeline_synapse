@@ -11,7 +11,7 @@ from .exceptions import (
     TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
 )
 # Import main engine
-from .tts_engine import TTSEngine
+from .tts_engine import TTSEngine, get_shared_tts_engine, shutdown_shared_tts_engine
 # Import providers (for advanced usage)
 from .providers import (
     TTSProvider,
@@ -23,6 +23,8 @@ from .providers import (
 __all__ = [
     # Main engine
     "TTSEngine",
+    "get_shared_tts_engine",
+    "shutdown_shared_tts_engine",
     # Exceptions
     "TTSEngineError",
     "TTSConnectionError",

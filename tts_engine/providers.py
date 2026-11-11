@@ -8,6 +8,7 @@ Enables fallback chain: Edge-TTS → SpeechT5.
 
 import asyncio
 import os
+import re
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -31,6 +32,12 @@ logger = logging.getLogger(__name__)
 # Import Edge-TTS
 try:
     import edge_tts
+    from edge_tts.exceptions import (
+        NoAudioReceived,
+        UnexpectedResponse,
+        UnknownResponse,
+        WebSocketError,
+    )
     EDGE_TTS_AVAILABLE = True
 except ImportError:
     EDGE_TTS_AVAILABLE = False
@@ -90,6 +97,13 @@ def _edge_error(exc: Exception) -> TTSEngineError:
         return exc
     if isinstance(exc, (TimeoutError, asyncio.TimeoutError)):
         return TTSTimeoutError("Edge TTS request timed out")
+    if EDGE_TTS_AVAILABLE and isinstance(
+        exc, (NoAudioReceived, UnexpectedResponse, UnknownResponse, WebSocketError)
+    ):
+        return TTSConnectionError(
+            "Edge TTS returned no usable audio",
+            code="tts_service_unavailable",
+        )
     if isinstance(exc, (PermissionError, FileNotFoundError, IsADirectoryError)):
         return TTSPermanentError(
             "Edge TTS output configuration is invalid",
@@ -121,6 +135,10 @@ def _edge_error(exc: Exception) -> TTSEngineError:
 
 class EdgeTTSProvider(TTSProvider):
     """Microsoft Edge-TTS provider (primary, requires internet)."""
+
+    FALLBACK_VOICE = "en-US-AriaNeural"
+    _voice_lock = threading.Lock()
+    _available_voices: Optional[set[str]] = None
 
     def __init__(
         self,
@@ -174,6 +192,45 @@ class EdgeTTSProvider(TTSProvider):
             finally:
                 loop.close()
 
+    def _run_voice_catalog(self):
+        """Resolve the voice catalogue without consuming synthesis test hooks."""
+        return self._run_coroutine(edge_tts.list_voices())
+
+    @staticmethod
+    def _run_coroutine(coro):
+        try:
+            loop = asyncio.get_running_loop()
+            return loop.run_until_complete(coro)
+        except RuntimeError:
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                return loop.run_until_complete(coro)
+            finally:
+                loop.close()
+
+    def _resolved_voice(self) -> str:
+        """Use the preferred voice when advertised, otherwise a stable fallback."""
+        with self._voice_lock:
+            if self._available_voices is None:
+                try:
+                    voices = self._run_voice_catalog()
+                    self.__class__._available_voices = {
+                        item.get("ShortName") for item in voices
+                        if isinstance(item, dict) and item.get("ShortName")
+                    }
+                except Exception:
+                    # Catalogue lookup is advisory; synthesis remains the real
+                    # availability check and SpeechT5 is the durable fallback.
+                    return self.voice
+            available = self._available_voices or set()
+        if self.voice in available:
+            return self.voice
+        if self.FALLBACK_VOICE in available:
+            logger.warning("Configured Edge voice unavailable; using fallback voice")
+            return self.FALLBACK_VOICE
+        return self.voice
+
     def generate(self, text: str, output_path: str) -> str:
         """Generate audio using Edge-TTS."""
         if not self.is_available():
@@ -184,9 +241,10 @@ class EdgeTTSProvider(TTSProvider):
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
 
+        voice = self._resolved_voice()
         for attempt in range(1, self.max_attempts + 1):
             try:
-                communicate = edge_tts.Communicate(text, self.voice)
+                communicate = edge_tts.Communicate(text, voice)
                 self._run_async(communicate.save(output_path))
                 logger.debug("[%s] Generated on attempt %s", self.name, attempt)
                 return output_path
@@ -217,11 +275,14 @@ class SpeechT5Provider(TTSProvider):
     """Microsoft SpeechT5 provider (local fallback, works offline)."""
 
     _model_lock = threading.Lock()
+    _inference_lock = threading.Lock()
     _processor = None
     _model = None
     _vocoder = None
     _speaker_embeddings = None
     _device = None
+    MAX_CHUNK_TOKENS = 540
+    CHUNK_SILENCE_SECONDS = 0.15
 
     def __init__(self, device: Optional[str] = None):
         """Initialize SpeechT5 provider.
@@ -248,18 +309,19 @@ class SpeechT5Provider(TTSProvider):
             self._model.to(self.device)
             self._vocoder.to(self.device)
 
-            # Load speaker embeddings (use a default speaker)
-            # This is a neutral speaker from the SpeechT5 training data
-            embeddings_url = "https://huggingface.co/datasets/Xenova/transformers.js-docs/resolve/main/speaker_embeddings.bin"
-
-            # Download the speaker embeddings file
+            # Load the fixed speaker embedding from the one-time setup cache.
             try:
-                response = requests.get(embeddings_url, timeout=30)
-                response.raise_for_status()
-
-                # The file is a raw binary tensor (float32)
-                # Load it as a tensor
-                x_vector = torch.frombuffer(bytearray(response.content), dtype=torch.float32)
+                from huggingface_hub import hf_hub_download
+                embedding_path = hf_hub_download(
+                    repo_id="Xenova/transformers.js-docs",
+                    repo_type="dataset",
+                    filename="speaker_embeddings.bin",
+                    local_files_only=True,
+                )
+                with open(embedding_path, "rb") as handle:
+                    x_vector = torch.frombuffer(
+                        bytearray(handle.read()), dtype=torch.float32
+                    )
 
                 # SpeechT5 expects 512-dim embeddings
                 if len(x_vector) != 512:
@@ -274,13 +336,15 @@ class SpeechT5Provider(TTSProvider):
                 logger.debug("[SpeechT5] Speaker embeddings loaded successfully")
 
             except Exception as e:
-                logger.error(
-                    "[SpeechT5] Speaker embedding load failed: error_type=%s",
+                logger.warning(
+                    "[SpeechT5] Cached speaker embedding unavailable: error_type=%s",
                     type(e).__name__,
                 )
-                # Fallback: use random embeddings
-                logger.warning("[SpeechT5] Using random speaker embeddings as fallback")
-                self._speaker_embeddings = torch.randn(1, 512).to(self.device)
+                # Deterministic fallback keeps offline generation reproducible.
+                generator = torch.Generator(device="cpu").manual_seed(0)
+                self._speaker_embeddings = torch.randn(
+                    1, 512, generator=generator
+                ).to(self.device)
 
             logger.debug("[SpeechT5] Models loaded successfully")
 
@@ -363,6 +427,47 @@ class SpeechT5Provider(TTSProvider):
 
         return text
 
+    def _token_count(self, text: str) -> int:
+        encoded = self._processor.tokenizer(
+            text, add_special_tokens=False, return_attention_mask=False
+        )
+        return len(encoded["input_ids"])
+
+    def _split_chunks(self, text: str) -> list[str]:
+        """Split all text losslessly enough for SpeechT5's 600-position encoder."""
+        sentences = [
+            part.strip() for part in re.split(r"(?<=[.!?])\s+", text)
+            if part.strip()
+        ] or [text]
+        atomic: list[str] = []
+        for sentence in sentences:
+            if self._token_count(sentence) <= self.MAX_CHUNK_TOKENS:
+                atomic.append(sentence)
+                continue
+            current: list[str] = []
+            for word in sentence.split():
+                candidate = " ".join([*current, word])
+                if current and self._token_count(candidate) > self.MAX_CHUNK_TOKENS:
+                    atomic.append(" ".join(current))
+                    current = [word]
+                else:
+                    current.append(word)
+            if current:
+                atomic.append(" ".join(current))
+
+        chunks: list[str] = []
+        current = ""
+        for part in atomic:
+            candidate = f"{current} {part}".strip()
+            if current and self._token_count(candidate) > self.MAX_CHUNK_TOKENS:
+                chunks.append(current)
+                current = part
+            else:
+                current = candidate
+        if current:
+            chunks.append(current)
+        return chunks
+
     def generate(self, text: str, output_path: str) -> str:
         """Generate audio using SpeechT5."""
         if not self.is_available():
@@ -391,23 +496,28 @@ class SpeechT5Provider(TTSProvider):
             ) from e
 
         try:
-            # Prepare inputs
-            inputs = self._processor(text=text, return_tensors="pt")
-            inputs = inputs.to(self.device)
-
-            # Generate speech
-            with torch.no_grad():
-                speech = self._model.generate(
-                    **inputs,
-                    speaker_embeddings=self._speaker_embeddings
-                )
-
-                # Use vocoder to convert to audio
-                with torch.no_grad():
-                    audio = self._vocoder(speech)
-
-            # Convert to numpy and save
-            audio_numpy = audio.squeeze().cpu().numpy()
+            chunks = self._split_chunks(text)
+            logger.info("[SpeechT5] Generating %d token-safe chunk(s)", len(chunks))
+            audio_parts = []
+            silence = np.zeros(
+                int(16000 * self.CHUNK_SILENCE_SECONDS), dtype=np.float32
+            )
+            with self._inference_lock:
+                for index, chunk in enumerate(chunks):
+                    inputs = self._processor(text=chunk, return_tensors="pt")
+                    inputs = inputs.to(self.device)
+                    with torch.no_grad():
+                        speech = self._model.generate(
+                            **inputs,
+                            speaker_embeddings=self._speaker_embeddings,
+                        )
+                        audio = self._vocoder(speech)
+                    if index:
+                        audio_parts.append(silence)
+                    audio_parts.append(
+                        np.atleast_1d(audio.squeeze().cpu().numpy())
+                    )
+            audio_numpy = np.concatenate(audio_parts)
 
             # Normalize audio to prevent clipping
             if np.max(np.abs(audio_numpy)) > 0:
@@ -421,8 +531,8 @@ class SpeechT5Provider(TTSProvider):
         except torch.cuda.OutOfMemoryError:
             logger.error("[SpeechT5] CUDA out of memory, trying CPU...")
             if self.device == "cuda":
+                self.unload_models()
                 self.device = "cpu"
-                self._model_lock.release()
                 return self.generate(text, output_path)
             else:
                 raise TTSEngineError("SpeechT5 ran out of memory on CPU")

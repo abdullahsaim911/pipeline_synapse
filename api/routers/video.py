@@ -86,8 +86,10 @@ from llm_interface.providers import (
     LLMUnavailableError,
 )
 from api.security import enforce_allowed_origin
+from api.resource_guard import LocalResourcesUnavailableError, require_processing_headroom
 from qa.moment import InterventionNotFoundError, load_moment
 from qa.faithfulness import build_gate_from_env
+from youtube_runtime import extract_youtube_video_id
 from qa.hybrid import build_selector_from_env
 from qa.service import AskService
 from qa.transcript import load_transcript
@@ -128,6 +130,8 @@ def _processing_manager(request: Request, db: Session, preparation_manager):
             session_factory=sessionmaker(bind=db.get_bind(), expire_on_commit=False),
             orchestrator_factory=get_orchestrator,
             preparation_manager=preparation_manager,
+            video_id_extractor=extract_youtube_video_id,
+            admission_guard=require_processing_headroom,
         )
         manager.start()
         request.app.state.processing_jobs = manager
@@ -391,8 +395,17 @@ def create_or_join_processing_job(
             detail={"code": "video_processing_busy", "active_video_id": exc.video_id,
                     "active_job_id": exc.job_id},
         )
-    except Exception:
-        logger.exception("Could not create or join a processing job")
+    except LocalResourcesUnavailableError:
+        raise HTTPException(
+            status_code=503,
+            detail={"code": "local_resources_busy", "retryable": True},
+            headers={"Retry-After": "15"},
+        )
+    except Exception as exc:
+        logger.exception(
+            "Could not create or join a processing job (error_type=%s)",
+            type(exc).__name__,
+        )
         raise HTTPException(status_code=500, detail="Processing job could not be created.")
 
 

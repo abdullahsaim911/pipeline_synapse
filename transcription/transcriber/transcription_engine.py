@@ -21,6 +21,7 @@ class TranscriptionResult:
     method: str  # "api" or "whisper"
     language: Optional[str] = None
     duration_seconds: float = 0.0
+    processing_duration_seconds: float = 0.0
     error: Optional[str] = None
 
     @property
@@ -40,10 +41,16 @@ class TranscriptionResult:
             "method": self.method,
             "language": self.language,
             "duration_seconds": self.duration_seconds,
+            "processing_duration_seconds": self.processing_duration_seconds,
             "entry_count": self.entry_count,
             "error": self.error,
             "entries": [e.to_dict() for e in self.entries]
         }
+
+    @staticmethod
+    def media_duration(entries: List[TranscriptEntry]) -> float:
+        """Derive media duration from transcript timestamps, not wall time."""
+        return max((float(entry.end) for entry in entries), default=0.0)
 
 
 class TranscriptionEngine:
@@ -99,7 +106,7 @@ class TranscriptionEngine:
 
         # Extract video ID if not provided
         if video_id is None and input_source.startswith(("http://", "https://")):
-            from utils.url_parser import extract_video_id
+            from transcription.utils.url_parser import extract_video_id
             video_id = extract_video_id(input_source)
 
         if not video_id:
@@ -116,7 +123,8 @@ class TranscriptionEngine:
                     video_id=video_id,
                     entries=entries,
                     method="api",
-                    duration_seconds=duration
+                    duration_seconds=TranscriptionResult.media_duration(entries),
+                    processing_duration_seconds=duration,
                 )
             except Exception as e:
                 self._log(f"❌ API unavailable: {e}. Switching to Whisper...")
@@ -143,7 +151,8 @@ class TranscriptionEngine:
                 entries=entries,
                 method="whisper",
                 language=language,
-                duration_seconds=duration
+                duration_seconds=TranscriptionResult.media_duration(entries),
+                processing_duration_seconds=duration,
             )
 
         except Exception as e:
@@ -154,7 +163,8 @@ class TranscriptionEngine:
                 entries=[],
                 method="failed",
                 error=str(e),
-                duration_seconds=duration
+                duration_seconds=0.0,
+                processing_duration_seconds=duration,
             )
 
     def transcribe_to_json(

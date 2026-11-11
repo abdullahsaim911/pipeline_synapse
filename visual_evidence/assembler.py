@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+import re
 from typing import Any, Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
@@ -24,6 +25,7 @@ from .models import (
     Region,
     RegionAttributes,
     Relation,
+    CORE_RELATION_TYPES,
     StructuralDescription,
     Uncertainty,
     ValidationDiagnostic,
@@ -32,6 +34,25 @@ from .models import (
 
 
 COMPACT_OBSERVATION_SCHEMA = "synapse_visual_observation_v1"
+
+
+def normalize_compact_relations(payload: Mapping[str, Any]) -> tuple[dict[str, Any], int]:
+    """Canonicalize model-authored relation vocabulary without losing meaning."""
+    normalized = deepcopy(dict(payload))
+    relations = normalized.get("relations")
+    if not isinstance(relations, list):
+        return normalized, 0
+    changed = 0
+    for relation in relations:
+        if not isinstance(relation, dict):
+            continue
+        value = str(relation.get("type") or "").strip().lower()
+        if value in CORE_RELATION_TYPES or value.startswith("custom:"):
+            continue
+        semantic = re.sub(r"[^a-z0-9_:-]+", "_", value).strip("_:")
+        relation["type"] = f"custom:{semantic or 'unspecified'}"
+        changed += 1
+    return normalized, changed
 
 
 class ObservationModel(BaseModel):
@@ -418,6 +439,7 @@ def assemble_compact_qwen_observation(
     elif extraction_status == "partial" and evidence_status == "supported":
         evidence_status = "partially_supported"
 
+    payload, _normalization_count = normalize_compact_relations(payload)
     regions: list[RegionObservation] = []
     source_regions = payload.get("regions", [])
     if not isinstance(source_regions, list):

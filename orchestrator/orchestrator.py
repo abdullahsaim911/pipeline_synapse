@@ -10,7 +10,6 @@ import importlib.util
 import json
 import logging
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -29,11 +28,7 @@ from vlm_engine import SnapshotEngine
 from synthesizer import LLMSynthesizer, VisualEvidenceUnavailableError
 from visual_evidence import assess_snapshot, load_usable_snapshot
 from stage_tracing import current_trace, trace_stage
-from youtube_runtime import youtube_runtime_options
-try:
-    from tts_engine import TTSEngine
-except ImportError:
-    TTSEngine = None
+from youtube_runtime import extract_youtube_video_id, youtube_runtime_options
 from .ollama_service import OllamaService, shared_ollama_service
 from .gpu_memory_manager import (
     clear_gpu_memory,
@@ -224,13 +219,7 @@ class PipelineOrchestrator:
         Raises:
             ValueError: If URL format is invalid
         """
-        pattern = r'(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([\w-]{11})'
-        match = re.search(pattern, youtube_url)
-
-        if not match:
-            raise ValueError(f"Invalid YouTube URL format: {youtube_url}")
-
-        return match.group(1)
+        return extract_youtube_video_id(youtube_url)
 
     def _ingest(self, youtube_url: str) -> str:
         """
@@ -282,37 +271,19 @@ class PipelineOrchestrator:
             stage_started = time.monotonic()
             trace_stage("transcription", "started", context=trace_context)
             try:
-                # Use subprocess to run transcription module's main.py
-                # This avoids relative import issues
-                transcription_main = os.path.join(project_root, "transcription", "main.py")
-                python_exe = sys.executable
-
-                cmd = [
-                    python_exe,
-                    transcription_main,
-                    youtube_url,
-                    "-o", f"{video_dir}/transcript.json",
-                    "-m", "base",
-                    "-q"
-                ]
-
                 print(f"[Orchestrator] Running transcription...")
-                result = subprocess.run(cmd, capture_output=True, text=True)
+                from transcription.lifecycle import transcribe
 
-                if result.returncode == 0:
-                    # Load the generated transcript
-                    if os.path.exists(f"{video_dir}/transcript.json"):
-                        with open(f"{video_dir}/transcript.json", "r") as f:
-                            transcript_result = json.load(f)
-                        print("[Orchestrator] Audio extraction complete")
-                        trace_stage(
-                            "transcription", "completed", started_at=stage_started,
-                            context=trace_context, status="success",
-                        )
-                    else:
-                        print(f"[Orchestrator] Transcript file not created")
-                else:
-                    print(f"[Orchestrator] Audio extraction failed: {result.stderr}")
+                video_id = self._extract_video_id(youtube_url)
+                transcript_result = transcribe(youtube_url, video_id)
+                transcript_path = os.path.join(video_dir, "transcript.json")
+                self._write_json_atomic(transcript_path, transcript_result)
+                print("[Orchestrator] Audio extraction complete")
+                trace_stage(
+                    "transcription", "completed", started_at=stage_started,
+                    context=trace_context, status="success",
+                    method=transcript_result.get("method", "unknown"),
+                )
 
             except Exception as e:
                 audio_error = e
@@ -709,7 +680,7 @@ class PipelineOrchestrator:
         # Initialize Synthesizer (with context for new modes)
         synthesizer = LLMSynthesizer(
             ollama_url="http://localhost:11434",
-            model="mistral",
+            model="mistral:latest",
             timeout=120,
             max_retries=3,
             transcripts=transcript_entries,
@@ -717,7 +688,8 @@ class PipelineOrchestrator:
         )
 
         # Initialize TTS Engine
-        tts_engine = TTSEngine()
+        from tts_engine import get_shared_tts_engine
+        tts_engine = get_shared_tts_engine()
 
         # Convert raw JSON dict entries to TranscriptEntry objects if needed.
         # The transcription module saves JSON, so transcript_result["entries"] are
@@ -789,10 +761,6 @@ class PipelineOrchestrator:
                 })
 
         print(f"[Orchestrator] Generated {len(segments)} audio segments")
-
-        # Cleanup TTS engine to free SpeechT5 memory
-        print("[Orchestrator] Cleaning up TTS engine...")
-        tts_engine.cleanup()
 
         return segments
 
@@ -1136,10 +1104,6 @@ class PipelineOrchestrator:
 
             print(f"[Orchestrator] Generated {len(interventions)} interventions")
 
-            # Cleanup TTS engine to free SpeechT5 memory
-            print("[Orchestrator] Cleaning up TTS engine...")
-            tts_engine.cleanup()
-
             return interventions
 
         except Exception as e:
@@ -1478,6 +1442,16 @@ class PipelineOrchestrator:
 
         extraction_started = time.monotonic()
         trace_stage("vlm_inference", "start", provider=provider)
+        if provider == PROVIDER_MODAL:
+            # Modal inference is the longest remote stage; overlap the local
+            # CPU-only Mistral load with it instead of delaying synthesis.
+            try:
+                from api.resource_guard import require_processing_headroom
+
+                require_processing_headroom()
+                get_ollama_service().begin_warmup()
+            except Exception as exc:  # Predictive warming is an optimization.
+                print(f"[Orchestrator] Mistral prewarm skipped: {type(exc).__name__}")
         vlm_engine, used_model = self._create_intervention_vlm_engine(provider)
         try:
             snapshot = vlm_engine.analyze_frame(
@@ -1616,13 +1590,21 @@ class PipelineOrchestrator:
         if ownership_check is not None:
             ownership_check()
         trace_stage("ollama_readiness", "start")
-        get_ollama_service().ensure_ready()
+        # If predictive warm-up is still running, this joins it through the
+        # service's warm lock. The first real request therefore never races a
+        # duplicate model load or uses different CPU/context options.
+        ollama_service = get_ollama_service()
+        warm_model = getattr(ollama_service, "warm_model", None)
+        if warm_model is not None:
+            warm_model()
+        else:  # Backward-compatible test/dry-run service adapter.
+            ollama_service.ensure_ready()
         trace_stage("ollama_readiness", "complete", started_at=ollama_started)
 
         from synthesizer import LLMSynthesizer
         synthesizer = LLMSynthesizer(
             ollama_url="http://localhost:11434",
-            model="mistral",
+            model="mistral:latest",
             timeout=120,
             max_retries=3,
             transcripts=transcript_entries,
@@ -1687,15 +1669,14 @@ class PipelineOrchestrator:
         if ownership_check is not None:
             ownership_check()
 
-        from tts_engine import TTSEngine
-        tts_engine = TTSEngine()
+        from tts_engine import get_shared_tts_engine
+        tts_engine = get_shared_tts_engine()
         audio_file_path = os.path.join(intervention_dir, f"{output_mode}.mp3")
         if self._valid_mp3(audio_file_path):
             trace_stage(
                 "tts_creation", "reused", audio_path=audio_file_path,
                 audio_bytes=os.path.getsize(audio_file_path),
             )
-            tts_engine.cleanup()
         else:
             tts_started = time.monotonic()
             temporary_audio = f"{audio_file_path}.tmp.mp3"
@@ -1712,7 +1693,6 @@ class PipelineOrchestrator:
                 else:
                     commit_audio()
             finally:
-                tts_engine.cleanup()
                 try:
                     if os.path.exists(temporary_audio):
                         os.remove(temporary_audio)

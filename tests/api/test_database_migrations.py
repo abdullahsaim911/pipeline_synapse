@@ -133,8 +133,16 @@ class DatabaseMigrationTests(unittest.TestCase):
             self.assertTrue(set(HISTORY_TABLES).issubset(tables))
             self.assertEqual(
                 connection.execute("SELECT version_num FROM alembic_version").fetchone()[0],
-                "20261105_0007",
+                "20261110_0008",
             )
+            preparation_columns = {
+                row[1]
+                for row in connection.execute(
+                    "PRAGMA table_info(explanation_preparations)"
+                )
+            }
+            self.assertIn("provider_wait_started_at", preparation_columns)
+            self.assertIn("deferred_until", preparation_columns)
             self.assertEqual(
                 connection.execute(
                     "SELECT id, profile_key FROM users WHERE profile_key = ?",

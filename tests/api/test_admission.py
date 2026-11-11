@@ -120,6 +120,23 @@ class AdmissionTests(unittest.TestCase):
         self.addCleanup(manager.shutdown)
         return manager
 
+    def test_admission_uses_lightweight_extractor_without_loading_orchestrator(self):
+        orchestrator_calls = []
+        manager = ProcessingJobManager(
+            self.Session,
+            lambda: orchestrator_calls.append(True) or DynamicOrchestrator(),
+            video_id_extractor=lambda url: url.rsplit("=", 1)[-1],
+        )
+        manager._submit = lambda _job_id: False
+        self.addCleanup(manager.shutdown)
+
+        snapshot = manager.create_or_join(
+            f"https://www.youtube.com/watch?v={VIDEO_A}", "explanatory"
+        )
+
+        self.assertEqual(snapshot["status"], "queued")
+        self.assertEqual(orchestrator_calls, [])
+
     def _artifact_generator(self, calls, started=None, release=None, failure=None):
         def generate(**kwargs):
             calls.append(kwargs["video_id"])

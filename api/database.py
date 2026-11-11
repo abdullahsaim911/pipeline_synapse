@@ -46,7 +46,7 @@ def create_database_engine(database_url: str = DATABASE_URL) -> Engine:
     url = make_url(database_url)
     kwargs = {"pool_pre_ping": True}
     if url.get_backend_name() == "sqlite":
-        kwargs["connect_args"] = {"check_same_thread": False}
+        kwargs["connect_args"] = {"check_same_thread": False, "timeout": 30}
 
     database_engine = create_engine(database_url, **kwargs)
     if url.get_backend_name() == "sqlite":
@@ -54,6 +54,10 @@ def create_database_engine(database_url: str = DATABASE_URL) -> Engine:
         def _enable_sqlite_foreign_keys(dbapi_connection, _connection_record):
             cursor = dbapi_connection.cursor()
             cursor.execute("PRAGMA foreign_keys=ON")
+            cursor.execute("PRAGMA busy_timeout=30000")
+            if url.database != ":memory:":
+                cursor.execute("PRAGMA journal_mode=WAL")
+                cursor.execute("PRAGMA synchronous=NORMAL")
             cursor.close()
 
     return database_engine

@@ -7,6 +7,7 @@ matches keywords to choose an action. The only deterministic parsing is for argu
 "night") once the action is known.
 """
 
+import os
 import re
 from collections import OrderedDict
 from typing import Dict, List, Optional
@@ -157,8 +158,16 @@ class Interpreter:
     def _encode(self, texts: List[str]) -> np.ndarray:
         if self._embedder is None:
             from sentence_transformers import SentenceTransformer
-            model = SentenceTransformer(EMBED_MODEL, device="cpu")
-            self._embedder = lambda items: model.encode(items, normalize_embeddings=True, batch_size=64)
+            local_only = os.environ.get(
+                "SYNAPSE_LOCAL_MODELS_ONLY", "1"
+            ).strip().lower() not in {"0", "false", "no", "off"}
+            model = SentenceTransformer(
+                EMBED_MODEL, device="cpu", local_files_only=local_only
+            )
+            batch_size = max(1, int(os.environ.get("SYNAPSE_VOICE_EMBED_BATCH_SIZE", "16")))
+            self._embedder = lambda items: model.encode(
+                items, normalize_embeddings=True, batch_size=batch_size
+            )
         return np.asarray(self._embedder(texts), dtype=np.float32)
 
     def warm(self) -> None:

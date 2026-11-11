@@ -5,18 +5,18 @@ The initial single-L4 profile is defined once in `modal_inference/config.py`:
 - `Qwen/Qwen3-VL-8B-Instruct-FP8`
 - vLLM `0.19.1`
 - one Modal NVIDIA L4 and one scheduled sequence
-- 8,192 total model tokens
-- 2,048 default and server-wide maximum completion tokens
+- 12,288 total model tokens
+- 8,192 default and server-wide maximum completion tokens
 - 0.90 vLLM GPU-memory utilization
 - one image, no video, with a 1,344-pixel client-side maximum dimension
 - temperature 0.1
 
-These are configuration targets, not measured performance claims. An 8,192-token
+These are configuration targets, not measured performance claims. A 12,288-token
 context budget does not prove that model weights, KV cache, activations, image
 processing, and vLLM workspaces fit in 24 GB. A live Modal startup must succeed
-before this profile is considered deployment-validated. If it fails, retain the
-configurability and evaluate 6,144 as the next explicit candidate; do not silently
-fall back.
+before this profile is considered deployment-validated. The 8,192-token
+completion setting remains bounded by the 12,288-token total context and must be
+validated with the exact processor budget before deployment.
 
 ## Context accounting
 

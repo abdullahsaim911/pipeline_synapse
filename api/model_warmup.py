@@ -32,9 +32,11 @@ WARMUP_ENABLED_ENV_VAR = "SYNAPSE_MODAL_WARMUP_ON_STARTUP"
 WARMUP_TIMEOUT_ENV_VAR = "SYNAPSE_MODAL_WARMUP_TIMEOUT_SECONDS"
 WARMUP_ATTEMPT_TIMEOUT_ENV_VAR = "SYNAPSE_MODAL_WARMUP_ATTEMPT_SECONDS"
 WARMUP_SHUTDOWN_TIMEOUT_ENV_VAR = "SYNAPSE_MODAL_WARMUP_SHUTDOWN_SECONDS"
+INFERENCE_TIMEOUT_ENV_VAR = "SYNAPSE_VLM_READINESS_ATTEMPT_SECONDS"
 DEFAULT_WARMUP_TIMEOUT_SECONDS = 600.0
 DEFAULT_ATTEMPT_TIMEOUT_SECONDS = 60.0
 DEFAULT_SHUTDOWN_TIMEOUT_SECONDS = 1.0
+DEFAULT_INFERENCE_TIMEOUT_SECONDS = 60.0
 MAX_BACKOFF_SECONDS = 15.0
 _FALSE_VALUES = {"0", "false", "no", "off"}
 # Statuses that a further attempt cannot change.
@@ -88,8 +90,16 @@ class ModalWarmup:
         return self._detail
 
     def _set_status(self, status: str, detail: Optional[str] = None) -> None:
+        previous = (self._status, self._detail)
         self._status, self._detail = status, detail
-        logger.debug("Modal VLM status: %s%s", status, f" ({detail})" if detail else "")
+        if previous == (status, detail):
+            return
+        message = "Modal VLM status: %s%s"
+        arguments = (status, f" ({detail})" if detail else "")
+        if status == STATUS_UNAVAILABLE:
+            logger.warning(message, *arguments)
+        else:
+            logger.info(message, *arguments)
 
     def start(self) -> None:
         """Begin warming in the background. Never blocks and never raises."""
@@ -100,6 +110,7 @@ class ModalWarmup:
                 return
             if self._thread is not None:
                 return
+            logger.info("Modal VLM warm-up started")
             self._thread = threading.Thread(
                 target=self._warm, name="synapse-modal-warmup", daemon=True
             )
@@ -133,10 +144,22 @@ class ModalWarmup:
         if self._stop.is_set():
             self._set_status(STATUS_UNAVAILABLE, "backend shutting down")
             return False
-        with self._probe_lock:
-            return self._probe_until(
-                time.monotonic() + (timeout or self._total_timeout())
+        wait_seconds = timeout or self._total_timeout()
+        deadline = time.monotonic() + wait_seconds
+        if not self._probe_lock.acquire(timeout=max(0.0, wait_seconds)):
+            return False
+        try:
+            return self._probe_until(deadline)
+        finally:
+            self._probe_lock.release()
+
+    def ensure_ready_for_inference(self) -> bool:
+        """Bound a job-stage readiness check while startup warming continues."""
+        return self.ensure_ready(
+            timeout=_positive_seconds(
+                INFERENCE_TIMEOUT_ENV_VAR, DEFAULT_INFERENCE_TIMEOUT_SECONDS
             )
+        )
 
     @staticmethod
     def _total_timeout() -> float:

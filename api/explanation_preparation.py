@@ -46,16 +46,18 @@ logger = logging.getLogger(__name__)
 
 VALID_OUTPUT_MODES = {"brief", "explanatory", "detailed"}
 DEFAULT_MAX_ATTEMPTS = 3
+DEFAULT_VLM_RETRY_SECONDS = 30.0
+DEFAULT_VLM_MAX_WAIT_SECONDS = 900.0
 # Evidence waiting for Mistral. A full queue pauses further VLM work.
 EXPLANATION_QUEUE_CAPACITY = 4
 PERMANENT_FAILURE_REASONS = {
     "vlm_authentication_failed",
-    "vlm_context_budget_exceeded",
     "vlm_remote_rejected",
     "evidence_reported_unavailable",
 }
 
 STAGE_PENDING = "pending_extraction"
+STAGE_WAITING_FOR_VLM = "waiting_for_vlm"
 STAGE_EXTRACTING = "extracting_evidence"
 STAGE_EVIDENCE_READY = "evidence_ready"
 STAGE_EXPLAINING = "generating_explanation"
@@ -67,6 +69,15 @@ STAGE_FAILED = "failed"
 def _utcnow() -> datetime:
     """Naive UTC for compatibility with existing SQLite DateTime columns."""
     return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+def _positive_seconds(variable: str, default: float) -> float:
+    raw = os.getenv(variable, "").strip()
+    try:
+        value = float(raw) if raw else default
+    except ValueError:
+        value = default
+    return value if value > 0 else default
 
 
 class PreparationNotRetryableError(RuntimeError):
@@ -153,6 +164,8 @@ class ExplanationPreparationManager:
         lease_timeout_seconds: float = 1800.0,
         maintenance_interval_seconds: Optional[float] = None,
         shutdown_grace_seconds: Optional[float] = None,
+        vlm_retry_seconds: Optional[float] = None,
+        vlm_max_wait_seconds: Optional[float] = None,
     ) -> None:
         self._session_factory = session_factory
         self._orchestrator_factory = orchestrator_factory
@@ -179,6 +192,22 @@ class ExplanationPreparationManager:
         self._lease_timeout = timedelta(seconds=lease_timeout_seconds)
         self._lease_timeout_seconds = lease_timeout_seconds
         self._maintenance_interval = maintenance_interval
+        self._vlm_retry_seconds = (
+            _positive_seconds(
+                "SYNAPSE_VLM_DEFER_RETRY_SECONDS", DEFAULT_VLM_RETRY_SECONDS
+            )
+            if vlm_retry_seconds is None else vlm_retry_seconds
+        )
+        self._vlm_max_wait_seconds = (
+            _positive_seconds(
+                "SYNAPSE_VLM_MAX_WAIT_SECONDS", DEFAULT_VLM_MAX_WAIT_SECONDS
+            )
+            if vlm_max_wait_seconds is None else vlm_max_wait_seconds
+        )
+        if self._vlm_retry_seconds <= 0:
+            raise ValueError("vlm_retry_seconds must be positive")
+        if self._vlm_max_wait_seconds < self._vlm_retry_seconds:
+            raise ValueError("vlm_max_wait_seconds must not be shorter than retry delay")
         shutdown_grace = (
             float(os.getenv("PREPARATION_SHUTDOWN_GRACE_SECONDS", "5"))
             if shutdown_grace_seconds is None else shutdown_grace_seconds
@@ -200,6 +229,8 @@ class ExplanationPreparationManager:
         self._explanation_thread: Optional[threading.Thread] = None
         self._maintenance_thread: Optional[threading.Thread] = None
         self._worker_id = ""
+        self._provider_retry_after = 0.0
+        self._provider_probe_key: Optional[tuple[str, str, str]] = None
         # Recent stage transitions: (monotonic time, intervention, mode, stage).
         self.timeline: deque[tuple[float, str, str, str]] = deque(maxlen=1000)
 
@@ -286,7 +317,7 @@ class ExplanationPreparationManager:
                     self._set_recoverable_or_exhausted(
                         state, now, error_code="missing_audio"
                     )
-                if state.status == "pending":
+                if state.status == "pending" and state.stage != STAGE_WAITING_FOR_VLM:
                     to_queue.append(job)
             db.commit()
 
@@ -309,6 +340,8 @@ class ExplanationPreparationManager:
                 ExplanationPreparation.failure_reason: "video_cancelled",
                 ExplanationPreparation.lease_owner: None,
                 ExplanationPreparation.lease_started_at: None,
+                ExplanationPreparation.provider_wait_started_at: None,
+                ExplanationPreparation.deferred_until: None,
                 ExplanationPreparation.updated_at: now,
             }, synchronize_session=False)
             db.commit()
@@ -334,6 +367,8 @@ class ExplanationPreparationManager:
                 ExplanationPreparation.failure_reason: None,
                 ExplanationPreparation.lease_owner: None,
                 ExplanationPreparation.lease_started_at: None,
+                ExplanationPreparation.provider_wait_started_at: None,
+                ExplanationPreparation.deferred_until: None,
                 ExplanationPreparation.updated_at: now,
             }, synchronize_session=False)
             db.commit()
@@ -474,6 +509,8 @@ class ExplanationPreparationManager:
             state.failure_reason = None
             state.lease_owner = None
             state.lease_started_at = None
+            state.provider_wait_started_at = None
+            state.deferred_until = None
             state.failed_at = None
             state.updated_at = now
             try:
@@ -513,6 +550,8 @@ class ExplanationPreparationManager:
                 state.failure_reason = None
                 state.lease_owner = None
                 state.lease_started_at = None
+                state.provider_wait_started_at = None
+                state.deferred_until = None
                 state.failed_at = None
                 state.updated_at = now
                 commit_active_slot(db, video_id)
@@ -545,7 +584,11 @@ class ExplanationPreparationManager:
                         self._deactivate(job, lease)
                     return result
             except Exception as exc:
-                self._mark_failed(job, exc, lease.owner)
+                if not (
+                    self._is_retryable_vlm_unavailable(exc)
+                    and self._defer_for_vlm(job, lease.owner)
+                ):
+                    self._mark_failed(job, exc, lease.owner)
                 raise
             finally:
                 self._untrack_lease(lease)
@@ -777,6 +820,16 @@ class ExplanationPreparationManager:
                 failure_type=type(exc).__name__,
             )
             return
+        if (
+            lease is not None
+            and self._is_retryable_vlm_unavailable(exc)
+            and self._defer_for_vlm(job, lease.owner)
+        ):
+            trace_stage(
+                "preparation_state", "deferred", context=context,
+                status="pending", failure_reason="vlm_remote_unavailable",
+            )
+            return
         if lease is not None:
             self._mark_failed(job, exc, lease.owner)
         trace_stage(
@@ -804,6 +857,10 @@ class ExplanationPreparationManager:
             return None
         self._require_lease(job, lease.owner)
         self._set_stage(job, lease.owner, STAGE_EXTRACTING)
+        readiness_check = (
+            (lambda: self._check_inference_readiness(job))
+            if self._before_inference is not None else None
+        )
         kwargs = dict(
             session_factory=self._session_factory,
             orchestrator_factory=self._orchestrator_factory,
@@ -811,7 +868,7 @@ class ExplanationPreparationManager:
             video_id=job.video_id,
             intervention_id=job.intervention_id,
             output_mode=job.output_mode,
-            before_inference=self._before_inference,
+            before_inference=readiness_check,
         )
         if self._evidence_preparer is prepare_visual_evidence:
             kwargs["ownership_check"] = lambda: self._require_lease(job, lease.owner)
@@ -822,6 +879,21 @@ class ExplanationPreparationManager:
         self._require_lease(job, lease.owner)
         self._set_stage(job, lease.owner, STAGE_EVIDENCE_READY)
         return evidence.snapshot if evidence is not None else None
+
+    def _check_inference_readiness(self, job: PreparationJob) -> bool:
+        with self._state_lock:
+            retry_after = self._provider_retry_after
+            probe_key = self._provider_probe_key
+        if probe_key is not None and probe_key != job.key:
+            return False
+        if time.monotonic() < retry_after:
+            return False
+        ready = bool(self._before_inference and self._before_inference())
+        if ready:
+            with self._state_lock:
+                self._provider_retry_after = 0.0
+                self._provider_probe_key = None
+        return ready
 
     def _generate(
         self,
@@ -876,6 +948,9 @@ class ExplanationPreparationManager:
                     and state.lease_owner == lease_owner
                 ):
                     state.stage = stage
+                    if stage == STAGE_EVIDENCE_READY:
+                        state.provider_wait_started_at = None
+                        state.deferred_until = None
                     state.lease_started_at = now
                     state.updated_at = now
                     db.commit()
@@ -946,6 +1021,12 @@ class ExplanationPreparationManager:
             state = self._get_state(db, job)
             if state is None or state.status != "pending":
                 return None
+            if (
+                state.stage == STAGE_WAITING_FOR_VLM
+                and state.deferred_until is not None
+                and state.deferred_until > now
+            ):
+                return None
             cached = find_valid_cached_explanation(
                 db, job.intervention_id, job.output_mode, self._data_dir
             )
@@ -975,6 +1056,7 @@ class ExplanationPreparationManager:
                     failure_reason=None,
                     lease_owner=lease_owner,
                     lease_started_at=now,
+                    deferred_until=None,
                     updated_at=now,
                     failed_at=None,
                 )
@@ -986,7 +1068,6 @@ class ExplanationPreparationManager:
 
     def _begin_manual(self, job: PreparationJob) -> Optional[_Lease]:
         now = _utcnow()
-        self._recover_stale_preparations(now)
         with self._session_factory() as db:
             self._load_intervention(db, job)
             video_job = db.query(ProcessingJob.status).filter(
@@ -1034,6 +1115,7 @@ class ExplanationPreparationManager:
                     failure_reason=None,
                     lease_owner=lease_owner,
                     lease_started_at=now,
+                    deferred_until=None,
                     updated_at=now,
                     failed_at=None,
                 )
@@ -1129,6 +1211,66 @@ class ExplanationPreparationManager:
             error_code=self._safe_error_code(exc), failure_reason=reason,
         )
 
+    @staticmethod
+    def _is_retryable_vlm_unavailable(exc: Exception) -> bool:
+        failure = getattr(exc, "failure", None)
+        return bool(
+            isinstance(failure, dict)
+            and failure.get("code") == "vlm_remote_unavailable"
+            and failure.get("retryable") is True
+        )
+
+    def _defer_for_vlm(self, job: PreparationJob, lease_owner: str) -> bool:
+        """Return a provider failure to durable pending state without an attempt."""
+        now = _utcnow()
+        retry_at = now + timedelta(seconds=self._vlm_retry_seconds)
+        terminal = False
+        changed = False
+        with self._session_factory() as db:
+            state = self._get_state(db, job)
+            if (
+                state is None
+                or state.status != "generating"
+                or state.lease_owner != lease_owner
+            ):
+                return False
+            wait_started = state.provider_wait_started_at or now
+            terminal = (
+                now - wait_started
+                >= timedelta(seconds=self._vlm_max_wait_seconds)
+            )
+            state.attempt_count = max(0, state.attempt_count - 1)
+            state.error_code = "vlm_remote_unavailable"
+            state.failure_reason = "vlm_remote_unavailable"
+            state.lease_owner = None
+            state.lease_started_at = None
+            state.provider_wait_started_at = wait_started
+            state.updated_at = now
+            if terminal:
+                state.status = "failed"
+                state.stage = STAGE_FAILED
+                state.deferred_until = None
+                state.failed_at = now
+            else:
+                state.status = "pending"
+                state.stage = STAGE_WAITING_FOR_VLM
+                state.deferred_until = retry_at
+                state.failed_at = None
+            db.commit()
+            changed = True
+        with self._state_lock:
+            self._provider_retry_after = max(
+                self._provider_retry_after,
+                time.monotonic() + self._vlm_retry_seconds,
+            )
+            if self._provider_probe_key is None:
+                self._provider_probe_key = job.key
+            if terminal and self._provider_probe_key == job.key:
+                self._provider_probe_key = None
+        if terminal:
+            release_terminal_video_slot(self._session_factory, job.video_id)
+        return changed
+
     def _recover_tracked_jobs(self) -> None:
         now = _utcnow()
         to_queue: list[PreparationJob] = []
@@ -1160,7 +1302,7 @@ class ExplanationPreparationManager:
                     self._set_recoverable_or_exhausted(
                         state, now, error_code="missing_audio"
                     )
-                if state.status == "pending":
+                if state.status == "pending" and state.stage != STAGE_WAITING_FOR_VLM:
                     to_queue.append(job)
             db.commit()
         for video_id in videos_seen:
@@ -1168,6 +1310,63 @@ class ExplanationPreparationManager:
         for job in to_queue:
             self._enqueue(job)
         self._recover_stale_preparations(now)
+        self._recover_deferred_preparations(now)
+
+    def _recover_deferred_preparations(
+        self, now: Optional[datetime] = None
+    ) -> int:
+        """Queue due provider waits or end waits that exceeded their deadline."""
+        now = now or _utcnow()
+        to_queue: list[PreparationJob] = []
+        terminal_videos: set[str] = set()
+        changed = 0
+        with self._session_factory() as db:
+            rows = db.query(ExplanationPreparation, Intervention.timestamp).join(
+                Intervention,
+                Intervention.id == ExplanationPreparation.intervention_id,
+            ).filter(
+                ExplanationPreparation.status == "pending",
+                ExplanationPreparation.stage == STAGE_WAITING_FOR_VLM,
+            ).order_by(
+                Intervention.timestamp.asc(),
+                ExplanationPreparation.intervention_id.asc(),
+            ).all()
+            for state, _timestamp in rows:
+                job = PreparationJob(
+                    state.video_id, state.intervention_id, state.output_mode
+                )
+                cached = find_valid_cached_explanation(
+                    db, state.intervention_id, state.output_mode, self._data_dir
+                )
+                if cached is not None:
+                    self._set_ready_state(db, job, state, now)
+                    terminal_videos.add(job.video_id)
+                    changed += 1
+                    continue
+                wait_started = state.provider_wait_started_at or now
+                expired = (
+                    now - wait_started
+                    >= timedelta(seconds=self._vlm_max_wait_seconds)
+                )
+                if expired:
+                    self._set_failed_state(
+                        state, now, "vlm_remote_unavailable",
+                        failure_reason="vlm_remote_unavailable",
+                    )
+                    terminal_videos.add(job.video_id)
+                    changed += 1
+                elif state.deferred_until is None or state.deferred_until <= now:
+                    to_queue.append(job)
+            db.commit()
+        for video_id in terminal_videos:
+            release_terminal_video_slot(self._session_factory, video_id)
+        if to_queue:
+            with self._state_lock:
+                if self._provider_probe_key is None:
+                    self._provider_probe_key = to_queue[0].key
+        for job in to_queue:
+            self._enqueue(job)
+        return changed
 
     def _run_lease_maintenance(self) -> None:
         """Renew live owners and recover only leases that remain stale."""
@@ -1177,6 +1376,7 @@ class ExplanationPreparationManager:
                 break
             try:
                 self._recover_stale_preparations()
+                self._recover_deferred_preparations()
             except Exception:
                 logger.exception("Could not scan for stale explanation preparations")
 
@@ -1235,21 +1435,38 @@ class ExplanationPreparationManager:
         recovered_jobs: list[PreparationJob] = []
         terminal_videos: set[str] = set()
         transition_count = 0
+        with self._state_lock:
+            healthy_local_owners = {
+                owner for owner, tracked in self._tracked_leases.items()
+                if not tracked.lost
+            }
         with self._session_factory() as db:
-            rows = db.query(ExplanationPreparation, Intervention.timestamp).join(
+            stale_filter = or_(
+                ExplanationPreparation.lease_started_at.is_(None),
+                ExplanationPreparation.lease_started_at <= stale_before,
+            )
+            if healthy_local_owners:
+                stale_filter = stale_filter & (
+                    ExplanationPreparation.lease_owner.notin_(healthy_local_owners)
+                )
+            rows = db.query(
+                ExplanationPreparation,
+                Intervention.timestamp,
+                ProcessingJob.status,
+            ).join(
                 Intervention,
                 Intervention.id == ExplanationPreparation.intervention_id,
+            ).outerjoin(
+                ProcessingJob,
+                ProcessingJob.video_id == ExplanationPreparation.video_id,
             ).filter(
                 ExplanationPreparation.status == "generating",
-                or_(
-                    ExplanationPreparation.lease_started_at.is_(None),
-                    ExplanationPreparation.lease_started_at <= stale_before,
-                ),
+                stale_filter,
             ).order_by(
                 Intervention.timestamp.asc(),
                 ExplanationPreparation.intervention_id.asc(),
             ).all()
-            for state, _timestamp in rows:
+            for state, _timestamp, processing_status in rows:
                 job = PreparationJob(
                     state.video_id, state.intervention_id, state.output_mode
                 )
@@ -1269,7 +1486,22 @@ class ExplanationPreparationManager:
                         ExplanationPreparation.lease_started_at
                         == state.lease_started_at
                     )
-                if cached is not None:
+                if processing_status in {"cancelling", "cancelled"}:
+                    values = dict(
+                        status="cancelled",
+                        stage="cancelled",
+                        error_code=None,
+                        failure_reason="video_cancelled",
+                        lease_owner=None,
+                        lease_started_at=None,
+                        provider_wait_started_at=None,
+                        deferred_until=None,
+                        ready_at=None,
+                        failed_at=None,
+                        updated_at=now,
+                    )
+                    enqueue = False
+                elif cached is not None:
                     values = dict(
                         status="ready",
                         stage=STAGE_READY,
@@ -1277,6 +1509,8 @@ class ExplanationPreparationManager:
                         failure_reason=None,
                         lease_owner=None,
                         lease_started_at=None,
+                        provider_wait_started_at=None,
+                        deferred_until=None,
                         ready_at=now,
                         failed_at=None,
                         updated_at=now,
@@ -1290,6 +1524,8 @@ class ExplanationPreparationManager:
                         failure_reason="retry_exhausted",
                         lease_owner=None,
                         lease_started_at=None,
+                        provider_wait_started_at=None,
+                        deferred_until=None,
                         ready_at=None,
                         failed_at=now,
                         updated_at=now,
@@ -1303,6 +1539,8 @@ class ExplanationPreparationManager:
                         failure_reason=None,
                         lease_owner=None,
                         lease_started_at=None,
+                        provider_wait_started_at=None,
+                        deferred_until=None,
                         ready_at=None,
                         failed_at=None,
                         updated_at=now,
@@ -1371,6 +1609,8 @@ class ExplanationPreparationManager:
         state.error_code = error_code
         state.lease_owner = None
         state.lease_started_at = None
+        state.provider_wait_started_at = None
+        state.deferred_until = None
         state.ready_at = None
         state.failed_at = None
         state.updated_at = now
@@ -1388,6 +1628,8 @@ class ExplanationPreparationManager:
         state.failure_reason = failure_reason or error_code
         state.lease_owner = None
         state.lease_started_at = None
+        state.provider_wait_started_at = None
+        state.deferred_until = None
         state.ready_at = None
         state.failed_at = now
         state.updated_at = now
@@ -1408,6 +1650,8 @@ class ExplanationPreparationManager:
         state.failure_reason = None
         state.lease_owner = None
         state.lease_started_at = None
+        state.provider_wait_started_at = None
+        state.deferred_until = None
         state.ready_at = now
         state.failed_at = None
         state.updated_at = now
@@ -1485,7 +1729,16 @@ class ExplanationPreparationManager:
             return
         with self._session_factory() as db:
             state = self._get_state(db, job)
-            pending = state is not None and state.status == "pending"
+            now = _utcnow()
+            pending = (
+                state is not None
+                and state.status == "pending"
+                and (
+                    state.stage != STAGE_WAITING_FOR_VLM
+                    or state.deferred_until is None
+                    or state.deferred_until <= now
+                )
+            )
         if pending:
             self._enqueue(replace(job, trace_id=new_trace_id(), enqueued_at=0.0))
 
