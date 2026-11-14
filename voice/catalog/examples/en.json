@@ -94,6 +94,22 @@
       "go with the last one in the list",
       "the fourth video please"
     ],
+    "next_results_page": [
+      "show me the next page of results",
+      "next page",
+      "show more results",
+      "see more lectures",
+      "go to the next page of videos",
+      "read me the next set of results"
+    ],
+    "previous_results_page": [
+      "show me the previous page of results",
+      "previous page",
+      "go back to the earlier results",
+      "return to the results before these",
+      "go to the previous page of videos",
+      "read me the previous set of results"
+    ],
     "start_lecture": [
       "start learning",
       "begin this lecture",

@@ -38,7 +38,8 @@ _ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixt
              "eighth": 8, "ninth": 9, "tenth": 10}
 # Embeddings put "next" and "previous" almost on top of each other, so for these pairs the direction WORD in the
 # sentence settles which one was meant (the same way a number settles "the second one").
-_PAIRS = {("next_moment", "previous_moment"), ("quiz_next", "quiz_previous")}
+_PAIRS = {("next_moment", "previous_moment"), ("quiz_next", "quiz_previous"),
+          ("next_results_page", "previous_results_page")}
 _BACK_WORDS = {"previous", "back", "before", "earlier", "prior", "preceding", "last", "backward", "backwards", "behind"}
 _FORWARD_WORDS = {"next", "following", "forward", "after", "ahead", "later", "onward", "upcoming"}
 _LETTERS = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6}

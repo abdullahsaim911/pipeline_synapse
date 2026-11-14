@@ -1,0 +1,1 @@
+Voice control has no spoken "next page" command. Its 62 action ids are generated from the backend catalog, so the backend would have to add one
