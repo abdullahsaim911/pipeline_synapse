@@ -54,6 +54,7 @@ class StartupPreflightTests(unittest.TestCase):
         warmup = mock.Mock()
         processing.shutdown.side_effect = lambda: order.append("processing")
         warmup.stop.side_effect = lambda: order.append("warmup")
+        mistral_warmup = mock.Mock()
         preparation.shutdown.side_effect = lambda: order.append("preparation")
 
         async def enter_lifespan():
@@ -66,11 +67,16 @@ class StartupPreflightTests(unittest.TestCase):
                 main, "ExplanationPreparationManager", return_value=preparation,
             ),
             mock.patch.object(main, "ProcessingJobManager", return_value=processing),
-            mock.patch.object(main, "ModalWarmup", return_value=warmup),
+            mock.patch.object(main, "ModalWarmup", return_value=warmup) as warmup_type,
         ):
+            warmup_type.for_mistral.return_value = mistral_warmup
             asyncio.run(enter_lifespan())
 
         self.assertEqual(order[:3], ["processing", "preparation", "warmup"])
+        mistral_warmup.start.assert_called_once()
+        mistral_warmup.request_stop.assert_called_once()
+        mistral_warmup.stop.assert_called_once()
+        self.assertIs(app.state.mistral_warmup, mistral_warmup)
 
 
 if __name__ == "__main__":

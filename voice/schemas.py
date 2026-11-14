@@ -48,6 +48,12 @@ class ContextItem(BaseModel):
     position: int = Field(..., ge=1, le=500, description="1-based position in its list")
 
 
+class ExplanationQuestion(BaseModel):
+    id: str = Field(min_length=1, max_length=120)
+    choices: List[Literal["listen", "skip", "yes", "no", "brief", "standard", "detailed",
+                          "wait", "resume", "later", "replay", "retry", "next", "finish", "process"]] = Field(min_length=1, max_length=15)
+
+
 class VoiceContext(BaseModel):
     """Snapshot of the app that the frontend sends with every utterance."""
     screen: Screen
@@ -60,6 +66,7 @@ class VoiceContext(BaseModel):
     # Action ids the frontend can execute on this screen right now.
     available_actions: List[str] = Field(default_factory=list, max_length=80)
     # Set while a yes/no question is open: the action waiting for an answer.
+    explanation_question: Optional[ExplanationQuestion] = None
     pending_confirmation: Optional[str] = None
     last_action: Optional[str] = None
     language_hint: Optional[str] = None

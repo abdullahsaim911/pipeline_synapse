@@ -48,6 +48,43 @@ class ModalWarmupTests(unittest.TestCase):
         return ModalWarmup(lock_path=self.lock_path)
 
     @mock.patch("api.model_warmup.urllib.request.urlopen")
+    def test_mistral_has_independent_endpoint_model_status_and_lock(self, urlopen):
+        from modal_inference.mistral_config import MODEL_ID as MISTRAL_MODEL
+        urlopen.side_effect = [response(), models_response(MISTRAL_MODEL), response()]
+        with self._environment(SYNAPSE_EXPLANATION_PROVIDER="modal_mistral",
+                               SYNAPSE_MISTRAL_MODAL_URL="https://mistral.modal.run/"):
+            vlm = self.warmup()
+            mistral = ModalWarmup.for_mistral()
+            self.assertNotEqual(vlm._lock_path, mistral._lock_path)
+            self.assertTrue(mistral.ensure_ready())
+            self.assertEqual(mistral.status, "ready")
+            self.assertEqual(vlm.status, "warming")
+            self.assertTrue(mistral.ensure_ready())
+        self.assertEqual([call.args[0].full_url for call in urlopen.call_args_list], [
+            "https://mistral.modal.run/health", "https://mistral.modal.run/v1/models", "https://mistral.modal.run/health",
+        ])
+
+    @mock.patch("api.model_warmup.urllib.request.urlopen")
+    def test_mistral_never_accepts_the_qwen_model_at_its_endpoint(self, urlopen):
+        urlopen.side_effect = [response(), models_response(MODEL_ID)]
+        with self._environment(SYNAPSE_EXPLANATION_PROVIDER="modal_mistral",
+                               SYNAPSE_MISTRAL_MODAL_URL="https://mistral.modal.run"):
+            warmup = ModalWarmup.for_mistral(lock_path=self.lock_path)
+            self.assertFalse(warmup.ensure_ready())
+            self.assertEqual(warmup.status, "unavailable")
+
+    @mock.patch("api.model_warmup.urllib.request.urlopen")
+    def test_mistral_warming_can_be_disabled_independently(self, urlopen):
+        for selected, enabled in [("ollama", "1"), ("modal_mistral", "0")]:
+            with self._environment(SYNAPSE_EXPLANATION_PROVIDER=selected,
+                                   SYNAPSE_MISTRAL_WARMUP_ON_STARTUP=enabled):
+                warmup = ModalWarmup.for_mistral(lock_path=self.lock_path)
+                warmup.start()
+                self.assertEqual(warmup.status, "disabled")
+                self.assertTrue(warmup.ensure_ready())
+        urlopen.assert_not_called()
+
+    @mock.patch("api.model_warmup.urllib.request.urlopen")
     def test_warmup_succeeds_only_after_health_and_model_are_confirmed(self, urlopen):
         urlopen.side_effect = [response(), models_response()]
         with self._environment():

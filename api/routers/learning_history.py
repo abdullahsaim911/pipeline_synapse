@@ -1,12 +1,13 @@
-"""Local-development APIs for personal lecture and explanation history."""
+"""Local account APIs for personal lecture and explanation history."""
 
 from datetime import datetime, timedelta, timezone
-import os
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Response
 from sqlalchemy.orm import Session
 
+# Retain the name for existing dependency overrides.
+from api.auth import get_current_user as get_local_development_user
 from api.database import get_db
 from api.history_schemas import (
     LectureActivityResponse,
@@ -22,8 +23,6 @@ from api.models import (
     Intervention,
     LectureActivity,
     LibraryItem,
-    LOCAL_DEVELOPMENT_PROFILE_KEY,
-    LOCAL_DEVELOPMENT_USER_ID,
     PlaybackProgress,
     RecentExplanation,
     User,
@@ -34,29 +33,10 @@ from api.security import enforce_allowed_origin
 
 router = APIRouter(prefix="/me", tags=["learning-history"])
 RETENTION_DAYS = 30
-LOCAL_ENVIRONMENTS = {"", "dev", "development", "local", "test"}
 
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc).replace(tzinfo=None)
-
-
-def get_local_development_user(db: Session = Depends(get_db)) -> User:
-    """Resolve the sole backend-controlled profile; never trust a client user ID."""
-    environment = os.getenv("SYNAPSE_ENV", "development").strip().lower()
-    if environment not in LOCAL_ENVIRONMENTS:
-        raise HTTPException(
-            status_code=404,
-            detail="Personal learning history is available only in local development.",
-        )
-    user = db.query(User).filter(
-        User.id == LOCAL_DEVELOPMENT_USER_ID,
-        User.profile_key == LOCAL_DEVELOPMENT_PROFILE_KEY,
-        User.is_local.is_(True),
-    ).one_or_none()
-    if user is None:
-        raise HTTPException(status_code=503, detail="Local development profile is unavailable.")
-    return user
 
 
 def _video(db: Session, video_id: str) -> Video:
@@ -320,6 +300,13 @@ def update_playback_progress(
     _video(db, video_id)
     intervention = _intervention(db, video_id, body.last_intervention_id)
     now = _utcnow()
+    observed = body.observed_at
+    if observed is not None:
+        if observed.tzinfo is None:
+            raise HTTPException(status_code=422, detail="Playback observation time must include a timezone.")
+        observed = observed.astimezone(timezone.utc).replace(tzinfo=None)
+        if observed > now + timedelta(seconds=30):
+            raise HTTPException(status_code=422, detail="Playback observation time is in the future.")
     progress = db.query(PlaybackProgress).filter(
         PlaybackProgress.user_id == user.id,
         PlaybackProgress.video_id == video_id,
@@ -327,10 +314,13 @@ def update_playback_progress(
     if progress is None:
         progress = PlaybackProgress(user_id=user.id, video_id=video_id)
         db.add(progress)
+    elif observed is not None and progress.updated_at is not None and observed <= progress.updated_at.replace(tzinfo=None):
+        activity = db.query(LectureActivity).filter_by(user_id=user.id, video_id=video_id).one_or_none()
+        return _progress_response(progress, activity)
     progress.position_seconds = body.position_seconds
     progress.duration_seconds = body.duration_seconds
     progress.completed = body.completed
-    progress.updated_at = now
+    progress.updated_at = observed or now
     activity = _touch_activity(
         db,
         str(user.id),

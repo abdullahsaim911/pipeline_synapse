@@ -12,6 +12,7 @@ from modal_inference.config import (
     DEFAULT_STRUCTURED_MAX_TOKENS,
     DEFAULT_TEMPERATURE,
     DEFAULT_GPU,
+    GPU_FALLBACKS,
     GPU_MEMORY_UTILIZATION,
     MAX_CONCURRENT_INPUTS,
     MAX_IMAGE_BYTES,
@@ -179,10 +180,10 @@ class TestChatCompletionRequest(unittest.TestCase):
         self.assertEqual(len(d["messages"]), 1)
         content = d["messages"][0]["content"]
         self.assertEqual(len(content), 2)
-        self.assertEqual(content[0]["type"], "text")
-        self.assertEqual(content[0]["text"], "Analyze this diagram.")
-        self.assertEqual(content[1]["type"], "image_url")
-        self.assertTrue(content[1]["image_url"]["url"].startswith("data:image/png;base64,"))
+        self.assertEqual(content[0]["type"], "image_url")
+        self.assertTrue(content[0]["image_url"]["url"].startswith("data:image/png;base64,"))
+        self.assertEqual(content[1]["type"], "text")
+        self.assertEqual(content[1]["text"], "Analyze this diagram.")
 
     def test_validate_rejects_empty_messages(self):
         req = ChatCompletionRequest(messages=[])
@@ -197,25 +198,26 @@ class TestChatCompletionRequest(unittest.TestCase):
         self.assertFalse(is_valid)
         self.assertIn("role", err)
 
-    def test_validate_rejects_multiple_images(self):
+    def test_validate_rejects_more_than_the_configured_image_limit(self):
         b64 = base64.b64encode(self.valid_png).decode("ascii")
         image = ContentPart(
             type="image_url",
             image_url=ImageUrlPart(url=f"data:image/png;base64,{b64}"),
         )
         req = ChatCompletionRequest(
-            messages=[ChatMessage(role="user", content=[image, image])]
+            messages=[ChatMessage(role="user", content=[image] * (MAX_IMAGES_PER_PROMPT + 1))]
         )
         is_valid, err = req.validate()
         self.assertFalse(is_valid)
-        self.assertIn("maximum is 1", err)
+        self.assertIn(f"maximum is {MAX_IMAGES_PER_PROMPT}", err)
 
 
-class TestL4DeploymentConfiguration(unittest.TestCase):
+class TestDeploymentConfiguration(unittest.TestCase):
     """Lock the cost and memory boundaries approved for Stage M1B."""
 
     def test_l4_single_request_boundaries(self):
         self.assertEqual(DEFAULT_GPU, "L4")
+        self.assertEqual(GPU_FALLBACKS, ("L4", "A10G"))
         self.assertEqual(MAX_MODEL_LEN, 12288)
         self.assertEqual(MAX_NUM_SEQS, 1)
         self.assertEqual(MAX_CONCURRENT_INPUTS, 1)
@@ -256,6 +258,7 @@ class TestL4DeploymentConfiguration(unittest.TestCase):
         self.assertEqual(command[command.index("--gpu-memory-utilization") + 1], "0.9")
         self.assertEqual(command[command.index("--override-generation-config") + 1], VLLM_GENERATION_CONFIG_JSON)
         self.assertEqual(command[command.index("--mm-processor-kwargs") + 1], VLLM_MM_PROCESSOR_KWARGS_JSON)
+        self.assertEqual(command[command.index("--mm-processor-cache-gb") + 1], "0")
 
     def test_third_party_startup_diagnostics_redact_runtime_key(self):
         line = "non-default args: {'api_key': ['private-runtime-key']}"

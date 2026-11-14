@@ -22,6 +22,22 @@ from voice.schemas import InterpretRequest, VoiceContext  # noqa: E402
 from voice.stt import MAX_BYTES, AudioError, Recognizer, decode_wav  # noqa: E402
 
 
+@pytest.mark.parametrize("action,text,expected", [
+    ("filter_saved_items", "filter saved items by calculus", {"query": "calculus"}),
+    ("filter_saved_items", "search my library for physics", {"query": "physics"}),
+    ("filter_saved_items", "find algebra in saved explanations", {"query": "algebra"}),
+    ("filter_saved_items", "show saved items matching biology", {"query": "biology"}),
+    ("set_saved_view", "show recent explanations", {"view": "recent"}),
+    ("set_saved_view", "switch to saved lectures", {"view": "lectures"}),
+    ("open_note_explanation", "open explanation one attached to note two", {"index": 2, "explanation": 1}),
+    ("open_note_explanation", "play nearby explanation two for voice note one", {"index": 1, "explanation": 2}),
+    ("open_note_explanation", "open the first explanation for recording three", {"index": 3, "explanation": 1}),
+    ("open_note", "open voice note two at its time", {"index": 2}),
+])
+def test_personal_storage_voice_arguments(action, text, expected):
+    assert extract_args(action, text, ActionCatalog.load()) == expected
+
+
 def test_default_intent_model_uses_local_cache_without_network(monkeypatch):
     captured = {}
 

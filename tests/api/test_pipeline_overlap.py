@@ -64,12 +64,14 @@ class RecordingOrchestrator:
         with self.lock:
             self.active[stage] += 1
             self.max_active[stage] = max(self.max_active[stage], self.active[stage])
-            self.events.append((time.monotonic(), f"{stage}:{name}:start"))
+            # Windows Python 3.11 monotonic has 15 ms resolution: tied timestamps
+            # sort lexically and can falsely reverse two recorded stage events.
+            self.events.append((time.perf_counter(), f"{stage}:{name}:start"))
 
     def _exit(self, stage, name):
         with self.lock:
             self.active[stage] -= 1
-            self.events.append((time.monotonic(), f"{stage}:{name}:end"))
+            self.events.append((time.perf_counter(), f"{stage}:{name}:end"))
 
     def _snapshot_path(self, intervention_id):
         return self.data_dir / f"{intervention_id}.json"
@@ -454,6 +456,12 @@ class OverlapTests(unittest.TestCase):
         self.assertEqual(state.error_code, "vlm_remote_unavailable")
         self.assertEqual(state.attempt_count, 0)
         self.assertIsNone(state.deferred_until)
+        # The failed preparation commits before the separate video-slot release
+        # transaction. Wait for that observable result rather than racing it.
+        def slot_released():
+            with self.Session() as db:
+                return db.query(ProcessingJob).one().active_slot is None
+        self.assertTrue(wait_until(slot_released))
         with self.Session() as db:
             self.assertIsNone(db.query(ProcessingJob).one().active_slot)
 
@@ -598,6 +606,8 @@ class OverlapTests(unittest.TestCase):
         self.seed(1)
         audio = self.data_dir / "finished.mp3"
         audio.write_bytes(b"ID3-done")
+        from explanation_cache import generation_manifest, write_manifest
+        write_manifest(audio, generation_manifest("Done", audio))
         with self.Session() as db:
             db.add(Explanation(
                 intervention_id="ip1", text_explanation="Done",
@@ -780,6 +790,7 @@ class StartupResponsivenessTests(unittest.TestCase):
             mock.patch.object(main, "require_current_schema"),
             mock.patch.object(main, "ExplanationPreparationManager"),
             mock.patch.object(main, "ProcessingJobManager"),
+            mock.patch.object(main, "OnDemandExplanations"),
             mock.patch("api.model_warmup.ModalWarmup._acquire_process_lock", return_value=False),
         ):
             started = time.monotonic()

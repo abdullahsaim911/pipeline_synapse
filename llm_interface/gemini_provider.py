@@ -160,6 +160,7 @@ class GeminiProvider(TextGenerationProvider):
         return GenerationResult(
             text=text, provider=self.name, model=self.model, latency_ms=latency_ms,
             usage=self._extract_usage(response),
+            finish_reason=self._extract_finish_reason(response),
         )
 
     # ------------------------------------------------------------------
@@ -202,7 +203,18 @@ class GeminiProvider(TextGenerationProvider):
         }
         if settings.system_instruction:
             kwargs["system_instruction"] = settings.system_instruction
+        if settings.response_schema is not None:
+            kwargs.update(response_mime_type="application/json", response_json_schema=settings.response_schema)
         return types.GenerateContentConfig(**kwargs)
+
+    @staticmethod
+    def _extract_finish_reason(response: Any) -> Optional[str]:
+        candidates = getattr(response, "candidates", None)
+        if not candidates:
+            return None
+        reason = getattr(candidates[0], "finish_reason", None)
+        name = getattr(reason, "name", reason)
+        return str(name).rsplit(".", 1)[-1].lower() if name is not None else None
 
     @staticmethod
     def _extract_usage(response: Any) -> Optional[TokenUsage]:

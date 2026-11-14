@@ -1,3 +1,4 @@
+from explanation_cache import generation_manifest, write_manifest
 """Deterministic P1 background explanation preparation tests."""
 
 import json
@@ -167,6 +168,7 @@ class ExplanationPreparationTests(unittest.TestCase):
         self.seed((10.0,))
         cached_audio = self.data_dir / "cached.mp3"
         cached_audio.write_bytes(b"ID3-cached")
+        write_manifest(cached_audio, generation_manifest("Cached", cached_audio))
         with self.Session() as db:
             db.add(Explanation(
                 intervention_id="point-10",
@@ -351,7 +353,8 @@ class ProcessSchedulingTests(unittest.TestCase):
                 yield db
 
         app.dependency_overrides[get_db] = test_db
-        with mock.patch.object(video_module, "get_orchestrator", return_value=detector):
+        with mock.patch.object(video_module, "get_orchestrator", return_value=detector), \
+             mock.patch.object(video_module, "require_processing_headroom"):
             with TestClient(app) as client:
                 before = time.monotonic()
                 response = client.post("/video/process", json={

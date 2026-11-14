@@ -10,7 +10,7 @@ from typing import Final
 # ---------------------------------------------------------------------------
 APP_NAME: Final[str] = "synapse-qwen3-vl"
 MODEL_ID: Final[str] = "Qwen/Qwen3-VL-8B-Instruct-FP8"
-MODEL_PRECISION: Final[str] = "FP8 W8A8 (E4M3 weights, dynamic activations)"
+MODEL_PRECISION: Final[str] = "FP8 E4M3 weights; native W8A8 on L4, W8A16 Marlin on A10G"
 MODEL_DTYPE: Final[str] = "bfloat16"
 MODEL_QUANTIZATION: Final[str] = "fp8"
 VLLM_VERSION: Final[str] = "0.19.1"
@@ -37,6 +37,10 @@ AUTH_ENV_VAR: Final[str] = "SYNAPSE_MODAL_API_KEY"
 # ---------------------------------------------------------------------------
 # NVIDIA L4: 24 GB GDDR6, Ada compute capability 8.9 with native FP8 support.
 DEFAULT_GPU: Final[str] = "L4"
+# Both choices have 24 GB VRAM. Modal tries them in preference order at scheduling
+# time, rather than waiting only for L4. A10G uses vLLM's FP8-weight Marlin path
+# (16-bit activations); do not include 16 GB T4 or an unbounded "any" GPU request.
+GPU_FALLBACKS: Final[tuple[str, ...]] = (DEFAULT_GPU, "A10G")
 DEFAULT_GPU_COUNT: Final[int] = 1
 
 # Worker limits: exactly 1 worker initially, scaling down to 0 when idle
@@ -88,7 +92,7 @@ MAX_CONCURRENT_INPUTS: Final[int] = 1
 # 10% is outside the vLLM allocator; live startup validation is still required.
 GPU_MEMORY_UTILIZATION: Final[float] = 0.90
 
-# Synapse performs dimension-preserving thumbnailing before remote dispatch.
+# Bound the single frame and account for the exact dispatched image.
 MAX_IMAGE_DIMENSION: Final[int] = 1344
 MAX_IMAGE_PIXELS: Final[int] = MAX_IMAGE_DIMENSION * MAX_IMAGE_DIMENSION
 

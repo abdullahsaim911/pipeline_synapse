@@ -49,6 +49,16 @@ Thumbs.db
 # Markdown files
 *.md
 !docs/database-foundation-and-final-erd.md
+!docs/personal-learning-storage-plan.md
+!docs/local-accounts-implementation-plan.md
+!docs/on-demand-explanation-implementation-plan.md
+!docs/explanation-quality-contract.md
+!docs/explanation-quality-repair.md
+!docs/cross-video-explanation-quality-review.md
+!docs/l4-explanation-accuracy-plan.md
+!docs/app-startup-and-model-readiness.md
+!docs/synapse-web-manual-test-guide.md
+!docs/synapse-web-voice-reference.md
 !docs/reliability/task_b6_production_readiness.md
 !docs/reliability/merged_backend_unexpected_exit_fix.md
 !modal_inference/README.md
@@ -95,6 +105,10 @@ tests/*
 !tests/test_structured_vlm_integration.py
 !tests/test_evidence_reconciliation.py
 !tests/test_task5_synthesis.py
+!tests/test_explanation_quality_contract.py
+!tests/test_mistral_reasoning_integration.py
+!tests/test_focused_evidence_refinement.py
+!tests/test_explanation_cache.py
 !tests/test_tts_reliability.py
 !tests/test_runtime_interpreters.py
 !tests/qa/

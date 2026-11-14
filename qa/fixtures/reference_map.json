@@ -1,0 +1,28 @@
+{
+  "target": {
+    "id": "reference-map",
+    "timestamp": 5,
+    "content_type": "map",
+    "canonical_categories": [
+      "CT-10"
+    ],
+    "frame_path": "qa/fixtures/reference_map.png",
+    "source_kind": "authored_synthetic_reference"
+  },
+  "transcript": {
+    "entries": [
+      {
+        "start": 0,
+        "end": 15,
+        "text": "Use the north arrow and route legend when reading this schematic. Walking routes and roads are different kinds of connections. The drawing is not to scale, so its drawn lengths do not establish travel distances."
+      }
+    ]
+  },
+  "essential_visual_facts": [
+    "North points up; Lab is northeast of Gate, Cafe is east of Gate, Library is northwest of Pond.",
+    "Dashed blue walkways connect Gate to Library and Library to Lab.",
+    "A solid gray road connects Gate to Cafe. There is no drawn Library-Cafe connection.",
+    "Legend distinguishes Walkway and Road; the map is explicitly not to scale."
+  ],
+  "source_note": "Authored deterministic QA image, not a saved lecture or a model success claim."
+}

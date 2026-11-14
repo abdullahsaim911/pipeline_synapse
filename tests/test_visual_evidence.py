@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from copy import deepcopy
 from pathlib import Path
 
 import jsonschema
@@ -451,4 +452,248 @@ def test_category_specific_custom_relation_semantics_are_preserved():
         ),
     )
     assert evidence.relations[0].relation == "custom:double_bond"
+
+
+def _repeated_panel_observation(category):
+    """Equivalent panels with local hierarchy, exact content and directed edges."""
+    regions, relations, exact = [], [], []
+    for suffix in ("a", "b"):
+        regions.append(RegionObservation(
+            ref=f"panel-{suffix}", category_ids=[category],
+            bbox_normalized=[0.1, 0.1, 0.6, 0.7], reading_order_index=0,
+            attributes={"structural_description": "A labeled structure."},
+            elements=[
+                _element(f"object-{suffix}", "object", label="Object", child_refs=[f"label-{suffix}"]),
+                _element(f"label-{suffix}", "label", exact_text="x != 2\n    x += 1",
+                         parent_ref=f"object-{suffix}", source_ref=f"object-{suffix}"),
+            ],
+        ))
+        relations.append(RelationObservation(
+            ref=f"edge-{suffix}", source_ref=f"label-{suffix}", target_ref=f"object-{suffix}",
+            relation="labels", directed=True, evidence_status="supported",
+            source_refs=[f"label-{suffix}", f"ocr.{suffix}"],
+        ))
+        exact.append({"text": "x != 2\n    x += 1", "notation": "code", "status": "supported",
+                      "source_ref": f"label-{suffix}"})
+    return FrameObservation(
+        regions=regions, relations=relations, exact_content=exact,
+        structural_description=StructuralObservation(
+            overview="One structured panel.", component_refs=["panel-a", "panel-b", "object-a", "object-b"],
+            relation_refs=["edge-a", "edge-b"], reading_order_refs=["object-a", "label-a", "object-b", "label-b"],
+            hierarchy_notes=["The label belongs to the object."],
+        ),
+        uncertainties=[UncertaintyObservation(target_ref="edge-b", reason="The attachment is faint.")],
+        diagnostics=[{"code": "source.note", "message": "Retain label provenance.", "target_id": "label-b"}],
+    )
+
+
+@pytest.mark.parametrize("category", [f"CT-{n:02d}" for n in range(1, 13)])
+def test_anchored_panel_normalization_preserves_references_across_categories(category):
+    observation = _repeated_panel_observation(category)
+    original = observation.model_dump(mode="json")
+    metadata = _metadata([category])
+    evidence = assemble_visual_evidence(metadata, observation, legacy_snapshot=original)
+    assert observation.model_dump(mode="json") == original
+    assert evidence.legacy_snapshot == original
+    assert len(evidence.regions) == 1
+    assert len(evidence.regions[0].elements) == 2
+    assert len(evidence.relations) == len(evidence.exact_content) == 1
+    parent, child = evidence.regions[0].elements
+    assert parent.child_ids == [child.id]
+    assert child.parent_id == child.source_ref == parent.id
+    assert evidence.relations[0].source_id == child.id
+    assert evidence.relations[0].target_id == parent.id
+    assert evidence.relations[0].directed
+    assert evidence.relations[0].source_refs == [child.id, "ocr.a", "ocr.b"]
+    assert evidence.structural_description.component_ids == ["region-001", parent.id]
+    assert evidence.structural_description.relation_ids == ["relation-001"]
+    assert evidence.reading_order == [parent.id, child.id]
+    assert evidence.uncertainties[0].target_id == "relation-001"
+    assert evidence.validation_diagnostics[0].target_id == child.id
+    assert evidence.exact_content[0].source_ref == child.id
+    assert evidence.exact_content[0].text == "x != 2\n    x += 1"
+    assert evidence.provenance.normalization["ref_aliases"]["label-b"] == child.id
+    assert metadata.provenance.model_extra == {}
+    assert evidence.to_schema_dict() == assemble_visual_evidence(metadata, observation, legacy_snapshot=original).to_schema_dict()
+    with SCHEMA_PATH.open(encoding="utf-8") as handle:
+        jsonschema.Draft202012Validator(json.load(handle)).validate(evidence.to_schema_dict())
+
+
+@pytest.mark.parametrize(("category", "kind", "text"), [
+    ("CT-02", "variable", "x"), ("CT-03", "resistor", "10 ohm"),
+    ("CT-04", "decision", "Ready?"), ("CT-05", "table_cell", "0"),
+    ("CT-08", "code_line", "    pass"), ("CT-11", "specimen", "Sample"),
+])
+def test_legitimate_repeated_occurrences_are_not_merged_by_text(category, kind, text):
+    observation = FrameObservation(regions=[RegionObservation(
+        ref="main", category_ids=[category], elements=[
+            _element("a", kind, exact_text=text, bbox_normalized=[0.1, 0.1, 0.2, 0.2]),
+            _element("b", kind, exact_text=text, bbox_normalized=[0.3, 0.1, 0.4, 0.2]),
+            _element("c", kind, exact_text=text), _element("d", kind, exact_text=text),
+        ],
+    )])
+    evidence = assemble_visual_evidence(_metadata([category]), observation)
+    assert len(evidence.regions[0].elements) == 4
+    assert evidence.provenance.model_extra == {}
+
+
+def test_mixed_category_duplicate_elements_keep_category_union():
+    observation = FrameObservation(regions=[RegionObservation(
+        ref="main", category_ids=["CT-01", "CT-02"], elements=[
+            _element("a", "equation", exact_text="y=x^2", category_ids=["CT-01"], bbox_normalized=[0.1, 0.1, 0.5, 0.2]),
+            _element("b", "equation", exact_text="y=x^2", category_ids=["CT-02"], bbox_normalized=[0.1, 0.1, 0.5, 0.2]),
+        ],
+    )])
+    evidence = assemble_visual_evidence(_metadata(["CT-01", "CT-02"]), observation)
+    assert len(evidence.regions[0].elements) == 1
+    assert evidence.regions[0].elements[0].category_ids == ["CT-01", "CT-02"]
+
+
+@pytest.mark.parametrize("edge_between_candidates", [True, False])
+def test_matching_elements_with_distinct_connectivity_are_retained(edge_between_candidates):
+    elements = [
+        _element(ref, "node", label="Same", bbox_normalized=[0.1, 0.1, 0.2, 0.2])
+        for ref in ("a", "b")
+    ] + [_element("n1", "node", label="N1"), _element("n2", "node", label="N2")]
+    edges = [("a", "b")] if edge_between_candidates else [("a", "n1"), ("b", "n2")]
+    observation = FrameObservation(
+        regions=[RegionObservation(ref="main", category_ids=["CT-04"], elements=elements)],
+        relations=[RelationObservation(source_ref=a, target_ref=b, relation="leads_to", directed=True,
+                                       evidence_status="supported") for a, b in edges],
+    )
+    evidence = assemble_visual_evidence(_metadata(["CT-04"]), observation)
+    assert len(evidence.regions[0].elements) == 4
+    assert all(edge.source_id != edge.target_id for edge in evidence.relations)
+    assert evidence.extraction_status == "partial"
+    assert any(d.code == "normalization.graph_identity_conflict" for d in evidence.validation_diagnostics)
+
+
+@pytest.mark.parametrize("difference", ["description", "uncertainty", "scene_uncertainty", "structural_uncertainty", "status", "attributes"])
+def test_conflicting_or_uncertain_duplicate_candidates_are_not_erased(difference):
+    observation = _repeated_panel_observation("CT-03")
+    if difference == "description":
+        observation.regions[1].elements[0].description = "A conflicting observed direction."
+    elif difference == "uncertainty":
+        observation.uncertainties.append(UncertaintyObservation(target_ref="panel-b", reason="Position uncertain."))
+    elif difference == "scene_uncertainty":
+        observation.uncertainties.append(UncertaintyObservation(target_ref="scene", reason="Panel locations uncertain."))
+    elif difference == "structural_uncertainty":
+        observation.structural_description.uncertainties = ["Panel locations uncertain."]
+    elif difference == "status":
+        observation.regions[1].elements[0].evidence_status = "ambiguous_or_conflicting"
+    else:
+        observation.regions[1].elements[0].attributes.value = "different exact value"
+    evidence = assemble_visual_evidence(_metadata(["CT-03"]), observation)
+    assert len(evidence.regions) == 2
+    assert evidence.extraction_status == "partial"
+    assert evidence.evidence_status == "partially_supported"
+    assert any(d.code.startswith("normalization.") for d in evidence.validation_diagnostics)
+
+
+def test_same_claim_with_conflicting_support_becomes_ambiguous_and_keeps_provenance():
+    observation = _repeated_panel_observation("CT-03")
+    observation.regions = observation.regions[:1]
+    first = observation.relations[0]
+    observation.relations[1] = first.model_copy(update={"ref": "edge-b", "evidence_status": "unavailable_or_unreadable", "source_refs": ["ocr.b"]})
+    observation.structural_description.component_refs = ["panel-a"]
+    observation.structural_description.reading_order_refs = ["object-a", "label-a"]
+    observation.exact_content = observation.exact_content[:1]
+    observation.diagnostics = []
+    evidence = assemble_visual_evidence(_metadata(["CT-03"]), observation)
+    assert len(evidence.relations) == 1
+    assert evidence.relations[0].evidence_status == "ambiguous_or_conflicting"
+    assert "ocr.a" in evidence.relations[0].source_refs and "ocr.b" in evidence.relations[0].source_refs
+    assert evidence.uncertainties[0].target_id == evidence.relations[0].id
+    assert evidence.extraction_status == "partial"
+
+
+def test_overview_is_not_folded_into_anchored_panels_and_order_conflict_is_reported():
+    observation = _repeated_panel_observation("CT-03")
+    # Explicit ordinal position in prose is a location anchor, not label matching.
+    for index, region in enumerate(observation.regions):
+        region.bbox_normalized = None
+        region.attributes.structural_description = "Leftmost panel containing a labeled structure."
+        region.reading_order_index = index
+    overview = deepcopy(observation.regions[0])
+    overview.ref = "overview"
+    overview.attributes.structural_description = "Overview of multiple panels."
+    overview.elements = [_element("overview-object", "object", label="Object")]
+    observation.regions.insert(0, overview)
+    evidence = assemble_visual_evidence(_metadata(["CT-03"]), observation)
+    assert len(evidence.regions) == 2
+    assert len(evidence.regions[0].elements) == 1
+    assert len(evidence.regions[1].elements) == 2
+    assert evidence.extraction_status == "partial"
+    assert any(d.code == "normalization.order_conflict" for d in evidence.validation_diagnostics)
+
+
+def test_duplicate_refs_and_unknown_edges_are_not_hidden_by_normalization():
+    observation = _repeated_panel_observation("CT-04")
+    observation.regions[1].ref = "panel-a"
+    with pytest.raises(ValueError, match="duplicate observation ref"):
+        assemble_visual_evidence(_metadata(["CT-04"]), observation)
+    observation = _repeated_panel_observation("CT-04")
+    observation.relations[1].target_ref = "missing"
+    with pytest.raises(ValueError, match="unknown observation ref"):
+        assemble_visual_evidence(_metadata(["CT-04"]), observation)
+
+
+def test_external_hierarchy_and_failed_graph_proposals_cannot_authorize_other_merges():
+    # Two candidate pairs. The first pair has conflicting edges. The second
+    # points to the first pair, which must remain distinct after that rejection.
+    elements = [
+        _element(ref, "node", label=label, bbox_normalized=bbox)
+        for ref, label, bbox in [
+            ("a", "A", [0.1, 0.1, 0.2, 0.2]), ("b", "A", [0.1, 0.1, 0.2, 0.2]),
+            ("c", "C", [0.3, 0.1, 0.4, 0.2]), ("d", "C", [0.3, 0.1, 0.4, 0.2]),
+        ]
+    ] + [_element("x", "node", label="X"), _element("y", "node", label="Y")]
+    observation = FrameObservation(
+        regions=[RegionObservation(ref="main", category_ids=["CT-04"], elements=elements)],
+        relations=[RelationObservation(source_ref=a, target_ref=b, relation="leads_to", directed=True,
+                                       evidence_status="supported")
+                   for a, b in [("a", "x"), ("b", "y"), ("c", "a"), ("d", "b")]],
+    )
+    evidence = assemble_visual_evidence(_metadata(["CT-04"]), observation)
+    assert len(evidence.regions[0].elements) == 6
+    # Incoming membership alone also distinguishes otherwise identical nodes.
+    observation.relations = []
+    observation.regions[0].elements[-2].child_refs = ["a"]
+    observation.regions[0].elements[-1].child_refs = ["b"]
+    evidence = assemble_visual_evidence(_metadata(["CT-04"]), observation)
+    assert len(evidence.regions[0].elements) == 5  # Only unconnected C copies merge.
+
+
+def test_exact_content_deduplication_keeps_notation_status_and_unbound_occurrences():
+    observation = FrameObservation(
+        regions=[RegionObservation(ref="main", category_ids=["CT-02"], elements=[_element("x", "expression", exact_text="x")])],
+        exact_content=[
+            {"text": "x", "status": status, "notation": notation, "source_ref": source}
+            for status, notation, source in [
+                ("supported", "math", "x"), ("supported", "math", "x"),
+                ("partially_supported", "math", "x"), ("supported", "plain", "x"),
+                ("supported", "math", None), ("supported", "math", None),
+            ]
+        ],
+    )
+    evidence = assemble_visual_evidence(_metadata(["CT-02"]), observation)
+    assert len(evidence.exact_content) == 5
+    assert evidence.regions[0].elements[0].exact_text == "x"
+
+
+def test_opposite_directed_edges_and_distinct_relation_labels_are_preserved():
+    observation = FrameObservation(
+        regions=[RegionObservation(ref="main", category_ids=["CT-04"], elements=[
+            _element("a", "node", label="A"), _element("b", "node", label="B"),
+        ])],
+        relations=[RelationObservation(ref=f"q{index}", source_ref=source, target_ref=target,
+                                       relation="branches_to", directed=True, label=label,
+                                       evidence_status="supported")
+                   for index, (source, target, label) in enumerate([
+                       ("a", "b", "Yes"), ("a", "b", "No"), ("b", "a", "Yes"),
+                   ])],
+    )
+    evidence = assemble_visual_evidence(_metadata(["CT-04"]), observation)
+    assert len(evidence.relations) == 3
+    assert [edge.label for edge in evidence.relations] == ["Yes", "No", "Yes"]
 

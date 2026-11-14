@@ -2,7 +2,7 @@
 SYNAPSE — Modal Remote Inference Application for Qwen3-VL
 Stage M1B: Cost-bounded Modal deployment for the official Qwen3-VL FP8 checkpoint.
 
-Runs exclusively on one remote Modal NVIDIA L4 GPU.
+Runs on one compatible remote GPU, preferring L4 with an A10G fallback.
 Exposes a secure OpenAI-compatible multimodal endpoint over HTTPS.
 Enforces persistent model caching, scale-to-zero, and strict runtime boundaries.
 """
@@ -29,7 +29,7 @@ from modal_inference.config import (
     APP_NAME,
     AUTH_ENV_VAR,
     CONTAINER_TIMEOUT_SECONDS,
-    DEFAULT_GPU,
+    GPU_FALLBACKS,
     HF_CACHE_DIR,
     HF_CACHE_VOL_NAME,
     MAX_CONCURRENT_INPUTS,
@@ -117,7 +117,7 @@ def _stream_process_output(
 # ---------------------------------------------------------------------------
 @app.function(
     image=inference_image,
-    gpu=DEFAULT_GPU,
+    gpu=list(GPU_FALLBACKS),
     min_containers=MIN_CONTAINERS,
     max_containers=MAX_CONTAINERS,
     scaledown_window=SCALEDOWN_WINDOW_SECONDS,

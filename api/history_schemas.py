@@ -10,7 +10,7 @@ ExplanationMode = Literal["brief", "explanatory", "detailed"]
 
 
 class StrictRequest(BaseModel):
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
 
 
 class LectureOpenedRequest(StrictRequest):
@@ -48,6 +48,7 @@ class LibraryItemResponse(BaseModel):
 
 
 class PlaybackProgressUpsertRequest(StrictRequest):
+    observed_at: Optional[datetime] = None
     position_seconds: float = Field(ge=0)
     duration_seconds: Optional[float] = Field(default=None, ge=0)
     completed: bool = False

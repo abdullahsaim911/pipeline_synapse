@@ -443,7 +443,7 @@
         "index": {
           "type": "int",
           "min": 1,
-          "max": 500,
+          "max": 60,
           "required": true
         }
       },
@@ -456,13 +456,14 @@
       "category": "collections",
       "description": "Open a Library item and play its spoken explanation right away.",
       "screens": [
-        "library"
+        "library",
+        "bookmarks"
       ],
       "params": {
         "index": {
           "type": "int",
           "min": 1,
-          "max": 500,
+          "max": 60,
           "required": true
         }
       },
@@ -482,7 +483,7 @@
         "index": {
           "type": "int",
           "min": 1,
-          "max": 500,
+          "max": 60,
           "required": true
         }
       },
@@ -904,6 +905,369 @@
       "params": {},
       "risk": "low",
       "binding": "Timeline.announce",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "answer_explanation",
+      "category": "dialog",
+      "description": "Answer the active explanation question using one of its available choices.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "choice": {
+          "type": "enum",
+          "required": true,
+          "values": [
+            "listen",
+            "skip",
+            "yes",
+            "no",
+            "brief",
+            "standard",
+            "detailed",
+            "wait",
+            "resume",
+            "later",
+            "replay",
+            "retry",
+            "next",
+            "finish",
+            "process"
+          ]
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.conversation.answer",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "play_note",
+      "category": "collections",
+      "description": "Play or stop the user's recorded voice note by its visible list number.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "stop_note_audio",
+      "category": "collections",
+      "description": "Stop playback of the personal voice recording currently being heard.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "delete_note",
+      "category": "collections",
+      "description": "Show the confirmation for deleting a personal voice recording by list number.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "confirm_note_deletion",
+      "category": "collections",
+      "description": "Confirm deletion of the voice recording named in the on-screen deletion prompt.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "cancel_note_deletion",
+      "category": "collections",
+      "description": "Cancel the pending voice note deletion and keep the personal recording.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "open_note_explanation",
+      "category": "collections",
+      "description": "Open and play a nearby saved explanation attached to a numbered voice note.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        },
+        "explanation": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "save_note_draft",
+      "category": "collections",
+      "description": "Save or retry uploading the personal voice recording currently held as a draft.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "discard_note_draft",
+      "category": "collections",
+      "description": "Discard the unsaved personal recording currently held in the draft prompt.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "import_local_saves",
+      "category": "collections",
+      "description": "Explicitly import browser saves and retry recoverable recordings into local backend storage.",
+      "screens": [
+        "library",
+        "bookmarks",
+        "notes"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "filter_saved_items",
+      "category": "collections",
+      "description": "Filter the visible saved collection by a topic or lecture title.",
+      "screens": [
+        "library",
+        "bookmarks"
+      ],
+      "params": {
+        "query": {
+          "type": "string",
+          "max_length": 160,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "clear_saved_filter",
+      "category": "collections",
+      "description": "Clear the current saved collection search and show all matching saved entries.",
+      "screens": [
+        "library",
+        "bookmarks"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "next_saved_page",
+      "category": "collections",
+      "description": "Show the next page of saved items or recorded personal voice notes.",
+      "screens": [
+        "library",
+        "bookmarks",
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "previous_saved_page",
+      "category": "collections",
+      "description": "Show the preceding page of saved items or recorded personal voice notes.",
+      "screens": [
+        "library",
+        "bookmarks",
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "retry_saved_load",
+      "category": "collections",
+      "description": "Retry reading the saved collection or voice notes after a storage request failure.",
+      "screens": [
+        "library",
+        "bookmarks",
+        "notes",
+        "explanation"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "set_saved_view",
+      "category": "collections",
+      "description": "Choose saved lectures or recently viewed explanations within the Library screen.",
+      "screens": [
+        "library"
+      ],
+      "params": {
+        "view": {
+          "type": "enum",
+          "values": [
+            "lectures",
+            "recent"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "confirm_saved_removal",
+      "category": "collections",
+      "description": "Confirm the saved lecture or bookmark named in the on-screen removal prompt.",
+      "screens": [
+        "library",
+        "bookmarks"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "cancel_saved_removal",
+      "category": "collections",
+      "description": "Cancel the pending Library or bookmark removal and keep the saved entry.",
+      "screens": [
+        "library",
+        "bookmarks"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "read_saved_item",
+      "category": "collections",
+      "description": "Open a saved explanation as text at its lecture timestamp without starting audio.",
+      "screens": [
+        "library",
+        "bookmarks"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "open_note",
+      "category": "collections",
+      "description": "Open the lecture paused at the exact timestamp of a numbered personal voice note.",
+      "screens": [
+        "notes",
+        "explanation"
+      ],
+      "params": {
+        "index": {
+          "type": "int",
+          "min": 1,
+          "max": 60,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "useVoiceActions shared UI handler",
+      "binding_status": "existing"
+    },
+    {
+      "id": "request_explanation",
+      "category": "lecture",
+      "description": "Request an explanation of this lecture part, choosing Brief, Standard or Detailed. Standard is the default.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "depth": {
+          "type": "enum",
+          "values": [
+            "brief",
+            "standard",
+            "detailed"
+          ],
+          "required": false
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.conversation.requestCurrent",
       "binding_status": "wrapper"
     }
   ]

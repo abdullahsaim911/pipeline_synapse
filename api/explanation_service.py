@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import inspect
 import os
+import subprocess
 import threading
 import time
 from contextlib import contextmanager
@@ -43,6 +44,10 @@ class PreparationCancelledError(RuntimeError):
     """A cancelled or superseded attempt reached a guarded side effect."""
 
 
+class InvalidPreparedArtifactError(RuntimeError):
+    """Generation returned without creating a complete servable cache."""
+
+
 @dataclass(frozen=True)
 class ExplanationArtifact:
     intervention_id: str
@@ -51,6 +56,7 @@ class ExplanationArtifact:
     text_file_path: Optional[str]
     vlm_snapshot_path: Optional[str]
     output_mode: str
+    explanation_id: Optional[int] = None
 
 
 @dataclass(frozen=True)
@@ -71,6 +77,7 @@ class _ExplanationTarget:
     confidence_semantics: str
     raw_category_labels: tuple[str, ...]
     canonical_category_ids: tuple[str, ...]
+    evidence_kind: str = "visual"
 
 
 # One remote VLM request at a time, and one Mistral/TTS run at a time. They are
@@ -99,6 +106,7 @@ def _artifact(row: Explanation) -> ExplanationArtifact:
         text_file_path=row.text_file_path,
         vlm_snapshot_path=row.vlm_snapshot_path,
         output_mode=row.output_mode,
+        explanation_id=row.id,
     )
 
 
@@ -148,11 +156,14 @@ def find_valid_cached_explanation(
         Explanation.intervention_id == intervention_id,
         Explanation.output_mode == output_mode,
     ).order_by(Explanation.created_at.desc(), Explanation.id.desc()).all()
+    from explanation_cache import cache_is_current
     for row in rows:
+        audio_path = resolve_explanation_audio_path(data_dir, row.audio_file_path)
         if (
             row.text_explanation
             and row.text_explanation.strip()
-            and resolve_explanation_audio_path(data_dir, row.audio_file_path) is not None
+            and audio_path is not None
+            and cache_is_current(row.text_explanation, audio_path, row.vlm_snapshot_path)
         ):
             return _artifact(row)
     return None
@@ -194,6 +205,7 @@ def _load_target(db: Session, video_id: str, intervention_id: str) -> _Explanati
         confidence_semantics=row.confidence_semantics or "unknown",
         raw_category_labels=tuple(row.raw_category_labels),
         canonical_category_ids=tuple(row.canonical_categories),
+        evidence_kind=row.evidence_kind,
     )
 
 
@@ -236,6 +248,17 @@ def prepare_visual_evidence(
     with VLM_EXTRACTION_LOCK:
         if ownership_check is not None:
             ownership_check()
+        if target.evidence_kind == "auto":
+            _extract_requested_frame(session_factory, data_dir, video_id, intervention_id,
+                ownership_check, checkpoint_commit)
+            with session_factory() as db:
+                target = _load_target(db, video_id, intervention_id)
+        if target.evidence_kind == "transcript":
+            with session_factory() as db:
+                context = db.get(Intervention, intervention_id).transcript_context
+            if not context or not context.strip():
+                raise EvidenceUnavailableError({"code": "insufficient_context", "retryable": False})
+            return EvidenceArtifact({"_transcript_only": True, "transcript_context": context}, None, True)
         extraction_started = time.monotonic()
         orchestrator = orchestrator_factory()
         extract = orchestrator.extract_visual_evidence
@@ -269,6 +292,49 @@ def prepare_visual_evidence(
         snapshot_path=evidence["snapshot_path"],
         reused=evidence["reused"],
     )
+
+
+def _extract_requested_frame(sessions, data_dir, video_id, point_id, ownership_check, checkpoint_commit):
+    """Extract one timestamp in the evidence worker, with transcript fallback for unavailable media."""
+    with sessions() as db:
+        point = db.get(Intervention, point_id)
+        timestamp = point.timestamp
+        source = db.get(Video, video_id).source_url
+    folder = Path(data_dir).resolve() / video_id / "interventions" / point_id
+    folder.mkdir(parents=True, exist_ok=True)
+    frame = folder / "requested.jpg"
+    temporary = folder / "requested.tmp.jpg"
+    try:
+        if not frame.is_file():
+            import imageio_ffmpeg
+            import yt_dlp
+            with yt_dlp.YoutubeDL({"quiet": True, "no_warnings": True,
+                "format": "best[height<=720]/bestvideo[height<=720]", "socket_timeout": 15}) as downloader:
+                info = downloader.extract_info(source, download=False)
+            subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-nostdin", "-loglevel", "error",
+                "-ss", str(timestamp), "-i", info["url"], "-frames:v", "1", "-y", str(temporary)],
+                check=True, timeout=45, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            if not temporary.is_file() or temporary.stat().st_size == 0:
+                raise RuntimeError("Requested frame unavailable")
+            if checkpoint_commit:
+                checkpoint_commit(lambda: os.replace(temporary, frame))
+            else:
+                os.replace(temporary, frame)
+        kind = "visual"
+    except PreparationCancelledError:
+        raise
+    except Exception as error:
+        trace_stage("requested_frame", "unavailable", error_type=type(error).__name__)
+        kind = "transcript"
+    finally:
+        temporary.unlink(missing_ok=True)
+    if ownership_check:
+        ownership_check()
+    with sessions() as db:
+        point = db.get(Intervention, point_id)
+        point.evidence_kind = kind
+        point.frame_path = str(frame) if kind == "visual" else ""
+        db.commit()
 
 
 def generate_explanation_from_evidence(
@@ -330,6 +396,20 @@ def generate_explanation_from_evidence(
         if ownership_check is not None:
             ownership_check()
 
+        # The API owns publication, including alternative synthesis providers.
+        # Stamp only a freshly returned result, never an existing database row.
+        from explanation_cache import cache_is_current, generation_manifest, write_manifest
+        generated_audio = resolve_explanation_audio_path(data_dir, result.get("audio_file_path"))
+        if generated_audio is None:
+            raise InvalidPreparedArtifactError("Synthesis did not produce a servable MP3")
+        if not cache_is_current(result["text_explanation"], generated_audio, result.get("vlm_snapshot_path")):
+            provenance = generation_manifest(result["text_explanation"], generated_audio, result.get("vlm_snapshot_path"))
+            publish_provenance = lambda: write_manifest(generated_audio, provenance)
+            if checkpoint_commit is not None:
+                checkpoint_commit(publish_provenance)
+            else:
+                publish_provenance()
+
         # Inference is complete before this new transaction begins.
         persistence_started = time.monotonic()
         trace_stage("explanation_persistence", "start")
@@ -384,6 +464,16 @@ def generate_explanation_from_evidence(
                 "explanation_persistence", "committed",
                 started_at=persistence_started, explanation_id=row.id,
             )
+            from api.personal_storage import capture_subscribers
+            try:
+                capture_subscribers(db, row)
+                db.commit()
+            except Exception as error:
+                # A personal storage failure must not turn completed inference
+                # into a failed preparation. Collection reads retry preservation
+                # and report storage failures to the learner.
+                db.rollback()
+                trace_stage("personal_snapshot", "failed", error_type=type(error).__name__)
             return _artifact(row)
 
 

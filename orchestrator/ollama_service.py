@@ -16,6 +16,7 @@ import time
 from typing import Any, Callable, Optional
 
 import requests
+from llm_interface import OllamaClient
 
 from synthesizer import TextSynthesisUnavailableError
 from stage_tracing import trace_stage
@@ -163,6 +164,8 @@ class OllamaService:
                 "stream": False,
                 "keep_alive": os.environ.get("SYNAPSE_OLLAMA_KEEP_ALIVE", "5m"),
                 "options": {
+                    "num_batch": OllamaClient.DEFAULT_GENERATION_PARAMS["num_batch"],
+                    "use_mmap": OllamaClient.DEFAULT_GENERATION_PARAMS["use_mmap"],
                     "num_gpu": self._configured_int("SYNAPSE_OLLAMA_NUM_GPU", 0, 0),
                     "num_ctx": self._configured_int("SYNAPSE_OLLAMA_NUM_CTX", 2048, 1),
                     "num_predict": 0,

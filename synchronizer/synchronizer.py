@@ -58,6 +58,13 @@ class AtomicVisualFact:
     relation_cues: List[str]
     precision_sensitive: bool = False
     directional: bool = False
+    # Internal matching metadata; omitted from the serialized coverage contract.
+    predicate: str = ""
+    exact_text: str = ""
+    notation: str = ""
+    relation_type: str = ""
+    relation_label: str = ""
+    ambiguous_subject: bool = False
 
 
 _COVERAGE_LABELS = {
@@ -79,9 +86,9 @@ _RELATION_CUES = {
     "contains": ["contains", "includes", "holds"],
     "inside": ["inside", "within"],
     "connected_to": ["connected", "joined", "wired"],
-    "points_to": ["points to", "arrow to", "leader line"],
-    "leads_to": ["leads to", "flows to", "then"],
-    "branches_to": ["branches to", "branch", "yes", "no"],
+    "points_to": ["points to", "points toward", "arrow to"],
+    "leads_to": ["leads to", "flows to", "goes to", "then"],
+    "branches_to": ["branches to", "branch to", "leads to", "go to", "goes to"],
     "corresponds_to": ["corresponds to", "matches", "represents"],
     "parent_of": ["parent of", "contains"],
     "child_of": ["child of", "part of"],
@@ -96,20 +103,26 @@ _RELATION_CUES = {
 
 
 def _normalized_text(value: Any) -> str:
-    text = unicodedata.normalize("NFKC", str(value or "")).casefold()
+    text = unicodedata.normalize("NFC", str(value or "")).casefold()
     text = text.replace("−", "-").replace("–", "-").replace("—", "-")
     return re.sub(r"\s+", " ", text).strip()
 
 
 def _tokens(value: Any) -> List[str]:
     return re.findall(
-        r">=|<=|==|!=|[=<>≤≥≠+*/^\-]|[a-z]+(?:'[a-z]+)?|\d+(?:\.\d+)?",
+        r">=|<=|==|!=|[=<>≤≥≠+*/^\-]|[^\W\d_]\w*(?:'\w+)?|\d+(?:\.\d+)?",
         _normalized_text(value),
     )
 
 
 def _content_tokens(value: Any) -> List[str]:
     return [token for token in _tokens(value) if token not in _STOP_WORDS]
+
+
+def _subject_tokens(value: Any) -> List[str]:
+    # Labels may contain identifiers such as A or Point A: articles cannot be
+    # dropped from an entity name as though they were prose stop words.
+    return _tokens(value)
 
 
 def _flatten_detail(prefix: str, value: Any) -> List[str]:
@@ -135,6 +148,32 @@ def _flatten_detail(prefix: str, value: Any) -> List[str]:
     return [f"{prefix}: {value}"]
 
 
+_DETAIL_CATEGORIES = dict(zip(
+    ("chart", "mathematics", "scientific_structure", "flow_network", "table", "structured_text",
+     "geometry", "programming", "interface", "map", "observational_image", "physical_scene"),
+    (f"CT-{number:02d}" for number in range(1, 13)),
+))
+_CRITICAL_DETAIL_FIELDS = {
+    "chart": ("axes", "units", "scales", "visible values", "observed trends", "legends"),
+    "mathematics": ("exact expressions", "transformations", "bounds"),
+    "scientific_structure": ("connections", "containment", "directions"),
+    "flow_network": ("branch conditions", "loops"),
+    "table": ("headers", "cells"),
+    "structured_text": ("definitions", "warnings", "steps", "lists"),
+    "geometry": ("constraints", "angles", "markings", "dimensions"),
+    "programming": ("exact code", "displayed output", "indentation"),
+    "interface": ("visible states",), "map": ("directions", "routes", "legend entries"),
+    "observational_image": ("comparisons",), "physical_scene": ("observable states", "contacts"),
+}
+
+
+def _detail_importance(detail_name: str, description: str) -> str:
+    path = description.split(":", 1)[0]
+    if detail_name == "structured_text" and set(_tokens(description)) & _NEGATIONS:
+        return "critical"
+    return "critical" if any(field in path for field in _CRITICAL_DETAIL_FIELDS.get(detail_name, ())) else "important"
+
+
 def extract_atomic_visual_facts(
     visual_evidence: Dict[str, Any], *, max_facts: int = 64
 ) -> tuple[List[AtomicVisualFact], Dict[str, Any]]:
@@ -142,21 +181,73 @@ def extract_atomic_visual_facts(
 
     if not isinstance(visual_evidence, dict):
         return [], {"truncated": False, "omitted_fact_count": 0}
+    if not isinstance(max_facts, int) or isinstance(max_facts, bool) or max_facts < 0:
+        raise ValueError("max_facts must be a non-negative integer")
 
     root_status = visual_evidence.get("evidence_status", "unavailable_or_unreadable")
     extraction_status = visual_evidence.get("extraction_status", "failed")
     root_categories = list(visual_evidence.get("category_ids") or [])
-    unusable_root = extraction_status in {"failed", "not_attempted"}
+    unusable_root = extraction_status in {"failed", "not_attempted"} or root_status == "unavailable_or_unreadable"
     uncertainty_by_target: Dict[str, List[str]] = {}
     for item in visual_evidence.get("uncertainties") or []:
         if isinstance(item, dict):
             uncertainty_by_target.setdefault(item.get("target_id", "scene"), []).append(
                 str(item.get("reason") or "Unspecified visual uncertainty")
             )
+    uncertainty_by_target.setdefault("scene", []).extend(
+        (visual_evidence.get("structural_description") or {}).get("uncertainties") or []
+    )
 
     candidates: List[AtomicVisualFact] = []
     names: Dict[str, str] = {}
     categories_by_ref: Dict[str, List[str]] = {}
+    status_by_ref: Dict[str, str] = {}
+    elements = []
+    for region in visual_evidence.get("regions") or []:
+        if not isinstance(region, dict):
+            continue
+        region_id = region.get("id")
+        categories = list(region.get("category_ids") or root_categories)
+        if region_id:
+            names[region_id] = str(region.get("position") or "visual region")
+            categories_by_ref[region_id] = categories
+            status_by_ref[region_id] = region.get("evidence_status") or root_status
+        for element in region.get("elements") or []:
+            if isinstance(element, dict) and element.get("id"):
+                ref = element["id"]
+                names[ref] = str(element.get("label") or element.get("exact_text") or element.get("kind") or "visual element")
+                categories_by_ref[ref] = list(element.get("category_ids") or categories)
+                status_by_ref[ref] = element.get("evidence_status") or region.get("evidence_status") or root_status
+                elements.append(element)
+    name_counts = {}
+    for element in elements:
+        name = _normalized_text(names[element["id"]])
+        name_counts[name] = name_counts.get(name, 0) + 1
+    elements_by_ref = {element["id"]: element for element in elements}
+    relations_by_ref = {item["id"]: item for item in visual_evidence.get("relations") or []
+                        if isinstance(item, dict) and item.get("id")}
+    order_family = {kind: family for family in (("left_of", "right_of"), ("above", "below"), ("precedes", "follows")) for kind in family}
+    order_groups = {}
+    for ref, relation in relations_by_ref.items():
+        family = order_family.get(relation.get("relation"))
+        if family:
+            key = (frozenset((relation.get("source_id"), relation.get("target_id"))), family)
+            order_groups.setdefault(key, []).append(ref)
+    diagnosed_groups = set()
+    for diagnostic in visual_evidence.get("validation_diagnostics") or []:
+        if diagnostic.get("code") != "extraction.quality.conflicting_spatial_order":
+            continue
+        relation = relations_by_ref.get(diagnostic.get("target_id"))
+        if not relation:
+            continue
+        key = (frozenset((relation.get("source_id"), relation.get("target_id"))), order_family.get(relation.get("relation")))
+        if key not in diagnosed_groups:
+            for ref in order_groups.get(key, []):
+                status_by_ref[ref] = "ambiguous_or_conflicting"
+                uncertainty_by_target.setdefault(ref, []).append(diagnostic.get("message") or "Conflicting spatial/order observations.")
+            diagnosed_groups.add(key)
+    candidate_keys = {}
+    proposition_claims = {}
     next_number = 1
 
     def add_fact(
@@ -171,6 +262,12 @@ def extract_atomic_visual_facts(
         relation_cues: Optional[List[str]] = None,
         precision_sensitive: bool = False,
         directional: bool = False,
+        predicate: str = "",
+        exact_text: str = "",
+        notation: str = "",
+        relation_type: str = "",
+        relation_label: str = "",
+        equivalence_key: Any = None,
     ) -> None:
         nonlocal next_number
         clean_description = str(description or "").strip()
@@ -182,15 +279,26 @@ def extract_atomic_visual_facts(
             for reason in uncertainty_by_target.get(ref, [])
         ]
         status = evidence_status or root_status
-        if unusable_root or status == "unavailable_or_unreadable":
+        if unusable_root or status == "unavailable_or_unreadable" or any(status_by_ref.get(ref) == "unavailable_or_unreadable" for ref in source_refs):
             reliability = "unavailable"
-        elif status == "ambiguous_or_conflicting":
+        elif status == "ambiguous_or_conflicting" or any(status_by_ref.get(ref) == "ambiguous_or_conflicting" for ref in source_refs):
             reliability = "ambiguous"
-        elif status == "partially_supported" or extraction_status == "partial":
+        elif status == "partially_supported" or reasons or any(status_by_ref.get(ref) == "partially_supported" for ref in source_refs):
             reliability = "partial"
         else:
             reliability = "supported"
-        candidates.append(AtomicVisualFact(
+        # Equivalence requires the same proposition and known source association.
+        # Status/reliability differences are never silently reconciled.
+        key = (equivalence_key or (fact_type, clean_description, tuple(source_refs)), status, reliability)
+        if key in candidate_keys:
+            existing = candidate_keys[key]
+            existing.source_refs = list(dict.fromkeys(existing.source_refs + source_refs))
+            existing.category_ids = list(dict.fromkeys(existing.category_ids + (categories or root_categories)))
+            existing.uncertainty_reasons = list(dict.fromkeys(existing.uncertainty_reasons + reasons))
+            if _IMPORTANCE_ORDER[importance] < _IMPORTANCE_ORDER[existing.importance]:
+                existing.importance = importance
+            return
+        fact = AtomicVisualFact(
             fact_id=f"fact-{next_number:03d}",
             fact_type=fact_type,
             description=clean_description,
@@ -204,8 +312,31 @@ def extract_atomic_visual_facts(
             relation_cues=relation_cues or [],
             precision_sensitive=precision_sensitive,
             directional=directional,
-        ))
+            predicate=predicate, exact_text=exact_text, notation=notation,
+            relation_type=relation_type, relation_label=relation_label,
+            ambiguous_subject=any(name_counts.get(_normalized_text(names.get(ref, "")), 0) > 1 for ref in source_refs),
+        )
+        candidates.append(fact)
+        candidate_keys[key] = fact
+        proposition_claims.setdefault(key[0], []).append(fact)
         next_number += 1
+
+    # Prefer explicit exact-content notation/status over an inferred duplicate
+    # from element.exact_text, but only for the same text and canonical source.
+    exact_by_source = {}
+    for item in visual_evidence.get("exact_content") or []:
+        if isinstance(item, dict) and item.get("text"):
+            exact_by_source.setdefault((item.get("source_ref"), item["text"]), []).append(item)
+
+    def exact_context(ref, text, categories):
+        if "CT-05" not in categories:
+            return {"subject_groups": [_content_tokens(text)]}
+        source = elements_by_ref.get(ref, {})
+        attributes = source.get("attributes") or {}
+        context = [str(attributes[key]) for key in ("row_header", "column_header") if attributes.get(key)]
+        if not context and source.get("label") not in (None, "", text):
+            context = [source["label"]]
+        return {"subject_groups": [_subject_tokens(item) for item in context], "relation_type": "table_value"}
 
     for region in visual_evidence.get("regions") or []:
         if not isinstance(region, dict):
@@ -226,46 +357,81 @@ def extract_atomic_visual_facts(
             categories = list(element.get("category_ids") or region_categories)
             categories_by_ref[element_id] = categories
             status = element.get("evidence_status") or region.get("evidence_status") or root_status
-            add_fact(
-                "component", f"Visible {kind}: {name}", [element_id], categories,
-                "important", status, subject_groups=[_content_tokens(name)],
-            )
+            text_only = kind in {"text label", "label", "text", "heading", "paragraph", "equation", "code block", "code line"}
+            if not (text_only and element.get("exact_text")) and not (not label and element.get("description")):
+                add_fact(
+                    "component", f"Visible {kind}: {name}", [element_id], categories,
+                    "important", status, subject_groups=[_subject_tokens(name)],
+                )
+            if element.get("description") and _normalized_text(element["description"]) not in {
+                _normalized_text(element.get("label")), _normalized_text(element.get("exact_text"))
+            }:
+                add_fact(
+                    "structure", element["description"], [element_id], categories,
+                    "critical" if set(categories) & {"CT-03", "CT-04", "CT-07", "CT-12"} else "important",
+                    status, subject_groups=[_subject_tokens(name)] if label else [],
+                    predicate=element["description"],
+                    equivalence_key=("statement", element_id, element["description"]),
+                )
             if element.get("position"):
                 add_fact(
                     "spatial", f"{name} is {element['position']}", [element_id], categories,
-                    "critical", status, subject_groups=[_content_tokens(name)],
+                    "critical", status, subject_groups=[_subject_tokens(name)],
                     relation_cues=_content_tokens(element["position"]),
+                    predicate=element["position"],
                 )
-            if element.get("exact_text"):
+            explicit_exact = exact_by_source.get((element_id, element.get("exact_text")), [])
+            if element.get("exact_text") and not any(item.get("status") == status for item in explicit_exact):
                 notation = "code" if "CT-08" in categories else "math" if "CT-02" in categories else "exact"
                 add_fact(
                     "exact_content", f"{notation}: {element['exact_text']}", [element_id],
                     categories, "critical", status,
-                    subject_groups=[_content_tokens(element["exact_text"])],
                     precision_sensitive=True,
+                    exact_text=element["exact_text"], notation=notation,
+                    equivalence_key=("exact", element_id, notation, element["exact_text"]),
+                    **exact_context(element_id, element["exact_text"], categories),
                 )
             for key, value in (element.get("attributes") or {}).items():
-                if value is None or isinstance(value, (dict, list)):
+                if value is None:
+                    continue
+                if isinstance(value, (dict, list)):
+                    for index, description in enumerate(_flatten_detail(f"{name} {key.replace('_', ' ')}", value)):
+                        add_fact("attribute", description, [element_id], categories, "important", status,
+                                 subject_groups=[_subject_tokens(name)], predicate=description.split(":", 1)[-1],
+                                 equivalence_key=("attribute_detail", element_id, key, index, description))
                     continue
                 importance = "critical" if key in {
                     "unit", "value", "symbol", "state", "indentation_level",
-                    "row_index", "column_index"
+                    "row_index", "column_index", "direction", "charge", "polarity"
                 } else "supporting"
+                if key in {"label", "text", "symbol"} and str(value) == element.get("exact_text"):
+                    continue
                 add_fact(
                     "attribute", f"{name} {key.replace('_', ' ')} is {value}",
                     [element_id], categories, importance, status,
-                    subject_groups=[_content_tokens(name)],
+                    subject_groups=[_subject_tokens(name)],
                     relation_cues=[key.replace("_", " ")],
                     precision_sensitive=importance == "critical",
+                    predicate=str(value), relation_type=key,
                 )
             if element.get("parent_id"):
                 parent_id = element["parent_id"]
                 add_fact(
                     "hierarchy", f"{name} is part of {names.get(parent_id, parent_id)}",
                     [element_id, parent_id], categories, "critical", status,
-                    subject_groups=[_content_tokens(name), _content_tokens(names.get(parent_id, parent_id))],
+                    subject_groups=[_subject_tokens(name), _subject_tokens(names.get(parent_id, parent_id))],
                     relation_cues=["part of", "within"],
+                    relation_type="custom:part_of", equivalence_key=("hierarchy", element_id, parent_id),
                 )
+
+        attributes = region.get("attributes") or {}
+        for field in ("structural_description", "hierarchy_notes", "topology_notes"):
+            notes = attributes.get(field) or []
+            for note in notes if isinstance(notes, list) else [notes]:
+                add_fact("structure", note, [region_id] if region_id else ["scene"], region_categories,
+                         "important" if field == "structural_description" else "critical",
+                         region.get("evidence_status") or root_status, predicate=note,
+                         equivalence_key=("statement", region_id, note))
 
     for relation in visual_evidence.get("relations") or []:
         if not isinstance(relation, dict):
@@ -287,12 +453,16 @@ def extract_atomic_visual_facts(
             "relation", f"{source_name} {relation_words} {target_name}{label}",
             [source_id, target_id] + ([relation["id"]] if relation.get("id") else []),
             categories, "critical", relation.get("evidence_status") or root_status,
-            subject_groups=[_content_tokens(source_name), _content_tokens(target_name)],
+            subject_groups=[_subject_tokens(source_name), _subject_tokens(target_name)],
             relation_cues=cues,
             directional=bool(relation.get("directed")),
+            relation_type=relation_type, relation_label=str(relation.get("label") or ""),
+            equivalence_key=("hierarchy", source_id, target_id) if relation_type in {"child_of", "custom:part_of"} and not relation.get("label")
+            else ("hierarchy", target_id, source_id) if relation_type == "parent_of" and not relation.get("label")
+            else ("relation", source_id, target_id, relation_type, relation.get("label"), bool(relation.get("directed"))),
         )
 
-    for item in visual_evidence.get("exact_content") or []:
+    for index, item in enumerate(visual_evidence.get("exact_content") or []):
         if not isinstance(item, dict) or not item.get("text"):
             continue
         source_ref = item.get("source_ref") or "scene"
@@ -301,49 +471,97 @@ def extract_atomic_visual_facts(
             "exact_content", f"{notation}: {item['text']}", [source_ref],
             categories_by_ref.get(source_ref, root_categories), "critical",
             item.get("status") or root_status,
-            subject_groups=[_content_tokens(item["text"])], precision_sensitive=True,
+            precision_sensitive=True,
+            exact_text=item["text"], notation=notation,
+            equivalence_key=("exact", source_ref, notation, item["text"]) if source_ref in names
+            else ("unbound_exact", index, notation, item["text"]),
+            **exact_context(source_ref, item["text"], categories_by_ref.get(source_ref, root_categories)),
         )
 
     structure = visual_evidence.get("structural_description") or {}
+    for text in dict.fromkeys([visual_evidence.get("global_layout"), structure.get("overview"), structure.get("orientation")]):
+        if text:
+            add_fact("structure", text, ["scene"], root_categories, "important", root_status,
+                     predicate=text, equivalence_key=("statement", "scene", text))
     for key in ("hierarchy_notes", "topology_notes"):
         for note in structure.get(key) or []:
             add_fact(
                 "structure", note, list(structure.get("component_ids") or []),
                 root_categories, "critical", root_status,
                 subject_groups=[_content_tokens(note)],
+                predicate=note,
+                equivalence_key=("statement", (structure.get("component_ids") or ["scene"])[0], note)
+                if len(structure.get("component_ids") or []) <= 1 else None,
             )
     reading_order = list(structure.get("reading_order") or [])
     if len(reading_order) > 1:
         readable_order = [names.get(ref, ref) for ref in reading_order]
         add_fact(
             "reading_order", "Reading order: " + " then ".join(readable_order),
-            reading_order, root_categories, "important", root_status,
-            subject_groups=[_content_tokens(name) for name in readable_order],
+            reading_order, root_categories, "critical", root_status,
+            subject_groups=[_subject_tokens(name) for name in readable_order],
             relation_cues=["then", "followed by", "before"],
+            relation_type="precedes", directional=True,
         )
 
     for detail_name, detail_value in (visual_evidence.get("category_details") or {}).items():
         if detail_value is None:
             continue
-        for description in _flatten_detail(detail_name.replace("_", " "), detail_value):
+        category = _DETAIL_CATEGORIES.get(detail_name)
+        descriptions = _flatten_detail(detail_name.replace("_", " "), detail_value)
+        if detail_name == "programming" and isinstance(detail_value, dict):
+            descriptions = [description for key, value in detail_value.items()
+                            for description in _flatten_detail(f"programming {key.replace('_', ' ')}", value)]
+        for index, description in enumerate(descriptions):
             detail_payload = description.split(":", 1)[-1]
             add_fact(
-                "category_detail", description, ["scene"], root_categories,
-                "important", root_status, subject_groups=[_content_tokens(detail_payload)],
+                "category_detail", description, ["scene"], [category] if category else root_categories,
+                _detail_importance(detail_name, description), root_status, subject_groups=[_content_tokens(detail_payload)],
                 precision_sensitive=detail_name in {"mathematics", "programming", "table"},
+                predicate=detail_payload,
+                exact_text=detail_payload if detail_name in {"mathematics", "programming", "table"} else "",
+                notation="code" if detail_name == "programming" else "math" if detail_name == "mathematics" else "plain",
+                equivalence_key=("detail", detail_name, index, description),
             )
 
-    # Remove exact duplicates while retaining the earliest source-grounded fact.
-    unique: List[AtomicVisualFact] = []
-    seen = set()
+    unbound_counts = {}
     for fact in candidates:
-        key = (fact.fact_type, _normalized_text(fact.description), tuple(fact.source_refs))
-        if key not in seen:
-            seen.add(key)
-            unique.append(fact)
-    unique.sort(key=lambda fact: (_IMPORTANCE_ORDER[fact.importance], fact.fact_id))
+        if fact.source_refs == ["scene"]:
+            key = (fact.fact_type, fact.description)
+            unbound_counts[key] = unbound_counts.get(key, 0) + 1
+    for fact in candidates:
+        if fact.source_refs == ["scene"] and unbound_counts[(fact.fact_type, fact.description)] > 1:
+            fact.ambiguous_subject = True
+    for claims in proposition_claims.values():
+        if len({fact.evidence_status for fact in claims}) > 1:
+            for fact in claims:
+                fact.uncertainty_reasons.append("Source records disagree on support for this proposition.")
+                if fact.evidence_reliability == "supported":
+                    fact.evidence_reliability = "partial"
+
+    type_order = {"exact_content": 0, "relation": 1, "hierarchy": 1, "structure": 2,
+                  "spatial": 2, "reading_order": 2, "attribute": 3, "category_detail": 3, "component": 4}
+    unique = sorted(candidates, key=lambda fact: (
+        fact.evidence_reliability in {"ambiguous", "unavailable"},
+        _IMPORTANCE_ORDER[fact.importance], type_order[fact.fact_type], int(fact.fact_id.split("-")[-1]),
+    ))
     omitted = max(0, len(unique) - max_facts)
-    selected = unique[:max_facts]
+    # Seed with the best available facts that add category coverage, then fill
+    # by educational priority. This is coverage, not a fixed per-category quota.
+    covered = set()
+    seeds = []
+    for fact in unique:
+        if fact.fact_type == "structure" and fact.source_refs == ["scene"]:
+            continue  # A generic scene overview does not represent each category's facts.
+        if fact.evidence_reliability not in {"ambiguous", "unavailable"} and set(fact.category_ids) - covered:
+            seeds.append(fact.fact_id)
+            covered.update(fact.category_ids)
+    chosen = set(seeds[:max_facts])
+    for fact in unique:
+        if len(chosen) >= max_facts:
+            break
+        chosen.add(fact.fact_id)
+    selected = [fact for fact in unique if fact.fact_id in chosen]
     for index, fact in enumerate(selected, start=1):
         fact.fact_id = f"fact-{index:03d}"
     return selected, {
@@ -353,93 +571,202 @@ def extract_atomic_visual_facts(
     }
 
 
-def _group_is_present(group: List[str], transcript: str, transcript_tokens: set[str]) -> bool:
-    meaningful = [token for token in group if token not in _STOP_WORDS]
-    if not meaningful:
+_WORD_VARIANTS = {
+    "pointing": "points", "point": "points", "towards": "toward",
+    "branching": "branches", "branch": "branches", "linked": "connected",
+    "increases": "rises", "increasing": "rises", "decreases": "falls", "decreasing": "falls",
+}
+_INVERSE_CUES = {
+    "left_of": ["right of"], "right_of": ["left of"], "above": ["below", "under"],
+    "below": ["above", "over"], "contains": ["inside", "within", "part of"],
+    "inside": ["contains", "includes"], "parent_of": ["part of", "child of"],
+    "child_of": ["contains", "parent of"], "custom:part_of": ["contains", "includes"],
+    "points_to": ["pointed to by"], "leads_to": ["reached from"],
+    "branches_to": ["reached from"], "precedes": ["follows", "after"], "follows": ["precedes", "before"],
+}
+_SYMMETRIC_RELATIONS = {"connected_to", "intersects", "parallel_to", "perpendicular_to", "bonded_to", "corresponds_to", "grouped_with"}
+_NEGATIONS = {"not", "never", "without", "no", "cannot", "can't", "isn't", "aren't", "doesn't", "don't", "wasn't"}
+
+
+def _match_tokens(value: str) -> List[str]:
+    return [_WORD_VARIANTS.get(token, token) for token in _tokens(value)]
+
+
+def _transcript_clauses(text: str) -> list:
+    # Keep semicolon-associated table fields together; do not split decimals.
+    return [(clause.strip(), _match_tokens(clause)) for clause in re.split(
+        r"(?<!\d)[.!?](?!\d)|\b(?:but|however|whereas)\b", text, flags=re.IGNORECASE,
+    ) if clause.strip()]
+
+
+def _token_span(needle: List[str], tokens: List[str], *, content_only: bool = False, start: int = 0):
+    indexed = [(index, token) for index, token in enumerate(tokens)
+               if index >= start and (not content_only or token not in _STOP_WORDS)]
+    wanted = [_WORD_VARIANTS.get(token, token) for token in needle if not content_only or token not in _STOP_WORDS]
+    if not wanted:
+        return None
+    values = [token for _, token in indexed]
+    for index in range(len(values) - len(wanted) + 1):
+        if values[index:index + len(wanted)] == wanted:
+            return indexed[index][0], indexed[index + len(wanted) - 1][0] + 1
+    return None
+
+
+def _contains_exact(payload: str, transcript: str, notation: str) -> bool:
+    """Match an ordered literal; never use a bag of operators/numbers or case-fold code."""
+    payload = unicodedata.normalize("NFC", payload).replace("\r\n", "\n")
+    transcript = unicodedata.normalize("NFC", transcript).replace("\r\n", "\n")
+    if notation == "math":
+        payload = payload.replace("−", "-")
+        transcript = transcript.replace("−", "-")
+        pattern = r"\s*".join(re.escape(char) for char in payload if not char.isspace())
+    elif notation == "code":
+        pattern = re.escape(payload)
+    else:
+        payload = re.sub(r"\s+", " ", payload.casefold()).strip().rstrip(".!?")
+        transcript = re.sub(r"\s+", " ", transcript.casefold())
+        pattern = re.escape(payload)
+    if not pattern:
         return False
-    phrase = " ".join(meaningful)
-    return phrase in transcript or all(token in transcript_tokens for token in meaningful)
+    # Avoid matching x=5 inside x=50 or a short identifier inside another name.
+    prefix = r"(?m)^" if notation == "code" and payload[:1] in {" ", "\t"} else r"(?<!\w)"
+    suffix = r"(?!\w|\.\d)"
+    if notation in {"math", "code"}:
+        suffix = r"(?!\w|\.\w|\s*[+*/^=<>≤≥≠-])"
+    match = re.search(prefix + pattern + suffix, transcript)
+    if match and notation in {"math", "code"} and re.search(r"[+*/^=<>≤≥≠-]\s*$", transcript[:match.start()]):
+        return False
+    return bool(match)
 
 
-def _match_atomic_fact(fact: AtomicVisualFact, transcript_text: str) -> tuple[str, Optional[str], str]:
-    transcript = _normalized_text(transcript_text)
-    transcript_tokens = set(_tokens(transcript))
-    meaningful_transcript = transcript_tokens - _DEICTIC_WORDS - _STOP_WORDS
+def _relation_covered(fact: AtomicVisualFact, tokens: List[str], spans: list, *, allow_negation: bool = False) -> bool:
+    if len(spans) < 2 or any(span is None for span in spans):
+        return False
+    if len({tuple(group) for group in fact.subject_groups}) < len(fact.subject_groups):
+        return False  # Same labels cannot establish distinct endpoint roles.
+    connectors = {"is", "are", "was", "were", "be", "will", "can", "does", "the", "a", "an",
+                  "to", "toward", "with", "on", "when", "if", "node", "point"}
+    connectors.update(_match_tokens(fact.relation_label))
+    if allow_negation:
+        connectors.update(_NEGATIONS)
+
+    def binds(first, cue, second):
+        return (first[1] <= cue[0] and cue[1] <= second[0]
+                and set(tokens[first[1]:cue[0]] + tokens[cue[1]:second[0]]) <= connectors)
+
+    if fact.fact_type == "reading_order":
+        return all(any((cue_span := _token_span(_match_tokens(cue), tokens, start=left[1])) and binds(left, cue_span, right)
+                       for cue in fact.relation_cues) for left, right in zip(spans, spans[1:]))
+    source, target = spans[:2]
+    cues = _RELATION_CUES.get(fact.relation_type, fact.relation_cues)
+    for cue in cues:
+        span = _token_span(_match_tokens(cue), tokens)
+        if span and binds(source, span, target):
+            return True
+        if span and fact.relation_type in _SYMMETRIC_RELATIONS and not fact.directional:
+            # "A and B are connected" and "B is connected to A" are symmetric.
+            if binds(target, span, source):
+                return True
+            first, second = sorted((source, target))
+            if second[1] <= span[0] and set(tokens[first[1]:second[0]] + tokens[second[1]:span[0]]) <= {"and", "is", "are", "both"}:
+                return True
+    for cue in _INVERSE_CUES.get(fact.relation_type, []):
+        span = _token_span(_match_tokens(cue), tokens)
+        if span and binds(target, span, source):
+            return True
+    return False
+
+
+def _match_atomic_fact(fact: AtomicVisualFact, transcript_text: str, *, clauses=None) -> tuple[str, Optional[str], str]:
     if fact.evidence_reliability in {"unavailable", "ambiguous"}:
         return "not_usable", None, ""
-    if not meaningful_transcript:
-        return "unspoken", None, fact.description
-
-    description = _normalized_text(fact.description)
-    groups_present = [
-        _group_is_present(group, transcript, transcript_tokens)
-        for group in fact.subject_groups if group
-    ]
-    literal_tokens = {
-        token for token in _tokens(description)
-        if re.fullmatch(r">=|<=|==|!=|[=<>≤≥≠+*/^\-]|\d+(?:\.\d+)?", token)
-    }
-
-    if fact.precision_sensitive:
-        exact_payload = description.split(":", 1)[-1].strip()
-        if exact_payload and exact_payload in transcript:
-            status = "spoken_explicit"
-        elif literal_tokens and literal_tokens.issubset(transcript_tokens):
-            words = set(_content_tokens(description)) - literal_tokens
-            overlap = len(words & transcript_tokens) / max(1, len(words))
-            if overlap >= 0.8:
-                status = "spoken_explicit"
-            elif overlap >= 0.5:
-                status = "uncertain_match"
+    clauses = _transcript_clauses(transcript_text) if clauses is None else clauses
+    if fact.precision_sensitive and fact.notation == "code":
+        clauses = [(transcript_text, _match_tokens(transcript_text))]
+    best, best_span = "unspoken", None
+    contradicted = False
+    ranks = {"unspoken": 0, "uncertain_match": 1, "spoken_partial": 2, "spoken_explicit": 3}
+    for clause, tokens in clauses:
+        if not set(tokens) - _DEICTIC_WORDS - _STOP_WORDS:
+            continue
+        spans = [_token_span(group, tokens) for group in fact.subject_groups if group]
+        all_subjects = bool(spans) and all(span is not None for span in spans)
+        negative = sum(token in _NEGATIONS for token in tokens if not (token == "no" and fact.relation_label.casefold() == "no"))
+        source_negative = sum(token in _NEGATIONS for token in _match_tokens(fact.exact_text or fact.predicate))
+        status = "unspoken"
+        if fact.fact_type in {"relation", "hierarchy", "reading_order"}:
+            if all_subjects:
+                core_covered = _relation_covered(fact, tokens, spans)
+                # A later opposite spatial/containment statement must not be
+                # hidden by an earlier explicit match. Reciprocal network edges
+                # can both be true, so only known asymmetric predicates qualify.
+                if (negative and _relation_covered(fact, tokens, spans, allow_negation=True)) or (
+                    fact.relation_type in _INVERSE_CUES and not core_covered
+                    and _relation_covered(fact, tokens, list(reversed(spans)))
+                ):
+                    contradicted = True
+                status = "spoken_explicit" if core_covered else "spoken_partial"
+                if core_covered and fact.relation_label:
+                    notation = "math" if re.search(r"[\d=<>≤≥≠+*/^²³]", fact.relation_label) else "plain"
+                    if not _contains_exact(fact.relation_label, clause, notation):
+                        status = "spoken_partial"
+                if negative or (fact.relation_cues and any(_token_span(_match_tokens(cue), tokens) for cue in fact.relation_cues) and not core_covered):
+                    status = "uncertain_match"
+        elif fact.fact_type == "component":
+            if all_subjects:
+                status = "spoken_explicit" if set(tokens) & {"shown", "visible", "here", "shows", "displays", "see"} else "spoken_partial"
+                if negative:
+                    status = "uncertain_match"
+        elif fact.fact_type in {"spatial", "attribute"}:
+            if all_subjects:
+                status = "spoken_partial"
+                predicate = _token_span(_match_tokens(fact.predicate), tokens, content_only=True)
+                connectors = {"is", "are", "was", "were", "has", "have", "at", "in", "the", "a", "an",
+                              "to", "of", "with", "measured", "equals", "located", "set"}
+                connectors.update(fact.relation_type.split("_"))
+                if predicate and any(span[1] <= predicate[0] and set(tokens[span[1]:predicate[0]]) <= connectors for span in spans):
+                    # Row/column indices require their roles, not just a number.
+                    role = fact.relation_type.split("_")[0]
+                    if role not in {"row", "column", "indentation"} or role in tokens:
+                        status = "spoken_explicit"
+                if fact.relation_type in {"unit", "symbol", "value"} and not _contains_exact(fact.predicate, clause, "math"):
+                    status = "spoken_partial"
+                if negative != source_negative:
+                    status = "uncertain_match"
+        elif fact.precision_sensitive:
+            payload = fact.exact_text or fact.description.split(":", 1)[-1].strip()
+            # Code can contain newlines; inspect the original segment, not its prose clauses.
+            text = transcript_text if fact.notation == "code" else clause
+            if _contains_exact(payload, text, fact.notation):
+                status = "spoken_explicit" if negative == source_negative else "uncertain_match"
+                if fact.relation_type == "table_value" and not all_subjects:
+                    status = "spoken_partial"
+                elif fact.relation_type == "table_value":
+                    value_span = _token_span(_match_tokens(payload), tokens)
+                    ordered = sorted(spans)
+                    links = {"is", "are", "has", "have", "for", "of", "row", "column", "header", "text", "value", "equals"}
+                    if (not value_span or len(set(ordered)) != len(ordered)
+                            or any(left[1] > right[0] or set(tokens[left[1]:right[0]]) - links
+                                   for left, right in zip(ordered, ordered[1:] + [value_span]))):
+                        status = "spoken_partial"
+        else:
+            predicate = _match_tokens(fact.predicate or fact.description)
+            if _token_span(predicate, tokens, content_only=True):
+                status = "spoken_explicit" if negative == source_negative else "uncertain_match"
             else:
-                status = "unspoken"
-        else:
-            status = "unspoken"
-        if fact.evidence_reliability == "partial" and status == "spoken_explicit":
+                needed = set(predicate) - _STOP_WORDS
+                overlap = len(needed & set(tokens)) / max(1, len(needed))
+                if all_subjects:
+                    status = "spoken_partial"
+                elif overlap >= 0.4:
+                    status = "uncertain_match"
+        if status == "spoken_explicit" and (fact.evidence_reliability == "partial" or fact.ambiguous_subject):
             status = "uncertain_match"
-        return (
-            status,
-            transcript_text if status != "unspoken" else None,
-            "" if status == "spoken_explicit" else fact.description,
-        )
-
-    cues_present = any(_normalized_text(cue) in transcript for cue in fact.relation_cues)
-    if fact.fact_type in {"relation", "hierarchy", "spatial", "reading_order"}:
-        direction_supported = True
-        if fact.directional and len(fact.subject_groups) >= 2:
-            source_phrase = " ".join(fact.subject_groups[0])
-            target_phrase = " ".join(fact.subject_groups[1])
-            source_index = transcript.find(source_phrase)
-            target_index = transcript.find(target_phrase)
-            direction_supported = (
-                source_index >= 0 and target_index >= 0 and source_index < target_index
-            )
-        if groups_present and all(groups_present) and cues_present and direction_supported:
-            status = "spoken_explicit"
-        elif groups_present and all(groups_present) and cues_present and not direction_supported:
-            status = "uncertain_match"
-        elif groups_present and all(groups_present):
-            status = "spoken_partial"
-        elif fact.fact_type == "spatial" and groups_present and any(groups_present):
-            status = "spoken_partial"
-        else:
-            status = "unspoken"
-    elif groups_present and all(groups_present):
-        status = "spoken_explicit"
-    else:
-        fact_tokens = set(_content_tokens(description))
-        overlap = len(fact_tokens & transcript_tokens) / max(1, len(fact_tokens))
-        if overlap >= 0.7:
-            status = "spoken_partial"
-        elif overlap >= 0.4:
-            status = "uncertain_match"
-        else:
-            status = "unspoken"
-
-    if fact.evidence_reliability == "partial" and status == "spoken_explicit":
-        status = "uncertain_match"
-    missing = "" if status == "spoken_explicit" else fact.description
-    return status, transcript_text if status in {"spoken_explicit", "spoken_partial", "uncertain_match"} else None, missing
+        if ranks[status] > ranks[best]:
+            best, best_span = status, clause
+    if contradicted:
+        return "uncertain_match", best_span, fact.description
+    return best, best_span, "" if best == "spoken_explicit" else fact.description
 
 
 def reconcile_visual_evidence(
@@ -450,15 +777,18 @@ def reconcile_visual_evidence(
     evidence = vlm_snapshot.get("visual_evidence") if isinstance(vlm_snapshot, dict) else None
     frame_id = evidence.get("frame_id") if isinstance(evidence, dict) else None
     facts, bounds = extract_atomic_visual_facts(evidence or {}, max_facts=max_facts)
+    clauses = _transcript_clauses(transcript_text)
     plan_facts = []
     for fact in facts:
-        coverage, span, missing = _match_atomic_fact(fact, transcript_text)
+        coverage, span, missing = _match_atomic_fact(fact, transcript_text, clauses=clauses)
         assert coverage in _COVERAGE_LABELS
         item = asdict(fact)
         item.pop("subject_groups", None)
         item.pop("relation_cues", None)
         item.pop("precision_sensitive", None)
         item.pop("directional", None)
+        for key in ("predicate", "exact_text", "notation", "relation_type", "relation_label", "ambiguous_subject"):
+            item.pop(key, None)
         if coverage == "uncertain_match":
             item["uncertainty_reasons"] = list(dict.fromkeys(
                 item["uncertainty_reasons"]
@@ -481,7 +811,7 @@ def reconcile_visual_evidence(
     return {
         "schema": "synapse_transcript_visual_coverage_v1",
         "frame_id": frame_id,
-        "method": "deterministic_conservative_v1",
+        "method": "deterministic_conservative_v2",
         "fact_count": len(plan_facts),
         "coverage_counts": counts,
         "facts": plan_facts,

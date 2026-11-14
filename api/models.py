@@ -29,7 +29,7 @@ LOCAL_DEVELOPMENT_PROFILE_KEY = "local-development"
 
 
 class User(Base):
-    """Application identity; authentication is intentionally deferred."""
+    """Application identity shared by local accounts and the compatibility profile."""
     __tablename__ = "users"
     __table_args__ = (UniqueConstraint("profile_key", name="uq_users_profile_key"),)
 
@@ -55,6 +55,66 @@ class User(Base):
     library_items = relationship("LibraryItem", cascade="all, delete-orphan")
     playback_progress = relationship("PlaybackProgress", cascade="all, delete-orphan")
     recent_explanations = relationship("RecentExplanation", cascade="all, delete-orphan")
+
+
+class LectureSessionInterest(Base):
+    __tablename__ = "lecture_session_interests"
+    __table_args__ = (Index("ix_lecture_session_interests_expiry", "state", "expires_at"),)
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    # Video metadata is replaceable inference cache, while session/request identity is durable.
+    video_id = Column(String(11), nullable=False, index=True)
+    state = Column(String(16), nullable=False, default="active")
+    account_digest = Column(String(64))
+    expires_at = Column(DateTime, nullable=False)
+    updated_at = Column(DateTime, nullable=False, server_default=func.now())
+
+
+class ExplanationRequest(Base):
+    __tablename__ = "explanation_requests"
+    __table_args__ = (
+        UniqueConstraint("user_id", "operation_id", name="uq_explanation_requests_operation"),
+        Index("ix_explanation_requests_owner_video", "user_id", "video_id", "created_at", "id"),
+        CheckConstraint("output_mode IN ('brief', 'explanatory', 'detailed')", name="ck_explanation_requests_mode"),
+    )
+
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    session_id = Column(String(36), ForeignKey("lecture_session_interests.id", ondelete="SET NULL"))
+    operation_id = Column(String(64), nullable=False)
+    intent_hash = Column(String(64), nullable=False)
+    video_id = Column(String(11), nullable=False)
+    timestamp = Column(Float, nullable=False)
+    intervention_id = Column(String, ForeignKey("interventions.id", ondelete="SET NULL"))
+    context_key = Column(String(64))
+    output_mode = Column(String(32), nullable=False)
+    resolution_error = Column(String(64))
+    saved_explanation_id = Column(String(36), ForeignKey("saved_explanations.id", ondelete="SET NULL"))
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    heard_at = Column(DateTime)
+    partial_seconds = Column(Float, nullable=False, default=0, server_default="0")
+    satisfaction = Column(String(8))
+    dismissed = Column(Boolean, nullable=False, default=False, server_default="0")
+
+
+class AccountCredential(Base):
+    __tablename__ = "account_credentials"
+
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+    username = Column(String(64), nullable=False, unique=True)
+    password_hash = Column(Text, nullable=False)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+
+class AccountSession(Base):
+    __tablename__ = "account_sessions"
+
+    token_digest = Column(String(64), primary_key=True)
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    created_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime, nullable=False)
+    revoked_at = Column(DateTime)
 
 
 class UserPreference(Base):
@@ -200,6 +260,9 @@ class Intervention(Base):
     timestamp = Column(Float, nullable=False, index=True)  # Float timestamp (seconds)
     timestamp_formatted = Column(String)  # e.g., "02:35"
     frame_path = Column(String, nullable=False)  # Relative path to keyframe
+    origin = Column(String(16), nullable=False, default="detected", server_default="detected")
+    evidence_kind = Column(String(16), nullable=False, default="visual", server_default="visual")
+    context_key = Column(String(64), unique=True, index=True)
     content_type = Column(String)  # "graph", "chemistry", "equation", etc.
     complexity_score = Column(Float)
     # Historical rows used this field for complexity.  New rows contain the
@@ -301,6 +364,7 @@ class ExplanationPreparation(Base):
     output_mode = Column(String, nullable=False, index=True)
     status = Column(String, nullable=False, default="pending", index=True)
     attempt_count = Column(Integer, nullable=False, default=0)
+    priority_at = Column(DateTime, index=True)
     error_code = Column(String)
     # Internal progress inside the public status, and the classified cause
     # behind a public error_code. Neither is part of the API response.
@@ -357,9 +421,9 @@ class LibraryItem(Base):
     user_id = Column(
         Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
-    video_id = Column(
-        String, ForeignKey("videos.id", ondelete="CASCADE"), nullable=False, index=True
-    )
+    # Library membership survives removal of the shared processing cache.
+    video_id = Column(String, nullable=False, index=True)
+    lecture_snapshot = Column(Text)
     added_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     last_accessed_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
     preferred_mode = Column(
@@ -439,3 +503,57 @@ class Transcript(Base):
 
     # Relationships
     video = relationship("Video", back_populates="transcripts")
+
+
+class SavedExplanation(Base):
+    """Immutable personal snapshot; independent of mutable inference cache rows."""
+    __tablename__ = "saved_explanations"
+    __table_args__ = (
+        UniqueConstraint("user_id", "fingerprint", name="uq_saved_explanations_owner_content"),
+        Index("ix_saved_explanations_owner_video", "user_id", "video_id"),
+    )
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    video_id = Column(String, nullable=False)
+    intervention_id = Column(String, nullable=False)
+    output_mode = Column(String(32), nullable=False)
+    fingerprint = Column(String(64), nullable=False)
+    payload = Column(Text, nullable=False)
+    bookmarked_at = Column(DateTime)
+    viewed_at = Column(DateTime)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+
+class VoiceNote(Base):
+    __tablename__ = "voice_notes"
+    __table_args__ = (
+        UniqueConstraint("user_id", "operation_id", name="uq_voice_notes_owner_operation"),
+        CheckConstraint("lecture_seconds >= 0 AND lecture_seconds <= 172800", name="ck_voice_notes_time"),
+        CheckConstraint("duration_ms > 0 AND duration_ms <= 300250", name="ck_voice_notes_duration"),
+        Index("ix_voice_notes_owner_video", "user_id", "video_id"),
+    )
+    id = Column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id = Column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    operation_id = Column(String(128), nullable=False)
+    fingerprint = Column(String(64), nullable=False)
+    video_id = Column(String, nullable=False)
+    lecture_seconds = Column(Float, nullable=False)
+    duration_ms = Column(Integer, nullable=False)
+    media_key = Column(String, nullable=False)
+    mime_type = Column(String(100), nullable=False)
+    size_bytes = Column(Integer, nullable=False)
+    payload = Column(Text, nullable=False)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+
+class VoiceNoteExplanation(Base):
+    __tablename__ = "voice_note_explanations"
+    note_id = Column(String(36), ForeignKey("voice_notes.id", ondelete="CASCADE"), primary_key=True)
+    explanation_id = Column(String(36), ForeignKey("saved_explanations.id"), primary_key=True)
+
+
+class MediaDeletion(Base):
+    """Durable file deletion outbox; transactionally enqueued with note removal."""
+    __tablename__ = "media_deletions"
+    media_key = Column(String, primary_key=True)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())

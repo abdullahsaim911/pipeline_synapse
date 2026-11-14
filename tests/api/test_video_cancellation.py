@@ -1,3 +1,4 @@
+from explanation_cache import generation_manifest, write_manifest
 """Deterministic video cancellation, fencing, resume, and admission tests."""
 
 import tempfile
@@ -323,6 +324,7 @@ class CancellationTests(unittest.TestCase):
             else:
                 audio = self.root / "resumed.mp3"
                 audio.write_bytes(b"ID3-resumed")
+                write_manifest(audio, generation_manifest("Fresh result", audio))
                 with self.Session() as db:
                     db.add(Explanation(
                         intervention_id="ip-0", text_explanation="Fresh result",
@@ -351,6 +353,7 @@ class CancellationTests(unittest.TestCase):
         self.seed_interventions(1)
         audio = self.root / "ready.mp3"
         audio.write_bytes(b"ID3-valid")
+        write_manifest(audio, generation_manifest("Complete", audio))
         with self.Session() as db:
             db.add(Explanation(
                 intervention_id="ip-0", text_explanation="Complete",

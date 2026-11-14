@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from explanation_cache import generation_manifest, write_manifest
+
 import multiprocessing
 import tempfile
 import threading
@@ -148,6 +150,7 @@ class AdmissionTests(unittest.TestCase):
                 raise failure
             audio = self.root / f"{kwargs['intervention_id']}.mp3"
             audio.write_bytes(b"ID3-test")
+            write_manifest(audio, generation_manifest("mock explanation", audio))
             with self.Session() as db:
                 db.add(Explanation(
                     intervention_id=kwargs["intervention_id"],
@@ -521,6 +524,35 @@ class AdmissionTests(unittest.TestCase):
             results = [future.result(timeout=3) for future in futures]
         self.assertEqual(len(calls), 1)
         self.assertEqual({result.text_explanation for result in results}, {"mock explanation"})
+
+    def test_cached_manual_join_preserves_the_generating_owners_lease(self):
+        self._seed_video(VIDEO_A)
+        calls = []
+        manager = self._preparation_manager(self._artifact_generator(calls))
+        before_ready = threading.Event()
+        finish = threading.Event()
+        self.addCleanup(finish.set)
+        mark_ready = manager._mark_ready
+
+        def delayed_ready(job, lease):
+            before_ready.set()
+            self.assertTrue(finish.wait(3))
+            mark_ready(job, lease)
+
+        manager._mark_ready = delayed_ready
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            owner = pool.submit(manager.generate_manual, VIDEO_A, f"point-{VIDEO_A}", "explanatory")
+            self.assertTrue(before_ready.wait(2))
+            try:
+                joined = manager.generate_manual(VIDEO_A, f"point-{VIDEO_A}", "explanatory")
+                with self.Session() as db:
+                    state = db.query(ExplanationPreparation).one()
+                    self.assertEqual(state.status, "generating")
+                    self.assertIsNotNone(state.lease_owner)
+            finally:
+                finish.set()
+            self.assertEqual(owner.result(timeout=3).text_explanation, joined.text_explanation)
+        self.assertEqual(len(calls), 1)
 
 
 if __name__ == "__main__":

@@ -26,6 +26,16 @@ class Interaction:
         return max(0.0, self.end - self.start)
 
 
+def representative_frame_time(seg: Interaction) -> float:
+    """Use the capture timestamp when present; old files retain episode timing."""
+    captured = seg.meta.get("frame_timestamp")
+    if isinstance(captured, (int, float)) and not isinstance(captured, bool):
+        import math
+        if math.isfinite(captured) and captured >= 0:
+            return float(captured)
+    return seg.end if seg.type == WRITING_DRAWING else (seg.start + seg.end) / 2.0
+
+
 def save_interactions(path: str, interactions: List[Interaction],
                       video: Optional[str] = None, duration: Optional[float] = None) -> None:
     payload = {"video": video, "duration": duration,

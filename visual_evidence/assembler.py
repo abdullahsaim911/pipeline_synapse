@@ -31,6 +31,7 @@ from .models import (
     ValidationDiagnostic,
     VisualEvidence,
 )
+from .normalization import normalize_observation
 
 
 COMPACT_OBSERVATION_SCHEMA = "synapse_visual_observation_v1"
@@ -200,9 +201,9 @@ def assemble_visual_evidence(
 ) -> VisualEvidence:
     """Assemble one canonical record with deterministic local IDs.
 
-    IDs depend only on observation order.  Facts, coordinates, relations, and
-    category assignments are copied from supplied evidence; none are inferred
-    merely to fill the schema.
+    Anchored equivalent occurrences are normalized once before IDs are assigned
+    in surviving observation order. Facts, coordinates and relations are never
+    inferred merely to fill the schema; original model output remains available.
     """
 
     metadata = (
@@ -217,6 +218,14 @@ def assemble_visual_evidence(
         if isinstance(observation, FrameObservation)
         else FrameObservation.model_validate(observation)
     )
+    observation, aliases, unresolved = normalize_observation(observation)
+    # Never mutate caller-owned metadata or persisted model observations.
+    metadata = metadata.model_copy(deep=True)
+    if unresolved and metadata.extraction_status not in {"failed", "not_attempted"}:
+        if metadata.extraction_status == "complete":
+            metadata.extraction_status = "partial"
+        if metadata.evidence_status == "supported":
+            metadata.evidence_status = "partially_supported"
 
     normalization = normalize_category_labels(metadata.raw_category_labels)
     categories = list(metadata.category_ids)
@@ -285,6 +294,19 @@ def assemble_visual_evidence(
             _resolve_ref(refs, child_ref, "child_refs") for child_ref in child_refs
         ]
 
+    elements_by_id = {element.id: element for region in regions for element in region.elements}
+    for parent in elements_by_id.values():
+        for child_id in parent.child_ids:
+            child = elements_by_id.get(child_id)
+            if child is not None:
+                if child.parent_id is not None and child.parent_id != parent.id:
+                    raise ValueError("conflicting containment parents")
+                child.parent_id = parent.id
+    for child in elements_by_id.values():
+        parent = elements_by_id.get(child.parent_id)
+        if parent is not None and child.id not in parent.child_ids:
+            parent.child_ids.append(child.id)
+
     relations: list[Relation] = []
     relation_refs: dict[str, str] = {}
     for relation_number, source_relation in enumerate(observation.relations, start=1):
@@ -325,9 +347,25 @@ def assemble_visual_evidence(
         uncertainties=structural.uncertainties,
     )
 
+    all_refs = {**refs, **relation_refs}
+    for region in regions:
+        for element in region.elements:
+            element.source_ref = all_refs.get(element.source_ref, element.source_ref)
+    for relation in relations:
+        relation.source_refs = [all_refs.get(ref, ref) for ref in relation.source_refs]
+    for diagnostic in diagnostics:
+        diagnostic.target_id = all_refs.get(diagnostic.target_id, diagnostic.target_id)
+    if aliases:
+        metadata.provenance = metadata.provenance or Provenance()
+        metadata.provenance = metadata.provenance.model_copy(update={
+            "normalization": {
+                "method": "exact_anchored_occurrences_v1",
+                "ref_aliases": {alias: all_refs[representative] for alias, representative in aliases.items()},
+            }
+        })
     uncertainties = [
         Uncertainty(
-            target_id=_resolve_ref(refs, item.target_ref, "uncertainty target_ref"),
+            target_id=_resolve_ref(all_refs, item.target_ref, "uncertainty target_ref"),
             reason=item.reason,
             impact=item.impact,
         )
@@ -388,7 +426,9 @@ def assemble_compact_qwen_observation(
     detected_categories = payload.get("categories", [])
     if not isinstance(detected_categories, list):
         raise ValueError("categories must be an array")
-    combined_categories = list(category_ids or [])
+    # Incoming categories are classifier hints. Only observed frame/region/
+    # element categories establish the canonical content of this observation.
+    combined_categories = []
     for category in detected_categories:
         if category not in combined_categories:
             combined_categories.append(category)
@@ -440,6 +480,26 @@ def assemble_compact_qwen_observation(
         evidence_status = "partially_supported"
 
     payload, _normalization_count = normalize_compact_relations(payload)
+    coordinate_system = payload.get("coordinate_system", "normalized_1")
+    if coordinate_system not in {"normalized_1", "qwen_1000"}:
+        raise ValueError("unsupported observation coordinate system")
+
+    invalid_box_count = 0
+
+    def normalized_bbox(value):
+        nonlocal invalid_box_count
+        if value is None or coordinate_system == "normalized_1":
+            return value
+        if (not isinstance(value, (list, tuple)) or len(value) != 4
+                or any(type(part) is not int or not 0 <= part <= 1000 for part in value)):
+            raise ValueError("qwen_1000 bbox must contain four integers in [0,1000]")
+        if value[0] >= value[2] or value[1] >= value[3]:
+            # Keep the observed content and textual position but discard an
+            # unusable crop anchor. Never swap corners or guess coordinates.
+            invalid_box_count += 1
+            return None
+        return [part / 1000 for part in value]
+
     regions: list[RegionObservation] = []
     source_regions = payload.get("regions", [])
     if not isinstance(source_regions, list):
@@ -464,7 +524,7 @@ def assemble_compact_qwen_observation(
                     exact_text=element.get("text"),
                     description=element.get("description"),
                     position=element.get("position"),
-                    bbox_normalized=element.get("bbox"),
+                    bbox_normalized=normalized_bbox(element.get("bbox")),
                     source_ref=element.get("source_ref"),
                     attributes=element.get("attributes", {}),
                     parent_ref=element.get("parent_ref"),
@@ -477,7 +537,7 @@ def assemble_compact_qwen_observation(
                 category_ids=region.get("categories", []),
                 elements=elements,
                 position=region.get("position"),
-                bbox_normalized=region.get("bbox"),
+                bbox_normalized=normalized_bbox(region.get("bbox")),
                 reading_order_index=region.get("reading_order_index"),
                 attributes={
                     "structural_description": region.get("description"),
@@ -486,6 +546,11 @@ def assemble_compact_qwen_observation(
                 evidence_status=region.get("evidence_status"),
             )
         )
+
+    for region in regions:
+        for category in [*region.category_ids, *(category for element in region.elements for category in element.category_ids)]:
+            if category not in combined_categories:
+                combined_categories.append(category)
 
     relations: list[RelationObservation] = []
     source_relations = payload.get("relations", [])
@@ -537,7 +602,7 @@ def assemble_compact_qwen_observation(
             )
         )
 
-    exact_content = payload.get("exact", [])
+    exact_content = deepcopy(payload.get("exact", []))
     if not isinstance(exact_content, list):
         raise ValueError("exact must be an array")
     declared_refs = {VisualEvidence.SCENE_TARGET}
@@ -551,10 +616,32 @@ def assemble_compact_qwen_observation(
         if not isinstance(item, Mapping):
             raise ValueError("each exact item must be an object")
         source_ref = item.get("source_ref")
+        if source_ref is None and isinstance(item.get("text"), str) and item["text"].strip():
+            literal = item["text"].strip()
+            pattern = re.compile(r"(?<!\w)" + re.escape(literal) + r"(?!\w)")
+            # Recover only an explicit literal-to-occurrence link. A semantic
+            # name in an opaque ref, a fuzzy match, or a classifier hint cannot
+            # establish an anchor. Ambiguous duplicate occurrences stay unlinked.
+            matches = [element.ref for region in regions for element in region.elements
+                       if element.ref and any(isinstance(value, str) and pattern.search(value)
+                                              for value in (element.exact_text, element.label, element.description))]
+            if len(matches) == 1:
+                item["source_ref"] = matches[0]
+                source_ref = matches[0]
         if source_ref is not None and source_ref not in declared_refs:
             raise ValueError(
                 f"exact source_ref references unknown observation ref '{source_ref}'"
             )
+
+    if invalid_box_count:
+        extraction_status = "partial"
+        if evidence_status == "supported":
+            evidence_status = "partially_supported"
+        diagnostics.append(ValidationDiagnostic(
+            code="extraction.invalid_crop_anchor",
+            message=f"Discarded {invalid_box_count} inverted or zero-area boxes; positions remain observations, not crop anchors.",
+            target_id=VisualEvidence.SCENE_TARGET,
+        ))
 
     details = payload.get("details")
     if extraction_status == "complete" and (
@@ -580,7 +667,7 @@ def assemble_compact_qwen_observation(
     )
     provenance_value.observation_format = COMPACT_OBSERVATION_SCHEMA
 
-    return assemble_visual_evidence(
+    evidence = assemble_visual_evidence(
         EvidenceMetadata(
             frame_id=frame_id,
             timestamp_seconds=timestamp_seconds,
@@ -602,6 +689,10 @@ def assemble_compact_qwen_observation(
         ),
         legacy_snapshot=payload,
     )
+    # The generic legacy assembler also normalizes raw labels. Here those are
+    # classifier provenance, so they must not reintroduce a rejected hint.
+    evidence.category_ids = combined_categories
+    return evidence
 
 
 def adapt_legacy_snapshot(

@@ -1,10 +1,9 @@
 """
 Intent interpretation (module 4): what did the learner mean, in the context of the screen they are on?
 
-The sentence is compared BY MEANING with the catalog's example sentences using a small multilingual embedding
-model, so different wordings (and other languages, once examples exist) reach the same action. Nothing here
-matches keywords to choose an action. The only deterministic parsing is for argument VALUES (numbers, "faster",
-"night") once the action is known.
+English commands are compared by meaning with catalog examples using the existing embedding model.
+An active explanation question first checks bounded answers and negation; uncertain answers are clarified.
+Other deterministic parsing extracts argument values after choosing an action.
 """
 
 import os
@@ -15,6 +14,7 @@ from typing import Dict, List, Optional
 import numpy as np
 
 from voice.catalog import ActionCatalog, CatalogError
+from voice.explanation_answers import EXAMPLES, exact_answer, explanation_request
 from voice.schemas import ActionCandidate, InterpretRequest, InterpretResponse, VoiceContext
 
 EMBED_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
@@ -39,12 +39,15 @@ _ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixt
              "eighth": 8, "ninth": 9, "tenth": 10}
 # Embeddings put "next" and "previous" almost on top of each other, so for these pairs the direction WORD in the
 # sentence settles which one was meant (the same way a number settles "the second one").
-_PAIRS = {("next_moment", "previous_moment"), ("quiz_next", "quiz_previous")}
+_PAIRS = {("next_moment", "previous_moment"), ("quiz_next", "quiz_previous"), ("next_saved_page", "previous_saved_page")}
 _BACK_WORDS = {"previous", "back", "before", "earlier", "prior", "preceding", "last", "backward", "backwards", "behind"}
 _FORWARD_WORDS = {"next", "following", "forward", "after", "ahead", "later", "onward", "upcoming"}
 _LETTERS = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6}
 _LETTER_LEADS = {"answer", "option", "choice", "letter", "choose", "pick", "select", "is"}
 _ENUM_WORDS = {
+    ("request_explanation", "depth"): {"brief": ["brief", "shorter", "short"],
+        "standard": ["standard", "normal"], "detailed": ["detailed", "detail", "fuller"]},
+    ("set_saved_view", "view"): {"recent": ["recent", "recently", "viewed"], "lectures": ["lecture", "lectures"]},
     ("set_theme", "theme"): {"night": ["night", "knight", "nite", "dark", "black"], "sepia": ["sepia", "warm"], "paper": ["paper", "light"]},
     ("set_presentation_mode", "mode"): {"accessibility": ["accessibility", "hide"], "study": ["study", "show"]},
     ("change_text_size", "change"): {"larger": ["bigger", "larger", "increase", "enlarge", "big", "large"],
@@ -105,6 +108,29 @@ def extract_args(action_id: str, text: str, catalog: ActionCatalog) -> dict:
     params = catalog.get(action_id).params
     tokens = _tokens(text)
     args: dict = {}
+    if action_id == "open_note_explanation":
+        # Two list indices must be attached to their named subjects, not just
+        # assigned in utterance order: "explanation one for note two".
+        def mentioned_number(nouns):
+            for position, token in enumerate(tokens):
+                if token not in nouns:
+                    continue
+                tail = tokens[position + 1:position + 4]
+                if tail[:1] == ["number"]:
+                    tail = tail[1:]
+                if tail and tail[0] in _ORDINALS:
+                    return _ORDINALS[tail[0]]
+                if tail and (tail[0].isdigit() or tail[0] in _NUMBERS):
+                    return _numbers(tail[:2])[0]
+                before = tokens[position - 1] if position else ""
+                if before in _ORDINALS:
+                    return _ORDINALS[before]
+            return None
+        for name, nouns in {"index": {"note", "notes", "recording", "recordings"}, "explanation": {"explanation", "explanations"}}.items():
+            value = mentioned_number(nouns)
+            if value is not None:
+                args[name] = value
+        return args
     for name in params:
         if name == "index":
             ordinal = next((_ORDINALS[t] for t in tokens if t in _ORDINALS), None)
@@ -134,6 +160,13 @@ def extract_args(action_id: str, text: str, catalog: ActionCatalog) -> dict:
                 args["direction"] = "forward"
         elif name == "query":
             query = _QUERY_LEAD.sub("", text.strip()).strip(" .?!")
+            if action_id == "filter_saved_items":
+                query = re.sub(r"^(?:please\s+)?(?:filter|search|find|show)\s+(?:(?:my|the)\s+)?(?:(?:saved\s+)?(?:items|explanations|lectures)|library|bookmarks)\s*(?:by|for|on|about|matching|to)?\s*", "", text.strip(), flags=re.I)
+                query = _QUERY_LEAD.sub("", query)
+                query = re.sub(r"\s+in\s+(?:my\s+)?(?:saved\s+(?:items|explanations|lectures)|library|bookmarks)\s*$", "", query, flags=re.I).strip(" .?!")
+                if query:
+                    args["query"] = query
+                continue
             args["query"] = query or text.strip()
         elif name == "question":
             args["question"] = text.strip()
@@ -207,6 +240,8 @@ class Interpreter:
         ok = {a.id for a in self.catalog.for_screen(ctx.screen)}
         if ctx.available_actions:
             ok &= set(ctx.available_actions) | _VOICE_LAYER | {"confirm_yes", "confirm_no"}
+        if not ctx.explanation_question:
+            ok.discard("answer_explanation")
         if not ctx.pending_confirmation:
             ok -= {"confirm_yes", "confirm_no"}
         # What is playing decides between the lecture and the explanation ("pause" means whichever is sounding).
@@ -225,6 +260,43 @@ class Interpreter:
         ctx, text = req.context, req.text
         language = req.language
         allowed = self.allowed(ctx)
+        if language and language.split("-")[0] != "en":
+            return self._reply("unsupported", "english_only", language=language)
+        question = ctx.explanation_question
+        requested = explanation_request(text) if "request_explanation" in allowed else None
+        if "request_explanation" in allowed and requested is None and re.search(
+            r"\b(?:don't|do not|never)\s+(?:explain|prepare|generate)\b|\b(?:brief|standard|detailed)\s+or\s+(?:brief|standard|detailed)\b", text.lower()):
+            return self._reply("unsupported", "answer_unclear", language=language)
+        if requested is not None and (not question or requested.get("depth")):
+            depth = requested.get("depth")
+            if question and depth in question.choices and "answer_explanation" in allowed:
+                return self._reply("execute", "explanation_answer", action="answer_explanation",
+                    args={"choice": depth}, confidence=1.0, language=language)
+            return self._reply("execute", "explanation_requested", action="request_explanation",
+                args=requested, confidence=1.0, language=language)
+        if question and "answer_explanation" in allowed and not ctx.pending_confirmation:
+            choice, handled = exact_answer(text, question.choices)
+            if choice:
+                return self._reply("execute", "explanation_answer", action="answer_explanation",
+                                   args={"choice": choice}, confidence=1.0, language=language)
+            if handled:
+                return self._reply("unsupported", "answer_unclear", language=language)
+            # Reuse the current embedding model for natural English paraphrases.
+            options, examples = [], []
+            for option in question.choices:
+                options.extend([option] * len(EXAMPLES[option]))
+                examples.extend(EXAMPLES[option])
+            similarities = self._encode(examples) @ self._encode([text])[0]
+            ranked_answers = sorted(
+                ((option, max(float(s) for o, s in zip(options, similarities) if o == option))
+                 for option in question.choices), key=lambda item: -item[1]
+            )
+            best, score = ranked_answers[0]
+            runner = ranked_answers[1][1] if len(ranked_answers) > 1 else 0
+            if score >= max(self.execute_min, 0.78) and score - runner >= max(self.margin, 0.12):
+                return self._reply("execute", "explanation_answer", action="answer_explanation",
+                                   args={"choice": best}, confidence=min(score, 1.0), language=language)
+            allowed.discard("answer_explanation")
         if not _APP_QUESTION_FORM.search(text.lower()):
             allowed.discard("app_question")
         # Asking HOW to do something mentions the same topic as doing it, so a command would win on topic alone.

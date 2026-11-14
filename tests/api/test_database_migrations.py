@@ -133,7 +133,7 @@ class DatabaseMigrationTests(unittest.TestCase):
             self.assertTrue(set(HISTORY_TABLES).issubset(tables))
             self.assertEqual(
                 connection.execute("SELECT version_num FROM alembic_version").fetchone()[0],
-                "20261110_0008",
+                "20261113_0011",
             )
             preparation_columns = {
                 row[1]

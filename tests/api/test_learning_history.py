@@ -3,6 +3,7 @@
 import os
 import tempfile
 import unittest
+from unittest.mock import patch
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -36,6 +37,9 @@ def utcnow():
 
 class LearningHistoryApiTests(unittest.TestCase):
     def setUp(self):
+        compatibility = patch.dict(os.environ, SYNAPSE_LOCAL_PROFILE_COMPAT="1")
+        compatibility.start()
+        self.addCleanup(compatibility.stop)
         self.previous_environment = os.environ.get("SYNAPSE_ENV")
         os.environ["SYNAPSE_ENV"] = "test"
         self.addCleanup(self._restore_environment)

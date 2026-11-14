@@ -119,7 +119,8 @@ class ContextManager:
                     validated.append(type('TranscriptEntry', (), {
                         'text': entry.get('text', ''),
                         'start': float(entry.get('start', 0.0)),
-                        'end': float(entry.get('end', entry.get('start', 0.0)) + 1.0)
+                        'end': float(entry['end'] if entry.get('end') is not None
+                                     else entry.get('start', 0.0) + entry.get('duration', 0.0))
                     })())
                 # Handle object entries (already have required attributes)
                 elif hasattr(entry, 'text') and hasattr(entry, 'start'):
@@ -200,6 +201,49 @@ class ContextManager:
                 "window_size": 30,
                 "mode": mode if mode else "standard"
             }
+
+    def get_aligned_context(self, timestamp: float) -> Dict:
+        """Keep nearby caption fragments together, independently of visual OCR matches.
+
+        All depths use the same teaching context. Temporal proximity supplies
+        speech context, not proof that a spoken claim describes the frame.
+        Stop at caption gaps so an unrelated segment cannot bridge missing speech.
+        """
+        entries = sorted(self.transcripts, key=lambda entry: entry.start)
+        if not entries:
+            return {"aligned_segments": [], "frame_timestamp": timestamp}
+        index = min(range(len(entries)), key=lambda i: max(
+            entries[i].start - timestamp, timestamp - entries[i].end, 0
+        ))
+        if max(entries[index].start - timestamp, timestamp - entries[index].end, 0) > 5:
+            return {"aligned_segments": [], "frame_timestamp": timestamp}
+        first = last = index
+        while (first > 0 and entries[first - 1].end >= timestamp - 30
+               and entries[first].start - entries[first - 1].end <= 5):
+            first -= 1
+        while (last + 1 < len(entries) and entries[last + 1].start <= timestamp + 60
+               and entries[last + 1].start - entries[last].end <= 5):
+            last += 1
+        # Captions frequently divide one sentence across records. Extend the
+        # outer boundaries to a sentence end, bounded at 45 seconds before and
+        # 90 seconds after (the teacher often finishes a derivation after a frame),
+        # without bridging a missing stretch of speech. Unpunctuated transcripts
+        # remain bounded rather than expanding to an entire lecture.
+        while (first > 0 and entries[first - 1].end >= timestamp - 45
+               and entries[first].start - entries[first - 1].end <= 5
+               and not entries[first - 1].text.rstrip().endswith((".", "?", "!"))):
+            first -= 1
+        while (last + 1 < len(entries) and entries[last + 1].start <= timestamp + 90
+               and entries[last + 1].start - entries[last].end <= 5
+               and not entries[last].text.rstrip().endswith((".", "?", "!"))):
+            last += 1
+        return {
+            "frame_timestamp": timestamp,
+            "aligned_segments": [
+                {"start": entry.start, "end": entry.end, "text": entry.text}
+                for entry in entries[first:last + 1] if entry.text.strip()
+            ],
+        }
 
     def _get_current_segment(self, current_index: int) -> Any:
         """Safely get current transcript segment."""

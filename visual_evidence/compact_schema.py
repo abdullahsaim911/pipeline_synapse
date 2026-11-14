@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from .assembler import COMPACT_OBSERVATION_SCHEMA
-from .models import CORE_RELATION_TYPES
+from .models import CORE_RELATION_TYPES, CanonicalCategory
 
 
 EVIDENCE_STATUSES = [
@@ -15,12 +15,13 @@ EVIDENCE_STATUSES = [
 
 STRING_ARRAY = {"type": "array", "items": {"type": "string"}}
 NULLABLE_STRING = {"anyOf": [{"type": "string"}, {"type": "null"}]}
+CATEGORY_ARRAY = {"type": "array", "items": {"enum": [item.value for item in CanonicalCategory]}}
 BBOX = {
     "anyOf": [
         {"type": "null"},
         {
             "type": "array",
-            "items": {"type": "number"},
+            "items": {"type": "integer", "minimum": 0, "maximum": 1000},
             "minItems": 4,
             "maxItems": 4,
         },
@@ -30,29 +31,30 @@ BBOX = {
 ELEMENT = {
     "type": "object",
     "properties": {
-        "ref": {"type": "string"},
+        "ref": {"type": "string", "pattern": "^e_[a-zA-Z0-9_]+$"},
         "kind": {"type": "string"},
         "evidence_status": {"enum": EVIDENCE_STATUSES},
-        "categories": STRING_ARRAY,
+        "categories": CATEGORY_ARRAY,
         "label": NULLABLE_STRING,
         "text": NULLABLE_STRING,
-        "description": NULLABLE_STRING,
+        "description": {"type": "string", "minLength": 1},
         "position": NULLABLE_STRING,
         "bbox": BBOX,
         "source_ref": NULLABLE_STRING,
         "attributes": {"type": "object"},
         "parent_ref": NULLABLE_STRING,
-        "child_refs": STRING_ARRAY,
+        # One parent pointer expresses containment without a second, redundant
+        # child inventory that can diverge or expand indefinitely during decoding.
     },
-    "required": ["ref", "kind", "evidence_status"],
+    "required": ["ref", "kind", "description", "bbox", "evidence_status"],
     "additionalProperties": False,
 }
 
 REGION = {
     "type": "object",
     "properties": {
-        "ref": {"type": "string"},
-        "categories": STRING_ARRAY,
+        "ref": {"type": "string", "pattern": "^r_[a-zA-Z0-9_]+$"},
+        "categories": CATEGORY_ARRAY,
         "evidence_status": {"enum": EVIDENCE_STATUSES},
         "elements": {"type": "array", "items": ELEMENT},
         "position": NULLABLE_STRING,
@@ -62,14 +64,14 @@ REGION = {
         },
         "description": NULLABLE_STRING,
     },
-    "required": ["ref", "categories", "evidence_status", "elements"],
+    "required": ["ref", "categories", "evidence_status", "elements", "position", "bbox"],
     "additionalProperties": False,
 }
 
 RELATION = {
     "type": "object",
     "properties": {
-        "ref": {"type": "string"},
+        "ref": {"type": "string", "pattern": "^rel_[a-zA-Z0-9_]+$"},
         "source": {"type": "string"},
         "target": {"type": "string"},
         "type": {
@@ -92,9 +94,10 @@ COMPACT_OBSERVATION_JSON_SCHEMA = {
     "type": "object",
     "properties": {
         "schema": {"const": COMPACT_OBSERVATION_SCHEMA},
+        "coordinate_system": {"const": "qwen_1000"},
         "status": {"enum": ["complete", "partial", "failed", "not_attempted"]},
         "evidence_status": {"enum": EVIDENCE_STATUSES},
-        "categories": STRING_ARRAY,
+        "categories": CATEGORY_ARRAY,
         "layout": NULLABLE_STRING,
         "regions": {"type": "array", "items": REGION},
         "relations": {"type": "array", "items": RELATION},
@@ -103,8 +106,6 @@ COMPACT_OBSERVATION_JSON_SCHEMA = {
             "properties": {
                 "overview": {"type": "string"},
                 "orientation": NULLABLE_STRING,
-                "components": STRING_ARRAY,
-                "relations": STRING_ARRAY,
                 "reading_order": STRING_ARRAY,
                 "hierarchy": STRING_ARRAY,
                 "topology": STRING_ARRAY,
@@ -145,6 +146,7 @@ COMPACT_OBSERVATION_JSON_SCHEMA = {
     },
     "required": [
         "schema",
+        "coordinate_system",
         "status",
         "evidence_status",
         "categories",

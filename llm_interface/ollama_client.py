@@ -59,6 +59,8 @@ class OllamaResponse:
     total_duration_ms: int
     prompt_eval_count: int
     eval_count: int
+    done: Optional[bool] = None
+    done_reason: Optional[str] = None
 
 
 class OllamaError(Exception):
@@ -134,6 +136,8 @@ class OllamaClient:
     # Default generation options
     DEFAULT_GENERATION_PARAMS = {
         "num_predict": 512,
+        "num_batch": 128,
+        "use_mmap": True,
         "num_gpu": 0,
         "num_ctx": 2048,
         "temperature": 0.7,
@@ -282,7 +286,7 @@ class OllamaClient:
         """
         text = response_json.get("response", "")
         model = response_json.get("model", self.model)
-        done = response_json.get("done", True)
+        done = response_json.get("done")
 
         # Extract timing info if available
         total_duration_ms = 0
@@ -302,8 +306,19 @@ class OllamaClient:
             model=model,
             total_duration_ms=total_duration_ms,
             prompt_eval_count=prompt_eval_count,
-            eval_count=eval_count
+            eval_count=eval_count,
+            done=done,
+            done_reason=response_json.get("done_reason"),
         )
+
+    def prompt_input_tokens(self, prompt: str) -> int:
+        """Bound input including the installed model's template/system overhead."""
+        from .prompt_budget import prompt_input_tokens
+        return prompt_input_tokens(prompt, self.model)
+
+    @staticmethod
+    def context_limit() -> int:
+        return _resolve_int_option("SYNAPSE_OLLAMA_NUM_CTX", default=2048, minimum=1)
 
     def generate(
         self,
@@ -326,10 +341,12 @@ class OllamaClient:
         """
         model_name = model or self.model
 
-        if FUSION_AVAILABLE:
+        # The legacy runner cannot accept per-request options. Keep it for
+        # existing default callers; explicit options use the native request path.
+        if FUSION_AVAILABLE and options is None:
             return self._generate_with_fusion_reuse(prompt, model_name)
         else:
-            return self._generate_with_retry(prompt, model_name)
+            return self._generate_with_retry(prompt, model_name, options=options)
 
     def _generate_with_fusion_reuse(
         self,
@@ -360,7 +377,8 @@ class OllamaClient:
     def _generate_with_retry(
         self,
         prompt: str,
-        model_name: str
+        model_name: str,
+        options: Optional[dict] = None,
     ) -> OllamaResponse:
         """
         Generate with exponential backoff retry logic.
@@ -372,7 +390,7 @@ class OllamaClient:
         Returns:
             OllamaResponse with generated text and metadata
         """
-        payload = self._build_payload(prompt)
+        payload = self._build_payload(prompt, options=options)
 
         for attempt in range(self.max_retries):
             attempt_started = time.monotonic()

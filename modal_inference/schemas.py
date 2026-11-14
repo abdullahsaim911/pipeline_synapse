@@ -295,8 +295,8 @@ class ChatCompletionRequest:
         data_uri = f"data:{mime_type};base64,{b64}"
 
         content_parts = [
-            ContentPart(type="text", text=prompt),
             ContentPart(type="image_url", image_url=ImageUrlPart(url=data_uri)),
+            ContentPart(type="text", text=prompt),
         ]
 
         msg = ChatMessage(role="user", content=content_parts)

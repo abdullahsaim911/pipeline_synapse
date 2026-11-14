@@ -49,12 +49,17 @@ def detect_interactions(source: str, out_path: Optional[str] = None, cfg: Option
         reader = FrameReader(frame_stream)
         try:
             for k, seg in enumerate(interactions):
-                fr = reader.read_at(_frame_time(seg), cfg.frame_max_width)
+                frame_time = max(0.0, _frame_time(seg))
+                duration = meta.get("duration")
+                if duration and duration > 0:
+                    frame_time = min(frame_time, max(0.0, duration - 0.1))
+                fr = reader.read_at(frame_time, cfg.frame_max_width)
                 if fr is None:
                     continue
-                p = os.path.join(frames_dir, f"{k:03d}_{seg.type}_{_frame_time(seg):07.2f}.jpg")
-                cv2.imwrite(p, fr, [cv2.IMWRITE_JPEG_QUALITY, cfg.jpeg_quality])
-                seg.frame_path = p
+                p = os.path.join(frames_dir, f"{k:03d}_{seg.type}_{frame_time:07.2f}.jpg")
+                if cv2.imwrite(p, fr, [cv2.IMWRITE_JPEG_QUALITY, cfg.jpeg_quality]):
+                    seg.frame_path = p
+                    seg.meta["frame_timestamp"] = frame_time
         finally:
             reader.close()
 

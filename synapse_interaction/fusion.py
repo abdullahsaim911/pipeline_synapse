@@ -8,10 +8,60 @@ Do NOT edit `transcript_context`: M3 locates the current transcript entry by mat
 """
 from __future__ import annotations
 import json
+import logging
+import math
+import os
 import re
 from typing import List, Optional
 
-from .schema import Interaction, load_interactions, WRITING_DRAWING, MOUSE_POINTING
+from .schema import (Interaction, load_interactions, representative_frame_time,
+                     WRITING_DRAWING, MOUSE_POINTING)
+
+logger = logging.getLogger(__name__)
+
+
+def _image_metadata(frame_path, keyframes):
+    """Reuse only exact-image metadata; never borrow another frame's label."""
+    from category_normalization import normalize_category_labels
+    same = next((kf for kf in keyframes
+                 if os.path.normcase(os.path.abspath(kf.get("frame_path") or "."))
+                 == os.path.normcase(os.path.abspath(frame_path))), None)
+    if same is not None:
+        metadata = dict(same)
+    else:
+        metadata = {"content_type": "unknown", "complexity_score": 0.0,
+                    "clip_confidence": None, "classification_confidence": None,
+                    "confidence_semantics": "unknown"}
+        try:
+            import cv2
+            from frame_extraction.pedagogical_extractor_v2 import (
+                classify_educational, compute_complexity_score,
+            )
+            image = cv2.imread(frame_path)
+            if image is None:
+                raise ValueError("Interaction image could not be read")
+            metadata["complexity_score"] = compute_complexity_score(image)
+            _, label, score = classify_educational(image)
+            if not math.isfinite(score):
+                raise ValueError("Non-finite CLIP similarity")
+            metadata.update(content_type=label, clip_confidence=score,
+                            classification_confidence=score,
+                            confidence_semantics="clip_similarity")
+        except Exception as exc:
+            logger.warning("Interaction category unavailable (%s)", type(exc).__name__)
+    normalization = normalize_category_labels(
+        metadata.get("raw_category_labels") or [metadata.get("content_type", "unknown")])
+    return {
+        "content_type": metadata.get("content_type", "unknown"),
+        "complexity_score": metadata.get("complexity_score", 0.0),
+        "clip_confidence": metadata.get("clip_confidence"),
+        "classification_confidence": metadata.get("classification_confidence"),
+        "confidence_semantics": metadata.get("confidence_semantics") or (
+            "classifier" if metadata.get("classification_confidence") is not None else "legacy_complexity"),
+        "raw_category_labels": list(normalization.raw_labels),
+        "canonical_categories": list(normalization.canonical_categories),
+        "category_mapping_notes": list(normalization.notes),
+    }
 
 LEVELS = ["low", "medium", "high"]
 # STRICT: only phrases where the teacher points at something visual. Plain "this"/"here" appear in almost
@@ -161,8 +211,8 @@ def fuse_interactions(points: list, interactions_path: str, transcript_path: Opt
 
     Upgrades: an existing M1 point near an interaction gets a higher confidence + a reason.
     New points are UNIQUE, content-rich frames (not one per writing line):
-      * richest first : candidates are ranked by how much is on screen (a complete page beats its partial versions)
-      * novelty       : skipped if >= `redundant_thr` of the frame's ink is already shown by a selected frame
+      * coverage first: select an eligible moment in each time window before extras
+      * novelty       : skipped if >= `redundant_thr` of the frame's ink is already shown by an earlier frame
                         (M1's own frames count too) -> only visually different frames survive
       * content       : needs >= `min_ink_px` ink pixels (at 480 px width) so an empty page is never picked
       * spacing/budget: >= `min_new_gap` s from every other point; at most 1 new point per `seconds_per_new_point` s
@@ -175,6 +225,7 @@ def fuse_interactions(points: list, interactions_path: str, transcript_path: Opt
         return _fuse(points, interactions, interactions_path, transcript_path, keyframes_path, point_cls,
                      match_slack, seconds_per_new_point, min_new_gap, min_new_score, min_ink_px, redundant_thr)
     except Exception:
+        logger.exception("Interaction fusion failed; retaining base interventions")
         return points
 
 
@@ -209,33 +260,49 @@ def _fuse(points, interactions, interactions_path, transcript_path, keyframes_pa
         cands.append({"seg": seg, "grid": grid, "ink": int(grid.sum()) if grid is not None else 0,
                       "quiet": quiet, "deictic": deictic})
 
-    # ---- rank: richest content first (a complete page beats its half-written versions) ----
+    # Quality decides within a local interval, not across the entire lecture.
     max_ink = max((c["ink"] for c in cands), default=0) or 1
     for c in cands:
         c["score"] = (c["ink"] / max_ink) + 0.3 * c["quiet"] + 0.3 * c["deictic"] + 0.2 * min(1.0, c["seg"].duration / 8.0)
-    cands.sort(key=lambda c: -c["score"])
+    cands.sort(key=lambda c: (int(representative_frame_time(c["seg"]) // seconds_per_new_point),
+                              -c["score"], representative_frame_time(c["seg"])))
+    # First visit the best candidate in each interval; spare budget can then
+    # consider alternatives. Failed candidates do not consume the budget.
+    groups = {}
+    for c in cands:
+        window = int(representative_frame_time(c["seg"]) // seconds_per_new_point)
+        groups.setdefault(window, []).append(c)
+    cands = [group[0] for group in groups.values()] + [
+        c for group in groups.values() for c in group[1:]]
 
-    refs = [g for g in (load_mask(getattr(p, "frame_path", None)) for p in out) if g is not None]   # M1's own frames
+    refs = [(p.timestamp, g) for p in out
+            if (g := load_mask(getattr(p, "frame_path", None))) is not None]
     budget = max(1, int(duration // seconds_per_new_point)) if duration else 1
     added = 0
     for c in cands:
         if added >= budget:
             break
         seg, grid = c["seg"], c["grid"]
+        t = representative_frame_time(seg)
         if grid is not None:
             if c["ink"] < min_ink_px:               # not enough on screen to be worth describing
                 continue
-            if any(contained_fraction(grid, r) >= redundant_thr for r in refs):
+            if any(ref_time <= t and contained_fraction(grid, r) >= redundant_thr
+                   for ref_time, r in refs):
                 continue                               # same content already covered by another selected frame
         elif not (c["quiet"] or c["deictic"]):         # no image to judge -> fall back to the speech cues
             continue
-        t = seg.end if seg.type == WRITING_DRAWING else (seg.start + seg.end) / 2
         if any(abs(t - p.timestamp) < min_new_gap for p in out):
             continue
         kf = min(keyframes, key=lambda k: abs(k.get("timestamp_seconds", 0) - t)) if keyframes else {}
         frame_path = seg.frame_path or kf.get("frame_path", "")
         if not frame_path:
             continue                                   # M2 needs an image
+        if not seg.frame_path:
+            t = kf["timestamp_seconds"]
+            if any(abs(t - p.timestamp) < min_new_gap for p in out):
+                continue
+        metadata = _image_metadata(frame_path, keyframes)
         ctx = ""
         if transcripts:
             hit = _overlapping(transcripts, t - 0.01, t + 0.01) or \
@@ -243,13 +310,19 @@ def _fuse(points, interactions, interactions_path, transcript_path, keyframes_pa
             ctx = hit[0]["text"]
         why = "New visual content (" + ("writing" if seg.type == WRITING_DRAWING else "pointing") + \
               (", silent" if c["quiet"] else "") + (", deictic" if c["deictic"] else "") + ")"
-        out.append(point_cls(timestamp=round(t, 2), frame_path=frame_path,
-                             content_type=kf.get("content_type", "text"),
-                             complexity_score=kf.get("complexity_score", 0.0),
-                             clip_confidence=kf.get("clip_confidence", 0.0),
+        point = point_cls(timestamp=round(t, 2), frame_path=frame_path,
+                             content_type=metadata["content_type"],
+                             complexity_score=metadata["complexity_score"],
+                             clip_confidence=metadata["clip_confidence"],
                              transcript_context=ctx, trigger_reason=why,
-                             confidence="high" if (c["quiet"] or c["deictic"]) else "medium"))
+                             confidence="high" if (c["quiet"] or c["deictic"]) else "medium")
+        # The public point_cls seam also supports legacy point classes with
+        # the original constructor. Current InterventionPoint owns these fields.
+        for name in ("classification_confidence", "confidence_semantics",
+                     "raw_category_labels", "canonical_categories", "category_mapping_notes"):
+            setattr(point, name, metadata[name])
+        out.append(point)
         if grid is not None:
-            refs.append(grid)
+            refs.append((t, grid))
         added += 1
     return sorted(out, key=lambda p: p.timestamp)

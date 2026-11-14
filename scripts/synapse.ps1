@@ -1,7 +1,9 @@
 param(
     [ValidateSet("start", "status", "stop", "setup")]
     [string]$Command = "start",
-    [string]$Python311 = ""
+    [string]$Python311 = "",
+    [switch]$RequireSignIn,
+    [switch]$NoLogWindow
 )
 
 $ErrorActionPreference = "Stop"
@@ -47,11 +49,20 @@ function Test-Endpoint([string]$Path) {
     try {
         return Invoke-RestMethod -Uri "$ApiUrl$Path" -TimeoutSec 2
     } catch {
+        # /ready returns useful component states with HTTP 503 while local
+        # workers load. Keep those states visible in the launcher's status log.
+        if ($Path -eq "/ready" -and $_.ErrorDetails.Message) {
+            try {
+                $readiness = $_.ErrorDetails.Message | ConvertFrom-Json
+                if ($null -ne $readiness.components) { return $readiness }
+            } catch {}
+        }
         return $null
     }
 }
 
 function Start-LogViewer {
+    if ($NoLogWindow) { return }
     $viewer = $null
     if (Test-Path -LiteralPath $LogViewerPidFile) {
         $viewerPid = 0
@@ -138,14 +149,17 @@ function Show-ModelTransition($Readiness) {
     }
     $components = $Readiness.components
     $modalConfiguredReady = $components.modal -in @("ready", "disabled")
+    $mistralConfiguredReady = $components.mistral -in @("ready", "disabled", $null)
     if (
         $components.voice -eq "ready" -and
         $components.transcription -eq "ready" -and
-        $modalConfiguredReady
+        $modalConfiguredReady -and $mistralConfiguredReady
     ) {
         Write-Host "All configured startup models are ready. The pipeline can be started."
     } elseif ($components.modal -eq "unavailable") {
         Write-Warning "Modal VLM is unavailable. The API remains alive and VLM work will wait and retry safely."
+    } elseif ($components.mistral -eq "unavailable") {
+        Write-Warning "Remote Mistral is unavailable. The API remains alive; explanation requests report provider failures without changing models."
     }
 }
 
@@ -258,6 +272,9 @@ if ($Command -eq "setup") {
 }
 
 if ($null -ne (Test-Endpoint "/health")) {
+    if ($RequireSignIn) {
+        throw "A backend is already running; its account policy was not changed. Stop it with '.\scripts\synapse.ps1 stop', then start again with -RequireSignIn."
+    }
     Write-Host "A Synapse backend is already running; no duplicate was started."
     Start-LogViewer
     Show-Status
@@ -265,10 +282,16 @@ if ($null -ne (Test-Endpoint "/health")) {
 }
 
 $apiPython = Get-RuntimePython "api"
+# This launcher defaults to the developer workflow. Built/packaged use starts
+# the same local API with -RequireSignIn; direct API starts default to protected.
+if ($RequireSignIn) { $env:SYNAPSE_LOCAL_PROFILE_COMPAT = "0" }
+elseif ([string]::IsNullOrWhiteSpace($env:SYNAPSE_LOCAL_PROFILE_COMPAT)) {
+    $env:SYNAPSE_LOCAL_PROFILE_COMPAT = "1"
+}
 $env:SYNAPSE_VOICE_PYTHON = Get-RuntimePython "voice"
 $env:SYNAPSE_PIPELINE_PYTHON = Get-RuntimePython "pipeline"
-if ([string]::IsNullOrWhiteSpace($env:SYNAPSE_OLLAMA_NUM_GPU)) { $env:SYNAPSE_OLLAMA_NUM_GPU = "0" }
-if ([string]::IsNullOrWhiteSpace($env:SYNAPSE_OLLAMA_NUM_CTX)) { $env:SYNAPSE_OLLAMA_NUM_CTX = "2048" }
+# Let the backend's .env loader resolve GPU layers and context. Python owns
+# their CPU/context defaults; explicit inherited environment values still win.
 if ([string]::IsNullOrWhiteSpace($env:SYNAPSE_OLLAMA_KEEP_ALIVE)) { $env:SYNAPSE_OLLAMA_KEEP_ALIVE = "5m" }
 if ([string]::IsNullOrWhiteSpace($env:SYNAPSE_TRANSCRIPTION_DEVICE)) { $env:SYNAPSE_TRANSCRIPTION_DEVICE = "cpu" }
 if ([string]::IsNullOrWhiteSpace($env:SYNAPSE_VOICE_EMBED_BATCH_SIZE)) { $env:SYNAPSE_VOICE_EMBED_BATCH_SIZE = "16" }
@@ -304,7 +327,7 @@ try {
             Start-Sleep -Milliseconds 250
         }
         if (-not $backend.HasExited) {
-            Write-Host "Backend is alive. Voice and transcription models are warming in parallel."
+            Write-Host "Backend is alive. Voice, transcription, VLM and remote Mistral warm independently when configured."
             Show-Status
         }
         $lastReadinessSignature = ""

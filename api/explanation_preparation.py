@@ -31,6 +31,7 @@ from api.explanation_service import (
     generate_explanation_from_evidence,
     prepare_visual_evidence,
     PreparationCancelledError,
+    InvalidPreparedArtifactError,
 )
 from api.models import (
     Explanation, ExplanationPreparation, Intervention, ProcessingJob, Video,
@@ -92,10 +93,6 @@ class PreparationRetryExhaustedError(RuntimeError):
         self.attempt_count = attempt_count
 
 
-class InvalidPreparedArtifactError(RuntimeError):
-    """Generation returned without creating a complete servable cache."""
-
-
 @dataclass(frozen=True)
 class PreparationJob:
     video_id: str
@@ -107,6 +104,60 @@ class PreparationJob:
     @property
     def key(self) -> tuple[str, str, str]:
         return (self.video_id, self.intervention_id, self.output_mode)
+
+
+class _PreparationQueue(queue.Queue):
+    """Stable priority at dispatch, including promotion of already queued work."""
+
+    def __init__(self, priorities, maxsize=0, wait_for_priority=False, priority_order=None, deferred=None):
+        self.priorities = priorities
+        self.priority_order = priority_order if priority_order is not None else {}
+        self.deferred = deferred if deferred is not None else set()
+        self.wait_for_priority = wait_for_priority
+        super().__init__(maxsize)
+
+    def get(self, block=True, timeout=None):
+        # Keep synthesis available for an explicit request whose evidence is
+        # still preparing, rather than starting another background generation.
+        if not self.wait_for_priority or not block:
+            return super().get(block, timeout)
+        deadline = time.monotonic() + timeout if timeout is not None else None
+        with self.not_empty:
+            while True:
+                foreground = any(item is not None and getattr(item, "job", item).key in self.priorities for item in self.queue)
+                stopping = any(item is None for item in self.queue)
+                runnable_priority = self.priorities - self.deferred
+                if self._qsize() and (not runnable_priority or foreground or stopping):
+                    item = self._get()
+                    self.not_full.notify()
+                    return item
+                remaining = deadline - time.monotonic() if deadline is not None else 0.1
+                if deadline is not None and remaining <= 0:
+                    raise queue.Empty
+                self.not_empty.wait(min(remaining, 0.1))
+
+    def displace_background(self):
+        """Move one ready background checkpoint out to make room for a request."""
+        with self.mutex:
+            for item in reversed(self.queue):
+                if item is not None and item.job.key not in self.priorities:
+                    self.queue.remove(item)
+                    self.unfinished_tasks -= 1
+                    if not self.unfinished_tasks:
+                        self.all_tasks_done.notify_all()
+                    self.not_full.notify()
+                    return item
+        return None
+
+    def _get(self):
+        candidates = [item for item in self.queue if item is not None
+            and getattr(item, "job", item).key in self.priorities]
+        if candidates:
+            item = min(candidates, key=lambda entry: self.priority_order.get(
+                getattr(entry, "job", entry).key, datetime.max))
+            self.queue.remove(item)
+            return item
+        return super()._get()
 
 
 @dataclass(frozen=True)
@@ -138,6 +189,8 @@ class PreparationSnapshot:
     status: str
     error_code: Optional[str]
     attempt_count: int
+    requested: bool = True
+    retryable: bool = False
 
 
 @dataclass(frozen=True)
@@ -215,15 +268,20 @@ class ExplanationPreparationManager:
         if shutdown_grace < 0:
             raise ValueError("shutdown_grace_seconds cannot be negative")
         self._shutdown_grace_seconds = shutdown_grace
-        self._queue: queue.Queue[Optional[PreparationJob]] = queue.Queue()
-        self._explanation_queue: queue.Queue[Optional[_ExplanationWork]] = queue.Queue(
-            maxsize=EXPLANATION_QUEUE_CAPACITY
+        self._priority_keys: set[tuple[str, str, str]] = set()
+        self._priority_order = {}
+        self._deferred_keys = set()
+        self._queue = _PreparationQueue(self._priority_keys, priority_order=self._priority_order)
+        self._explanation_queue = _PreparationQueue(
+            self._priority_keys, maxsize=EXPLANATION_QUEUE_CAPACITY, wait_for_priority=True,
+            priority_order=self._priority_order, deferred=self._deferred_keys,
         )
         self._scheduled: set[tuple[str, str, str]] = set()
         self._active_leases: set[tuple[str, str]] = set()
         self._tracked_leases: dict[str, _TrackedLease] = {}
         self._state_lock = threading.Lock()
         self._stop_event = threading.Event()
+        self._dispatch_ready = threading.Event()
         self._shutdown_started = False
         self._thread: Optional[threading.Thread] = None
         self._explanation_thread: Optional[threading.Thread] = None
@@ -242,13 +300,14 @@ class ExplanationPreparationManager:
     def max_attempts(self) -> int:
         return self._max_attempts
 
-    def start(self) -> None:
+    def start(self, before_dispatch=None) -> None:
         with self._state_lock:
             if self._shutdown_started:
                 raise RuntimeError("Explanation preparation manager has been shut down")
             if self._thread is not None and self._thread.is_alive():
                 return
             self._stop_event.clear()
+            self._dispatch_ready.clear()
             self._worker_id = str(uuid.uuid4())
             thread = threading.Thread(
                 target=self._run_evidence_worker,
@@ -270,11 +329,15 @@ class ExplanationPreparationManager:
             self._maintenance_thread = maintenance_thread
         try:
             self._recover_tracked_jobs()
-            maintenance_thread.start()
             thread.start()
             explanation_thread.start()
+            if before_dispatch is not None:
+                before_dispatch()
+            self._dispatch_ready.set()
+            maintenance_thread.start()
         except Exception:
             self._stop_event.set()
+            self._dispatch_ready.set()
             with self._state_lock:
                 self._thread = None
                 self._explanation_thread = None
@@ -296,6 +359,7 @@ class ExplanationPreparationManager:
                 return 0
             intervention_rows = db.query(Intervention).filter(
                 Intervention.video_id == video_id,
+                Intervention.origin == "detected",
             ).order_by(
                 Intervention.timestamp.asc(),
                 Intervention.id.asc(),
@@ -307,7 +371,8 @@ class ExplanationPreparationManager:
                     db, intervention.id, output_mode, self._data_dir
                 )
                 if cached is not None:
-                    self._set_ready_state(db, job, state, now)
+                    if state is None or state.status != "generating":
+                        self._set_ready_state(db, job, state, now)
                     continue
 
                 if state is None:
@@ -335,6 +400,7 @@ class ExplanationPreparationManager:
                 ExplanationPreparation.status.in_(("pending", "generating")),
             ).update({
                 ExplanationPreparation.status: "cancelled",
+                ExplanationPreparation.priority_at: None,
                 ExplanationPreparation.stage: "cancelled",
                 ExplanationPreparation.error_code: None,
                 ExplanationPreparation.failure_reason: "video_cancelled",
@@ -347,6 +413,10 @@ class ExplanationPreparationManager:
             db.commit()
         release_terminal_video_slot(self._session_factory, video_id)
         self._invalidate_video_leases(video_id)
+        with self._state_lock:
+            for key in list(self._priority_keys):
+                if key[0] == video_id:
+                    self._forget_priority(key)
         trace_stage("video_cancellation", "preparations_fenced", video_id=video_id,
                     preparation_count=changed,
                     local_abort="unsupported_in_flight" if was_inflight else "not_running")
@@ -388,6 +458,7 @@ class ExplanationPreparationManager:
                 raise ExplanationTargetNotFoundError("Video not found")
             interventions = db.query(Intervention).filter(
                 Intervention.video_id == video_id,
+                Intervention.origin == "detected",
             ).order_by(
                 Intervention.timestamp.asc(),
                 Intervention.id.asc(),
@@ -396,6 +467,7 @@ class ExplanationPreparationManager:
             for intervention in interventions:
                 job = PreparationJob(video_id, intervention.id, output_mode)
                 state = self._get_state(db, job)
+                has_cache_row = False
                 cached = find_valid_cached_explanation(
                     db, intervention.id, output_mode, self._data_dir
                 )
@@ -418,16 +490,74 @@ class ExplanationPreparationManager:
                     status=status,
                     error_code=error_code,
                     attempt_count=state.attempt_count if state is not None else 0,
+                    requested=state is not None or cached is not None or has_cache_row,
+                    retryable=status == "failed" and (state is None or (
+                        state.attempt_count < self._max_attempts and state.failure_reason not in PERMANENT_FAILURE_REASONS
+                    )),
                 ))
             return snapshots
 
+    def request(self, video_id: str, intervention_id: str, output_mode: str, *, requested_at=None) -> RetryResult:
+        """Admit one explicit request through the existing durable worker pipeline."""
+        self._require_running()
+        self._validate_mode(output_mode)
+        job = PreparationJob(video_id, intervention_id, output_mode)
+        with self._session_factory() as db:
+            self._load_intervention(db, job)
+            cached = find_valid_cached_explanation(
+                db, intervention_id, output_mode, self._data_dir
+            )
+            state = self._get_state(db, job)
+            if cached is not None:
+                return RetryResult("ready", None, state.attempt_count if state else 0)
+            if state is not None and state.status == "failed":
+                return RetryResult(state.status, state.error_code, state.attempt_count)
+            if state is not None and state.status == "ready":
+                return RetryResult("failed", "missing_audio", state.attempt_count)
+        admitted = self._admit_manual(job, restart_cancelled=True)
+        if not admitted:
+            return RetryResult("ready", None, 0)
+        self._promote(job, requested_at)
+        queued = self._enqueue(job)
+        with self._session_factory() as db:
+            state = self._get_state(db, job)
+            return RetryResult(state.status, state.error_code, state.attempt_count, queued=queued)
+
     def retry(self, video_id: str, intervention_id: str, output_mode: str) -> RetryResult:
+        result = self._retry(video_id, intervention_id, output_mode)
+        if result.status in {"pending", "generating"}:
+            job = PreparationJob(video_id, intervention_id, output_mode)
+            self._promote(job)
+            self._enqueue(job)
+        return result
+
+    def _forget_priority(self, key):
+        """Forget terminal dispatch metadata while the state lock is held."""
+        self._priority_keys.discard(key)
+        self._priority_order.pop(key, None)
+        self._deferred_keys.discard(key)
+
+    def _promote(self, job, requested_at=None):
+        with self._session_factory() as db:
+            state = self._get_state(db, job)
+            if state is None or state.status not in {"pending", "generating"}:
+                return
+            state.priority_at = state.priority_at or requested_at or _utcnow()
+            requested_at = state.priority_at
+            deferred = state.stage == STAGE_WAITING_FOR_VLM
+            db.commit()
+        with self._state_lock:
+            self._priority_order[job.key] = requested_at
+            self._priority_keys.add(job.key)
+            if deferred:
+                self._deferred_keys.add(job.key)
+
+    def _retry(self, video_id: str, intervention_id: str, output_mode: str) -> RetryResult:
         """Requeue exactly one failed key without waiting for generation."""
         self._require_running()
         self._validate_mode(output_mode)
         job = PreparationJob(video_id, intervention_id, output_mode)
         now = _utcnow()
-
         with self._session_factory() as db:
             intervention = self._load_intervention(db, job)
             cached = find_valid_cached_explanation(
@@ -596,7 +726,7 @@ class ExplanationPreparationManager:
             if owns_slot:
                 release_terminal_video_slot(self._session_factory, video_id)
 
-    def _admit_manual(self, job: PreparationJob) -> bool:
+    def _admit_manual(self, job: PreparationJob, *, restart_cancelled: bool = False) -> bool:
         """Create durable preparation state and acquire the video slot atomically."""
         now = _utcnow()
         for _attempt in range(3):
@@ -607,7 +737,8 @@ class ExplanationPreparationManager:
                     db, job.intervention_id, job.output_mode, self._data_dir
                 )
                 if cached is not None:
-                    self._set_ready_state(db, job, state, now)
+                    if state is None or state.status != "generating":
+                        self._set_ready_state(db, job, state, now)
                     db.commit()
                     return False
 
@@ -621,6 +752,13 @@ class ExplanationPreparationManager:
                 video = db.get(Video, job.video_id) if video_job is None else None
                 if state is None:
                     db.add(self._new_state(job, status="pending"))
+                elif restart_cancelled and state.status == "cancelled":
+                    # Explicit request after reopening; the old attempt remains fenced.
+                    state.status = "pending"
+                    state.stage = STAGE_PENDING
+                    state.error_code = None
+                    state.failure_reason = None
+                    state.updated_at = now
 
                 if video_job is None:
                     video_job = ProcessingJob(
@@ -728,14 +866,24 @@ class ExplanationPreparationManager:
         return not alive
 
     def _run_evidence_worker(self) -> None:
+        self._dispatch_ready.wait()
+        if self._stop_event.is_set():
+            return
         while True:
-            job = self._queue.get()
-            if job is None:
+            entry = self._queue.get()
+            if entry is None:
                 self._queue.task_done()
                 break
+            parked = entry if isinstance(entry, _ExplanationWork) else None
+            job = parked.job if parked is not None else entry
             lease = None
             handed_off = False
             try:
+                if parked is not None:
+                    lease = parked.lease
+                    if self._holds_lease(job, lease.owner):
+                        handed_off = self._hand_off(parked)
+                    continue
                 lease = self._claim(job)
                 if lease is not None:
                     self._track_lease(job, lease)
@@ -765,6 +913,9 @@ class ExplanationPreparationManager:
                 self._queue.task_done()
 
     def _run_explanation_worker(self) -> None:
+        self._dispatch_ready.wait()
+        if self._stop_event.is_set():
+            return
         while True:
             work = self._explanation_queue.get()
             if work is None:
@@ -846,6 +997,18 @@ class ExplanationPreparationManager:
                 trace_stage("explanation_queue", "entered")
                 return True
             except queue.Full:
+                if work.job.key in self._priority_keys:
+                    displaced = self._explanation_queue.displace_background()
+                    if displaced is not None:
+                        self._queue.put(displaced)
+                else:
+                    with self._queue.mutex:
+                        foreground_waiting = any(entry is not None and getattr(entry, "job", entry).key in self._priority_keys for entry in self._queue.queue)
+                    if foreground_waiting:
+                        # Retain the prepared checkpoint and lease; let the
+                        # evidence worker dispatch the explicit request next.
+                        self._queue.put(work)
+                        return True
                 continue
         return False
 
@@ -884,6 +1047,9 @@ class ExplanationPreparationManager:
         with self._state_lock:
             retry_after = self._provider_retry_after
             probe_key = self._provider_probe_key
+            if job.key in self._priority_keys and probe_key not in self._priority_keys:
+                self._provider_probe_key = job.key
+                probe_key = job.key
         if probe_key is not None and probe_key != job.key:
             return False
         if time.monotonic() < retry_after:
@@ -982,6 +1148,7 @@ class ExplanationPreparationManager:
 
     def _activate(self, job: PreparationJob, lease: _Lease) -> None:
         with self._state_lock:
+            self._deferred_keys.discard(job.key)
             self._active_leases.add((job.video_id, lease.owner))
 
     def _deactivate(self, job: PreparationJob, lease: _Lease) -> None:
@@ -1020,6 +1187,9 @@ class ExplanationPreparationManager:
         with self._session_factory() as db:
             state = self._get_state(db, job)
             if state is None or state.status != "pending":
+                if state is None or state.status in {"ready", "failed", "cancelled"}:
+                    with self._state_lock:
+                        self._forget_priority(job.key)
                 return None
             if (
                 state.stage == STAGE_WAITING_FOR_VLM
@@ -1033,10 +1203,14 @@ class ExplanationPreparationManager:
             if cached is not None:
                 self._set_ready_state(db, job, state, now)
                 db.commit()
+                with self._state_lock:
+                    self._forget_priority(job.key)
                 return None
             if state.attempt_count >= self._max_attempts:
                 self._set_failed_state(state, now, "retry_exhausted")
                 db.commit()
+                with self._state_lock:
+                    self._forget_priority(job.key)
                 return None
             lease_owner = f"{self._worker_id}:worker:{uuid.uuid4()}"
             previous_attempts = state.attempt_count
@@ -1080,14 +1254,15 @@ class ExplanationPreparationManager:
                 db, job.intervention_id, job.output_mode, self._data_dir
             )
             if cached is not None:
-                self._set_ready_state(db, job, state, now)
+                if state is None or state.status != "generating":
+                    self._set_ready_state(db, job, state, now)
                 db.commit()
                 return None
             if state is not None and state.status == "generating":
                 return None
             if state is not None and state.status == "cancelled":
                 raise PreparationCancelledError("Video preparation is cancelled")
-            if state is not None and state.attempt_count >= self._max_attempts:
+            if state is not None and state.status != "ready" and state.attempt_count >= self._max_attempts:
                 raise PreparationRetryExhaustedError(state.attempt_count)
             if state is None:
                 state = self._new_state(job, status="pending")
@@ -1099,18 +1274,19 @@ class ExplanationPreparationManager:
                     return None
             lease_owner = f"{self._worker_id}:manual:{uuid.uuid4()}"
             previous_attempts = state.attempt_count
+            next_attempt = 1 if state.status == "ready" else previous_attempts + 1
             state_id = state.id
             claimed = db.execute(
                 update(ExplanationPreparation)
                 .where(
                     ExplanationPreparation.id == state_id,
-                    ExplanationPreparation.status.in_(("pending", "failed")),
+                    ExplanationPreparation.status.in_(("pending", "failed", "ready")),
                     ExplanationPreparation.attempt_count == previous_attempts,
                 )
                 .values(
                     status="generating",
                     stage=STAGE_EXTRACTING,
-                    attempt_count=previous_attempts + 1,
+                    attempt_count=next_attempt,
                     error_code=None,
                     failure_reason=None,
                     lease_owner=lease_owner,
@@ -1123,7 +1299,7 @@ class ExplanationPreparationManager:
             db.commit()
             if claimed != 1:
                 return None
-            return _Lease(lease_owner, str(state_id), previous_attempts + 1)
+            return _Lease(lease_owner, str(state_id), next_attempt)
 
     def _wait_for_existing(self, job: PreparationJob) -> ExplanationArtifact:
         """Join the durable owner instead of duplicating work in another process."""
@@ -1181,6 +1357,8 @@ class ExplanationPreparationManager:
                 raise PreparationCancelledError("Preparation lease was cancelled or superseded")
             self._set_ready_state(db, job, state, now)
             db.commit()
+        with self._state_lock:
+            self._forget_priority(job.key)
         release_terminal_video_slot(self._session_factory, job.video_id)
         self.timeline.append(
             (time.monotonic(), job.intervention_id, job.output_mode, STAGE_READY)
@@ -1202,6 +1380,8 @@ class ExplanationPreparationManager:
                 return
             self._set_failed_state(state, now, self._safe_error_code(exc), reason)
             db.commit()
+        with self._state_lock:
+            self._forget_priority(job.key)
         release_terminal_video_slot(self._session_factory, job.video_id)
         self.timeline.append(
             (time.monotonic(), job.intervention_id, job.output_mode, STAGE_FAILED)
@@ -1248,6 +1428,7 @@ class ExplanationPreparationManager:
             state.updated_at = now
             if terminal:
                 state.status = "failed"
+                state.priority_at = None
                 state.stage = STAGE_FAILED
                 state.deferred_until = None
                 state.failed_at = now
@@ -1263,10 +1444,13 @@ class ExplanationPreparationManager:
                 self._provider_retry_after,
                 time.monotonic() + self._vlm_retry_seconds,
             )
+            self._deferred_keys.add(job.key)
             if self._provider_probe_key is None:
                 self._provider_probe_key = job.key
             if terminal and self._provider_probe_key == job.key:
                 self._provider_probe_key = None
+            if terminal:
+                self._forget_priority(job.key)
         if terminal:
             release_terminal_video_slot(self._session_factory, job.video_id)
         return changed
@@ -1285,6 +1469,12 @@ class ExplanationPreparationManager:
             ).all()
             for state, _timestamp in rows:
                 videos_seen.add(state.video_id)
+                if state.priority_at and state.status in {"pending", "generating"}:
+                    key = (state.video_id, state.intervention_id, state.output_mode)
+                    self._priority_keys.add(key)
+                    self._priority_order[key] = state.priority_at
+                    if state.stage == STAGE_WAITING_FOR_VLM:
+                        self._deferred_keys.add(key)
                 if state.status == "generating":
                     continue
                 if state.status == "cancelled":
@@ -1362,6 +1552,7 @@ class ExplanationPreparationManager:
             release_terminal_video_slot(self._session_factory, video_id)
         if to_queue:
             with self._state_lock:
+                to_queue.sort(key=lambda item: self._priority_order.get(item.key, datetime.max))
                 if self._provider_probe_key is None:
                     self._provider_probe_key = to_queue[0].key
         for job in to_queue:
@@ -1601,6 +1792,10 @@ class ExplanationPreparationManager:
     def _set_recoverable_or_exhausted(
         self, state: ExplanationPreparation, now: datetime, error_code: str
     ) -> None:
+        if state.status == "ready":
+            # A completed artifact that is missing/stale starts a new generation
+            # cycle; successful historical attempts are not failed retries.
+            state.attempt_count = 0
         if state.attempt_count >= self._max_attempts:
             self._set_failed_state(state, now, "retry_exhausted")
             return
@@ -1623,6 +1818,7 @@ class ExplanationPreparationManager:
         failure_reason: Optional[str] = None,
     ) -> None:
         state.status = "failed"
+        state.priority_at = None
         state.stage = STAGE_FAILED
         state.error_code = error_code
         state.failure_reason = failure_reason or error_code
@@ -1645,6 +1841,7 @@ class ExplanationPreparationManager:
             state = self._new_state(job, status="ready")
             db.add(state)
         state.status = "ready"
+        state.priority_at = None
         state.stage = STAGE_READY
         state.error_code = None
         state.failure_reason = None

@@ -1,3 +1,4 @@
+from explanation_cache import generation_manifest, write_manifest
 """Focused REL-008/009 slot reconciliation and preparation shutdown tests."""
 
 import tempfile
@@ -226,6 +227,7 @@ class FinalLifecycleTests(unittest.TestCase):
             calls.append("recovered")
             audio = self.root / "recovered.mp3"
             audio.write_bytes(b"ID3-recovered")
+            write_manifest(audio, generation_manifest("recovered", audio))
             with self.Session() as db:
                 db.add(Explanation(
                     intervention_id="point-0",
@@ -259,6 +261,11 @@ class FinalLifecycleTests(unittest.TestCase):
             # Attempt 2 was the interrupted owner; the recovered owner is 3.
             self.assertEqual((state.status, state.attempt_count), ("ready", 3))
         self.assertEqual(calls, ["recovered"])
+        # Ready is committed before the separate terminal-slot release. Observe
+        # that asynchronous lifecycle step rather than racing its transaction.
+        deadline = time.monotonic() + 2
+        while self.active_slot() is not None and time.monotonic() < deadline:
+            time.sleep(0.01)
         self.assertIsNone(self.active_slot())
 
     def test_shutdown_during_blocked_mistral_or_tts_fences_late_result(self):

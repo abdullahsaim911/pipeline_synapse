@@ -49,6 +49,11 @@ class FakeOrchestrator:
 
 class VideoPersistenceTests(unittest.TestCase):
     def setUp(self):
+        # Provider work is fake here; host RAM pressure from an unrelated live
+        # evaluation must not change a database-persistence test's admission.
+        headroom = mock.patch.object(video_module, "require_processing_headroom")
+        headroom.start()
+        self.addCleanup(headroom.stop)
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         database_path = os.path.join(self.temp.name, "test.sqlite")

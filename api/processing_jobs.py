@@ -25,6 +25,7 @@ from api.models import (
     Explanation,
     ExplanationPreparation,
     Intervention,
+    LectureSessionInterest,
     ProcessingJob,
     ProcessingJobRequestedMode,
     Transcript,
@@ -131,10 +132,10 @@ def inspect_video_cache(db: Session, video_id: str) -> CacheInspection:
             not intervention.id
             or intervention.timestamp is None
             or intervention.timestamp < 0
-            or not intervention.frame_path
+            or (not intervention.frame_path and intervention.evidence_kind == "visual")
         ):
             return CacheInspection("invalid", "invalid_intervention")
-        if _frame_is_missing(intervention.frame_path):
+        if intervention.frame_path and _frame_is_missing(intervention.frame_path):
             return CacheInspection("invalid", "missing_intervention_media")
     return CacheInspection("valid")
 
@@ -430,6 +431,9 @@ def release_terminal_video_slot(session_factory, video_id: str) -> bool:
             )
             .values(active_slot=None, updated_at=_utcnow())
         ).rowcount
+        if released:
+            db.query(LectureSessionInterest).filter_by(video_id=video_id, state="continuing").update(
+                {LectureSessionInterest.state: "released"}, synchronize_session=False)
         db.commit()
         return released == 1
 
@@ -814,12 +818,12 @@ class ProcessingJobManager:
             video_id = job.video_id
             trace_stage("video_cancellation", "requested", video_id=video_id,
                         active_stage=job.stage, attempt=job.attempt_count)
-            if job.status in {"cancelled", "failed"}:
-                return serialize_job(job, requested_modes=_requested_modes(db, job))
             unfinished = db.query(ExplanationPreparation.id).filter(
                 ExplanationPreparation.video_id == video_id,
                 ExplanationPreparation.status.in_(("pending", "generating")),
             ).first() is not None
+            if job.status in {"cancelled", "failed"} and not unfinished:
+                return serialize_job(job, requested_modes=_requested_modes(db, job))
             if job.status == "succeeded" and not unfinished:
                 return serialize_job(job, requested_modes=_requested_modes(db, job))
             if job.status in {"queued", "running", "succeeded", "failed", "cancelling"}:
@@ -1277,6 +1281,12 @@ class ProcessingJobManager:
     def _schedule_modes(self, video_id: str, modes: list[str]) -> None:
         if self.preparation_manager is None or self._stop_event.is_set():
             return
+        context_ready = getattr(self, "context_ready", None)
+        if context_ready is not None:
+            try:
+                context_ready(video_id)
+            except Exception:
+                logger.exception("Owned request reconciliation will retry from durable state")
         for output_mode in modes:
             try:
                 self.preparation_manager.schedule_video(video_id, output_mode)
@@ -1380,6 +1390,8 @@ class ProcessingJobManager:
                 ).first() is not None
                 if not unfinished:
                     job.active_slot = None
+                    db.query(LectureSessionInterest).filter_by(video_id=job.video_id, state="continuing").update(
+                        {LectureSessionInterest.state: "released"}, synchronize_session=False)
                     job.updated_at = _utcnow()
                     changed = True
             if changed:

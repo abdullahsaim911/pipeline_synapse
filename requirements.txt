@@ -28,6 +28,7 @@ faster-whisper>=1.0.0
 # =============================================================================
 sentence-transformers>=2.2.0
 requests>=2.31.0
+jsonschema>=4.25.1,<5
 
 # =============================================================================
 # VLM Module Dependencies
@@ -48,6 +49,7 @@ sqlalchemy>=2.0.36
 alembic>=1.14.0
 psycopg[binary]>=3.2.0
 python-multipart>=0.0.12
+argon2-cffi>=23.1.0
 
 # Hosted LLM provider and environment loading for Q&A / quiz
 google-genai>=1.0.0

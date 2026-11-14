@@ -1,3 +1,4 @@
+from explanation_cache import generation_manifest, write_manifest
 """Secure explanation-audio delivery and response compatibility tests."""
 
 import tempfile
@@ -82,6 +83,7 @@ class ExplanationAudioTests(unittest.TestCase):
         audio = self.data_dir / VIDEO_ID / "interventions" / "11111111" / "explanatory.mp3"
         audio.parent.mkdir(parents=True)
         audio.write_bytes(b"ID3\x04synapse-test")
+        write_manifest(audio, generation_manifest("Readable explanation text.", audio))
         self.add_explanation(audio)
 
         response = self.client.get(self.audio_endpoint())
@@ -128,6 +130,7 @@ class ExplanationAudioTests(unittest.TestCase):
         audio = self.data_dir / VIDEO_ID / "interventions" / "11111111" / "explanatory.mp3"
         audio.parent.mkdir(parents=True)
         audio.write_bytes(b"ID3")
+        write_manifest(audio, generation_manifest("Readable explanation text.", audio))
         self.add_explanation(audio)
 
         with mock.patch.object(video_module, "get_orchestrator") as get_orchestrator:

@@ -23,6 +23,10 @@ from api.routers import video as video_module
 from api.routers.quiz import router as quiz_router
 from api.logging_setup import configure_ask_logging
 from api.security import configure_cors
+from api.auth import router as auth_router
+from api.routers.personal_storage import router as personal_storage_router
+from api.routers.explanation_requests import router as explanation_requests_router
+from api.on_demand import OnDemandExplanations
 from stage_tracing import trace_stage
 from voice.lifecycle import VoiceWarmup
 from voice.routes import router as voice_router, shutdown_voice_runtime
@@ -39,18 +43,23 @@ async def lifespan(app: FastAPI):
     startup_started = time.monotonic()
     trace_stage("backend", "startup")
     require_current_schema(engine)
+    from api.personal_storage import reconcile_media
+    with SessionLocal() as media_db:
+        reconcile_media(media_db)
     # Warming runs in the background so an unavailable Modal never delays
     # startup. The VLM worker re-checks readiness before each extraction.
     warmup = ModalWarmup()
     warmup.start()
     app.state.model_warmup = warmup
+    mistral_warmup = ModalWarmup.for_mistral()
+    mistral_warmup.start()
+    app.state.mistral_warmup = mistral_warmup
     preparation = ExplanationPreparationManager(
         session_factory=SessionLocal,
         orchestrator_factory=video_module.get_orchestrator,
         data_dir=video_module.get_data_dir(),
         before_inference=warmup.ensure_ready_for_inference,
     )
-    preparation.start()
     app.state.explanation_preparation = preparation
     processing = ProcessingJobManager(
         session_factory=SessionLocal,
@@ -59,8 +68,13 @@ async def lifespan(app: FastAPI):
         video_id_extractor=extract_youtube_video_id,
         admission_guard=require_processing_headroom,
     )
-    processing.start()
     app.state.processing_jobs = processing
+    requests = OnDemandExplanations(SessionLocal, preparation, processing)
+    processing.context_ready = requests.source_ready
+    app.state.on_demand_explanations = requests
+    preparation.start(before_dispatch=requests.maintain)
+    processing.start()
+    requests.start()
     voice_warmup = VoiceWarmup()
     voice_warmup.start()
     app.state.voice_warmup = voice_warmup
@@ -72,14 +86,17 @@ async def lifespan(app: FastAPI):
         yield
     finally:
         shutdown_started = time.monotonic()
+        requests.shutdown()
         trace_stage("backend", "shutdown_started")
         preparation.begin_shutdown()
         warmup.request_stop()
+        mistral_warmup.request_stop()
         voice_warmup.request_stop()
         transcription_warmup.request_stop()
         processing.shutdown()
         preparation.shutdown()
         warmup.stop()
+        mistral_warmup.stop()
         voice_warmup.stop()
         transcription_warmup.stop()
         shutdown_voice_runtime()
@@ -111,6 +128,9 @@ configure_cors(app)
 app.include_router(video_router)
 app.include_router(quiz_router)
 app.include_router(learning_history_router)
+app.include_router(personal_storage_router)
+app.include_router(explanation_requests_router)
+app.include_router(auth_router)
 app.include_router(voice_router)
 
 
@@ -148,6 +168,7 @@ async def readiness_check(response: Response):
             "voice": voice_status,
             "transcription": transcription_status,
             "modal": getattr(app.state.model_warmup, "status", "unavailable"),
+            "mistral": getattr(getattr(app.state, "mistral_warmup", None), "status", "disabled"),
         },
     }
 

@@ -227,7 +227,7 @@ def test_mixed_category_cross_relation_is_preserved_and_matched():
         _plan(evidence, "Equation y equals x squared corresponds to Curve y."),
         "corresponds to", fact_type="relation",
     )
-    assert fact["transcript_coverage"] == "spoken_explicit"
+    assert fact["transcript_coverage"] == "spoken_partial"  # The "same y" label was not spoken.
     assert fact["category_ids"] == ["CT-02", "CT-01"]
 
 
@@ -238,7 +238,8 @@ def test_deictic_empty_partial_and_failed_evidence_use_safe_labels():
     partial = copy.deepcopy(supported)
     partial["extraction_status"] = "partial"
     fact = _find_fact(_plan(partial, "The cerebrum is visible."), "Cerebrum")
-    assert fact["transcript_coverage"] == "uncertain_match"
+    # A partial frame does not invalidate this explicitly supported local fact.
+    assert fact["transcript_coverage"] == "spoken_explicit"
 
     failed = copy.deepcopy(supported)
     failed["extraction_status"] = "failed"
@@ -256,8 +257,8 @@ def test_plan_is_bounded_and_reports_omissions():
     )
     assert plan["fact_count"] == 3
     assert plan["truncated"] is True
-    assert plan["omitted_fact_count"] == 7
-    assert plan["total_fact_count"] == 10
+    assert plan["omitted_fact_count"] == 8
+    assert plan["total_fact_count"] == 11  # Ten components and the supplied scene overview.
 
 
 def test_all_mistral_modes_receive_same_compact_coverage_plan():
@@ -367,7 +368,7 @@ def evaluation_cases():
         EvaluationCase("mixed-relation", mixed, "Equation y equals x squared corresponds to Curve y.", "corresponds to", "relation", "spoken_explicit"),
         EvaluationCase("deictic", brain, "Look here at this.", "Visible component: Cerebellum", "component", "unspoken"),
         EvaluationCase("empty", brain, "", "Visible component: Cerebellum", "component", "unspoken"),
-        EvaluationCase("partial-evidence", partial, "The cerebellum is shown.", "Visible component: Cerebellum", "component", "uncertain_match"),
+        EvaluationCase("partial-frame-supported-local", partial, "The cerebellum is shown.", "Visible component: Cerebellum", "component", "spoken_explicit"),
     ]
 
 
@@ -405,4 +406,194 @@ def test_held_out_synthetic_evaluation_metrics():
     assert selected == {"precision": 1.0, "recall": 1.0, "false_matches": 0, "false_omissions": 0}
     assert naive["false_matches"] > selected["false_matches"]
     assert runtime_ms < 100.0
+
+
+def test_exact_text_and_repeated_descriptions_deduplicate_only_at_same_source():
+    evidence = _evidence("CT-06", elements=[
+        _element("a", "Rate", "CT-06", kind="text_label", exact_text="Rate"),
+        _element("b", "Rate", "CT-06", kind="text_label", exact_text="Rate"),
+    ], exact=[{"text": "Rate", "status": "supported", "notation": "plain", "source_ref": "a"}] * 2)
+    original = copy.deepcopy(evidence)
+    plan = _plan(evidence, "Rate is shown.")
+    exact = [fact for fact in plan["facts"] if fact["fact_type"] == "exact_content"]
+    assert len(exact) == 2
+    assert {tuple(fact["source_refs"]) for fact in exact} == {("a",), ("b",)}
+    assert not [fact for fact in plan["facts"] if fact["fact_type"] == "component"]
+    assert all(fact["transcript_coverage"] != "spoken_explicit" for fact in exact)
+    assert evidence == original
+
+
+def test_descriptions_and_hierarchy_keep_meaning_and_combined_provenance():
+    child = _element("part", "Part", "CT-03", parent_id="body")
+    child["description"] = "The Part has a curved boundary."
+    evidence = _evidence("CT-03", elements=[child, _element("body", "Body", "CT-03")], relations=[{
+        "id": "membership", "source_id": "part", "target_id": "body", "relation": "child_of",
+        "directed": True, "evidence_status": "supported",
+    }], structure={"component_ids": ["part"], "topology_notes": [child["description"]]})
+    plan = _plan(evidence, "")
+    assert len([fact for fact in plan["facts"] if child["description"] in fact["description"]]) == 1
+    hierarchy = [fact for fact in plan["facts"] if fact["fact_type"] == "hierarchy"]
+    assert len(hierarchy) == 1
+    assert hierarchy[0]["description"] == "Part is part of Body"  # Parent appears later in source order.
+    assert hierarchy[0]["source_refs"] == ["part", "body", "membership"]
+
+
+@pytest.mark.parametrize("transcript", [
+    "Valid and Accept are shown. Another node branches to Exit on Yes.",
+    "Valid branches to Reject on Yes; Accept is shown.",
+    "Valid does not branch to Accept on Yes.",
+    "Valid branches to Accept on No.",
+    "Yes is a branch. Valid and Accept are the nodes.",
+])
+def test_topic_negation_wrong_endpoint_or_branch_is_not_explicit_coverage(transcript):
+    fact = _find_fact(_plan(_flow_evidence(), transcript), "branches to", fact_type="relation")
+    assert fact["transcript_coverage"] != "spoken_explicit"
+    assert fact["missing_information"]
+
+
+@pytest.mark.parametrize("transcript", [
+    "Valid is branching to Accept on Yes.",
+    "Accept is reached from Valid on Yes.",
+    "From Valid, go to Accept on Yes.",
+])
+def test_closed_relation_paraphrases_preserve_endpoint_roles(transcript):
+    fact = _find_fact(_plan(_flow_evidence(), transcript), "branches to", fact_type="relation")
+    assert fact["transcript_coverage"] == "spoken_explicit"
+
+
+def test_inverse_spatial_relationship_and_clause_local_span():
+    evidence = _evidence("CT-07", elements=[_element("a", "A", "CT-07"), _element("b", "B", "CT-07")], relations=[{
+        "id": "order", "source_id": "a", "target_id": "b", "relation": "left_of",
+        "directed": False, "evidence_status": "supported",
+    }])
+    fact = _find_fact(_plan(evidence, "Earlier we talked about energy. B is right of A."), "left of", fact_type="relation")
+    assert fact["transcript_coverage"] == "spoken_explicit"
+    assert fact["supporting_transcript_span"] == "B is right of A"
+    wrong = _find_fact(_plan(evidence, "A is right of B."), "left of", fact_type="relation")
+    assert wrong["transcript_coverage"] != "spoken_explicit"
+
+
+@pytest.mark.parametrize(("visual", "notation", "transcript"), [
+    ("x <= 5", "math", "It is not x <= 5."),
+    ("x <= 5", "math", "x <= 50."),
+    ("x <= 5", "math", "x <= 5.1."),
+    ("x = 5", "math", "x = 5 + 1."),
+    ("5", "math", "- 5."),
+    ("x + y = z", "math", "y + x = z."),
+    ("x²", "math", "x2."),
+    ("(a+b)/c", "math", "a+b/c."),
+    ("print(A)", "code", "print(a)"),
+    ("if x:\n    run()", "code", "if x:\nrun()"),
+    ("    run()", "code", "        run()"),
+    ("Do not divide by zero.", "plain", "It is not true that you should Do not divide by zero."),
+])
+def test_exact_literals_preserve_case_scope_multiplicity_and_negation(visual, notation, transcript):
+    evidence = _evidence("CT-08" if notation == "code" else "CT-02", exact=[{
+        "text": visual, "status": "supported", "notation": notation, "source_ref": "scene",
+    }])
+    fact = _find_fact(_plan(evidence, transcript), visual, fact_type="exact_content")
+    assert fact["transcript_coverage"] != "spoken_explicit"
+
+
+def test_partial_local_evidence_and_explicit_uncertainty_remain_uncertain():
+    evidence = _evidence("CT-03", status="partial", elements=[
+        _element("clear", "Clear part", "CT-03"),
+        _element("partial", "Partial part", "CT-03", status="partially_supported"),
+        _element("ambiguous", "Ambiguous part", "CT-03", status="ambiguous_or_conflicting"),
+    ], uncertainties=[{"target_id": "clear", "reason": "The identity is uncertain."}])
+    plan = _plan(evidence, "Clear part is visible. Partial part is visible. Ambiguous part is visible.")
+    assert _find_fact(plan, "Visible component: Clear part")["transcript_coverage"] == "uncertain_match"
+    assert _find_fact(plan, "Visible component: Partial part")["transcript_coverage"] == "uncertain_match"
+    assert _find_fact(plan, "Visible component: Ambiguous part")["transcript_coverage"] == "not_usable"
+
+
+def test_cell_value_does_not_establish_its_header_associations():
+    cell = _element("cell", "Ada Score", "CT-05", kind="table_cell", exact_text="95",
+                    attributes={"row_header": "Ada", "column_header": "Score"})
+    evidence = _evidence("CT-05", elements=[cell])
+    assert _find_fact(_plan(evidence, "The value is 95."), "95", fact_type="exact_content")["transcript_coverage"] != "spoken_explicit"
+    assert _find_fact(_plan(evidence, "Ada has Score 95."), "95", fact_type="exact_content")["transcript_coverage"] == "spoken_explicit"
+
+
+def test_repeated_detail_cells_remain_distinct_and_mixed_categories_survive_bound():
+    evidence = _evidence("CT-05", details={"table": {"cells": [{"text": "0"}, {"text": "0"}]}})
+    cells = [fact for fact in _plan(evidence, "")["facts"] if fact["fact_type"] == "category_detail"]
+    assert len(cells) == 2
+    crowded = _evidence(["CT-02", "CT-09"], elements=[
+        _element(f"e{i}", f"Equation {i}", "CT-02", exact_text=f"x = {i}") for i in range(80)
+    ] + [_element("state", "Network", "CT-09", attributes={"state": "disabled"})])
+    plan = _plan(crowded, "")
+    assert plan["fact_count"] == 64
+    assert any(fact["source_refs"] == ["state"] for fact in plan["facts"])
+    assert plan["omitted_fact_count"] == plan["total_fact_count"] - 64
+    assert _find_fact(plan, "state is disabled")["importance"] == "critical"
+    assert plan == _plan(crowded, "")
+
+
+def test_internal_matching_metadata_does_not_expand_coverage_contract():
+    plan = _plan(_flow_evidence(), "Valid branches to Accept on Yes.")
+    fields = {"fact_id", "fact_type", "description", "source_refs", "category_ids", "importance",
+              "evidence_reliability", "evidence_status", "uncertainty_reasons", "transcript_coverage",
+              "supporting_transcript_span", "missing_information"}
+    assert all(set(fact) == fields for fact in plan["facts"])
+    assert plan["schema"] == "synapse_transcript_visual_coverage_v1"
+
+
+def test_attributes_and_cell_values_cannot_borrow_other_entities_predicates():
+    evidence = _evidence("CT-09", elements=[_element("control", "Control", "CT-09", attributes={"state": "disabled"})])
+    fact = _find_fact(_plan(evidence, "Control is shown; Button is disabled."), "state is disabled")
+    assert fact["transcript_coverage"] != "spoken_explicit"
+    cell = _element("cell", "Ada Score", "CT-05", kind="table_cell", exact_text="95",
+                    attributes={"row_header": "Ada", "column_header": "Score"})
+    value = _find_fact(_plan(_evidence("CT-05", elements=[cell]), "Ada has Score 90; Bob has 95."), "95", fact_type="exact_content")
+    assert value["transcript_coverage"] != "spoken_explicit"
+
+
+def test_relation_math_label_is_precise_and_reading_order_requires_each_transition():
+    evidence = _flow_evidence()
+    evidence["relations"][0]["label"] = "x² > 0"
+    fact = _find_fact(_plan(evidence, "Valid branches to Accept on x2 > 0."), "branches to", fact_type="relation")
+    assert fact["transcript_coverage"] != "spoken_explicit"
+    order = _evidence("CT-04", elements=[_element(ref, ref.upper(), "CT-04") for ref in ("a", "b", "c")],
+                      structure={"reading_order": ["a", "b", "c"]})
+    correct = _find_fact(_plan(order, "A then B then C."), "Reading order", fact_type="reading_order")
+    unrelated = _find_fact(_plan(order, "A and B and C are shown; D then E."), "Reading order", fact_type="reading_order")
+    assert correct["transcript_coverage"] == "spoken_explicit"
+    assert unrelated["transcript_coverage"] != "spoken_explicit"
+
+
+def test_upstream_spatial_conflict_diagnostic_cannot_be_overridden_by_teacher_words():
+    evidence = _evidence("CT-07", status="partial", elements=[
+        _element("a", "A", "CT-07"), _element("b", "B", "CT-07"),
+    ], relations=[
+        {"id": "left", "source_id": "a", "target_id": "b", "relation": "left_of", "evidence_status": "supported"},
+        {"id": "right", "source_id": "a", "target_id": "b", "relation": "right_of", "evidence_status": "supported"},
+    ])
+    evidence["validation_diagnostics"] = [{
+        "code": "extraction.quality.conflicting_spatial_order", "target_id": "right",
+        "message": "Supported order claims contradict one another.",
+    }]
+    facts = [fact for fact in _plan(evidence, "A is left of B.")["facts"] if fact["fact_type"] == "relation"]
+    assert len(facts) == 2
+    assert all(fact["transcript_coverage"] == "not_usable" for fact in facts)
+    assert all(fact["uncertainty_reasons"] for fact in facts)
+
+
+def test_unbound_repeated_literals_are_not_assumed_to_be_the_same_occurrence():
+    exact = {"text": "x + 1", "notation": "math", "status": "supported", "source_ref": "scene"}
+    evidence = _evidence("CT-02", exact=[exact, copy.deepcopy(exact)])
+    facts = [fact for fact in _plan(evidence, "x + 1")["facts"] if fact["fact_type"] == "exact_content"]
+    assert len(facts) == 2
+    assert all(fact["transcript_coverage"] == "uncertain_match" for fact in facts)
+
+
+def test_conflicting_support_records_stay_distinct_without_lexical_certainty():
+    evidence = _evidence("CT-02", elements=[_element("x", "Equation", "CT-02", exact_text="x = 5")], exact=[{
+        "text": "x = 5", "notation": "math", "status": "partially_supported", "source_ref": "x",
+    }])
+    facts = [fact for fact in _plan(evidence, "x = 5")["facts"] if fact["fact_type"] == "exact_content"]
+    assert len(facts) == 2
+    assert {fact["evidence_status"] for fact in facts} == {"supported", "partially_supported"}
+    assert all(fact["transcript_coverage"] == "uncertain_match" for fact in facts)
+    assert all(fact["uncertainty_reasons"] for fact in facts)
 

@@ -71,15 +71,30 @@ def _positive_seconds(variable: str, default: float) -> float:
 class ModalWarmup:
     """Tracks ``warming``, ``ready`` and ``unavailable`` for the remote model."""
 
-    def __init__(self, lock_path: Optional[Path] = None) -> None:
-        self._status = STATUS_WARMING if modal_warmup_enabled() else STATUS_DISABLED
+    def __init__(self, lock_path: Optional[Path] = None, *, endpoint_env="SYNAPSE_MODAL_URL",
+                 expected_model=MODEL_ID, enabled=None, name="VLM") -> None:
+        self._endpoint_env = endpoint_env
+        self._expected_model = expected_model
+        self._name = name
+        self._trace_stage = "mistral_warmup" if name == "Mistral" else "modal_warmup"
+        self._status = STATUS_WARMING if (modal_warmup_enabled() if enabled is None else enabled) else STATUS_DISABLED
         self._detail: Optional[str] = None
         self._model_verified = False
         self._probe_lock = threading.Lock()
         self._state_lock = threading.Lock()
         self._stop = threading.Event()
         self._thread: Optional[threading.Thread] = None
-        self._lock_path = lock_path or Path(tempfile.gettempdir()) / "synapse_modal_warmup.lock"
+        self._lock_path = lock_path or Path(tempfile.gettempdir()) / (
+            "synapse_mistral_warmup.lock" if name == "Mistral" else "synapse_modal_warmup.lock"
+        )
+
+    @classmethod
+    def for_mistral(cls, lock_path=None):
+        from modal_inference.mistral_config import MODEL_ID as MISTRAL_MODEL
+        enabled = (os.environ.get("SYNAPSE_EXPLANATION_PROVIDER", "ollama").strip().lower() == "modal_mistral"
+                   and os.environ.get("SYNAPSE_MISTRAL_WARMUP_ON_STARTUP", "1").strip().lower() not in _FALSE_VALUES)
+        return cls(lock_path=lock_path, endpoint_env="SYNAPSE_MISTRAL_MODAL_URL",
+                   expected_model=MISTRAL_MODEL, enabled=enabled, name="Mistral")
 
     @property
     def status(self) -> str:
@@ -94,8 +109,8 @@ class ModalWarmup:
         self._status, self._detail = status, detail
         if previous == (status, detail):
             return
-        message = "Modal VLM status: %s%s"
-        arguments = (status, f" ({detail})" if detail else "")
+        message = "Modal %s status: %s%s"
+        arguments = (self._name, status, f" ({detail})" if detail else "")
         if status == STATUS_UNAVAILABLE:
             logger.warning(message, *arguments)
         else:
@@ -110,9 +125,11 @@ class ModalWarmup:
                 return
             if self._thread is not None:
                 return
-            logger.info("Modal VLM warm-up started")
+            logger.info("Modal %s warm-up started", self._name)
             self._thread = threading.Thread(
-                target=self._warm, name="synapse-modal-warmup", daemon=True
+                target=self._warm,
+                name="synapse-mistral-warmup" if self._name == "Mistral" else "synapse-modal-warmup",
+                daemon=True
             )
             self._thread.start()
 
@@ -205,12 +222,12 @@ class ModalWarmup:
             logger.debug("Could not remove the Modal warm-up lock", exc_info=True)
 
     def _probe_until(self, deadline: float) -> bool:
-        endpoint = os.environ.get("SYNAPSE_MODAL_URL", "").strip().rstrip("/")
+        endpoint = os.environ.get(self._endpoint_env, "").strip().rstrip("/")
         api_key = os.environ.get("SYNAPSE_MODAL_API_KEY", "").strip()
         if not endpoint.startswith("https://") or not api_key:
             self._set_status(
                 STATUS_UNAVAILABLE,
-                "SYNAPSE_MODAL_URL (https) and SYNAPSE_MODAL_API_KEY are required",
+                f"{self._endpoint_env} (https) and SYNAPSE_MODAL_API_KEY are required",
             )
             return False
 
@@ -227,27 +244,27 @@ class ModalWarmup:
             attempt_started = time.monotonic()
             try:
                 remaining = deadline - time.monotonic()
-                trace_stage("modal_warmup", "probe_start")
+                trace_stage(self._trace_stage, "probe_start")
                 self._probe(endpoint, api_key, max(1.0, min(attempt_timeout, remaining)))
                 if self._stop.is_set():
                     self._set_status(STATUS_UNAVAILABLE, "backend shutting down")
                     return False
                 trace_stage(
-                    "modal_warmup", "probe_ready", started_at=attempt_started,
+                    self._trace_stage, "probe_ready", started_at=attempt_started,
                     model_verified=self._model_verified,
                 )
                 self._set_status(STATUS_READY)
                 return True
             except _PermanentProbeError as exc:
                 trace_stage(
-                    "modal_warmup", "probe_failed", started_at=attempt_started,
+                    self._trace_stage, "probe_failed", started_at=attempt_started,
                     retryable=False, error_type=type(exc).__name__,
                 )
                 self._set_status(STATUS_UNAVAILABLE, str(exc))
                 return False
             except (urllib.error.URLError, TimeoutError, OSError, ValueError) as exc:
                 trace_stage(
-                    "modal_warmup", "probe_failed", started_at=attempt_started,
+                    self._trace_stage, "probe_failed", started_at=attempt_started,
                     retryable=True, error_type=type(exc).__name__,
                 )
                 # A client timeout is normal during a cold start: the first
@@ -268,8 +285,8 @@ class ModalWarmup:
             return
         payload = json.loads(self._request(f"{endpoint}/v1/models", api_key, timeout))
         served = {item.get("id") for item in payload.get("data", []) if isinstance(item, dict)}
-        if MODEL_ID not in served:
-            raise _PermanentProbeError(f"The endpoint does not serve {MODEL_ID}")
+        if self._expected_model not in served:
+            raise _PermanentProbeError(f"The endpoint does not serve {self._expected_model}")
         self._model_verified = True
 
     @staticmethod

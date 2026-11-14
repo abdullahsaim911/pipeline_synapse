@@ -9,7 +9,9 @@ sqlalchemy>=2.0.36
 
 # API tools
 python-multipart>=0.0.12
+argon2-cffi>=23.1.0
 
 # Hosted LLM provider and environment loading for Q&A / quiz
 google-genai>=1.0.0
 python-dotenv
+jsonschema>=4.25.1,<5

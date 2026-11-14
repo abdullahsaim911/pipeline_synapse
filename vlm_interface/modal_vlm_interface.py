@@ -160,12 +160,6 @@ class ModalVLMInterface:
         )
         self.model_name: str = model_id or _DEFAULT_MODEL_ID
 
-        if context_budget_estimator is None:
-            from vlm_interface.qwen_context_budget import QwenContextBudgetEstimator
-            context_budget_estimator = QwenContextBudgetEstimator(
-                model_id=self.model_name,
-                max_model_len=MAX_MODEL_LEN,
-            )
         self._context_budget_estimator = context_budget_estimator
         if require_exact_context_budget is None:
             raw_required = os.environ.get(
@@ -227,20 +221,23 @@ class ModalVLMInterface:
             budget_image = encoded_image.convert("RGB")
         budget_parts = gen.get("_context_budget_parts") or {}
         requested_max_tokens = max_tokens
+        self.last_context_budget = None
         try:
-            budget_report = self._context_budget_estimator.estimate(
-                image=budget_image,
-                prompt=prompt,
-                requested_output_tokens=max_tokens,
-                common_prompt=str(budget_parts.get("common_prompt") or ""),
-                category_directives=str(
-                    budget_parts.get("category_directives") or ""
-                ),
-            )
+            if self._context_budget_estimator is None:
+                budget_report = self._native_context_budget(jpeg_bytes, prompt, max_tokens, budget_image.size)
+            else:
+                budget_report = self._context_budget_estimator.estimate(
+                    image=budget_image,
+                    prompt=prompt,
+                    requested_output_tokens=max_tokens,
+                    common_prompt=str(budget_parts.get("common_prompt") or ""),
+                    category_directives=str(budget_parts.get("category_directives") or ""),
+                )
             self.last_context_budget = budget_report.to_dict()
         except VLMContextBudgetError:
             report = getattr(self._context_budget_estimator, "last_report", None)
-            self.last_context_budget = report.to_dict() if report is not None else None
+            if report is not None:
+                self.last_context_budget = report.to_dict()
             # Exact accounting can safely reduce only the impossible unused
             # tail of a request. The configured capability remains available
             # whenever prompt + image tokens leave enough context for it.
@@ -272,7 +269,8 @@ class ModalVLMInterface:
         )
         self.last_context_budget["fits"] = True
 
-        payload = self._build_payload(jpeg_bytes, prompt, max_tokens, temperature)
+        payload = self._build_payload(jpeg_bytes, prompt, max_tokens, temperature,
+                                      response_schema=gen.get("_response_schema"))
 
         # 3.  Send with retry
         start_ms = time.perf_counter()
@@ -351,9 +349,8 @@ class ModalVLMInterface:
         # Convert to RGB (drops alpha, handles palette / grayscale)
         image = image.convert("RGB")
 
-        # Resize if any dimension exceeds the cap
         if max(image.size) > _MAX_IMAGE_DIMENSION:
-            image.thumbnail((_MAX_IMAGE_DIMENSION, _MAX_IMAGE_DIMENSION))
+            image.thumbnail((_MAX_IMAGE_DIMENSION, _MAX_IMAGE_DIMENSION), Image.Resampling.LANCZOS)
 
         # Encode as JPEG
         buf = io.BytesIO()
@@ -372,40 +369,59 @@ class ModalVLMInterface:
     # Payload construction
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _chat_messages(jpeg_bytes: bytes, prompt: str) -> list[dict[str, Any]]:
+        return [{"role": "user", "content": [
+            {"type": "image_url", "image_url": {
+                "url": "data:image/jpeg;base64," + base64.b64encode(jpeg_bytes).decode("ascii"), "detail": "auto",
+            }}, {"type": "text", "text": prompt},
+        ]}]
+
+    def _native_context_budget(self, jpeg_bytes: bytes, prompt: str, output_tokens: int, image_size: tuple[int, int]):
+        """Use the serving processor; never load Transformers/PyTorch locally."""
+        from vlm_interface.qwen_context_budget import ContextBudgetReport
+
+        payload = json.dumps({"model": self.model_name, "messages": self._chat_messages(jpeg_bytes, prompt),
+                              "add_generation_prompt": True, "add_special_tokens": False}).encode("utf-8")
+        response = self._send_with_retry(payload, route="/tokenize")
+        count = response.get("count")
+        if type(count) is not int or count < 1:
+            raise VLMContextBudgetError("Serving processor returned an invalid multimodal token count")
+        if response.get("max_model_len") != MAX_MODEL_LEN:
+            raise VLMContextBudgetError("Serving model context does not match the configured context contract")
+        remaining = MAX_MODEL_LEN - count - output_tokens
+        report = ContextBudgetReport(
+            model_id=self.model_name, max_model_len=MAX_MODEL_LEN, requested_output_tokens=output_tokens,
+            exact=True, processor_available=True, input_tokens=count,
+            remaining_context_tokens=remaining, fits=remaining >= 32, image_size=image_size,
+            image_token_method="Serving vLLM /tokenize multimodal processor (total input count)",
+        )
+        self.last_context_budget = report.to_dict()
+        if not report.fits:
+            raise VLMContextBudgetError("Multimodal input and requested output exceed the context budget")
+        return report
+
     def _build_payload(
         self,
         jpeg_bytes: bytes,
         prompt: str,
         max_tokens: int,
         temperature: float,
+        response_schema: Optional[dict] = None,
     ) -> bytes:
         """Build and serialize the OpenAI-compatible multimodal JSON payload."""
-        b64 = base64.b64encode(jpeg_bytes).decode("ascii")
-        data_uri = f"data:image/jpeg;base64,{b64}"
-
         body: dict[str, Any] = {
             "model": self.model_name,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": prompt},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": data_uri,
-                                "detail": "auto",
-                            },
-                        },
-                    ],
-                }
-            ],
+            "messages": self._chat_messages(jpeg_bytes, prompt),
             "max_tokens": max_tokens,
             "temperature": temperature,
+            # Prevent overview record loops without penalizing repeated exact
+            # characters in focused mathematical/code transcriptions.
+            "repetition_penalty": 1.05 if response_schema is None else 1.0,
             "stream": False,
             # vLLM 0.19 structured outputs constrain decoding to this compact
             # contract instead of merely asking the model to produce JSON.
-            "structured_outputs": {"json": COMPACT_OBSERVATION_JSON_SCHEMA},
+            "structured_outputs": {"json": response_schema or COMPACT_OBSERVATION_JSON_SCHEMA},
         }
 
         return json.dumps(body).encode("utf-8")
@@ -414,12 +430,12 @@ class ModalVLMInterface:
     # HTTP transport with bounded retry / backoff
     # ------------------------------------------------------------------
 
-    def _send_with_retry(self, payload: bytes) -> dict[str, Any]:
+    def _send_with_retry(self, payload: bytes, *, route: str = "/v1/chat/completions") -> dict[str, Any]:
         """
         POST *payload* to ``/v1/chat/completions`` with bounded
         exponential-backoff retry for transient failures.
         """
-        url = f"{self._endpoint_url}/v1/chat/completions"
+        url = f"{self._endpoint_url}{route}"
         last_exc: Exception | None = None
 
         for attempt in range(1 + self._max_retries):

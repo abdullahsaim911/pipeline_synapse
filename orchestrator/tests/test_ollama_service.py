@@ -170,6 +170,8 @@ def test_predictive_warmup_uses_cpu_context_policy(monkeypatch):
     assert calls.started == []
     assert len(posted) == 1
     assert posted[0][1]["options"] == {
+        "num_batch": 128,
+        "use_mmap": True,
         "num_gpu": 0, "num_ctx": 2048, "num_predict": 0,
     }
     assert posted[0][1]["keep_alive"] == "5m"

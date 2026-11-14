@@ -27,6 +27,8 @@ from synchronizer import Synchronizer, TranscriptEntry, reconcile_visual_evidenc
 from vlm_engine import SnapshotEngine
 from synthesizer import LLMSynthesizer, VisualEvidenceUnavailableError
 from visual_evidence import assess_snapshot, load_usable_snapshot
+from explanation_cache import QUALITY_VERSION, fingerprint, cache_is_current, generation_manifest, write_manifest
+from synthesizer.configuration import explanation_profile, configured_explanation_provider
 from stage_tracing import current_trace, trace_stage
 from youtube_runtime import extract_youtube_video_id, youtube_runtime_options
 from .ollama_service import OllamaService, shared_ollama_service
@@ -684,7 +686,8 @@ class PipelineOrchestrator:
             timeout=120,
             max_retries=3,
             transcripts=transcript_entries,
-            output_mode=output_mode
+            output_mode=output_mode,
+            **({"text_provider": configured_explanation_provider()} if explanation_profile()["provider"] != "ollama" else {}),
         )
 
         # Initialize TTS Engine
@@ -697,7 +700,8 @@ class PipelineOrchestrator:
         transcript_entries = [
             e if isinstance(e, TranscriptEntry) else TranscriptEntry(
                 start=e.get("start", 0.0),
-                end=e.get("start", 0.0) + e.get("duration", 0.0),
+                end=(e["end"] if e.get("end") is not None
+                     else e.get("start", 0.0) + e.get("duration", 0.0)),
                 text=e.get("text", "")
             )
             for e in transcript_entries
@@ -1405,7 +1409,7 @@ class PipelineOrchestrator:
         snapshot_path = os.path.join(intervention_dir, "vlm_snapshot.json")
 
         reusable = load_usable_snapshot(snapshot_path)
-        if reusable is not None:
+        if reusable is not None and reusable.get("_quality_version") == QUALITY_VERSION:
             trace_stage(
                 "snapshot_validation", "complete", usable=True, reused=True,
                 snapshot_path=snapshot_path,
@@ -1442,7 +1446,7 @@ class PipelineOrchestrator:
 
         extraction_started = time.monotonic()
         trace_stage("vlm_inference", "start", provider=provider)
-        if provider == PROVIDER_MODAL:
+        if provider == PROVIDER_MODAL and explanation_profile()["provider"] == "ollama":
             # Modal inference is the longest remote stage; overlap the local
             # CPU-only Mistral load with it instead of delaying synthesis.
             try:
@@ -1463,6 +1467,7 @@ class PipelineOrchestrator:
                 timestamp_seconds=intervention_timestamp,
                 raw_category_labels=raw_category_labels or [content_type],
                 canonical_category_ids=canonical_category_ids or [],
+                **({"ownership_check": ownership_check} if ownership_check is not None else {}),
             )
         finally:
             vlm_engine.cleanup()
@@ -1485,6 +1490,7 @@ class PipelineOrchestrator:
         os.makedirs(intervention_dir, exist_ok=True)
         persistence_started = time.monotonic()
         trace_stage("snapshot_persistence", "start", snapshot_path=snapshot_path)
+        snapshot["_quality_version"] = QUALITY_VERSION
         persist_snapshot = lambda: self._write_json_atomic(snapshot_path, snapshot)
         if checkpoint_commit is not None:
             checkpoint_commit(persist_snapshot)
@@ -1542,10 +1548,14 @@ class PipelineOrchestrator:
             text_file_path, vlm_snapshot_path and output_mode
         """
         intervention_dir = self._intervention_dir(video_id, intervention_id)
+        os.makedirs(intervention_dir, exist_ok=True)
         vlm_snapshot_path = os.path.join(intervention_dir, "vlm_snapshot.json")
+        transcript_only = bool(vlm_snapshot and vlm_snapshot.get("_transcript_only"))
         fresh_snapshot = vlm_snapshot is not None
         if vlm_snapshot is None:
             vlm_snapshot = load_usable_snapshot(vlm_snapshot_path)
+            if vlm_snapshot is not None and vlm_snapshot.get("_quality_version") != QUALITY_VERSION:
+                vlm_snapshot = None
         if vlm_snapshot is None:
             raise VisualEvidenceUnavailableError("No usable visual evidence is saved")
         if ownership_check is not None:
@@ -1555,7 +1565,8 @@ class PipelineOrchestrator:
         transcript_entries = [
             e if isinstance(e, TranscriptEntry) else TranscriptEntry(
                 start=e.get("start", 0.0),
-                end=e.get("start", 0.0) + e.get("duration", 0.0),
+                end=(e["end"] if e.get("end") is not None
+                     else e.get("start", 0.0) + e.get("duration", 0.0)),
                 text=e.get("text", "")
             )
             for e in transcript_entries
@@ -1566,14 +1577,25 @@ class PipelineOrchestrator:
         )
         transcript_context = transcript_segment.text if transcript_segment else ""
 
+        from synthesizer.context_manager import ContextManager
+        lecture_context = ContextManager(transcript_entries).get_aligned_context(
+            intervention_timestamp
+        )
+
         # Reconcile canonical visual facts with the matched teacher speech
         # after VLM extraction and before synthesis.
         reconciliation_started = time.monotonic()
         trace_stage("reconciliation", "start")
-        self._attach_transcript_coverage(vlm_snapshot, transcript_context)
+        if transcript_only:
+            transcript_context = vlm_snapshot["transcript_context"]
+        else:
+            aligned_speech = " ".join(
+                segment["text"] for segment in lecture_context["aligned_segments"]
+            )
+            self._attach_transcript_coverage(vlm_snapshot, aligned_speech or transcript_context)
         # A reused canonical snapshot is immutable cache evidence. Reconcile it
         # in memory for this mode without rewriting a previously valid file.
-        if fresh_snapshot:
+        if fresh_snapshot and not transcript_only:
             commit_reconciliation = lambda: self._write_json_atomic(
                 vlm_snapshot_path, vlm_snapshot
             )
@@ -1589,17 +1611,19 @@ class PipelineOrchestrator:
         ollama_started = time.monotonic()
         if ownership_check is not None:
             ownership_check()
-        trace_stage("ollama_readiness", "start")
+        text_provider = configured_explanation_provider()
         # If predictive warm-up is still running, this joins it through the
         # service's warm lock. The first real request therefore never races a
         # duplicate model load or uses different CPU/context options.
-        ollama_service = get_ollama_service()
-        warm_model = getattr(ollama_service, "warm_model", None)
-        if warm_model is not None:
-            warm_model()
-        else:  # Backward-compatible test/dry-run service adapter.
-            ollama_service.ensure_ready()
-        trace_stage("ollama_readiness", "complete", started_at=ollama_started)
+        if text_provider is None:
+            trace_stage("ollama_readiness", "start")
+            ollama_service = get_ollama_service()
+            warm_model = getattr(ollama_service, "warm_model", None)
+            if warm_model is not None:
+                warm_model()
+            else:  # Backward-compatible test/dry-run service adapter.
+                ollama_service.ensure_ready()
+            trace_stage("ollama_readiness", "complete", started_at=ollama_started)
 
         from synthesizer import LLMSynthesizer
         synthesizer = LLMSynthesizer(
@@ -1608,14 +1632,27 @@ class PipelineOrchestrator:
             timeout=120,
             max_retries=3,
             transcripts=transcript_entries,
-            output_mode=output_mode
+            output_mode=output_mode,
+            **({"text_provider": text_provider} if text_provider is not None else {}),
+            **({"ownership_check": ownership_check} if ownership_check is not None else {}),
         )
+        # Backend alignment is prompt context, not a new VLM observation. Keep it
+        # out of persisted raw evidence and use the same window for every depth.
+        vlm_snapshot = dict(vlm_snapshot, _lecture_context=lecture_context)
         text_file_path = os.path.join(intervention_dir, f"{output_mode}.txt")
+        audio_file_path = os.path.join(intervention_dir, f"{output_mode}.mp3")
+        input_hash = fingerprint([vlm_snapshot, transcript_context, content_type, trigger_reason, output_mode])
+        reuse_generation = False
         explanation = ""
         try:
             if os.path.isfile(text_file_path):
                 with open(text_file_path, "r", encoding="utf-8") as handle:
                     explanation = handle.read().strip()
+                reuse_generation = cache_is_current(
+                    explanation, audio_file_path, vlm_snapshot_path, input_hash=input_hash
+                ) and self._valid_mp3(audio_file_path)
+                if not reuse_generation:
+                    explanation = ""
             if explanation:
                 trace_stage("mistral_generation", "reused", text_chars=len(explanation))
             else:
@@ -1623,14 +1660,17 @@ class PipelineOrchestrator:
                 if ownership_check is not None:
                     ownership_check()
                 trace_stage("mistral_generation", "request")
-                explanation = synthesizer.weave(
-                    transcript_context=transcript_context,
-                    vlm_snapshot=vlm_snapshot,
-                    content_type=content_type,
-                    intervention_reason=trigger_reason,
-                    output_mode=output_mode,
-                    require_visual_explanation=True,
-                )
+                if transcript_only:
+                    explanation = synthesizer.explain_transcript(transcript_context, output_mode)
+                else:
+                    explanation = synthesizer.weave(
+                        transcript_context=transcript_context,
+                        vlm_snapshot=vlm_snapshot,
+                        content_type=content_type,
+                        intervention_reason=trigger_reason,
+                        output_mode=output_mode,
+                        require_visual_explanation=True,
+                    )
                 trace_stage(
                     "mistral_generation", "response", started_at=mistral_started,
                     text_chars=len(explanation),
@@ -1672,7 +1712,7 @@ class PipelineOrchestrator:
         from tts_engine import get_shared_tts_engine
         tts_engine = get_shared_tts_engine()
         audio_file_path = os.path.join(intervention_dir, f"{output_mode}.mp3")
-        if self._valid_mp3(audio_file_path):
+        if reuse_generation:
             trace_stage(
                 "tts_creation", "reused", audio_path=audio_file_path,
                 audio_bytes=os.path.getsize(audio_file_path),
@@ -1705,6 +1745,15 @@ class PipelineOrchestrator:
             )
         print(f"[Orchestrator] Audio generated: {audio_file_path}")
         print(f"[Orchestrator] Text explanation saved: {text_file_path}")
+
+        provenance = generation_manifest(explanation, audio_file_path, vlm_snapshot_path, input_hash=input_hash)
+        commit_manifest = lambda: write_manifest(audio_file_path, provenance)
+        if ownership_check is not None:
+            ownership_check()
+        if checkpoint_commit is not None:
+            checkpoint_commit(commit_manifest)
+        else:
+            commit_manifest()
 
         return {
             "intervention_id": intervention_id,

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from explanation_cache import generation_manifest, write_manifest
+
 import multiprocessing
 import tempfile
 import threading
@@ -298,6 +300,7 @@ class ExplanationLeaseTests(unittest.TestCase):
 
         def successful(**kwargs):
             audio.write_bytes(b"ID3-ready")
+            write_manifest(audio, generation_manifest("Ready", audio))
             with kwargs["session_factory"]() as db:
                 db.add(Explanation(
                     intervention_id=INTERVENTION_ID,

@@ -25,12 +25,16 @@ class _Processor:
         self.image_processor = _ImageProcessor()
 
     def apply_chat_template(self, messages, **kwargs):
+        from modal_inference.config import MAX_IMAGE_PIXELS
+        assert kwargs["processor_kwargs"] == {"max_pixels": MAX_IMAGE_PIXELS}
         assert len(messages) == 1
         assert [part["type"] for part in messages[0]["content"]] == ["image", "text"]
         return {
             "input_ids": [[0] * self.input_tokens],
             "image_grid_thw": [[1, 40, 40]],
         }
+
+
 
 
 def test_exact_processor_budget_reports_all_required_components():

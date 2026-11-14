@@ -138,6 +138,7 @@ class GenerateExplanationRequest(BaseModel):
 
 class GenerateExplanationResponse(BaseModel):
     """Response schema for generated explanation."""
+    explanation_id: Optional[int] = None
     intervention_id: str
     text_explanation: str
     audio_file_path: Optional[str] = None
@@ -233,6 +234,8 @@ class ExplanationPreparationItem(BaseModel):
     status: PreparationStatus
     error_code: Optional[str] = None
     attempt_count: int = 0
+    requested: bool = True
+    retryable: bool = False
 
 
 class ExplanationPreparationStatusResponse(BaseModel):

@@ -582,6 +582,157 @@
       "which one is highlighted right now",
       "what did I select",
       "what is the current choice"
+    ],
+    "answer_explanation": [
+      "answer the explanation question",
+      "choose a different explanation depth",
+      "I would like the fuller version",
+      "give me the shorter explanation instead",
+      "wait here for the requested explanation",
+      "finish reviewing the unheard explanations"
+    ],
+    "play_note": [
+      "play voice note two",
+      "listen to recording three",
+      "play my first voice note",
+      "start voice note four",
+      "hear recording five"
+    ],
+    "stop_note_audio": [
+      "stop my voice note audio",
+      "stop the recording playback",
+      "silence my recorded note",
+      "stop listening to my note",
+      "end voice note playback"
+    ],
+    "delete_note": [
+      "delete voice note two",
+      "remove my first recording",
+      "erase voice note three",
+      "delete recording four",
+      "remove voice note five"
+    ],
+    "confirm_note_deletion": [
+      "confirm voice note deletion",
+      "yes delete that recording",
+      "erase the selected voice note",
+      "confirm removing that note",
+      "go ahead delete the voice note"
+    ],
+    "cancel_note_deletion": [
+      "cancel voice note deletion",
+      "keep that recording",
+      "do not delete my note",
+      "cancel removing that voice note",
+      "leave that recording saved"
+    ],
+    "open_note_explanation": [
+      "open explanation one attached to note two",
+      "play nearby explanation two for voice note one",
+      "open the first explanation for recording three",
+      "hear attached explanation one from note four",
+      "play explanation two attached to recording five"
+    ],
+    "save_note_draft": [
+      "save my recording draft",
+      "retry saving the voice note",
+      "upload this recording draft",
+      "keep the unsaved voice recording",
+      "retry my note upload"
+    ],
+    "discard_note_draft": [
+      "discard my voice note draft",
+      "throw away the unsaved recording",
+      "delete this recording draft",
+      "discard this unsaved voice note",
+      "remove the current note draft"
+    ],
+    "import_local_saves": [
+      "import my browser saves",
+      "recover browser recordings",
+      "retry importing my saved notes",
+      "move browser saves into Synapse storage",
+      "import my old bookmarks and notes"
+    ],
+    "filter_saved_items": [
+      "filter saved items by calculus",
+      "search my library for physics",
+      "find algebra in saved explanations",
+      "filter bookmarks by chemistry",
+      "show saved items matching biology"
+    ],
+    "clear_saved_filter": [
+      "clear the saved items filter",
+      "remove my library search",
+      "clear bookmark search",
+      "show all my saved explanations again",
+      "reset the collection filter"
+    ],
+    "next_saved_page": [
+      "next page of saved items",
+      "show more voice notes",
+      "next library page",
+      "next bookmarks page",
+      "show the following saved page"
+    ],
+    "previous_saved_page": [
+      "previous page of saved items",
+      "previous voice notes page",
+      "previous library page",
+      "previous bookmarks page",
+      "go back one saved page"
+    ],
+    "retry_saved_load": [
+      "retry loading saved content",
+      "reload my voice notes",
+      "retry loading my library",
+      "reload my saved bookmarks",
+      "check saved storage again"
+    ],
+    "set_saved_view": [
+      "show recent explanations",
+      "show saved lectures in my library",
+      "switch library to recent",
+      "switch to saved lectures",
+      "show recently viewed explanations"
+    ],
+    "confirm_saved_removal": [
+      "confirm saved item removal",
+      "yes remove that saved lecture",
+      "confirm removing this bookmark",
+      "remove the selected library lecture",
+      "go ahead remove that saved entry"
+    ],
+    "cancel_saved_removal": [
+      "cancel saved item removal",
+      "keep that library lecture",
+      "keep the selected bookmark",
+      "do not remove that saved entry",
+      "cancel removing the saved lecture"
+    ],
+    "read_saved_item": [
+      "read saved item two",
+      "open saved explanation three without audio",
+      "read the first bookmark as text",
+      "open library item four for reading",
+      "read explanation five silently"
+    ],
+    "open_note": [
+      "open voice note two at its time",
+      "go to the first recording in the lecture",
+      "open note three in the video",
+      "jump to voice note four",
+      "show the lecture position for note five"
+    ],
+    "request_explanation": [
+      "I do not understand this, explain it",
+      "please explain this part",
+      "give me a brief explanation",
+      "give me the standard version",
+      "give me the detailed version",
+      "help me understand this",
+      "I need an explanation",
+      "explain in detail"
     ]
   }
 }

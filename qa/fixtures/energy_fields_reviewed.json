@@ -1,0 +1,48 @@
+{
+  "schema": "synapse_visual_observation_v1",
+  "status": "complete",
+  "evidence_status": "supported",
+  "categories": ["CT-03", "CT-06"],
+  "layout": "Three side-by-side bordered panels, titled Gravitation on the left, Electric in the middle, and Magnetic on the right.",
+  "regions": [
+    {
+      "ref": "gravity", "categories": ["CT-03"], "position": "left panel",
+      "evidence_status": "supported",
+      "elements": [
+        {"ref": "gtitle", "kind": "text_label", "text": "Gravitation", "position": "above left panel", "evidence_status": "supported"},
+        {"ref": "earth", "kind": "illustrated_object", "description": "Earth at the center of the left panel; green radial lines have arrowheads pointing inward toward Earth.", "position": "center of left panel", "evidence_status": "supported"},
+        {"ref": "moon", "kind": "illustrated_object", "description": "A small Moon image appears above and to the right of Earth. No orbit path is shown.", "position": "upper right within left panel", "evidence_status": "supported"}
+      ]
+    },
+    {
+      "ref": "electric", "categories": ["CT-03"], "position": "middle panel",
+      "evidence_status": "supported",
+      "elements": [
+        {"ref": "etitle", "kind": "text_label", "text": "Electric", "position": "above middle panel", "evidence_status": "supported"},
+        {"ref": "positive", "kind": "charge_symbol", "text": "+", "description": "A blue positive symbol at the center with yellow radial arrows pointing outward from it.", "position": "center of middle panel", "evidence_status": "supported"},
+        {"ref": "negative", "kind": "charge_symbol", "text": "−", "description": "A red minus symbol is above and to the right of the central positive symbol. The visible radial arrows are not shown ending on this symbol.", "position": "upper right within middle panel", "evidence_status": "supported"}
+      ]
+    },
+    {
+      "ref": "magnetic", "categories": ["CT-03"], "position": "right panel",
+      "evidence_status": "supported",
+      "elements": [
+        {"ref": "mtitle", "kind": "text_label", "text": "Magnetic", "position": "above right panel", "evidence_status": "supported"},
+        {"ref": "magnet", "kind": "bar_magnet", "description": "A horizontal bar magnet has a red N half on the left and a blue S half on the right. White curved field lines arc around it; arrowheads on the upper and lower arcs point from left to right outside the magnet.", "position": "center of right panel", "evidence_status": "supported"},
+        {"ref": "needle", "kind": "colored_bar", "description": "A small tilted blue-and-red bar appears above and to the right of the main magnet.", "position": "upper right within right panel", "evidence_status": "supported"}
+      ]
+    }
+  ],
+  "relations": [
+    {"ref": "panels1", "source": "gravity", "target": "electric", "type": "left_of", "evidence_status": "supported"},
+    {"ref": "panels2", "source": "electric", "target": "magnetic", "type": "left_of", "evidence_status": "supported"}
+  ],
+  "structure": {
+    "overview": "Three field illustrations compare gravitational, electric, and magnetic field patterns. Field arrows show direction, not energy transfer between panels.",
+    "reading_order": ["gravity", "electric", "magnetic"]
+  },
+  "exact": [
+    {"text": "N", "status": "supported", "notation": "plain", "source_ref": "magnet"},
+    {"text": "S", "status": "supported", "notation": "plain", "source_ref": "magnet"}
+  ]
+}

@@ -37,10 +37,11 @@ from api.explanation_service import (
 )
 from api.explanation_preparation import (
     ExplanationPreparationManager,
+    PreparationCancelledError,
     PreparationNotRetryableError,
     PreparationRetryExhaustedError,
 )
-from api.models import Video, Intervention, Transcript, Explanation
+from api.models import Video, Intervention, Transcript, Explanation, ProcessingJob
 from api.processing_jobs import (
     ProcessingJobBusyError,
     ProcessingJobManager,
@@ -350,7 +351,7 @@ def _processed_video_response(db: Session, video_id: str) -> ProcessVideoRespons
         raise HTTPException(status_code=500, detail="Processed video cache is unavailable.")
     interventions = (
         db.query(Intervention)
-        .filter(Intervention.video_id == video_id)
+        .filter(Intervention.video_id == video_id, Intervention.origin == "detected")
         .order_by(Intervention.timestamp)
         .all()
     )
@@ -630,6 +631,7 @@ def generate_explanation(
             request.output_mode,
         )
         return GenerateExplanationResponse(
+            explanation_id=getattr(result, "explanation_id", None),
             intervention_id=result.intervention_id,
             text_explanation=result.text_explanation,
             audio_file_path=result.audio_file_path,
@@ -710,6 +712,8 @@ def get_explanation_preparation_status(
                     status=item.status,
                     error_code=item.error_code,
                     attempt_count=item.attempt_count,
+                    requested=getattr(item, "requested", True),
+                    retryable=getattr(item, "retryable", False),
                 )
                 for item in items
             ],
@@ -756,6 +760,72 @@ def retry_explanation_preparation(
         )
     except ExplanationTargetNotFoundError as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except PreparationCancelledError:
+        raise HTTPException(status_code=409, detail={"code": "preparation_cancelled"})
+    except PreparationNotRetryableError:
+        raise HTTPException(
+            status_code=409,
+            detail={"code": "not_failed"},
+        )
+    except PreparationRetryExhaustedError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "retry_exhausted",
+                "attempt_count": exc.attempt_count,
+            },
+        )
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={
+                "code": "video_processing_busy",
+                "active_video_id": exc.video_id,
+                "active_job_id": exc.job_id,
+            },
+        )
+
+
+@router.post(
+    "/{video_id}/interventions/{intervention_id}/explanations/request",
+    response_model=ExplanationRetryResponse,
+    status_code=202,
+    dependencies=[Depends(enforce_allowed_origin)],
+)
+def request_explanation_preparation(
+    response: Response,
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    intervention_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9-]{1,64}$"),
+    output_mode: str = Query(
+        default="explanatory",
+        pattern=r"^(brief|explanatory|detailed)$",
+    ),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Admit one requested preparation key without waiting for inference."""
+    if preparation_manager is None:
+        raise HTTPException(
+            status_code=503,
+            detail="Explanation preparation is unavailable.",
+        )
+    try:
+        result = preparation_manager.request(
+            video_id, intervention_id, output_mode
+        )
+        if not result.queued:
+            response.status_code = 200
+        return ExplanationRetryResponse(
+            video_id=video_id,
+            intervention_id=intervention_id,
+            output_mode=output_mode,
+            status=result.status,
+            error_code=result.error_code,
+            attempt_count=result.attempt_count,
+        )
+    except ExplanationTargetNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc))
+    except PreparationCancelledError:
+        raise HTTPException(status_code=409, detail={"code": "preparation_cancelled"})
     except PreparationNotRetryableError:
         raise HTTPException(
             status_code=409,
@@ -783,6 +853,50 @@ def retry_explanation_preparation(
 # ============================================================================
 # Endpoint 4: Toggle Bookmark
 # ============================================================================
+
+@router.post("/{video_id}/explanations/cancel", dependencies=[Depends(enforce_allowed_origin)])
+def cancel_lecture_explanations(
+    request: Request,
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Single-window lecture exit: fence unfinished work, retain completed cache."""
+    if preparation_manager is None:
+        raise HTTPException(status_code=503, detail="Explanation preparation is unavailable.")
+    job = db.query(ProcessingJob).filter(ProcessingJob.video_id == video_id).one_or_none()
+    if job is not None:
+        _processing_manager(request, db, preparation_manager).cancel(job.id)
+    else:
+        preparation_manager.cancel_video(video_id)
+    return {"video_id": video_id, "status": "cancelled"}
+
+
+@router.post("/{video_id}/explanations/open", response_model=ProcessingJobResponse,
+             dependencies=[Depends(enforce_allowed_origin)])
+def open_lecture_explanations(
+    request: Request,
+    video_id: str = ApiPath(..., pattern=r"^[A-Za-z0-9_-]{11}$"),
+    db: Session = Depends(get_db),
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Explicit re-entry uses existing cache/resume admission and Standard preparation."""
+    video = db.get(Video, video_id)
+    if video is None:
+        raise HTTPException(status_code=404, detail="Lecture not found.")
+    if preparation_manager is None:
+        raise HTTPException(status_code=503, detail="Explanation preparation is unavailable.")
+    manager = _processing_manager(request, db, preparation_manager)
+    job = db.query(ProcessingJob).filter(ProcessingJob.video_id == video_id).one_or_none()
+    try:
+        if job is not None and job.status in {"cancelling", "cancelled"}:
+            return manager.resume(job.id)
+        return manager.create_or_join(video.source_url, "explanatory")
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(status_code=409, detail={"code": "video_processing_busy", "active_video_id": exc.video_id})
+    except (ProcessingJobNotFoundError, ValueError):
+        raise HTTPException(status_code=409, detail="This lecture cannot be resumed yet.")
+
 
 @router.post("/intervention/bookmark/{intervention_id}", response_model=BookmarkResponse)
 async def toggle_bookmark(
@@ -842,7 +956,7 @@ async def get_interventions(
 
     # 2. Get all interventions, including those not yet explained.
     interventions = db.query(Intervention).filter(
-        Intervention.video_id == video_id
+        Intervention.video_id == video_id, Intervention.origin == "detected"
     ).order_by(
         Intervention.timestamp.asc(),
         Intervention.id.asc()
@@ -912,6 +1026,7 @@ async def get_intervention_explanation(
 
     # 3. Return response matching Endpoint 3 structure
     return GenerateExplanationResponse(
+        explanation_id=explanation.id,
         intervention_id=intervention_id,
         text_explanation=explanation.text_explanation,
         audio_file_path=explanation.audio_file_path,

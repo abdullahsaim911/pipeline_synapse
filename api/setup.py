@@ -28,6 +28,14 @@ from api.models import (
     User,
     UserPreference,
     Video,
+    SavedExplanation,
+    VoiceNote,
+    VoiceNoteExplanation,
+    MediaDeletion,
+    AccountCredential,
+    AccountSession,
+    ExplanationRequest,
+    LectureSessionInterest,
 )
 
 
@@ -52,6 +60,14 @@ def verify_tables():
     try:
         # Check each table
         tables = [
+            SavedExplanation,
+            VoiceNote,
+            VoiceNoteExplanation,
+            MediaDeletion,
+            AccountCredential,
+            AccountSession,
+            ExplanationRequest,
+            LectureSessionInterest,
             User,
             UserPreference,
             Video,

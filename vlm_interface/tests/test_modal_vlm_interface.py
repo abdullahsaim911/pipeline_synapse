@@ -167,6 +167,13 @@ def adapter() -> ModalVLMInterface:
 def allow_unavailable_processor_for_transport_unit_tests(monkeypatch):
     """Transport tests run without model assets; exact accounting is tested separately."""
     monkeypatch.setenv("SYNAPSE_VLM_REQUIRE_EXACT_CONTEXT_BUDGET", "0")
+    initialize = ModalVLMInterface.__init__
+
+    def initialize_with_fake_budget(self, *args, **kwargs):
+        kwargs.setdefault("context_budget_estimator", _FakeBudgetEstimator(exact=False))
+        initialize(self, *args, **kwargs)
+
+    monkeypatch.setattr(ModalVLMInterface, "__init__", initialize_with_fake_budget)
 
 
 # =========================================================================
@@ -399,11 +406,11 @@ class TestImagePromptFormat:
         assert isinstance(msg["content"], list)
         assert len(msg["content"]) == 2
 
-        text_part = msg["content"][0]
+        text_part = msg["content"][1]
         assert text_part["type"] == "text"
         assert text_part["text"] == "Describe the frame."
 
-        image_part = msg["content"][1]
+        image_part = msg["content"][0]
         assert image_part["type"] == "image_url"
         assert image_part["image_url"]["url"].startswith("data:image/jpeg;base64,")
 
@@ -506,7 +513,7 @@ class TestImageInputFormats:
             assert isinstance(result, VLMResponse)
             # Payload image is always JPEG regardless of input
             body = json.loads(mock_urlopen.call_args[0][0].data)
-            assert "data:image/jpeg;base64," in body["messages"][0]["content"][1]["image_url"]["url"]
+            assert "data:image/jpeg;base64," in body["messages"][0]["content"][0]["image_url"]["url"]
         finally:
             tmp.unlink(missing_ok=True)
 
@@ -565,13 +572,15 @@ class TestImageConversion:
 
         # Decode the sent JPEG to verify dimensions
         body = json.loads(mock_urlopen.call_args[0][0].data)
-        data_uri = body["messages"][0]["content"][1]["image_url"]["url"]
+        data_uri = body["messages"][0]["content"][0]["image_url"]["url"]
         b64 = data_uri.split(",", 1)[1]
         sent_img = Image.open(io.BytesIO(base64.b64decode(b64)))
         assert max(sent_img.size) <= _MAX_IMAGE_DIMENSION
+        from modal_inference.config import MAX_IMAGE_PIXELS
+        assert sent_img.width * sent_img.height <= MAX_IMAGE_PIXELS
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
-    def test_small_image_not_resized(self, mock_urlopen, adapter):
+    def test_overview_preserves_small_image_layout(self, mock_urlopen, adapter):
         mock_urlopen.return_value = _FakeHTTPResponse(
             _json_bytes(_make_openai_response())
         )
@@ -579,10 +588,11 @@ class TestImageConversion:
         adapter.analyze(small, "Hello")
 
         body = json.loads(mock_urlopen.call_args[0][0].data)
-        data_uri = body["messages"][0]["content"][1]["image_url"]["url"]
+        data_uri = body["messages"][0]["content"][0]["image_url"]["url"]
         b64 = data_uri.split(",", 1)[1]
         sent_img = Image.open(io.BytesIO(base64.b64decode(b64)))
         assert sent_img.size == (100, 80)
+        assert small.size == (100, 80)
 
     @mock.patch("vlm_interface.modal_vlm_interface.urllib.request.urlopen")
     def test_grayscale_converted_to_rgb(self, mock_urlopen, adapter):

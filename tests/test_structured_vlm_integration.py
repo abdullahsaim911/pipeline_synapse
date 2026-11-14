@@ -145,6 +145,118 @@ def test_each_canonical_category_gets_only_its_relevant_specialized_instruction(
     assert SnapshotEngine.CANONICAL_CATEGORY_DIRECTIVES[other] not in prompt
 
 
+@pytest.mark.parametrize("hint", ["diagram", "slide", "unknown"])
+def test_ambiguous_hints_get_full_discovery_without_a_forced_category(hint):
+    from category_normalization import normalize_category_labels
+
+    prompt = object.__new__(SnapshotEngine)._build_prompt(hint)
+    assert not normalize_category_labels(hint).canonical_categories
+    assert "CANONICAL CATEGORY HINTS: none" in prompt
+    assert all(f"CT-{number:02d}" in prompt for number in range(1, 13))
+    assert '"categories":["CT-01"]' not in prompt
+    assert "arrowhead, shaft, attachment and visible endpoints" in prompt
+    assert "a data chart" in prompt
+
+
+def test_duplicate_region_quality_gap_is_partial_without_merging_or_reinference():
+    import copy
+
+    payload = _base_payload(["CT-03"])
+    first = _region("panel-a", "CT-03", [
+        _element("source-a", "source", category="CT-03", label="Source")
+    ], description="A labeled source and its surrounding field.")
+    second = copy.deepcopy(first)
+    second["ref"] = "panel-b"
+    second["elements"][0]["ref"] = "source-b"
+    payload["regions"] = [first, second]
+    original = copy.deepcopy(payload)
+    engine = _engine(payload, finish_reason="stop")
+    calls = []
+    analyze = engine.vlm_interface.analyze
+
+    def record_call(*args, **kwargs):
+        calls.append(kwargs)
+        return analyze(*args, **kwargs)
+
+    engine.vlm_interface.analyze = record_call
+    snapshot = engine.analyze_frame("unused.jpg", "diagram")
+    evidence = snapshot["visual_evidence"]
+    assert len(calls) == 1
+    assert evidence["extraction_status"] == "partial"
+    assert evidence["evidence_status"] == "partially_supported"
+    assert len(evidence["regions"]) == 2
+    assert evidence["validation_diagnostics"][-1]["target_id"] == "region-002"
+    assert evidence["validation_diagnostics"][-1]["code"].endswith("possible_duplicate_region")
+    assert snapshot["_structured_observation"] == original == payload
+    assert snapshot["_vlm_metrics"]["possible_truncation"] is False
+    assert not snapshot["_error"]
+    assert validate_visual_evidence(evidence).structurally_valid
+
+
+def test_separate_identical_objects_keep_positions_and_inapplicable_structure_empty():
+    payload = _base_payload(["CT-11"])
+    payload["regions"] = [
+        _region("a", "CT-11", [_element("a1", "specimen", category="CT-11", label="Sample")]),
+        _region("b", "CT-11", [_element("b1", "specimen", category="CT-11", label="Sample")]),
+    ]
+    payload["regions"][0]["position"] = "left"
+    payload["regions"][1]["position"] = "right"
+    _, snapshot = _analyze(payload, "observational_image", ["CT-11"])
+    evidence = snapshot["visual_evidence"]
+    assert evidence["extraction_status"] == "complete"
+    assert len(evidence["regions"]) == 2
+    assert evidence["structural_description"]["reading_order"] == []
+    assert evidence["structural_description"]["hierarchy_notes"] == []
+    assert evidence["structural_description"]["topology_notes"] == []
+    assert not evidence["validation_diagnostics"]
+
+
+def test_ordered_regions_without_structured_navigation_are_diagnosed():
+    payload = _base_payload(["CT-06"])
+    payload["regions"] = [
+        _region("a", "CT-06", [_element("a1", "text", category="CT-06", text="First")]),
+        _region("b", "CT-06", [_element("b1", "text", category="CT-06", text="Second")]),
+    ]
+    for index, region in enumerate(payload["regions"]):
+        region.pop("position")
+        region["reading_order_index"] = index
+    _, snapshot = _analyze(payload, "text", ["CT-06"])
+    evidence = snapshot["visual_evidence"]
+    codes = {item["code"].rsplit(".", 1)[-1] for item in evidence["validation_diagnostics"]}
+    assert codes == {"missing_region_positions", "missing_reading_order_refs"}
+    assert evidence["extraction_status"] == "partial"
+    assert evidence["structural_description"]["reading_order"] == []
+    payload["structure"]["reading_order"] = ["a", "b"]
+    payload["regions"][0]["position"] = "top"
+    payload["regions"][1]["position"] = "bottom"
+    _, complete = _analyze(payload, "text", ["CT-06"])
+    assert complete["visual_evidence"]["extraction_status"] == "complete"
+
+
+@pytest.mark.parametrize(("first", "second", "conflict"), [
+    ("left_of", "right_of", True),
+    ("above", "below", True),
+    ("precedes", "follows", True),
+    ("connected_to", "connected_to", False),
+])
+def test_explicit_spatial_contradictions_are_flagged_without_rewriting_relations(first, second, conflict):
+    payload = _base_payload(["CT-04"])
+    payload["regions"] = [_region("network", "CT-04", [
+        _element("a", "node", category="CT-04", label="A"),
+        _element("b", "node", category="CT-04", label="B"),
+    ])]
+    # Reciprocal connections are legitimate; opposite spatial claims are not.
+    payload["relations"] = [
+        {"ref": "q1", "source": "a", "target": "b", "type": first, "evidence_status": "supported"},
+        {"ref": "q2", "source": "a" if conflict else "b", "target": "b" if conflict else "a", "type": second, "evidence_status": "supported"},
+    ]
+    _, snapshot = _analyze(payload, "flowchart", ["CT-04"])
+    evidence = snapshot["visual_evidence"]
+    assert len(evidence["relations"]) == 2
+    assert (evidence["extraction_status"] == "partial") is conflict
+    assert validate_visual_evidence(evidence).structurally_valid
+
+
 CATEGORY_FIXTURES = [
     (
         "graph", "CT-01", "chart", "axis", "Temperature (°C)",
@@ -372,7 +484,7 @@ def test_unknown_relation_is_preserved_as_custom_before_strict_validation(
     assert snapshot["_vlm_metrics"]["relation_normalization_count"] == 1
 
 
-def test_malformed_structured_output_gets_exactly_one_internal_correction():
+def test_invalid_observation_is_retained_without_a_second_interpretation():
     invalid = _base_payload(["CT-04"])
     invalid["regions"] = [_region("flow", "CT-04", [
         _element("start", "node", category="CT-04")
@@ -404,10 +516,10 @@ def test_malformed_structured_output_gets_exactly_one_internal_correction():
     snapshot = engine.analyze_frame(
         "unused.jpg", "flowchart", canonical_category_ids=["CT-04"]
     )
-    assert snapshot["_error"] is False
-    assert len(engine.vlm_interface.calls) == 2
-    assert "CORRECTION:" in engine.vlm_interface.calls[1]
-    assert snapshot["_vlm_metrics"]["corrective_retry_count"] == 1
+    assert snapshot["_error"] is True
+    assert len(engine.vlm_interface.calls) == 1
+    assert snapshot["_structured_observation"] == invalid
+    assert snapshot["_failure"]["code"] == "vlm_contract_invalid"
 
 
 def test_graph_with_axes_values_and_equation_preserves_cross_category_evidence():

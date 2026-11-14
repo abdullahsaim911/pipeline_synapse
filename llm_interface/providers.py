@@ -5,9 +5,9 @@ Defines the contract that future services (e.g. Ask a Question) depend on, the
 error hierarchy providers raise, and a small factory that selects a provider by
 name. Nothing here knows about a specific vendor SDK.
 
-The existing OllamaClient is intentionally NOT wrapped here: its generate()
-currently ignores per-call options, so an adapter could not honour
-GenerationSettings. Existing explanation code keeps using OllamaClient directly.
+Existing local explanation code keeps using OllamaClient directly for its
+readiness, token-budget and native response metadata. Remote explanations use
+this provider contract without changing the orchestration result shape.
 """
 
 import os
@@ -108,12 +108,15 @@ class GenerationSettings:
     temperature: float = 0.2
     max_output_tokens: int = 1024
     system_instruction: Optional[str] = None
+    response_schema: Optional[dict] = None
 
     def __post_init__(self):
         if not 0.0 <= self.temperature <= 2.0:
             raise ValueError("temperature must be between 0.0 and 2.0")
         if self.max_output_tokens <= 0:
             raise ValueError("max_output_tokens must be positive")
+        if self.response_schema is not None and not isinstance(self.response_schema, dict):
+            raise ValueError("response_schema must be an object")
 
 
 @dataclass(frozen=True)
@@ -136,6 +139,7 @@ class GenerationResult:
     model: str
     latency_ms: int
     usage: Optional[TokenUsage] = None
+    finish_reason: Optional[str] = None
 
 
 class TextGenerationProvider(ABC):

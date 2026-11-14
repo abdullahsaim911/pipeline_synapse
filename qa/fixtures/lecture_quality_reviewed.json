@@ -1,0 +1,678 @@
+{
+  "scope": "Reviewed source-image requirements, not model success claims",
+  "cases": [
+    {
+      "video_id": "-7trrETEE7k",
+      "intervention_id": "278f3bcd-387d-48cf-bd83-d939d014941f",
+      "timestamp": 436.0,
+      "frame_path": "data/-7trrETEE7k/keyframes/frame_0012_07_16.jpg",
+      "classifier_hint": "slide",
+      "hint_categories": [],
+      "case_index": 1,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Angular momentum heading at upper left; conservation heading across top.",
+        "L vector = I omega vector. The boxed condition is sum of external torque vectors = 0, with total angular momentum constant.",
+        "Left pair of wheels is labeled I1, omega1 and I2, omega2; right pair shares omega. Curved arrows depict the rotation directions; a hand gesture separates the illustrations.",
+        "I1 omega1 + I2 omega2 = (I1 + I2) omega; boxed omega = (I1 omega1 + I2 omega2)/(I1 + I2)."
+      ],
+      "forbidden_inferences": [
+        "Do not drop vector marks, subscripts, zero-external-torque condition or denominator grouping.",
+        "Do not assert actual motion from the still frame."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "in the same direction, so I can add it, so plus I2 omega2. That should equal the total final angular momentum, and the total final angular momentum would be just, you know, I1 plus I2 times omega. And boom! From this, I can calculate what omega should be. Of course, you could say that, \"Hey, the two wheels are identical, so I1 should be equal to I2.\" And you know, we can further simplify this, but you get the point. Okay, now consider a box floating in outer space with a spinning disc inside of it. The disc is connected to a motor and the motor is powered by a battery,"
+    },
+    {
+      "video_id": "3zLQfuMZMF4",
+      "intervention_id": "646b8a10-78a2-454b-b632-15bf75d54fbe",
+      "timestamp": 102.0,
+      "frame_path": "data/3zLQfuMZMF4/keyframes/frame_0004_01_42.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 2,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Top formula: integral u dv = uv - integral v du.",
+        "Middle example: integral 2x sin x dx.",
+        "Bottom question: How do we choose u and dv?"
+      ],
+      "forbidden_inferences": [
+        "Preserve the subtraction sign and differential scope.",
+        "The frame does not yet display a chosen u/dv or a solved answer."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "how we derive the formula of integration by parts from the formula of the product rule notice that the integral of the function that we wanted to integrate consist of U and DV meaning that we let part of the function equals to U and DV before we perform integration on it but how do we know whether which part of the function is equal to U or DV for the selection of U just remember the acronym li8 where L for logarithmic function such as the natural log of x i for inverse trigonometric function such as inverse of sinx a for algebraic"
+    },
+    {
+      "video_id": "AlkMD91fukI",
+      "intervention_id": "6df97f87-6310-4fe9-a979-8cf71f89c04c",
+      "timestamp": 70.0,
+      "frame_path": "data/AlkMD91fukI/keyframes/frame_0003_01_10.jpg",
+      "classifier_hint": "text",
+      "hint_categories": [
+        "CT-06"
+      ],
+      "case_index": 3,
+      "reviewed_categories": [
+        "CT-06",
+        "CT-11",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "An open book lies across the center/right of a wooden table; a patterned mug containing a dark drink is at upper left.",
+        "Hands overlap the lower center/right pages. A pointing finger and other hand obscure some text.",
+        "The book header reads DEEP WORK; a right-page heading reads Discipline #2: Act on the Lead Measures."
+      ],
+      "forbidden_inferences": [
+        "Do not invent an unobstructed transcription or claim that a page is turning.",
+        "The text classifier hint does not describe the whole observational scene."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "requires concentration, you're sabotaging yourself right from the start. You are not going to get into deep work like that. So, keep your phone away, period. And if you have an Apple Watch or something like that, put Do Not Disturb mode on, because those notifications [music] will distract you, too. And in general, remove all distractions. You need to find a quiet place where you can actually concentrate. What I have found out to be the absolute best thing for me is to start working straight after waking up. Just brush your teeth, get a cup of black coffee, and go to work. Your willpower is strongest in the morning, so it feels a lot easier to work then. If you try to work in the afternoon"
+    },
+    {
+      "video_id": "B0Ard8jDiHM",
+      "intervention_id": "d0016564-b6f7-48cd-95b8-1612ce557afb",
+      "timestamp": 332.0,
+      "frame_path": "data/B0Ard8jDiHM/keyframes/frame_0004_05_32.jpg",
+      "classifier_hint": "notes",
+      "hint_categories": [
+        "CT-06"
+      ],
+      "case_index": 4,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03"
+      ],
+      "essential_visual_facts": [
+        "Center-of-mass weighted-position formula appears at top.",
+        "A smaller red 2 kg mass is on the left and a larger blue 6 kg mass is on the right, separated by 10 cm.",
+        "The center-of-mass marker lies closer to the larger right mass.",
+        "First calculation uses coordinates 0 cm and 10 cm and gives 7.5 cm. The bottom calculation uses -10 cm and 0 cm and gives -2.5 cm."
+      ],
+      "forbidden_inferences": [
+        "Distinguish changing the coordinate origin from moving the masses or center of mass.",
+        "Preserve negative signs, masses, distances and weighted-average denominator."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "So recapping, you can use the center of mass formula to find the exact location of the center of mass between a system of objects, you add all the masses times their positions and divide by the total mass, the position can be measured relative to any point you call X equals zero and the number you get out of that calculation will be the distance from X equals zero to the center of mass of that system."
+    },
+    {
+      "video_id": "CQYELiTtUs8",
+      "intervention_id": "50ba446c-a44b-464a-8f7a-d4073130f765",
+      "timestamp": 118.0,
+      "frame_path": "data/CQYELiTtUs8/keyframes/frame_0009_01_58.jpg",
+      "classifier_hint": "slide",
+      "hint_categories": [],
+      "case_index": 5,
+      "reviewed_categories": [
+        "CT-06",
+        "CT-11",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Large historical portrait at left; smaller portrait at upper center-left.",
+        "Yellow Law I quotation at center-right describes persistence at rest or uniform straight motion except when force changes the state.",
+        "Pink underlining emphasizes rest and moving uniformly straight forward.",
+        "Small outlined rock above the quote has a leader labeled rest."
+      ],
+      "forbidden_inferences": [
+        "Do not assign unreadable full names from abbreviated annotations.",
+        "Do not invent motion or a second/third-law equation absent from this frame."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "\"Every body persists in,\" either, \"being in a state of rest or moving uniformly straight forward, except insofar as it is compelled to change its state by force impressed.\" So this Newton's first law-- and I think I should do a little aside here, because, this right here is Newton. And if this is Newton's first law, why do I have this huge picture of this guy over here? Well, the reason is is because Newton's first law is really just a restatement of this guy's law of inertia. And this guy, another titan of civilization"
+    },
+    {
+      "video_id": "HGg_WiaSr4U",
+      "intervention_id": "8232ac29-17ce-4e85-8818-1fa8a96714b2",
+      "timestamp": 164.0,
+      "frame_path": "data/HGg_WiaSr4U/keyframes/frame_0002_02_44.jpg",
+      "classifier_hint": "biology",
+      "hint_categories": [
+        "CT-03"
+      ],
+      "case_index": 6,
+      "reviewed_categories": [
+        "CT-03",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Lipids heading at upper left with Not so water soluble beside it.",
+        "A space-filling molecular illustration occupies the left half, with three elongated outlined parts and red spheres near its upper junction.",
+        "Below it is Triglyceride (Fat). Top notes list energy storage, signaling, and membranes."
+      ],
+      "forbidden_inferences": [
+        "Do not invent a displayed molecular formula or bond types.",
+        "Preserve the water-solubility qualification and grouping of three elongated parts."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "and -glyceride from a glycerol. And triglyceride is, in fact, another word for fat. And what makes a triglyceride not so soluble in water? Look at these long hydrocarbon chains where you just essentially have a bunch of carbons and hydrogens. Those parts, remember, things that are soluble in water, they tend to be polar molecules, things that have a partial charge on one end or another or even a full charge. But when we look at these hydrocarbon chains, they tend to not have these partial charges on"
+    },
+    {
+      "video_id": "J8mLQQZeIH8",
+      "intervention_id": "fc5d2b82-185a-4c28-b3be-6a6bafd6eb94",
+      "timestamp": 358.0,
+      "frame_path": "data/J8mLQQZeIH8/keyframes/frame_0006_05_58.jpg",
+      "classifier_hint": "slide",
+      "hint_categories": [],
+      "case_index": 7,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Top text states Newton third law: when A puts a force on B, B puts an equal and opposite force on A.",
+        "Upper-right vector relation F_A on B = -F_B on A is labeled Action and Reaction.",
+        "Left apple/Earth illustration has opposing arrows and m/M labels; middle box shows second law acceleration vector = net force vector / m.",
+        "Right shoe/ball illustration has opposing red/white arrows. Bottom-right person holding a bar is accompanied by opposing arrows."
+      ],
+      "forbidden_inferences": [
+        "Preserve the minus sign and distinguish forces on different bodies.",
+        "Do not say equal forces imply equal accelerations or invent animation."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "Newton's third law written as action and reaction. Every action has equal and opposite reaction. I don't really like that wording, mainly because words like action and reaction makes us feel like we're talking about some kind of an action that you're doing, right? But when it comes to Newton's third law, we're not talking about any action, we're talking about forces. It's only applicable to forces and nothing else. So because there's a chance of misconception, I usually don't like to talk about that. But there's another big problem with using the words action and reaction."
+    },
+    {
+      "video_id": "LPZh9BOjkQs",
+      "intervention_id": "d4585079-b933-43fb-a9e8-eace3e584c01",
+      "timestamp": 260.0,
+      "frame_path": "data/LPZh9BOjkQs/keyframes/frame_0007_04_20.jpg",
+      "classifier_hint": "table",
+      "hint_categories": [
+        "CT-05"
+      ],
+      "case_index": 8,
+      "reviewed_categories": [
+        "CT-04",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "A dense grid of repeated miniature panels fills the left half.",
+        "Right title reads 1 Billion computations per Second.",
+        "Right-hand stacked horizontal scales are connected by dotted V-shaped guides, labeled Minute, Hour, Day, Month, Year, 100 Years, 10,000 Years, 1,000,000 Years, and 100,000,000 Years. A small Second label sits by the top scale."
+      ],
+      "forbidden_inferences": [
+        "This is not an ordinary table of numerical cells despite the classifier hint.",
+        "Do not invent exact counts in the miniature panels or treat scale widths as one common linear time axis."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "Workers flag unhelpful or problematic predictions, and their corrections further change the model's parameters, making them more likely to give predictions that users prefer. Looking back at the pre-training, though, this staggering amount of computation is only made possible by using special computer chips that are optimized for running many operations in parallel, known as GPUs. However, not all language models can be easily parallelized. Prior to 2017, most language models would process text one word at a time,"
+    },
+    {
+      "video_id": "P_SD5Rt6XMk",
+      "intervention_id": "7edbe060-62fa-4ce3-8c49-0ae1c01a8ebf",
+      "timestamp": 330.0,
+      "frame_path": "data/P_SD5Rt6XMk/keyframes/frame_0005_05_30.jpg",
+      "classifier_hint": "chemistry",
+      "hint_categories": [
+        "CT-03"
+      ],
+      "case_index": 9,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Top reaction is CH4 + 2O2 -> CO2 + 2H2O, accompanied by molecule illustrations.",
+        "A magnified green atom/cloud at lower left connects by a white leader to a nucleus labeled Neutrons and Protons (+).",
+        "Right isotope comparison shows carbon with 6P/6N versus 6P/8N, and isotope notation with mass numbers 12 and 14 above atomic number 6.",
+        "The lower-right nucleus illustration is labeled Unstable."
+      ],
+      "forbidden_inferences": [
+        "Do not swap proton/neutron counts, coefficients or isotope mass/atomic numbers.",
+        "Do not apply the Unstable annotation to both isotope examples or invent a decay equation."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "Well, turns out that stability also depends upon the ratio of the number of protons and the number of neutrons. Certain ratios are more stable compared to the others. And like I said, it's not very straightforward, it's not very intuitive. And so we'll not have to remember which nuclei is stable or which nuclei are not. But the bottom line is there are certain nuclei that are unstable. They can be heavy or they can be light. Now let's see what happens to these unstable nuclei. So let's take an example. If you take carbon-14, turns out that, because it's unstable, it spits out something called the beta particle,"
+    },
+    {
+      "video_id": "Tf4A93763Bw",
+      "intervention_id": "b485e8bf-9606-4110-bd9f-43b61fbb722e",
+      "timestamp": 400.0,
+      "frame_path": "data/Tf4A93763Bw/keyframes/frame_0002_06_40.jpg",
+      "classifier_hint": "diagram",
+      "hint_categories": [],
+      "case_index": 10,
+      "reviewed_categories": [
+        "CT-03",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Three side-by-side panels read Gravitation, Electric and Magnetic.",
+        "Left globe has green arrowheads pointing inward; moon is above and to its right.",
+        "Center white plus on a blue circle has yellow arrows pointing outward; a white minus on a red circle sits upper right.",
+        "Right main bar magnet has red N at left and blue S at right; surrounding white arrowed curves run outside from N toward S. A small unlettered blue/red bar is above it."
+      ],
+      "forbidden_inferences": [
+        "No displayed orbit or motion is established.",
+        "Do not invent printed N/S letters on the small bar, polarity interactions, energy-flow arrows or attraction/repulsion of opposite charges."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "into the earth-ball system, which then gets transferred into the surrounding through sound, heat and motion. That's how energy flows. It's always there, it's always conserved, but it changes form and moves around. That is amazing, right? Finally, everything we've talked about doesn't just apply to gravitational potential energy. Remember, there are other kinds of potential energy. The principle of conservation of energy applies to all forms of energy: electric, magnetic, even light waves for that matter. For example, we can apply it to electric circuits to predict how bright a bulb will glow,"
+    },
+    {
+      "video_id": "W6rb-0AghZE",
+      "intervention_id": "22141881-df39-4694-bfdd-5d5d2b414ec4",
+      "timestamp": 416.0,
+      "frame_path": "data/W6rb-0AghZE/keyframes/frame_0008_06_56.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 11,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Top problem states a 10 kg box pulled by a rope 30 degrees above horizontal, with gravity 100 N, tension 120 N, normal 40 N and friction 80 N.",
+        "Upper-left illustration shows the rope/box arrangement. Right force diagram has gravity down, normal and tension vertical component up, friction left and tension horizontal component right.",
+        "Horizontal calculation is (120 cos 30 degrees - 80)/10 = 2.4 m/s^2 to the right.",
+        "Vertical calculation is (120 sin 30 degrees + 40 - 100)/10 = 0."
+      ],
+      "forbidden_inferences": [
+        "Do not swap force values or sine/cosine components.",
+        "Preserve subtraction signs, mass denominator and acceleration units."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "That's the net force, okay? Divided by mass, that's 10 kilograms. So if you plug all of that in now, we get this. And if you plug this values in the calculator, you'll get the answer to be zero. This means acceleration in the Y direction is zero, there is no net force in the Y direction, it all cancels out, the acceleration is zero. That means there's only the acceleration in the X direction. This represents the total acceleration of the box. So that is our final answer and that kind of makes intuitive sense. If you were to pull a box like this, you would expect it to slide and accelerate along the horizontal."
+    },
+    {
+      "video_id": "d8EA5TxGzcY",
+      "intervention_id": "8c17ac49-bb70-4baa-b20d-836b862eda18",
+      "timestamp": 446.0,
+      "frame_path": "data/d8EA5TxGzcY/keyframes/frame_0005_07_26.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 12,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-06",
+        "CT-07"
+      ],
+      "essential_visual_facts": [
+        "Rhombus ABCD has A left, B top, C right, D bottom and E at the diagonals intersection; a right-angle marker is drawn at E.",
+        "BE is 7 and CE is 24; side labels are S with matching side marks.",
+        "A separate right triangle has legs 7 and 24 and hypotenuse S.",
+        "Pythagorean working gives S^2 = 24^2 + 7^2 = 576 + 49 = 625, S = 25, and P = 4S = 100."
+      ],
+      "forbidden_inferences": [
+        "Do not confuse the half-diagonal labels with side lengths or full diagonal lengths.",
+        "Keep side length 25 distinct from perimeter 100."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "so now let's take the square root of both sides the square root of 625 is 25 so now we can calculate the perimeter so it's 4 s or 4 times 25 which is a hundred so that's the perimeter for this particular rhombus it's a hundred units number five what is the area of the isosceles trapezoid shown below so first we'll need a formula the area"
+    },
+    {
+      "video_id": "eBTNzScLUg4",
+      "intervention_id": "30766b1a-d1ef-4921-b0e3-1deedc79b28e",
+      "timestamp": 146.0,
+      "frame_path": "data/eBTNzScLUg4/keyframes/frame_0003_02_26.jpg",
+      "classifier_hint": "diagram",
+      "hint_categories": [],
+      "case_index": 13,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Heading Law of Conservation of Mass.",
+        "Reaction CH4 + 2O2 -> CO2 + 2H2O spans the frame.",
+        "Masses beneath the species are 16 g, 64 g, 44 g and 36 g respectively.",
+        "Boxed totals show 80 g on reactant side in red and 80 g on product side in blue. A lower-left schematic box contains CH4 + O2."
+      ],
+      "forbidden_inferences": [
+        "Do not lose coefficients, mass units or species-to-mass association.",
+        "Do not turn the lower schematic into a contradictory second balanced equation."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "of mass if you have 80 g of material inside the closed container before the reaction then when the reaction is complete you should still have 80 g of matter inside that container in a chemical reaction the only thing that's happening is that the atoms are rearranging themselves here carbon is bonded to hydrogen but now it's Bond oxygen so therefore the total mass should remain the same the atoms are simply switching Partners they just rearrange themselves in this chemical reaction but the amount of mass the"
+    },
+    {
+      "video_id": "n1Jyv6Bxte8",
+      "intervention_id": "b976c452-15cc-41b4-84f4-2c3f646e9bd4",
+      "timestamp": 200.0,
+      "frame_path": "data/n1Jyv6Bxte8/keyframes/frame_0004_03_20.jpg",
+      "classifier_hint": "slide",
+      "hint_categories": [],
+      "case_index": 14,
+      "reviewed_categories": [
+        "CT-01",
+        "CT-03",
+        "CT-06",
+        "CT-11",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Instructor is on the left, and a stylized document illustration is on the right.",
+        "A magnifying glass overlaps a colored line-graph illustration on the document.",
+        "The document also depicts text lines, highlighted lines, a small blue rectangular inset and a chemical ring drawing."
+      ],
+      "forbidden_inferences": [
+        "Small document labels/values are not legible enough for confident transcription.",
+        "Do not invent research findings or treat the illustration as an interactive interface."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "What determines cell development and how can we use cells to form therapeutically applicable tissues are some of the questions I ask. (bright music) - I found biology really interesting, and so I started reading research papers that I found online. I didn't know what most of the words meant when I started, but over time, they started to make sense and I felt like I was understanding what was going on. - My mom loved taking me on nature walks and gardening, and I also read a lot of nature and animal magazines. I loved seeing all the vivid photographs"
+    },
+    {
+      "video_id": "pY1rwEsdCRo",
+      "intervention_id": "6954dd56-694d-4b1d-974b-cfd917510256",
+      "timestamp": 318.0,
+      "frame_path": "data/pY1rwEsdCRo/keyframes/frame_0006_05_18.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 15,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Top Translation illustration shows a basketball with three rightward arrows labeled v, mass m, and K_trans = (1/2) m v^2.",
+        "Lower basketball illustration has curved yellow arrows, omega and I labels, and K_rot = (1/2) I omega^2.",
+        "A central outlined band overlaps dimmed round objects and a larger bright basketball."
+      ],
+      "forbidden_inferences": [
+        "Distinguish speed v from angular speed omega and mass m from moment of inertia I.",
+        "Describe depicted translational/rotational arrows without inventing an observed animation or temporal sequence."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "Look, it's moving forward. It's translating, and it's spinning. It's rotating as well. How do you calibrate kinetic energy of such an object? Well, now you have to add both its translational kinetic energy and the rotational kinetic energy. That'll be the total kinetic energy of such motion. All right, now before we can tackle our original problem, we can solve our original question. We need one more concept, one more idea. In translational motion, if you have a force that's acting on an object, and let's say it displaces the object about some direction,"
+    },
+    {
+      "video_id": "rjkQcfw5fkM",
+      "intervention_id": "12dd95d4-fc11-4f16-a5f7-5e6f62a9f786",
+      "timestamp": 222.0,
+      "frame_path": "data/rjkQcfw5fkM/keyframes/frame_0004_03_42.jpg",
+      "classifier_hint": "notes",
+      "hint_categories": [
+        "CT-06"
+      ],
+      "case_index": 16,
+      "reviewed_categories": [
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "A vertical divider separates two handwritten columns.",
+        "Left asks What keeps Objects at Rest? and says Natural state; blue text says objects at rest tend to stay at rest until an unbalanced force acts.",
+        "Right asks What keeps objects in Motion? A downward yellow arrow leads to Unbalanced force in the dir. of motion."
+      ],
+      "forbidden_inferences": [
+        "The right-hand source statement must not be silently endorsed as the universal modern law for constant velocity.",
+        "Review aligned teacher speech to distinguish an historical/mistaken idea from the lesson conclusion; do not silently rewrite the source statement."
+      ],
+      "review_basis": "Source image and aligned teacher passage reviewed",
+      "teacher_passage": "But as soon as the chair loses contact from my foot, I am no longer pushing that chair forward, there's nothing that's pushing that chair forward. There is no unbalanced force in the forward direction, and yet that chair continues to move forward. And for a second, if we imagine if this was right, that we needed an unbalanced force to keep things in motion, then that chair should have instantly stopped the moment we lost contact with the foot, this is how it would look like, all right, ready? Boom, see, the chair would instantly stop",
+      "expected_lecture_connection": "The teacher refutes the right-column claim: the chair continues moving after contact and forward pushing stop. Distinguish continued motion from acceleration; do not endorse the displayed misconception."
+    },
+    {
+      "video_id": "uUH5YI5dTOg",
+      "intervention_id": "0e3df276-201e-4fc5-8124-540c35ceeb45",
+      "timestamp": 364.0,
+      "frame_path": "data/uUH5YI5dTOg/keyframes/frame_0008_06_04.jpg",
+      "classifier_hint": "biology",
+      "hint_categories": [
+        "CT-03"
+      ],
+      "case_index": 17,
+      "reviewed_categories": [
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Central enlarged tissue/skin diagram connects by dashed guides to a boxed region on the arm of a human outline at right.",
+        "Heading Epithelial (skin) cells, Protective label and Dividing annotation identify the central illustrated tissue.",
+        "Left examples are labeled muscle, neurons and bone.",
+        "Bottom contrast is mature/specialized versus stem cells/unspecialized. Right notes identify self-renewal and ability to differentiate/potency; top says lose about 40,000 per hour and must replace."
+      ],
+      "forbidden_inferences": [
+        "Do not swap mature and stem-cell roles or invent an organelle-level mechanism.",
+        "Use the printed dividing annotation as a depicted concept, not an observed animation."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "Some are more potent than others. So, this epithelial stem cell we saw here is actually one of the less potent types of stem cell. In other words, these stem cells can only divide and specialize into more epithelial cells. So, they're our source of epithelial cells, sure, but, only epithelial cells and not any other cell type. So, we call them unipotent, referring to their ability to only create one type of cell. But, lemme show you another example here of a multipotent stem cell. Let's look at this guy's femur, his thigh bone,"
+    },
+    {
+      "video_id": "vOipqtdR23s",
+      "intervention_id": "f8673579-caea-4577-8f12-668389de65ac",
+      "timestamp": 310.0,
+      "frame_path": "data/vOipqtdR23s/keyframes/frame_0006_05_10.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 18,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Top-left Position: location (Vector), x vector = 10 m (10 m right).",
+        "Road number line at upper right runs from -20 to 25 m in 5 m steps; negative is left, positive right.",
+        "A dim car at 10 and a bright car at 25 are accompanied by 3 seconds.",
+        "Velocity is described as how quickly position changes, with v vector = delta x vector/delta t and (25 m - 10 m)/3 s = 5 m/s."
+      ],
+      "forbidden_inferences": [
+        "Preserve signed direction and distinguish displacement from the final coordinate.",
+        "Do not invent acceleration or a constant-speed observation from this still."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "so velocity becomes a vector quantity. So the sign tells you which direction the position has changed, that the new position is to the right side of my initial position. And what does the number say? Five meters per second. It says that if the car was traveling at a constant rate, it would change its position five meters to the right every second. So if I could see an animation of it, this is what it would look like. So in the first second, look, it changed by five. And the next second, it changed again by five to the right. And the last second, again, it changed by five meters to the right."
+    },
+    {
+      "video_id": "zQLxbN8dxJg",
+      "intervention_id": "d554d874-ebf9-4c02-bc02-62f6e81ffbf0",
+      "timestamp": 828.0,
+      "frame_path": "data/zQLxbN8dxJg/keyframes/frame_0007_13_48.jpg",
+      "classifier_hint": "equation",
+      "hint_categories": [
+        "CT-02"
+      ],
+      "case_index": 19,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "Top boxed conservation condition is net external force vector = 0 and total momentum constant.",
+        "Left panel shows m1 with v1 arrow right and m2 with v2 arrow left, with right defined as positive.",
+        "Initial total momentum is m1 v1 - m2 v2; right joined-block panel uses (m1 + m2) v.",
+        "Final-speed expression is (m1 v1 - m2 v2)/(m1 + m2). Right opposing force arrows are F2 on 1 left and F1 on 2 right, with F2 on 1 vector = -F1 on 2 vector."
+      ],
+      "forbidden_inferences": [
+        "Do not replace the minus with plus or assume kinetic-energy conservation for the joined-block depiction.",
+        "The sign of final v depends on the variables; do not invent a necessarily rightward final velocity."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "So this is f1 on 2. But what is this saying? This is saying that these two forces must be equal but opposite to each other. In other words, this is Newton's Third Law. When one object puts a force on another, the second object puts back an equal but opposite force on the first one. So what's incredible is that you can derive Newton's Third Law from momentum conservation, or you can do it the other way around. You can start with Newton's Third Law and derive the momentum of conservation."
+    },
+    {
+      "video_id": "AlkMD91fukI",
+      "intervention_id": "f1bf09f0-c76d-465a-b797-78c1354e441a",
+      "timestamp": 20.0,
+      "frame_path": "data/AlkMD91fukI/keyframes/frame_0001_00_20.jpg",
+      "classifier_hint": "circuit",
+      "hint_categories": [
+        "CT-03"
+      ],
+      "case_index": 20,
+      "reviewed_categories": [
+        "CT-11",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "A hand holds a small green electronics board near the lower center.",
+        "Loose parts on a dark surface include a black battery holder with red lead at upper left, coiled black USB cable at lower left, clear LEDs near upper center-left and a white breadboard at upper center.",
+        "A small blue servo-like component is centered below the breadboard, and a pile of colored jumper wires is on the right."
+      ],
+      "forbidden_inferences": [
+        "This is a photographed set of loose components, not a grounded completed-circuit schematic.",
+        "Do not invent pin numbers, supply voltage, active behavior or a definite unreadable board model."
+      ],
+      "review_basis": "Source image and aligned teacher passage reviewed",
+      "teacher_passage": "myself to the absolute limit. During that time, I have to learn all these different productivity hacks, and I have found out what actually works and what doesn't. Now, I'm going to share those with you, so you can benefit from them, too. Why should you listen to me? Well, I studied two degrees at the same time for a whole year. Right now, I work about 80 hours per month while also doing my second year of computer science, and apparently, that still wasn't enough for me, so I decided to give this YouTube thing a shot as well. So, the first thing is there are no hacks. The hard work has to be put in either way. It will probably suck, but you can make it a lot easier for yourself by optimizing things. Let's get",
+      "expected_lecture_connection": "The narration discusses study/workload/productivity experience, not a circuit tutorial or an explanation of the displayed algorithm. Describe the visual without fabricating a technical teaching intent."
+    },
+    {
+      "video_id": "AlkMD91fukI",
+      "intervention_id": "c6811f5c-b843-4f2c-96af-3e7cb21796ac",
+      "timestamp": 14.0,
+      "frame_path": "data/AlkMD91fukI/keyframes/frame_0000_00_14.jpg",
+      "classifier_hint": "code",
+      "hint_categories": [
+        "CT-08"
+      ],
+      "case_index": 21,
+      "reviewed_categories": [
+        "CT-06",
+        "CT-08",
+        "CT-09"
+      ],
+      "essential_visual_facts": [
+        "A dark code editor has a file sidebar at left and a Java source pane with line numbers at right.",
+        "Visible source includes class FastSort, generic sort overloads and partition calls; conditions use begin < end.",
+        "Recursive bounds use partitionIndex - 1 and partitionIndex + 1; comparator overloads pass comparator.",
+        "Large overlaid text Computer science and engineering obscures some middle source lines."
+      ],
+      "forbidden_inferences": [
+        "Do not invent obscured lines, a complete uncropped program, console output or successful execution.",
+        "Preserve comparison operators, recursive bounds, generic syntax and the distinction between editor UI and program output."
+      ],
+      "review_basis": "Source image and aligned teacher passage reviewed",
+      "teacher_passage": "For the past 2 years, I have pushed myself to the absolute limit. During that time, I have to learn all these different productivity hacks, and I have found out what actually works and what doesn't. Now, I'm going to share those with you, so you can benefit from them, too. Why should you listen to me? Well, I studied two degrees at the same time for a whole year. Right now, I work about 80 hours per month while also doing my second year of computer science, and apparently, that still wasn't enough for me, so I decided to give this YouTube thing a shot as well. So, the first thing is there are no hacks. The hard work has to be put in",
+      "expected_lecture_connection": "The narration discusses study/workload/productivity experience, not a circuit tutorial or an explanation of the displayed algorithm. Describe the visual without fabricating a technical teaching intent."
+    },
+    {
+      "video_id": "B0Ard8jDiHM",
+      "intervention_id": "4f69b35e-b9f1-4144-9949-2747499392a9",
+      "timestamp": 20.0,
+      "frame_path": "data/B0Ard8jDiHM/keyframes/frame_0000_00_20.jpg",
+      "classifier_hint": "flowchart",
+      "hint_categories": [
+        "CT-04"
+      ],
+      "case_index": 22,
+      "reviewed_categories": [
+        "CT-03",
+        "CT-06",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "A small red circle labeled 2 kg is at left and a larger blue circle labeled 6 kg is at right.",
+        "A dashed dimension line above them is labeled 10 cm; a question mark appears within the span near the right.",
+        "No center-of-mass calculation or numeric answer is displayed yet."
+      ],
+      "forbidden_inferences": [
+        "This is not a flowchart despite the classifier hint.",
+        "Do not claim a drawn pivot, a shown 7.5 cm answer, force arrows or actual motion."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "this two kilogram mass and this six kilogram mass, now they're separated by 10 centimeters, so it's somewhere in between them and we know it's gonna be closer to the larger mass, 'cause the center of mass is always closer to the larger mass, but exactly where is it gonna be? We need a formula to figure this out and the formula for the center of mass looks like this, it says the location of the center of mass, that's what this is, this Xcm is just the location of the center of mass, it's the position of the center of mass is gonna equal,"
+    },
+    {
+      "video_id": "W6rb-0AghZE",
+      "intervention_id": "768e6959-4913-4aa5-849a-664f3e44cb69",
+      "timestamp": 232.0,
+      "frame_path": "data/W6rb-0AghZE/keyframes/frame_0002_03_52.jpg",
+      "classifier_hint": "geometry",
+      "hint_categories": [
+        "CT-07"
+      ],
+      "case_index": 23,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06",
+        "CT-07",
+        "CT-12"
+      ],
+      "essential_visual_facts": [
+        "The top 10 kg, 30 degree rope/box problem lists gravity 100 N, tension 120 N, normal 40 N and friction 80 N.",
+        "Right free-body/component illustration shows tension diagonally up-right, its horizontal F_T cos 30 degrees component right and F_T sin 30 degrees component up, with a 30 degree angle.",
+        "Other force directions are normal up, friction left and gravity down.",
+        "Lower-left generic triangle has hypotenuse h, horizontal h cos theta and vertical h sin theta."
+      ],
+      "forbidden_inferences": [
+        "Do not swap sine/cosine component roles or force directions.",
+        "The later numerical acceleration solution is not displayed in this particular frame."
+      ],
+      "review_basis": "Direct inspection of the source image; teacher-connection review pending",
+      "teacher_passage": "so it's going to be FT cos 30 degrees. And what will this be? Well, it's going to be FT, the force of tension times sines of 30 degrees. These two vectors are called the components of this vector. And since these two vectors add up to gimme the same vector, I can now get rid of this. This is replaced by these two vectors. Let me get rid of this as well. And we now have all the vectors in the horizontal and vertical. Now just to clarify, when somebody asks you to draw a free body diagram, this is the actual free body diagram. It's just that, that sometimes we resolve forces"
+    },
+    {
+      "video_id": "eBTNzScLUg4",
+      "intervention_id": "81e9564d-1b45-4f24-9943-3dd96d76ad16",
+      "timestamp": 46.0,
+      "frame_path": "data/eBTNzScLUg4/keyframes/frame_0001_00_46.jpg",
+      "classifier_hint": "graph",
+      "hint_categories": [
+        "CT-01"
+      ],
+      "case_index": 24,
+      "reviewed_categories": [
+        "CT-02",
+        "CT-03",
+        "CT-06"
+      ],
+      "essential_visual_facts": [
+        "Heading Law of Conservation of Mass.",
+        "Only reactants CH4 + 2O2 and a rightward reaction arrow are visible; the product area is blank.",
+        "16 g is below CH4 and 64 g below 2O2. A lower-left outlined schematic contains CH4 + O2."
+      ],
+      "forbidden_inferences": [
+        "This is not a data graph despite the classifier hint.",
+        "Do not present CO2, H2O, product masses or a boxed total as already visible; those belong to a later frame."
+      ],
+      "review_basis": "Source image and aligned teacher passage reviewed",
+      "teacher_passage": "of Meth in this container we're also going to place 64 G of oxygen gas so the methane and the oxygen gas they cannot leave the container they're stuck there now as the reaction proceeds it's a combustion reaction it's going to produce carbon dioxide and water vapor depending on the temperature now let's say if if you collect 44 G of carbon dioxide according",
+      "expected_lecture_connection": "The teacher anticipates CO2 and water vapor in the closed-container reaction. Attribute them to speech: the current frame still shows only the reactants and a blank product area."
+    }
+  ],
+  "reviewed_category_coverage": [
+    "CT-01",
+    "CT-02",
+    "CT-03",
+    "CT-04",
+    "CT-06",
+    "CT-07",
+    "CT-08",
+    "CT-09",
+    "CT-11",
+    "CT-12"
+  ],
+  "categories_without_reviewed_case": [
+    "CT-05",
+    "CT-10"
+  ]
+}

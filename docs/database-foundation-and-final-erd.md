@@ -4,6 +4,8 @@ Status: Task 4 foundation, Task 5 shared processing coordination, and Task 6A lo
 
 ## Decisions and boundaries
 
+Personal-storage extension (migration `20261113_0009`): `saved_explanations`, `voice_notes`, `voice_note_explanations`, and `media_deletions` are implemented. Bookmark and recent-view timestamps belong to the owner-scoped immutable explanation version. `library_items` now has a lecture metadata snapshot and a logical video ID without the cache-deletion cascade. Permanent recordings use managed backend files; IndexedDB is draft/import recovery only. See [the implemented personal-storage plan](personal-learning-storage-plan.md) and `synapse-web/docs/PERSONAL_STORAGE.md`. Remaining planned schema tables below describe later work and are not all physical tables.
+
 - SQLite is the local database; SQLAlchemy models and named constraints remain PostgreSQL-compatible.
 - `DATABASE_URL` selects the database. The default resolves to `synapse.db` at the repository root, independent of the process working directory.
 - Alembic is the only application-schema upgrade mechanism. Runtime startup no longer calls `create_all`; tests may still use model metadata to create isolated fixtures.

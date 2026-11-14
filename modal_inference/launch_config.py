@@ -64,5 +64,11 @@ def build_vllm_serve_command(api_key: str) -> list[str]:
         VLLM_GENERATION_CONFIG_JSON,
         "--mm-processor-kwargs",
         VLLM_MM_PROCESSOR_KWARGS_JSON,
+        # vLLM 0.19 /tokenize updates the processor cache without populating
+        # EngineCore's receiver cache. A following generation of that image
+        # otherwise fails with "Expected a cached item". Frames are processed
+        # once; bypass this cache rather than keep inconsistent cache owners.
+        "--mm-processor-cache-gb",
+        "0",
         "--trust-remote-code",
     ]

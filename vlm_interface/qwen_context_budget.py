@@ -14,7 +14,7 @@ from typing import Any, Callable
 
 from PIL import Image
 
-from modal_inference.config import MAX_MODEL_LEN, MODEL_ID
+from modal_inference.config import MAX_IMAGE_PIXELS, MAX_MODEL_LEN, MODEL_ID
 from vlm_interface.vlm_types import VLMContextBudgetError
 
 
@@ -166,6 +166,7 @@ class QwenContextBudgetEstimator:
             tokenize=True,
             add_generation_prompt=True,
             return_dict=True,
+            processor_kwargs={"max_pixels": MAX_IMAGE_PIXELS},
             # Python lists are sufficient for counting and avoid initializing
             # a tensor/CUDA runtime in the lightweight remote client.
             return_tensors=None,

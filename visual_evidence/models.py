@@ -7,6 +7,7 @@ not a required Qwen response format and not learner-facing narration.
 
 from __future__ import annotations
 
+from collections import deque
 from enum import Enum
 from typing import Any, ClassVar, Literal
 
@@ -483,6 +484,28 @@ class VisualEvidence(EvidenceModel):
                     )
                 if child_id == element.id:
                     raise ValueError(f"element '{element.id}' cannot be its own child")
+
+        # Containment must be acyclic. Flow/network relations may legitimately
+        # cycle and are deliberately excluded from this hierarchy-only check.
+        children = {key: set(element.child_ids) for key, element in element_by_id.items()}
+        for element in element_by_id.values():
+            if element.parent_id in children:
+                children[element.parent_id].add(element.id)
+        indegree = dict.fromkeys(element_by_id, 0)
+        for descendants in children.values():
+            for child_id in descendants:
+                indegree[child_id] += 1
+        roots = deque(key for key, degree in indegree.items() if degree == 0)
+        visited = 0
+        while roots:
+            parent = roots.popleft()
+            visited += 1
+            for child_id in children[parent]:
+                indegree[child_id] -= 1
+                if indegree[child_id] == 0:
+                    roots.append(child_id)
+        if visited != len(element_by_id):
+            raise ValueError("containment hierarchy contains a cycle")
 
         for reference in self.reading_order:
             if reference not in endpoint_ids:

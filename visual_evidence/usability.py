@@ -39,12 +39,13 @@ def assess_snapshot(snapshot: Any) -> SnapshotAssessment:
         code = failure.get("code") if isinstance(failure, Mapping) else None
         return SnapshotAssessment(False, code or "extraction_failed")
 
-    missing = snapshot.get("missing_elements")
-    if missing and missing not in ("null", "None", ""):
-        return SnapshotAssessment(False, "evidence_marked_missing")
-
     evidence = snapshot.get("visual_evidence")
     if not isinstance(evidence, Mapping):
+        # Legacy OCR/missing flags cannot override validated canonical content.
+        # Keep the legacy rejection reason when no canonical evidence exists.
+        missing = snapshot.get("missing_elements")
+        if missing and missing not in ("null", "None", ""):
+            return SnapshotAssessment(False, "evidence_marked_missing")
         return SnapshotAssessment(False, "canonical_evidence_absent")
     validation = validate_visual_evidence(evidence)
     if not validation.structurally_valid:

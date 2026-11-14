@@ -1,0 +1,27 @@
+{
+  "target": {
+    "id": "reference-table",
+    "timestamp": 5,
+    "content_type": "table",
+    "canonical_categories": [
+      "CT-05"
+    ],
+    "frame_path": "qa/fixtures/reference_table.png",
+    "source_kind": "authored_synthetic_reference"
+  },
+  "transcript": {
+    "entries": [
+      {
+        "start": 0,
+        "end": 15,
+        "text": "Compare configurations using both latency and accuracy. Read each row together with its headers and units. Lower latency means less waiting, while higher accuracy means a larger percentage of correct results."
+      }
+    ]
+  },
+  "essential_visual_facts": [
+    "Rows A/B/C have latency 12/9/15 ms and accuracy 88/92/90 percent.",
+    "B is lowest latency and highest accuracy.",
+    "Headers and row associations must stay intact."
+  ],
+  "source_note": "Authored deterministic QA image, not a saved lecture or a model success claim."
+}

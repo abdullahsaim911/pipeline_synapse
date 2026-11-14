@@ -121,13 +121,13 @@ EDU_CATEGORIES = {
         "calculus formulas with integrals summations and derivatives",
     ],
     "graph": [
-        "a scientific graph with axes and plotted data",
-        "a chart showing data visualization",
-        "a plot with x and y axes displaying information",
+        "a scientific data graph with labeled axes and plotted curves or points",
+        "a bar chart or line chart comparing numerical data",
+        "a coordinate plot with x and y axes and data series",
     ],
     "flowchart": [
         "a flowchart showing a process or algorithm",
-        "a process diagram with connected steps",
+        "a process diagram with ordered steps and decision branches",
         "boxes and arrows showing a workflow",
     ],
     "biology": [
@@ -156,14 +156,14 @@ EDU_CATEGORIES = {
         "mathematical shapes and constructions",
     ],
     "table": [
-        "a table or chart showing organized data",
+        "a data table with column headers and aligned cells",
         "a data table with rows and columns",
         "organized information in tabular format",
     ],
     "notes": [
         "handwritten notes explaining a topic",
-        "written explanations on a whiteboard",
-        "hand-drawn diagrams and text",
+        "handwritten sentences explaining a topic on a whiteboard",
+        "a page of handwritten prose notes and annotations",
     ],
     "text": [
         "a slide with only text and bullet points",
@@ -184,14 +184,14 @@ PROMPTS_PER_CATEGORY = 3  # Each category has 3 prompts
 
 # Non-educational content prompts (also expanded)
 NON_EDU_PROMPTS = [
-    "a person's face talking to the camera",
-    "a close-up of someone speaking",
+    "a person's face talking to the camera without a board, slide, or instructional visuals",
+    "a close-up of someone speaking with no visible instructional content",
     "a YouTube video thumbnail or title screen",
     "a subscribe button or end screen with social links",
     "like and subscribe reminder",
     "a blank or empty screen",
     "a solid color background",
-    "a plain title slide with only text",
+    "a video opening title showing only the channel name and branding",
     "a classroom or background without content",
     "video intro or outro animation",
     "channel logo or branding",
@@ -651,6 +651,71 @@ def is_semantically_redundant(
 # =============================================================================
 
 
+def ensure_temporal_coverage(
+    selected: List[ScoredFrame], frames: List[ScoredFrame], duration: float,
+    min_gap: float, max_gap: float, target_min: int, target_max: int,
+) -> List[ScoredFrame]:
+    """Keep scene choices, fill uncovered intervals, then enforce a distributed cap.
+
+    Use timestamps rather than dataclass equality: frames contain NumPy arrays.
+    Coverage is best effort; never invent a candidate in a blank interval.
+    """
+    if max_gap <= 0 or min_gap <= 0 or target_max < 1:
+        raise ValueError("Frame gaps and output limit must be positive")
+    chosen = {frame.timestamp: frame for frame in selected}
+    candidates = [frame for frame in frames
+                  if frame.is_educational and frame.complexity_score > 0.05]
+
+    def add_best(pool):
+        eligible = [frame for frame in pool if frame.timestamp not in chosen
+                    and all(abs(frame.timestamp - t) >= min_gap for t in chosen)]
+        if not eligible:
+            return False
+        best = max(eligible, key=lambda frame: (frame.complexity_score, -frame.timestamp))
+        chosen[best.timestamp] = best
+        return True
+
+    # Local windows prevent the complete board at the end of a long scene
+    # from being the only candidate. Existing scene choices remain anchors.
+    end = max(duration, max((frame.timestamp for frame in frames), default=0.0))
+    start = 0.0
+    while start < end:
+        stop = min(start + max_gap, end)
+        if not any(start <= t < stop for t in chosen):
+            add_best([frame for frame in candidates if start <= frame.timestamp < stop])
+        start = stop
+
+    # Meet the legacy minimum using the least-covered candidates first.
+    remaining = [frame for frame in frames if frame.is_educational
+                 and frame.timestamp not in chosen]
+    while len(chosen) < min(target_min, target_max) and remaining:
+        best = max(remaining, key=lambda frame: (
+            min((abs(frame.timestamp - t) for t in chosen), default=end),
+            frame.complexity_score, -frame.timestamp,
+        ))
+        remaining = [frame for frame in remaining if frame.timestamp != best.timestamp]
+        add_best([best])
+
+    ordered = sorted(chosen.values(), key=lambda frame: frame.timestamp)
+    if len(ordered) <= target_max:
+        return ordered
+
+    # Keep the best candidate per time bin before filling unused slots.
+    bins = {}
+    for frame in ordered:
+        index = min(target_max - 1, int(frame.timestamp / max(end, 1.0) * target_max))
+        current = bins.get(index)
+        if current is None or frame.complexity_score > current.complexity_score:
+            bins[index] = frame
+    kept = {frame.timestamp: frame for frame in bins.values()}
+    while len(kept) < target_max:
+        best = max((frame for frame in ordered if frame.timestamp not in kept),
+                   key=lambda frame: (min(abs(frame.timestamp - t) for t in kept),
+                                      frame.complexity_score, -frame.timestamp))
+        kept[best.timestamp] = best
+    return sorted(kept.values(), key=lambda frame: frame.timestamp)
+
+
 def extract_pedagogical_keyframes(
     video_id: str,
     output_dir: str,
@@ -871,49 +936,10 @@ def extract_pedagogical_keyframes(
     if verbose:
         print("\n  [7/7] Ensuring temporal coverage...")
 
-    # Check for gaps and force-save if needed
-    final_frames = []
-    last_time = -max_frame_gap
-
-    for sf in selected_frames:
-        # If gap is too large, we might need to fill it
-        # (This is already handled by scene segmentation, but double-check)
-        final_frames.append(sf)
-        last_time = sf.timestamp
-
-    # Check if we have too few frames
-    if len(final_frames) < target_min:
-        if verbose:
-            print(f"    Too few frames ({len(final_frames)}), adding more...")
-
-        # Add more frames by lowering thresholds
-        remaining = [
-            sf for sf in scored_frames if sf not in final_frames and sf.is_educational
-        ]
-        remaining.sort(key=lambda x: x.complexity_score, reverse=True)
-
-        for sf in remaining:
-            if len(final_frames) >= target_min:
-                break
-
-            # Check spacing
-            too_close = any(
-                abs(sf.timestamp - f.timestamp) < min_frame_gap / 2
-                for f in final_frames
-            )
-
-            if not too_close:
-                final_frames.append(sf)
-
-        # Sort by timestamp
-        final_frames.sort(key=lambda x: x.timestamp)
-
-    # Trim if too many
-    if len(final_frames) > target_max:
-        # Keep most complex frames with good temporal distribution
-        final_frames.sort(key=lambda x: x.complexity_score, reverse=True)
-        final_frames = final_frames[:target_max]
-        final_frames.sort(key=lambda x: x.timestamp)
+    final_frames = ensure_temporal_coverage(
+        selected_frames, scored_frames, float(duration), min_frame_gap,
+        max_frame_gap, target_min, target_max,
+    )
 
     if verbose:
         print(f"    Final frame count: {len(final_frames)}")
@@ -936,8 +962,8 @@ def extract_pedagogical_keyframes(
                 timestamp_seconds=sf.timestamp,
                 complexity_score=round(sf.complexity_score, 4),
                 # ``clip_confidence`` is retained for API compatibility, but
-                # newly generated records now contain the genuine classifier
-                # score.  Complexity remains independently available above.
+                # newly generated records contain raw CLIP cosine similarity,
+                # not a calibrated probability. Complexity is independent.
                 clip_confidence=(
                     round(sf.classification_confidence, 4)
                     if sf.classification_confidence is not None
@@ -962,7 +988,7 @@ def extract_pedagogical_keyframes(
         "clip_confidence": r.clip_confidence,
         "classification_confidence": r.classification_confidence,
         "confidence_semantics": (
-            "classifier" if r.classification_confidence is not None else "unknown"
+            "clip_similarity" if r.classification_confidence is not None else "unknown"
         ),
         "raw_category_labels": [r.content_type],
     } for r in results]

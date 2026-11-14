@@ -2,8 +2,7 @@
 VLM Snapshot Engine (M2)
 
 Universal Eye" for pipeline - analyzes complete video frames from STEM lectures.
-Uses Qwen2-VL-7B-Instruct for visual structure analysis.
-Supports both transformers and GGUF backends.
+Uses the configured Qwen3-VL remote provider or legacy local backends.
 """
 
 import json
@@ -25,6 +24,7 @@ from visual_evidence import (
     assemble_compact_qwen_observation,
     normalize_compact_relations,
 )
+from visual_evidence.models import ValidationDiagnostic, VisualEvidence
 from stage_tracing import trace_stage
 
 # Lightweight provider constants and response types (no PyTorch/Transformers eager load)
@@ -54,8 +54,7 @@ class SnapshotEngine:
     """
     VLM Engine for analyzing STEM lecture frames.
 
-    Loads Qwen2-VL-7B-Instruct model once and keeps it in memory
-    for the duration of the pipeline loop.
+    Reuses the selected provider for structured single-frame observations.
     """
 
     # System prompt (constant) - Enhanced for multiple content type detection
@@ -370,52 +369,110 @@ Provide in visual_analysis.text object:
     # These assignments replace the active legacy prompt while local GGUF code
     # remains isolated in gguf_vlm_engine.py.
     SYSTEM_PROMPT = f"""
-Analyze ONLY the supplied single frame of an educational video. Return ONLY JSON
-conforming to the existing {COMPACT_OBSERVATION_SCHEMA} contract. First identify
-distinct meaningful visual regions across the entire image and their reading order;
-do not force the image into arbitrary quadrants. Extract visible facts, not a
-learner-facing explanation. For each region capture its applicable CT categories,
-important elements, exact readable labels, symbols, numbers and units, positions,
-and supported relations. Describe structural organization with a short overview,
-orientation, containment, hierarchy, topology and directional relations. Use short
-local IDs consistently, including for critical relation or arrow labels and exact
-associations.
+Analyze ONLY this single frame. Return a compact structured observation using
+{COMPACT_OBSERVATION_SCHEMA}, not a learner-facing explanation.
 
-Do not assert a connection from proximity or causation from co-location. Report
-unreadable or ambiguous labels, intersections and attachments explicitly and
-preserve partial evidence. Do not claim previous or future states, motion, or an
-action's success from one frame. Never fabricate ticks, measurements, words,
-operators, anatomical labels, teacher intent, hierarchy, junctions, arrows or
-connections. Use [ILLEGIBLE] only when text is visible but unreadable. Avoid
-duplicate prose when structured fields already encode a fact. Put the most
-educationally consequential supported evidence first; do not pad decorative facts.
+ORGANIZATION: Inspect the whole frame first. Use layout/structure.overview for the
+whole; one region per meaningful panel/block/scene, never arbitrary quadrants or an
+extra region copying its panels. One element ref per visible occurrence; reuse in
+relations/hierarchy/exact. Keep similar objects at distinct locations separate.
+Supply region positions, supported reading_order refs and grouping via parent_ref
+or containment relations. Leave inapplicable hierarchy/order/topology empty.
+Region position is required (null only if unclear). Within each panel locate the
+essential parts relative to each other. Do not repeat a whole-frame inventory in
+each region. A line family may be one element with its common direction/shape;
+do not create a separate identical object for every ray or duplicate its labels.
+Use short location words in position; coordinate arrays belong only in bbox.
+Do not replace a panel's meaningful parts with one generic "diagram" element.
+When arrows matter, record source objects and arrow groups separately. Each arrow
+group description must state where the visible arrow tips sit relative to the
+object and then its toward/away direction. A familiar field name is not evidence
+for direction. A static object alone cannot establish "orbiting", "falling" or
+"flowing"; retain its visible position instead.
+Different variable names or subscripts do not prove unequal values. Describe a
+hand's visible orientation without assigning an inferred gesture meaning. A bright
+cursor/highlight is not an atom, molecule or scene object without visible evidence.
 
-OUTPUT FORMAT (JSON only): return exactly one object on a single line as minified
-JSON: no indentation, no newlines between tokens and no spaces after ":" or ",".
-Required keys are shown below. Omit every other key whose value would be null, an
-empty array or an empty object; an omitted key means null or empty.
-{{"schema":"{COMPACT_OBSERVATION_SCHEMA}","status":"complete|partial|failed","evidence_status":"supported|partially_supported|ambiguous_or_conflicting|unavailable_or_unreadable","categories":["CT-01"],"regions":[{{"ref":"r1","categories":["CT-01"],"evidence_status":"supported","elements":[{{"ref":"e1","kind":"specific visible kind","evidence_status":"supported"}},{{"ref":"e2","kind":"specific visible kind","evidence_status":"supported"}}]}}],"relations":[{{"ref":"q1","source":"e1","target":"e2","type":"left_of|right_of|above|below|contains|inside|grouped_with|connected_to|points_to|leads_to|branches_to|depends_on|corresponds_to|parent_of|child_of|precedes|follows|intersects|parallel_to|perpendicular_to|bonded_to|labels|custom:specific_semantic","evidence_status":"supported"}}],"structure":{{"overview":"grounded structural overview"}},"exact":[{{"text":"exact visible content","status":"supported","notation":"plain|math|code|chemical|other","source_ref":"e1"}}]}}
+RELATIONSHIPS: Inspect each arrowhead, shaft, attachment and visible endpoints.
+Encode confirmed source/target with directed:true. For unknown endpoints describe
+orientation and uncertainty. Distinguish direction/curvature/contact/connectivity;
+proximity is not connection, crossing is not junction. Do not supply unseen paths,
+endpoints, polarity or functions from scientific knowledge, or infer temporal change,
+motion, causation or success from one frame.
+For radial arrows inspect the arrow tips: tips at the central object mean toward
+it; tips at the outer ends mean away from it. Record the observed direction, not
+the direction expected from a familiar diagram. For curved arrows follow the
+visible shaft and tips; state unknown endpoints instead of completing a textbook
+path. A circle near an object alone does not show orbiting or motion.
 
-Optional keys, included only when they carry a value:
+EXACTNESS: Preserve labels, notation scope, operators, signs, values, units and code
+indentation verbatim, with source refs. [ILLEGIBLE] means visible unreadable text.
+Record target-specific uncertainties and essential omissions in missing; unresolved
+essential direction/topology/association/organization means partial, not complete.
+Complete requires applicable essential evidence, not just valid JSON or finish=stop.
+
+OUTPUT FORMAT: One minified JSON object matching the supplied schema, no markdown.
+schema is {COMPACT_OBSERVATION_SCHEMA}; coordinate_system is qwen_1000.
+Populate actual regions and parts from the frame; an overview alone is insufficient.
+Choose complete/partial/failed from visible evidence, not from an example template.
+Categories must identify observed content. Omit optional empty fields.
+
+Item fields (not literal JSON):
+region: {{ref,categories,evidence_status,elements:[{{ref,kind,description,evidence_status}}]}};
+relation: {{ref,source,target,type,evidence_status}}; exact: {{text,status,notation}}.
+Use schema relation types (contains, labels, points_to, connected_to, left_of, etc.)
+or custom:specific_semantic. notation: plain|math|code|chemical|other.
+status: complete|partial|failed|not_attempted. evidence_status (exact.status):
+supported|partially_supported|ambiguous_or_conflicting|unavailable_or_unreadable.
+
+Optional fields:
 root: layout, details, uncertainties[{{target:"e1|r1|scene",reason,impact}}], missing[].
 region: position, bbox, reading_order_index, description.
 element: categories, label, text, description, position, bbox, source_ref, attributes,
-parent_ref, child_refs. relation: label, directed, cross_category, source_refs.
-structure: orientation, components, relations, reading_order, hierarchy, topology,
+parent_ref. relation: label, directed, cross_category, source_refs.
+Every element description names the visible part and its observable attributes.
+Refs are opaque IDs: a name used only inside a ref is lost and is not a description.
+structure: orientation, reading_order, hierarchy, topology,
 uncertainties.
 
-Rules: refs are short local references, not backend IDs. Every relation endpoint,
-structure reference, parent/child reference, exact source_ref and uncertainty target
-must name a declared ref (or "scene" where allowed). Put each grounded relationship
-in root relations once; structure.relations contains only its relation refs. Use bbox
-only for grounded normalized [x_min,y_min,x_max,y_max] values in [0,1], otherwise
-null. Keep exact math, code, labels, values, units, signs, indentation, branch labels,
-and connector direction. Exact text must point to the element or region that visibly
-contains it. Preserve partial evidence instead of guessing. Under output pressure
-prioritize: valid JSON/status, essential regions/elements, exact critical content,
-essential topology/spatial relations, category details, then secondary context.
-Never call truncated or materially incomplete evidence complete. Do not repeat a
-fact across fields. Output minified JSON only, with no markdown.
+All refs must resolve ("scene" allowed for exact/uncertainty). exact.source_ref names
+its visible source. Declare each element once; use only refs already declared.
+Region refs start with r_, element refs with e_, and relation refs with rel_.
+Every ref is unique across the response. Never declare a ref named "scene";
+that word is reserved for whole-frame exact/uncertainty targets only.
+Relation source/target name declared entities.
+Use sequential numeric IDs (r_1, r_2; e_1, e_2 across ALL regions; rel_1, rel_2).
+Do not restart element numbering in a new region or use the same e_lines name
+for separate line groups. Stop after each real visible occurrence is recorded.
+parent_ref must name the element's own region or another declared element; never
+use "scene" as a parent. Use null when no parent is observed.
+bbox: Qwen integer grid
+[x_min,y_min,x_max,y_max] in [0,1000], with positive width and height; omit a box if
+uncertain and give a grounded position in words. Prioritize essential entities WITH exact content,
+relations and uncertainty before details. Encode facts once; preserve partial evidence.
+"""
+
+    # Always present: a hint selects extra depth, but discovery needs the full
+    # taxonomy even for ambiguous legacy labels such as diagram or slide.
+    CATEGORY_DISCOVERY = """
+CATEGORY DISCOVERY (classify visible content, not the hint or drawing style):
+CT-01 data charts: axes/scales, series, legends, values, comparisons;
+CT-02 math: expressions, scope, bounds, transformation order;
+CT-03 science/technical: sources, parts, arrows, fields, bonds, circuits, connectivity;
+CT-04 flows/networks: nodes, directed branches, decisions, loops;
+CT-05 tables: rows/columns, headers, cell associations, units;
+CT-06 text: headings, steps, definitions, warnings, negations;
+CT-07 geometry: points, angles, markings, constraints, dimensions;
+CT-08 programming: exact code, indentation, ordering, displayed output;
+CT-09 interfaces: controls, panels, selections, visible states;
+CT-10 maps: places, routes, legends, compass, scale;
+CT-11 observational images: forms, textures, patterns, contrasts;
+CT-12 physical scenes: apparatus, objects, contacts, arrangement.
+Generic diagrams may span categories. Lines alone do not establish a data chart.
+Field/vector diagrams belong to CT-03; CT-04 requires a process or node network,
+not just arrows within a scientific field illustration.
+Discover all supported categories per region/frame, including unhinted categories;
+preserve their defining structure using this contract. Never copy a hint by default.
 """
 
     CANONICAL_CATEGORY_DIRECTIVES = {
@@ -432,13 +489,16 @@ fact across fields. Output minified JSON only, with no markdown.
             "silently correct suspicious mathematics."
         ),
         "CT-03": (
-            "In details.scientific_structure inventory labeled components and orientation, "
-            "leader-line label targets, containment and only confirmed contact/connectivity. "
-            "For circuits preserve terminals, wires, junctions versus crossings, branches, "
-            "switch state and visible values; for chemistry preserve atoms, bond types and "
-            "charges; for biology preserve compartments, parts and label associations. "
-            "Distinguish adjacency, custom:part_of, diagram arrows and electrical connections. Do "
-            "not invent biological function or current direction."
+            "In details.scientific_structure capture labeled parts, orientation, label targets, "
+            "containment and confirmed connectivity. For fields/vectors separate sources, "
+            "charges/poles, lines and arrowheads; use refs for visible toward/away direction, "
+            "curved paths and confirmed endpoints. A nearby object need not be an endpoint. "
+            "Do not infer convergence, closed loops or polarity from textbook expectations; "
+            "mark obscured arrowheads/endpoints uncertain. Circuits: terminals, wires, "
+            "junctions versus crossings, branches, switch states, values. Chemistry: atoms, "
+            "bonds, charges. Biology: compartments, parts, label associations. Distinguish "
+            "adjacency, custom:part_of, arrows and electrical connections; do not invent "
+            "functions or current direction."
         ),
         "CT-04": (
             "In details.flow_network capture node labels/shapes, start/end, each directed "
@@ -718,28 +778,18 @@ fact across fields. Output minified JSON only, with no markdown.
         )
 
         user_prompt = f"""
-Analyze this educational frame and return the compact structured observation.
-
-RAW CATEGORY HINT: {primary_type}
 PRIMARY CONTENT TYPE: {primary_type}
 CANONICAL CATEGORY HINTS: {', '.join(category_ids) if category_ids else 'none'}
 {uncertainty_note}
 
-Hints are not facts. Verify them from the frame and include additional clearly
-visible categories. Do not force an ambiguous hint into a CT category.
+Hints are not facts; verify from the frame. Do not force an ambiguous hint.
+{self.CATEGORY_DISCOVERY}
 
 CATEGORY-SPECIFIC REQUIREMENTS:
 {category_directives}
 
-OUTPUT REQUIREMENTS:
-- Scan the entire frame and create meaningful regions rather than arbitrary quadrants.
-- Preserve exact visible content and its source association.
-- Encode supported containment, hierarchy, topology, label targets, spatial arrangement,
-  connector direction, reading order and cross-category relationships with local refs.
-- Treat intersections, wire crossings, arrow attachments and label targets as uncertain
-  unless their visual attachment is clear.
-- A partial or uncertain result must be labeled partial or ambiguous.
-- Output only the single JSON object defined above.
+FINAL CHECK: Verify unique occurrences, within/cross-category relations, arrowhead
+direction and honest status. Output only the single JSON object defined above.
 """
         self._last_prompt_budget_parts = {
             "common_prompt": self.SYSTEM_PROMPT + user_prompt.replace(
@@ -964,6 +1014,93 @@ OUTPUT REQUIREMENTS:
             "completion_tokens": tokens,
         }
 
+    @staticmethod
+    def _diagnose_extraction_quality(evidence: VisualEvidence) -> None:
+        """Flag observable gaps without inferring facts or merging occurrences.
+
+        Run only after contract/reference validation. Diagnostics describe the
+        returned observation, not scientific correctness against the unseen image.
+        """
+        if evidence.extraction_status in {"failed", "not_attempted"}:
+            return
+
+        diagnostics = []
+
+        def report(code: str, message: str, target: str = "scene") -> None:
+            diagnostics.append(ValidationDiagnostic(
+                code=f"extraction.quality.{code}", message=message, target_id=target,
+            ))
+
+        # IDs and reading-order indices cannot establish distinct occurrences.
+        # Include all observed properties/locations so repeated labels alone do
+        # not flag distinct objects. Even exact matches are candidates, not merges.
+        seen_regions = {}
+        for region in evidence.regions:
+            if not region.attributes.structural_description or not any(
+                element.label or element.exact_text or element.description
+                for element in region.elements
+            ):
+                continue
+            content = region.model_dump(mode="json", exclude={"id", "reading_order_index"})
+            content["elements"] = [element.model_dump(
+                mode="json", exclude={"id", "parent_id", "child_ids", "source_ref"}
+            ) for element in region.elements]
+            signature = json.dumps(content, sort_keys=True, ensure_ascii=False)
+            if signature in seen_regions:
+                report(
+                    "possible_duplicate_region",
+                    f"Region repeats the observed content and location of {seen_regions[signature]}; "
+                    "distinct occurrences are not established. Preserved both for review.",
+                    region.id,
+                )
+            else:
+                seen_regions[signature] = region.id
+
+        structure = evidence.structural_description
+        if len(evidence.regions) > 1:
+            spatial_types = {"left_of", "right_of", "above", "below", "inside", "contains"}
+            region_ids = {region.id for region in evidence.regions}
+            located_by_relation = any(
+                relation.relation in spatial_types
+                and (relation.source_id in region_ids or relation.target_id in region_ids)
+                for relation in evidence.relations
+            )
+            if not located_by_relation and not any(
+                region.position or region.bbox_normalized for region in evidence.regions
+            ):
+                report("missing_region_positions", "Multiple regions have no structured positions, bounds or spatial relations.")
+            # Do not require reading order for an unordered image. An emitted
+            # index sequence does establish that the observation intended one.
+            if (
+                sum(region.reading_order_index is not None for region in evidence.regions) > 1
+                and not structure.reading_order
+            ):
+                report("missing_reading_order_refs", "Region order indices were supplied but structure.reading_order has no refs.")
+
+        # Only categorical contradictions: do not guess at field physics,
+        # symmetry, or reciprocal edges which may be valid in a network.
+        inverse_types = {"right_of": "left_of", "below": "above", "follows": "precedes"}
+        asymmetric_types = {"left_of", "above", "precedes"}
+        seen_directions = set()
+        for relation in evidence.relations:
+            if relation.evidence_status != "supported":
+                continue
+            kind, source, target = relation.relation, relation.source_id, relation.target_id
+            if kind in inverse_types:
+                kind, source, target = inverse_types[kind], target, source
+            if kind not in asymmetric_types:
+                continue
+            if source == target or (kind, target, source) in seen_directions:
+                report("conflicting_spatial_order", "Supported spatial/order relations assert incompatible directions.", relation.id or "scene")
+            seen_directions.add((kind, source, target))
+
+        if diagnostics:
+            evidence.validation_diagnostics.extend(diagnostics)
+            if evidence.extraction_status == "complete":
+                evidence.extraction_status = "partial"
+            if evidence.evidence_status == "supported":
+                evidence.evidence_status = "partially_supported"
+
     def _attach_visual_evidence(
         self,
         snapshot: Dict[str, Any],
@@ -1070,6 +1207,7 @@ OUTPUT REQUIREMENTS:
                 fallback["visual_evidence"] = evidence.to_schema_dict()
                 return fallback
 
+            self._diagnose_extraction_quality(evidence)
             evidence_dict = evidence.to_schema_dict()
             structure = evidence_dict["structural_description"]
             exact_text = "\n".join(
@@ -1138,6 +1276,7 @@ OUTPUT REQUIREMENTS:
         timestamp_seconds: Optional[float] = None,
         raw_category_labels: Optional[list[str]] = None,
         canonical_category_ids: Optional[list[str]] = None,
+        ownership_check: Optional[Any] = None,
     ) -> Dict:
         """
         Analyze a STEM lecture frame and extract structured information.
@@ -1245,58 +1384,13 @@ OUTPUT REQUIREMENTS:
             response=response,
             token_limit=token_limit,
         )
-        failure_code = (attached.get("_failure") or {}).get("code")
-        if (
-            self.provider == PROVIDER_MODAL
-            and failure_code in {"vlm_contract_invalid", "vlm_output_malformed"}
-        ):
-            corrective_prompt = (
-                prompt
-                + "\nCORRECTION: Return one JSON object matching the supplied schema "
-                  "exactly. Use only listed relation types; prefix any other "
-                  "relation with 'custom:'."
+        # One full-frame overview, followed only by bounded detail checks.
+        # Preserve failed overviews rather than silently replacing them.
+        if not attached.get("_error") and self.provider == PROVIDER_MODAL:
+            from .evidence_refinement import refine_critical_details
+            attached = refine_critical_details(
+                attached, frame_path, self.vlm_interface, ownership_check=ownership_check,
             )
-            try:
-                corrective_response = self.vlm_interface.analyze(
-                    image_path_or_pil=frame_path,
-                    prompt=corrective_prompt,
-                    generation_params={
-                        "max_new_tokens": token_limit,
-                        "temperature": DEFAULT_TEMPERATURE,
-                        "_context_budget_parts": getattr(
-                            self, "_last_prompt_budget_parts", {}
-                        ),
-                    },
-                )
-                corrective_result = self._parse_json_response(corrective_response.text)
-                if corrective_result.get("_error"):
-                    self._apply_parse_failure(
-                        corrective_result, corrective_response, token_limit
-                    )
-                corrected = self._attach_visual_evidence(
-                    corrective_result,
-                    primary_type=primary_type,
-                    frame_path=frame_path,
-                    frame_id=frame_id,
-                    timestamp_seconds=timestamp_seconds,
-                    raw_category_labels=raw_category_labels,
-                    canonical_category_ids=canonical_category_ids,
-                    classification_confidence=classification_confidence,
-                    confidence_semantics=confidence_semantics,
-                    response=corrective_response,
-                    token_limit=token_limit,
-                )
-                corrected.setdefault("_vlm_metrics", {})[
-                    "corrective_retry_count"
-                ] = 1
-                return corrected
-            except Exception as exc:
-                attached.setdefault("_vlm_metrics", {})[
-                    "corrective_retry_count"
-                ] = 1
-                attached["_vlm_metrics"]["corrective_retry_error_type"] = (
-                    type(exc).__name__
-                )
         return attached
 
     def cleanup(self):

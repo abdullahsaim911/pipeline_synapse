@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from explanation_cache import generation_manifest, write_manifest
+
 import tempfile
 import threading
 import time
@@ -72,6 +74,7 @@ class RecordingGenerator:
             )
             audio.parent.mkdir(parents=True, exist_ok=True)
             audio.write_bytes(b"ID3-p2-fixture")
+            write_manifest(audio, generation_manifest(f"Prepared {intervention_id}", audio))
             with kwargs["session_factory"]() as db:
                 row = db.query(Explanation).filter_by(
                     intervention_id=intervention_id,
@@ -191,6 +194,7 @@ class PersistentPreparationTests(unittest.TestCase):
         audio = self.data_dir / VIDEO_ID / intervention_id / f"{mode}.mp3"
         audio.parent.mkdir(parents=True, exist_ok=True)
         audio.write_bytes(b"ID3-valid-cache")
+        write_manifest(audio, generation_manifest("Cached explanation", audio))
         with self.Session() as db:
             db.add(Explanation(
                 intervention_id=intervention_id,
@@ -440,6 +444,7 @@ class PreparationEndpointTests(unittest.TestCase):
         audio = self.data_dir / VIDEO_ID / intervention_id / f"{mode}.mp3"
         audio.parent.mkdir(parents=True, exist_ok=True)
         audio.write_bytes(b"ID3-valid-cache")
+        write_manifest(audio, generation_manifest("Cached explanation", audio))
         with self.Session() as db:
             db.add(Explanation(
                 intervention_id=intervention_id,

@@ -1,7 +1,10 @@
 """
 Browser-origin controls for the local Synapse API.
 
-This is NOT authentication. The API listens on 127.0.0.1 only, so other
+Origin filtering complements account authentication; it is not authentication.
+Personal routes resolve verified bearer sessions or the explicit local-profile
+compatibility branch. Shared pipeline routes retain their existing behavior.
+The API listens on 127.0.0.1 only, so other
 machines cannot reach it, but any web page open in a browser on this computer
 can try to call it. These helpers stop that for browsers by allowing only the
 Synapse frontend's origin(s):
@@ -36,7 +39,7 @@ from fastapi.middleware.cors import CORSMiddleware
 logger = logging.getLogger(__name__)
 
 ORIGINS_ENV_VAR = "SYNAPSE_CORS_ORIGINS"
-DEFAULT_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173")
+DEFAULT_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173", "http://127.0.0.1:5174")
 
 # scheme://host[:port], no path; or the literal "null".
 _ORIGIN_RE = re.compile(r"^(?:null|https?://[A-Za-z0-9.\-]+(?::\d{1,5})?)$")
@@ -62,13 +65,13 @@ def get_allowed_origins() -> List[str]:
 
 
 def configure_cors(app: FastAPI) -> None:
-    """Add CORS limited to the allowed origins. The frontend sends no cookies."""
+    """Allow explicit frontend origins and bearer headers; no credentialed cookies."""
     app.add_middleware(
         CORSMiddleware,
         allow_origins=get_allowed_origins(),
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=["Content-Type"],
+        allow_headers=["Content-Type", "Authorization"],
     )
 
 
