@@ -14,6 +14,9 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 Screen = Literal[
     "home", "subject", "timeline", "explanation",
     "bookmarks", "library", "notes", "quiz",
+    # First launch and account screens: a few voice actions (choose a mode, say the username) so a learner
+    # who cannot see the screen gets into Synapse without a screen reader. Passwords are always typed.
+    "welcome", "login", "signup",
 ]
 
 # What is audibly playing right now. "unknown" when the frontend cannot tell.

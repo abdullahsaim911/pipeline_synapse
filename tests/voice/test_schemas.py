@@ -54,7 +54,7 @@ def test_full_context_is_accepted():
 
 @pytest.mark.parametrize("bad", [
     {"screen": "settings"},
-    {"screen": "welcome"},
+    {"screen": "onboarding"},  # "welcome", "login" and "signup" are voice screens now; unknown names are not
     {"video_id": "short"},
     {"playing": "music"},
     {"lecture_seconds": -1},

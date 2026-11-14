@@ -50,6 +50,8 @@ _ENUM_WORDS = {
     ("set_saved_view", "view"): {"recent": ["recent", "recently", "viewed"], "lectures": ["lecture", "lectures"]},
     ("set_theme", "theme"): {"night": ["night", "knight", "nite", "dark", "black"], "sepia": ["sepia", "warm"], "paper": ["paper", "light"]},
     ("set_presentation_mode", "mode"): {"accessibility": ["accessibility", "hide"], "study": ["study", "show"]},
+    ("quiz_start", "mode"): {"assessment": ["assessment", "assess", "test", "exam", "graded"],
+                             "practice": ["practice", "practise", "practising", "practicing"]},
     ("change_text_size", "change"): {"larger": ["bigger", "larger", "increase", "enlarge", "big", "large"],
                                      "smaller": ["smaller", "reduce", "shrink", "decrease", "small"]},
     ("change_listening_speed", "direction"): {"faster": ["faster", "quicker", "quick", "speed", "fast", "increase"],
@@ -101,6 +103,37 @@ def _last_enum(text_tokens: List[str], options: Dict[str, List[str]]) -> Optiona
                 if token == word and at > best_at:
                     best, best_at = value, at
     return best
+
+
+_USERNAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{2,63}$")  # the account service's rule (api/auth.py)
+_USERNAME_LEAD = re.compile(
+    r"^.*?\b(?:user\s*name|login(?:\s+name)?|my\s+name)\b(?:\s*,)?\s*(?:is|it\s+is|it's|should\s+be|will\s+be|to|as)?\s*", re.I)
+_USERNAME_VERB_LEAD = re.compile(r"^(?:please\s+)?(?:type|enter|use|put|set|sign\s+in\s+as|log\s+in\s+as|it's|it\s+is)\s+", re.I)
+_USERNAME_SYMBOLS = {"underscore": "_", "dot": ".", "period": ".", "point": ".", "dash": "-", "hyphen": "-", "minus": "-"}
+
+
+def _spoken_username(text: str) -> Optional[str]:
+    """
+    The username in "my username is m a h a 2 2" -> "maha22". Spelled letters and digits are joined, spoken
+    symbols become characters ("learner underscore one" -> "learner_one"), number words become digits, and the
+    whole is joined without spaces. Returns None unless the result is a valid username, so a misheard name is
+    asked for again rather than typed.
+    """
+    rest = _USERNAME_LEAD.sub("", text.strip(), count=1) if _USERNAME_LEAD.search(text) else _USERNAME_VERB_LEAD.sub("", text.strip())
+    rest = rest.strip(" .?!,'\"")
+    parts = []
+    for token in re.findall(r"[A-Za-z]+|\d+", rest):
+        low = token.lower()
+        if low in _USERNAME_SYMBOLS:
+            parts.append(_USERNAME_SYMBOLS[low])
+        elif low in _NUMBERS and low not in ("a",):
+            parts.append(str(_NUMBERS[low]))
+        elif low in ("capital", "uppercase", "lowercase", "letter", "the", "please", "thanks"):
+            continue
+        else:
+            parts.append(low)
+    name = "".join(parts)
+    return name if _USERNAME_RE.match(name) else None
 
 
 def extract_args(action_id: str, text: str, catalog: ActionCatalog) -> dict:
@@ -170,6 +203,17 @@ def extract_args(action_id: str, text: str, catalog: ActionCatalog) -> dict:
             args["query"] = query or text.strip()
         elif name == "question":
             args["question"] = text.strip()
+        elif name == "name" and action_id == "fill_username":
+            username = _spoken_username(text)
+            if username:
+                args["name"] = username
+        elif name == "count" and action_id == "quiz_start":
+            numbers = [n for n in _numbers(tokens) if n > 0]
+            if numbers:
+                # Keep within what quizzes allow ("twenty questions" -> the most there can be); the spoken reply
+                # says the count used, so the learner hears exactly what was set up.
+                spec = params["count"]
+                args["count"] = max(spec.min, min(spec.max, numbers[0]))
         elif (action_id, name) in _ENUM_WORDS:
             value = _last_enum(tokens, _ENUM_WORDS[(action_id, name)])
             if value:

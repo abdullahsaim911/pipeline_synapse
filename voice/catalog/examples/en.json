@@ -261,6 +261,43 @@
       "change to accessibility mode",
       "I want to see the video in study mode"
     ],
+    "get_started": [
+      "get started",
+      "I'm ready to begin",
+      "finish the setup",
+      "let's start using synapse",
+      "continue with this mode",
+      "done, take me in"
+    ],
+    "skip_onboarding": [
+      "skip the introduction",
+      "skip this welcome",
+      "skip setup for now",
+      "I don't need the introduction",
+      "skip it and go in"
+    ],
+    "fill_username": [
+      "my username is maha",
+      "the username is s m i t h",
+      "type my username, it is alex k",
+      "username a l i 2 2",
+      "set my user name to student one",
+      "use the username learner underscore one"
+    ],
+    "open_signup": [
+      "create an account",
+      "I need a new account",
+      "sign me up",
+      "make a new account instead",
+      "go to the create account page"
+    ],
+    "open_login": [
+      "I already have an account",
+      "go to sign in instead",
+      "take me to the sign in page",
+      "I want to log in",
+      "switch to signing in"
+    ],
     "change_text_size": [
       "make the text bigger",
       "increase the font size",
@@ -373,7 +410,10 @@
       "create the practice set",
       "begin practicing",
       "generate some questions for me",
-      "I want to test myself"
+      "I want to test myself",
+      "start an assessment with ten questions",
+      "give me eight practice questions",
+      "make a test of six questions"
     ],
     "quiz_answer": [
       "option two",
@@ -533,6 +573,31 @@
       "what page am I on",
       "what is on this screen",
       "tell me where I am"
+    ],
+    "read_list": [
+      "read the results",
+      "read me the results",
+      "what lectures did you find",
+      "read my saved items",
+      "what is in this list",
+      "read out the list for me",
+      "tell me what's listed here"
+    ],
+    "read_more": [
+      "read more",
+      "read the next few",
+      "keep reading",
+      "more results please",
+      "what else is there",
+      "continue reading the list"
+    ],
+    "preparation_status": [
+      "how many explanations are ready",
+      "how far along are the explanations",
+      "what is the preparation progress",
+      "are all the explanations finished",
+      "how long until the explanations are done",
+      "give me a progress update"
     ],
     "filter_moments": [
       "show only the graphs",

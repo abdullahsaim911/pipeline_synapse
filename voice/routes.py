@@ -15,6 +15,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from api.security import enforce_allowed_origin
+from voice.piper_speaker import PiperSpeaker
 from voice.process_runtime import ProcessInterpreter, ProcessRecognizer, VoiceProcessRuntime
 from voice.schemas import InterpretRequest, InterpretResponse, TranscribeResponse
 from voice.stt import MAX_BYTES, AudioError
@@ -32,7 +33,10 @@ SPEECH_CACHE_DIR = os.path.join(tempfile.gettempdir(), "synapse_voice_cache")
 SPEECH_CACHE_MAX_FILES = 128
 SPEECH_CACHE_MAX_BYTES = 64 * 1024 * 1024
 SPEECH_CACHE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60
-_CACHE_FILE_RE = re.compile(r"^[0-9a-f]{64}\.mp3$")
+# Older Edge-TTS .mp3 replies no longer match and are pruned as stale files.
+_CACHE_FILE_RE = re.compile(r"^[0-9a-f]{64}\.wav$")
+SPEECH_FILE_EXTENSION = ".wav"
+SPEECH_MEDIA_TYPE = "audio/wav"
 logger = logging.getLogger(__name__)
 
 
@@ -76,17 +80,22 @@ def get_interpreter() -> ProcessInterpreter:
 
 
 def get_tts():
-    """The existing TTSEngine (Edge-TTS, with the offline fallback), created on first use."""
+    """The local Piper voice for spoken replies, created on first use.
+
+    Deliberately independent of the pipeline's explanation TTS (tts_engine).
+    """
     global _tts
     with _instance_lock:
         if _tts is None:
-            try:
-                from tts_engine import TTSEngine
-                _tts = TTSEngine()
-            except Exception as exc:
-                logger.warning("Voice TTS is unavailable: %s", type(exc).__name__)
-                raise HTTPException(status_code=503, detail="Speech is not available right now.") from exc
+            _tts = PiperSpeaker()
     return _tts
+
+
+def _speech_cache_path(tts, text: str) -> str:
+    """Key by voice settings as well as text, so a voice or pace change is never served stale audio."""
+    identity = getattr(tts, "cache_identity", "")
+    digest = hashlib.sha256(f"{identity}\n{text}".encode("utf-8")).hexdigest()
+    return os.path.join(SPEECH_CACHE_DIR, digest + SPEECH_FILE_EXTENSION)
 
 
 def _prune_speech_cache(now: Optional[float] = None) -> None:
@@ -127,7 +136,7 @@ def _prune_speech_cache(now: Optional[float] = None) -> None:
 
 
 def _generate_speech(tts, text: str, path: str) -> None:
-    """Generate to a private temporary file, then publish one complete MP3 atomically."""
+    """Generate to a private temporary file, then publish one complete reply atomically."""
     fd, temporary = tempfile.mkstemp(prefix="voice-", suffix=".tmp", dir=SPEECH_CACHE_DIR)
     os.close(fd)
     try:
@@ -177,11 +186,11 @@ def interpret(request: InterpretRequest, interpreter: ProcessInterpreter = Depen
 
 @router.post("/speak")
 def speak(request: SpeakRequest, tts=Depends(get_tts)):
-    """Speak a short reply with the existing TTS engine. Repeated phrases are served from a disk cache."""
+    """Speak a short reply with the local Piper voice. Repeated phrases are served from a disk cache."""
     text = re.sub(r"\s+", " ", request.text).strip()
     with _work_slot(_speech_gate, "Another voice reply is already being prepared."):
         os.makedirs(SPEECH_CACHE_DIR, exist_ok=True)
-        path = os.path.join(SPEECH_CACHE_DIR, hashlib.sha256(text.encode("utf-8")).hexdigest() + ".mp3")
+        path = _speech_cache_path(tts, text)
         try:
             if not os.path.isfile(path) or os.path.getsize(path) == 0:
                 _generate_speech(tts, text, path)
@@ -190,7 +199,7 @@ def speak(request: SpeakRequest, tts=Depends(get_tts)):
         except Exception as exc:
             logger.warning("Voice speech generation failed: %s", type(exc).__name__)
             raise HTTPException(status_code=503, detail="Speech is not available right now.") from exc
-    return FileResponse(path, media_type="audio/mpeg")
+    return FileResponse(path, media_type=SPEECH_MEDIA_TYPE)
 
 
 @router.post("/warmup", status_code=204)
@@ -218,12 +227,24 @@ def warm_up(stop_event: Optional[threading.Event] = None) -> bool:
         if stop_event is not None and stop_event.is_set():
             return False
         get_recognizer().warm()
+        _warm_speech()
         return True
     except Exception as exc:  # noqa: BLE001
         logger.warning("Background voice warm-up failed: %s", type(exc).__name__)
         return False
     finally:
         _voice_turn_gate.release()
+
+
+def _warm_speech() -> None:
+    """Load the reply voice early; a missing voice is reported but never blocks commands."""
+    warm = getattr(get_tts(), "warm", None)
+    if warm is None:
+        return
+    try:
+        warm()
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Voice reply speech is unavailable: %s", exc)
 
 
 def shutdown_voice_runtime(timeout: float = 1.0) -> bool:

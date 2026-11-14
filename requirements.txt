@@ -70,6 +70,10 @@ edge-tts
 nest_asyncio
 httpx
 av>=11,<17
+# Spoken voice-command replies (/voice/speak) use a local Piper voice.
+# piper-tts is GPL-3.0-or-later. Install the voice once (~60 MB, into models/piper):
+#   python -m voice.piper_speaker download
+piper-tts>=1.3
 
 # =============================================================================
 # Installation Notes
