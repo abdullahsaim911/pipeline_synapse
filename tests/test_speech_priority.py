@@ -185,7 +185,7 @@ def test_voice_binds_priority_in_generation_thread(monkeypatch, tmp_path, endpoi
     original_attempt = streaming.AudioAttempt
     monkeypatch.setattr(streaming, 'AudioAttempt', lambda: original_attempt(root=tmp_path))
     monkeypatch.setattr(routes, 'SPEECH_CACHE_DIR', str(tmp_path / 'cache'))
-    monkeypatch.setattr(routes, '_speech_key', lambda text: 'a' * 64)
+    monkeypatch.setattr(routes, '_speech_cache_path', lambda tts, text: str(tmp_path / 'cache' / ('a' * 64 + '.wav')))
     seen = []
 
     class FakeSpeech:

@@ -7,6 +7,16 @@ background startup warm-up after the voice/STT and video-transcription warm-ups
 settle. It uses the same shared speech engine and inference gate as requests.
 Kokoro remains lazy-loaded as fallback. No startup audio is generated or streamed.
 
+Short voice-command replies use the merged Piper voice, preserving its configured
+voice, pace, and WAV cache. Both `/voice/speak` and `/voice/speak/stream` use Piper.
+Piper shares the non-preemptive CPU speech gate with explanation TTS: the active
+generation finishes, then pending voice replies take priority over explanations.
+Streaming converts Piper PCM to the existing mono 24 kHz protocol and bounded
+chunks while saving the native WAV; it does not run a second inference.
+API model setup provisions Piper as well as Pocket/Kokoro. Existing installations
+can install `requirements/runtime-api.lock` and run
+`python -m voice.piper_speaker download` before restarting the backend.
+
 Pocket startup loading waits for at least 2 GiB available RAM (and honors the
 existing processing headroom guard), retrying every second while memory is low.
 `/health` remains responsive. `/ready` reports a `tts` component and stays 503

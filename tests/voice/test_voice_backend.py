@@ -18,6 +18,8 @@ if PROJECT_ROOT not in sys.path:
 from voice import routes  # noqa: E402
 from voice.catalog import ActionCatalog  # noqa: E402
 from voice.interpret import Interpreter, extract_args  # noqa: E402
+from voice import piper_speaker  # noqa: E402
+from voice.piper_speaker import PiperSpeaker, PiperVoiceMissingError  # noqa: E402
 from voice.schemas import InterpretRequest, VoiceContext  # noqa: E402
 from voice.stt import MAX_BYTES, AudioError, Recognizer, decode_wav  # noqa: E402
 
@@ -297,7 +299,7 @@ def test_interpret_route(client):
 def test_speak_route_caches_repeated_phrases(client):
     first = client.post("/voice/speak", json={"text": "Opening your bookmarks."})
     again = client.post("/voice/speak", json={"text": "Opening   your bookmarks."})
-    assert first.status_code == again.status_code == 200 and first.headers["content-type"] == "audio/mpeg"
+    assert first.status_code == again.status_code == 200 and first.headers["content-type"] == "audio/wav"
     assert client.spoken.count("Opening your bookmarks.") <= 1
     assert client.post("/voice/speak", json={"text": "x" * 401}).status_code == 422
 
@@ -306,11 +308,69 @@ def test_speech_cache_is_bounded(tmp_path, monkeypatch):
     monkeypatch.setattr(routes, "SPEECH_CACHE_DIR", str(tmp_path))
     monkeypatch.setattr(routes, "SPEECH_CACHE_MAX_FILES", 2)
     for index, text in enumerate(("one", "two", "three")):
-        path = tmp_path / (routes.hashlib.sha256(text.encode()).hexdigest() + ".mp3")
-        path.write_bytes(b"ID3")
+        path = tmp_path / (routes.hashlib.sha256(text.encode()).hexdigest() + ".wav")
+        path.write_bytes(b"RIFF")
         os.utime(path, (index + 1, index + 1))
     routes._prune_speech_cache(now=3)
-    assert len(list(tmp_path.glob("*.mp3"))) == 2
+    assert len(list(tmp_path.glob("*.wav"))) == 2
+
+
+def test_old_edge_mp3_replies_are_pruned(tmp_path, monkeypatch):
+    monkeypatch.setattr(routes, "SPEECH_CACHE_DIR", str(tmp_path))
+    stale = tmp_path / (routes.hashlib.sha256(b"old").hexdigest() + ".mp3")
+    stale.write_bytes(b"ID3")
+    routes._prune_speech_cache()
+    assert not stale.exists()
+
+
+def test_speech_cache_key_includes_voice_settings(tmp_path, monkeypatch):
+    monkeypatch.setattr(routes, "SPEECH_CACHE_DIR", str(tmp_path))
+    slow = PiperSpeaker(voice="v", voice_dir=tmp_path, length_scale=1.2)
+    fast = PiperSpeaker(voice="v", voice_dir=tmp_path, length_scale=1.0)
+    other = PiperSpeaker(voice="w", voice_dir=tmp_path, length_scale=1.2)
+    paths = {routes._speech_cache_path(s, "Okay.") for s in (slow, fast, other)}
+    assert len(paths) == 3 and all(p.endswith(".wav") for p in paths)
+    assert routes._speech_cache_path(slow, "Okay.") == routes._speech_cache_path(
+        PiperSpeaker(voice="v", voice_dir=tmp_path, length_scale=1.2), "Okay.")
+
+
+def test_piper_settings_are_validated(monkeypatch, tmp_path):
+    monkeypatch.setenv("SYNAPSE_PIPER_VOICE", "en_GB-test-low")
+    monkeypatch.setenv("SYNAPSE_PIPER_VOICE_DIR", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_PIPER_LENGTH_SCALE", "9")
+    monkeypatch.setenv("SYNAPSE_PIPER_SPEAKER", "not-a-number")
+    speaker = PiperSpeaker()
+    assert speaker.model_path == tmp_path / "en_GB-test-low.onnx"
+    assert speaker.length_scale == 2.0 and speaker.speaker_id is None
+    monkeypatch.setenv("SYNAPSE_PIPER_LENGTH_SCALE", "slow")
+    assert PiperSpeaker().length_scale == piper_speaker.DEFAULT_LENGTH_SCALE
+
+
+def test_missing_piper_voice_is_a_clear_error(tmp_path):
+    speaker = PiperSpeaker(voice="absent-voice", voice_dir=tmp_path)
+    with pytest.raises(PiperVoiceMissingError, match="python -m voice.piper_speaker download"):
+        speaker.generate("Hello.", str(tmp_path / "out.wav"))
+
+
+def test_speak_route_reports_missing_voice_as_unavailable(tmp_path, monkeypatch):
+    monkeypatch.setattr(routes, "SPEECH_CACHE_DIR", str(tmp_path / "voice-cache"))
+    app = FastAPI()
+    app.include_router(routes.router)
+    app.dependency_overrides[routes.get_tts] = lambda: PiperSpeaker(voice="absent-voice", voice_dir=tmp_path)
+    response = TestClient(app).post("/voice/speak", json={"text": "Hello."})
+    assert response.status_code == 503 and response.json()["detail"] == "Speech is not available right now."
+    assert not list((tmp_path / "voice-cache").glob("*.wav"))
+
+
+def test_installed_piper_voice_speaks(tmp_path):
+    pytest.importorskip("piper")
+    speaker = PiperSpeaker()
+    if not speaker.model_path.is_file():
+        pytest.skip(f"Piper voice not installed at {speaker.model_path}")
+    out = tmp_path / "reply.wav"
+    speaker.generate("Okay, opening your bookmarks.", str(out))
+    with wave.open(str(out), "rb") as wav:
+        assert wav.getnframes() / wav.getframerate() > 0.5
 
 
 def test_foreign_browser_origin_is_refused(client):
@@ -337,6 +397,50 @@ def test_excess_speech_work_is_rejected_without_queueing(client):
     finally:
         routes._speech_gate.release()
     assert response.status_code == 429
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("my username is m a h a 2 2", "maha22"),
+    ("the username is s m i t h", "smith"),
+    ("username learner underscore one", "learner_1"),
+    ("type my username, it is alex k", "alexk"),
+    ("set my user name to student one", "student1"),
+    ("my username is maha dot k", "maha.k"),
+    ("it is maha khalid", "mahakhalid"),
+])
+def test_username_is_taken_from_speech_or_spelling(text, expected):
+    assert extract_args("fill_username", text, ActionCatalog.load()) == {"name": expected}
+
+
+@pytest.mark.parametrize("text", ["my username is x", "my username is", "username underscore a b"])
+def test_an_impossible_username_is_asked_for_again_not_typed(text):
+    # Too short, empty, or starting with a symbol: the account rule would refuse it, so nothing is filled in.
+    assert extract_args("fill_username", text, ActionCatalog.load()) == {}
+
+
+@pytest.mark.parametrize("text,expected", [
+    ("start an assessment with ten questions", {"mode": "assessment", "count": 10}),
+    ("give me eight practice questions", {"mode": "practice", "count": 8}),
+    ("make a test of three questions", {"mode": "assessment", "count": 5}),  # below the minimum: the minimum
+    ("give me twenty practice questions", {"mode": "practice", "count": 10}),  # above the maximum: the maximum
+    ("start the practice questions", {"mode": "practice"}),
+])
+def test_quiz_mode_and_count_are_heard(text, expected):
+    catalog = ActionCatalog.load()
+    args = extract_args("quiz_start", text, catalog)
+    assert args == expected
+    assert catalog.validate_args("quiz_start", args) == expected
+
+
+def test_welcome_and_account_screens_are_voice_screens():
+    catalog = ActionCatalog.load()
+    for screen in ("welcome", "login", "signup"):
+        VoiceContext(screen=screen)  # accepted by the request schema
+    assert {"set_presentation_mode", "get_started", "skip_onboarding"} <= {a.id for a in catalog.for_screen("welcome")}
+    assert {"fill_username", "open_signup"} <= {a.id for a in catalog.for_screen("login")}
+    assert {"fill_username", "open_login"} <= {a.id for a in catalog.for_screen("signup")}
+    # Passwords are never a voice action.
+    assert not [a.id for a in catalog.for_screen("login") if "password" in a.id or "password" in a.params]
 
 
 def test_quiz_answer_letters_and_numbers():

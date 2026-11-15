@@ -42,3 +42,5 @@ nest-asyncio==1.6.0
 httpx==0.28.1
 soundfile==0.13.1
 mediapipe==1.1.1
+piper-tts==1.8.0
+scipy==1.17.1

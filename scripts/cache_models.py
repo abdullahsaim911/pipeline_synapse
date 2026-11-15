@@ -16,6 +16,8 @@ def main() -> None:
         sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
         from tts_engine.assets import prepare_assets
         prepare_assets()
+        from voice.piper_speaker import download
+        download()
     elif args.runtime == "voice":
         from sentence_transformers import SentenceTransformer
 
