@@ -379,7 +379,8 @@
       "category": "lecture",
       "description": "Switch the lecture screen between accessibility mode, which hides the video, and study mode, which shows it.",
       "screens": [
-        "explanation"
+        "explanation",
+        "welcome"
       ],
       "params": {
         "mode": {
@@ -394,6 +395,73 @@
       "risk": "low",
       "binding": "Explanation.setPresentationMode(mode)",
       "binding_status": "wrapper"
+    },
+    {
+      "id": "get_started",
+      "category": "navigation",
+      "description": "On the first-launch Welcome screen, finish setup with the chosen mode and start using Synapse.",
+      "screens": [
+        "welcome"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Welcome.getStarted",
+      "binding_status": "existing"
+    },
+    {
+      "id": "skip_onboarding",
+      "category": "navigation",
+      "description": "On the first-launch Welcome screen, skip the introduction and keep the current mode.",
+      "screens": [
+        "welcome"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "Welcome.skip",
+      "binding_status": "existing"
+    },
+    {
+      "id": "fill_username",
+      "category": "settings",
+      "description": "On the sign in or create account screen, type the username the learner says or spells. Passwords are never taken by voice.",
+      "screens": [
+        "login",
+        "signup"
+      ],
+      "params": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "max_length": 64
+        }
+      },
+      "risk": "low",
+      "binding": "AccountForm.setUsername",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "open_signup",
+      "category": "navigation",
+      "description": "From the sign in screen, go to the create account screen to make a new local account.",
+      "screens": [
+        "login"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "AccountForm.onNavigate('signup')",
+      "binding_status": "existing"
+    },
+    {
+      "id": "open_login",
+      "category": "navigation",
+      "description": "From the create account screen, go to the sign in screen for an existing account.",
+      "screens": [
+        "signup"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "AccountForm.onNavigate('login')",
+      "binding_status": "existing"
     },
     {
       "id": "change_text_size",
@@ -584,11 +652,26 @@
     {
       "id": "quiz_start",
       "category": "lecture",
-      "description": "On the practice setup, create a practice set of questions for this lecture.",
+      "description": "On the practice setup, create questions for this lecture: practice or assessment, and how many questions (5 to 10). Practice with the default count when not said.",
       "screens": [
         "quiz"
       ],
-      "params": {},
+      "params": {
+        "mode": {
+          "type": "enum",
+          "required": false,
+          "values": [
+            "practice",
+            "assessment"
+          ]
+        },
+        "count": {
+          "type": "int",
+          "required": false,
+          "min": 5,
+          "max": 10
+        }
+      },
       "risk": "low",
       "binding": "QuizSetup.session.generate",
       "binding_status": "wrapper"
@@ -832,6 +915,50 @@
       "description": "Say which screen the learner is on and what is on it.",
       "screens": [
         "*"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "read_list",
+      "category": "voice",
+      "description": "Read out the items listed on this screen (search results, saved items, bookmarks or voice notes), a few at a time, with their numbers.",
+      "screens": [
+        "home",
+        "subject",
+        "library",
+        "bookmarks",
+        "notes"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "read_more",
+      "category": "voice",
+      "description": "Continue reading the listed items from where the last reading stopped.",
+      "screens": [
+        "home",
+        "subject",
+        "library",
+        "bookmarks",
+        "notes"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "voice layer",
+      "binding_status": "voice"
+    },
+    {
+      "id": "preparation_status",
+      "category": "voice",
+      "description": "Say how the lecture's explanations are coming along: how many are ready, still being prepared, or failed.",
+      "screens": [
+        "explanation"
       ],
       "params": {},
       "risk": "low",
