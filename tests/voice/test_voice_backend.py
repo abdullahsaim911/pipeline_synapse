@@ -216,6 +216,89 @@ def test_question_is_routed_to_qa():
     assert (res.decision, res.action, res.args) == ("ask_question", "ask_question", {"question": "why is the curve flat"})
 
 
+def test_practice_word_opens_practice_not_the_timeline():
+    # The real embedding put "I want to practise this lecture" on open_timeline (0.85 vs 0.72).
+    res = ask("I really want to practise this whole lecture", "open_timeline")
+    assert (res.decision, res.action) == ("execute", "start_practice")
+
+
+LIBRARY = dict(screen="library", video_id=None,
+               available_actions=["open_item", "play_item_audio", "read_saved_item", "navigate_home"])
+
+
+def ask_close(text, scores, **ctx):
+    """Interpret with fixed similarity scores, to reproduce a close call the real embedding makes."""
+    interp = Interpreter(CATALOG, embedder=FakeEmbedder())
+    interp.scores = lambda _text: {a: 0.0 for a in CATALOG.ids()} | scores
+    return interp.interpret(InterpretRequest(text=text, context=VoiceContext(**ctx)))
+
+
+def test_library_open_without_audio_words_opens_the_explanation():
+    # "open explanation one" sat between play_item_audio (0.67) and open_item (0.63) with the real embedding.
+    res = ask_close("open explanation one", {"play_item_audio": 0.67, "open_item": 0.63}, **LIBRARY)
+    assert (res.decision, res.action, res.args) == ("execute", "open_item", {"index": 1})
+
+
+def test_library_audio_words_still_play():
+    res = ask_close("I want to listen to item two", {"open_item": 0.70, "play_item_audio": 0.66}, **LIBRARY)
+    assert (res.decision, res.action, res.args) == ("execute", "play_item_audio", {"index": 2})
+
+
+LECTURE = dict(screen="explanation", video_id="aircAruvnKk",
+               available_actions=["toggle_voice_note", "navigate_notes", "navigate_home", "play_lecture"])
+
+
+def test_open_my_notes_on_the_lecture_opens_the_notes_screen_not_a_recording():
+    # The real embedding sent "open my wise notes" (a mishearing) to toggle_voice_note at 0.74.
+    res = ask_close("open my wise notes", {"toggle_voice_note": 0.74, "navigate_notes": 0.55}, **LECTURE)
+    assert (res.decision, res.action) == ("execute", "navigate_notes")
+
+
+def test_recording_words_still_record_a_note():
+    res = ask_close("start my note", {"toggle_voice_note": 0.75, "navigate_notes": 0.66}, **LECTURE)
+    assert res.action == "toggle_voice_note"
+    res = ask_close("open a note and record it", {"toggle_voice_note": 0.75, "navigate_notes": 0.66}, **LECTURE)
+    assert res.action == "toggle_voice_note"
+
+
+HOME = dict(screen="home", available_actions=["search_lectures", "read_list", "navigate_bookmarks", "continue_lecture"])
+
+
+def test_search_verb_runs_the_search_instead_of_asking():
+    # The real embedding gave "search synapse lecture" 0.61 (confirm) and "search for ..." a tie with read_list.
+    res = ask_close("search synapse lecture", {"search_lectures": 0.61, "read_list": 0.40}, **HOME)
+    assert (res.decision, res.action, res.args) == ("execute", "search_lectures", {"query": "synapse"})
+    res = ask_close("search for synapse lecture", {"search_lectures": 0.61, "read_list": 0.58}, **HOME)
+    assert (res.decision, res.action, res.args) == ("execute", "search_lectures", {"query": "synapse"})
+
+
+def test_search_verb_does_not_override_a_better_navigation_match():
+    res = ask_close("find my bookmarks", {"navigate_bookmarks": 0.90, "search_lectures": 0.60}, **HOME)
+    assert res.action == "navigate_bookmarks"
+
+
+def test_a_topic_that_is_only_the_word_lecture_is_kept():
+    res = ask_close("search lectures", {"search_lectures": 0.61}, **HOME)
+    assert res.args == {"query": "lectures"}
+
+
+def test_library_clear_winner_is_not_overridden():
+    res = ask_close("play number four", {"play_item_audio": 0.95, "open_item": 0.60}, **LIBRARY)
+    assert res.action == "play_item_audio"
+
+
+def test_library_explanation_screen_without_a_number_asks_which_one():
+    res = ask("go to the explanation screen", **LIBRARY)
+    assert (res.decision, res.message_key) == ("unsupported", "missing_index")
+
+
+def test_practice_word_leaves_timeline_questions_and_other_screens_alone():
+    assert ask("show the practice moments on the timeline", "open_timeline").action == "open_timeline"
+    assert ask("why do doctors practise for years", "ask_question").action == "ask_question"
+    assert ask("practise this whole lecture", "open_timeline",
+               available_actions=["open_timeline", "play_lecture"]).action == "open_timeline"
+
+
 def test_questions_are_recognised_on_any_screen():
     assert ask("why is it flat", "ask_question", video_id=None).decision == "ask_question"
 

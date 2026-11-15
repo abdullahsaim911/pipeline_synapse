@@ -136,6 +136,32 @@
       "binding_status": "existing"
     },
     {
+      "id": "next_results_page",
+      "category": "discovery",
+      "description": "Show the next page of lecture search results, six at a time.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useLectureSearch.pagination.onNext",
+      "binding_status": "existing"
+    },
+    {
+      "id": "previous_results_page",
+      "category": "discovery",
+      "description": "Go back to the previous page of lecture search results.",
+      "screens": [
+        "home",
+        "subject"
+      ],
+      "params": {},
+      "risk": "low",
+      "binding": "useLectureSearch.pagination.onPrev",
+      "binding_status": "existing"
+    },
+    {
       "id": "start_lecture",
       "category": "discovery",
       "description": "Start learning the selected or pasted lecture, which prepares it for explanations.",
