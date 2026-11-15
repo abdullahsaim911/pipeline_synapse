@@ -32,8 +32,12 @@ env/
 venv/
 ENV/
 .venv/
+.venv-tts/
 .runtime/
 synapse-env/
+
+# Local TTS models, caches, streams and benchmark output
+.tts-lab/
 
 # IDE
 .vscode/
