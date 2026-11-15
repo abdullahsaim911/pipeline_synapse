@@ -11,22 +11,11 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.runtime == "api":
-        # Cache the offline TTS fallback used when Edge-TTS is unavailable.
-        from transformers import (
-            SpeechT5ForTextToSpeech,
-            SpeechT5HifiGan,
-            SpeechT5Processor,
-        )
-
-        SpeechT5Processor.from_pretrained("microsoft/speecht5_tts")
-        SpeechT5ForTextToSpeech.from_pretrained("microsoft/speecht5_tts")
-        SpeechT5HifiGan.from_pretrained("microsoft/speecht5_hifigan")
-        from huggingface_hub import hf_hub_download
-        hf_hub_download(
-            repo_id="Xenova/transformers.js-docs",
-            repo_type="dataset",
-            filename="speaker_embeddings.bin",
-        )
+        import sys
+        from pathlib import Path
+        sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+        from tts_engine.assets import prepare_assets
+        prepare_assets()
     elif args.runtime == "voice":
         from sentence_transformers import SentenceTransformer
 

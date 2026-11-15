@@ -5,8 +5,10 @@ without requiring remote GPUs, network calls, or model weights.
 """
 
 import base64
+import ast
 import json
 import unittest
+from pathlib import Path
 
 from modal_inference.config import (
     DEFAULT_STRUCTURED_MAX_TOKENS,
@@ -223,12 +225,22 @@ class TestDeploymentConfiguration(unittest.TestCase):
         self.assertEqual(MAX_CONCURRENT_INPUTS, 1)
         self.assertEqual(MAX_IMAGES_PER_PROMPT, 1)
         self.assertEqual(MAX_VIDEOS_PER_PROMPT, 0)
-        self.assertEqual(SCALEDOWN_WINDOW_SECONDS, 300)
+        self.assertEqual(SCALEDOWN_WINDOW_SECONDS, 420)
         self.assertEqual(GPU_MEMORY_UTILIZATION, 0.90)
         self.assertEqual(DEFAULT_STRUCTURED_MAX_TOKENS, 8192)
         self.assertEqual(MAX_OUTPUT_TOKENS, 8192)
         self.assertEqual(DEFAULT_TEMPERATURE, 0.1)
         self.assertEqual(MAX_IMAGE_DIMENSION, 1344)
+
+    def test_ministral_idle_window_is_seven_minutes(self):
+        source = Path(__file__).resolve().parents[1] / 'mistral_app.py'
+        tree = ast.parse(source.read_text(encoding='utf-8'))
+        serve = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == 'serve')
+        deployment = next(node for node in serve.decorator_list
+                          if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                          and node.func.attr == 'function')
+        idle = next(value.value for value in deployment.keywords if value.arg == 'scaledown_window')
+        self.assertEqual(ast.literal_eval(idle), 420)
 
     def test_official_fp8_checkpoint_is_explicit(self):
         self.assertEqual(MODEL_ID, "Qwen/Qwen3-VL-8B-Instruct-FP8")

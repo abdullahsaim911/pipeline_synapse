@@ -31,6 +31,9 @@ SOURCE = Path("data/Tf4A93763Bw/interventions/a0a2adaa/vlm_snapshot.json")
 
 @pytest.fixture
 def pipeline(tmp_path, monkeypatch):
+    # This offline fixture mocks Ollama's generation/tokenizer boundary.
+    # Do not inherit a developer's remote provider selection from .env.
+    monkeypatch.setenv("SYNAPSE_EXPLANATION_PROVIDER", "ollama")
     data = tmp_path / "data"
     video_dir = data / VIDEO_ID
     video_dir.mkdir(parents=True)
@@ -206,7 +209,7 @@ def test_other_mode_reuses_evidence_without_rewriting_saved_source(pipeline):
         assert {row.output_mode for row in db.query(Explanation).all()} == {"brief", "detailed"}
 
 
-def test_stale_generation_regenerates_text_and_audio_together(pipeline):
+def test_missing_audio_manifest_reuses_valid_text_checkpoint(pipeline):
     from explanation_cache import manifest_path
     p = pipeline
     first = p.manager.generate_manual(VIDEO_ID, p.point, "brief")
@@ -214,8 +217,21 @@ def test_stale_generation_regenerates_text_and_audio_together(pipeline):
     second = p.manager.generate_manual(VIDEO_ID, p.point, "brief")
     assert second.text_explanation == WEAK_TEXT
     assert len(p.calls["vlm"]) == 1
-    assert len(p.calls["llm"]) == len(p.calls["tts"]) == 2
+    assert len(p.calls["llm"]) == 1
+    assert len(p.calls["tts"]) == 2
     assert manifest_path(second.audio_file_path).is_file()
+
+
+def test_invalid_text_checkpoint_regenerates_text_and_audio(pipeline):
+    from explanation_cache import manifest_path
+    p = pipeline
+    first = p.manager.generate_manual(VIDEO_ID, p.point, "brief")
+    manifest_path(first.audio_file_path).unlink()
+    Path(first.text_file_path).write_text("Corrupted cached text", encoding="utf-8")
+    second = p.manager.generate_manual(VIDEO_ID, p.point, "brief")
+    assert second.text_explanation == WEAK_TEXT
+    assert len(p.calls["vlm"]) == 1
+    assert len(p.calls["llm"]) == len(p.calls["tts"]) == 2
 
 
 def test_unversioned_evidence_is_reextracted_before_generation(pipeline):

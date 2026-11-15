@@ -11,7 +11,7 @@ from contextlib import contextmanager
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel, Field
 
 from api.security import enforce_allowed_origin
@@ -28,7 +28,7 @@ _tts = None
 _instance_lock = threading.Lock()
 _voice_turn_gate = threading.BoundedSemaphore(1)
 _speech_gate = threading.BoundedSemaphore(1)
-SPEECH_CACHE_DIR = os.path.join(tempfile.gettempdir(), "synapse_voice_cache")
+SPEECH_CACHE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.tts-lab', 'voice-cache')
 SPEECH_CACHE_MAX_FILES = 128
 SPEECH_CACHE_MAX_BYTES = 64 * 1024 * 1024
 SPEECH_CACHE_MAX_AGE_SECONDS = 7 * 24 * 60 * 60
@@ -76,13 +76,13 @@ def get_interpreter() -> ProcessInterpreter:
 
 
 def get_tts():
-    """The existing TTSEngine (Edge-TTS, with the offline fallback), created on first use."""
+    """Use the same serialized Pocket/Kokoro engine as lecture explanations."""
     global _tts
     with _instance_lock:
         if _tts is None:
             try:
-                from tts_engine import TTSEngine
-                _tts = TTSEngine()
+                from tts_engine import get_shared_tts_engine
+                _tts = get_shared_tts_engine()
             except Exception as exc:
                 logger.warning("Voice TTS is unavailable: %s", type(exc).__name__)
                 raise HTTPException(status_code=503, detail="Speech is not available right now.") from exc
@@ -128,10 +128,13 @@ def _prune_speech_cache(now: Optional[float] = None) -> None:
 
 def _generate_speech(tts, text: str, path: str) -> None:
     """Generate to a private temporary file, then publish one complete MP3 atomically."""
+    from tts_engine.tts_engine import speech_priority
     fd, temporary = tempfile.mkstemp(prefix="voice-", suffix=".tmp", dir=SPEECH_CACHE_DIR)
     os.close(fd)
     try:
-        tts.generate(text, temporary)
+        # Bind here, including when called by the streaming generation thread.
+        with speech_priority(0):
+            tts.generate(text, temporary)
         if not os.path.isfile(temporary) or os.path.getsize(temporary) == 0:
             raise RuntimeError("TTS produced no audio")
         os.replace(temporary, path)
@@ -144,6 +147,62 @@ def _generate_speech(tts, text: str, path: str) -> None:
 
 class SpeakRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=400)
+
+
+def _speech_key(text):
+    from tts_engine.providers import tts_profile
+    return hashlib.sha256((str(tts_profile()) + text).encode('utf-8')).hexdigest()
+
+
+@router.post('/speak/stream')
+def speak_stream(request: SpeakRequest, tts=Depends(get_tts)):
+    from tts_engine.streaming import AudioAttempt
+    if not _speech_gate.acquire(blocking=False):
+        raise HTTPException(429, 'Another voice reply is already being prepared.')
+    text = re.sub(r'\s+', ' ', request.text).strip()
+    path = os.path.join(SPEECH_CACHE_DIR, _speech_key(text) + '.mp3')
+    if os.path.isfile(path) and os.path.getsize(path) > 0:
+        from tts_engine.streaming import event_line
+        try:
+            os.utime(path, None)
+            _prune_speech_cache()
+        finally:
+            _speech_gate.release()
+        return StreamingResponse(iter([event_line('complete', cached=True)]),
+                                 media_type='application/x-ndjson',
+                                 headers={'Cache-Control': 'no-store'})
+    try:
+        attempt = AudioAttempt()
+    except OSError as exc:
+        _speech_gate.release()
+        raise HTTPException(503, 'Speech storage is unavailable.') from exc
+
+    def generate():
+        try:
+            with attempt.bind():
+                os.makedirs(SPEECH_CACHE_DIR, exist_ok=True)
+                _generate_speech(tts, text, path)
+                attempt.complete()
+                _prune_speech_cache()
+        except Exception as exc:
+            attempt.fail(getattr(exc, 'code', 'tts_unavailable'))
+        finally:
+            _speech_gate.release()
+            if getattr(attempt, 'disconnected', False):
+                attempt.dispose()
+
+    threading.Thread(target=generate, name='voice-speech-stream', daemon=True).start()
+
+    def deliver():
+        try:
+            yield from attempt.lines()
+        finally:
+            # Generation may finish after disconnect; it still owns publication.
+            attempt.disconnected = True
+            if attempt.done:
+                attempt.dispose()
+    return StreamingResponse(deliver(), media_type='application/x-ndjson',
+                             headers={'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
 
 
 @router.post("/transcribe", response_model=TranscribeResponse)
@@ -181,7 +240,7 @@ def speak(request: SpeakRequest, tts=Depends(get_tts)):
     text = re.sub(r"\s+", " ", request.text).strip()
     with _work_slot(_speech_gate, "Another voice reply is already being prepared."):
         os.makedirs(SPEECH_CACHE_DIR, exist_ok=True)
-        path = os.path.join(SPEECH_CACHE_DIR, hashlib.sha256(text.encode("utf-8")).hexdigest() + ".mp3")
+        path = os.path.join(SPEECH_CACHE_DIR, _speech_key(text) + ".mp3")
         try:
             if not os.path.isfile(path) or os.path.getsize(path) == 0:
                 _generate_speech(tts, text, path)

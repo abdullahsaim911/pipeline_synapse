@@ -153,6 +153,7 @@ function Show-ModelTransition($Readiness) {
     if (
         $components.voice -eq "ready" -and
         $components.transcription -eq "ready" -and
+        $components.tts -in @("ready", "disabled", $null) -and
         $modalConfiguredReady -and $mistralConfiguredReady
     ) {
         Write-Host "All configured startup models are ready. The pipeline can be started."
@@ -257,7 +258,7 @@ if ($Command -eq "setup") {
     Remove-Item Env:TRANSFORMERS_OFFLINE -ErrorAction SilentlyContinue
     & (Join-Path $RuntimeRoot "api\Scripts\python.exe") `
       (Join-Path $RepoRoot "scripts\cache_models.py") api
-    Assert-NativeSuccess "Caching SpeechT5 fallback models"
+    Assert-NativeSuccess "Caching Pocket TTS and Kokoro models"
     & (Join-Path $RuntimeRoot "voice\Scripts\python.exe") `
       (Join-Path $RepoRoot "scripts\cache_models.py") voice
     Assert-NativeSuccess "Caching voice models"

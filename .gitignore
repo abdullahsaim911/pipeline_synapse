@@ -141,3 +141,9 @@ data/
 /task2_specs/
 /task5_specs/
 /backups/
+
+!docs/tts-streaming.md
+
+!tests/test_speech_priority.py
+
+!tests/test_text_checkpoint_recovery.py

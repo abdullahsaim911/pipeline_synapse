@@ -13,7 +13,7 @@ import os
 import subprocess
 import threading
 import time
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -80,9 +80,9 @@ class _ExplanationTarget:
     evidence_kind: str = "visual"
 
 
-# One remote VLM request at a time, and one Mistral/TTS run at a time. They are
-# separate so extraction of the next intervention can overlap explanation of the
-# previous one. A local VLM shares the GPU with Mistral, so that case takes both.
+# One VLM and one text generation at a time. CPU speech has its own shared
+# admission gate and releases the text resource during synthesis. A local VLM
+# shares the GPU with Mistral, so text generation in that case takes both.
 VLM_EXTRACTION_LOCK = threading.Lock()
 EXPLANATION_GENERATION_LOCK = threading.Lock()
 
@@ -337,6 +337,33 @@ def _extract_requested_frame(sessions, data_dir, video_id, point_id, ownership_c
         db.commit()
 
 
+def prepare_explanation_text(
+    *, session_factory, orchestrator_factory, data_dir, video_id,
+    intervention_id, output_mode, vlm_snapshot=None, ownership_check=None,
+    checkpoint_commit=None,
+):
+    """Save the existing synthesis output before handing it to CPU speech."""
+    with _explanation_resources():
+        if ownership_check is not None:
+            ownership_check()
+        with session_factory() as db:
+            target = _load_target(db, video_id, intervention_id)
+        orchestrator = orchestrator_factory()
+        # Older adapters supply the combined operation. They remain supported
+        # by the compatible generator path; production uses the split methods.
+        synthesize = getattr(orchestrator, "synthesize_intervention_text", None)
+        if synthesize is None:
+            return None
+        return synthesize(
+            video_id=video_id, intervention_id=intervention_id,
+            intervention_timestamp=target.timestamp, content_type=target.content_type,
+            trigger_reason=target.trigger_reason,
+            transcript_entries=_load_transcript(data_dir, video_id),
+            output_mode=output_mode, vlm_snapshot=vlm_snapshot,
+            ownership_check=ownership_check, checkpoint_commit=checkpoint_commit,
+        )
+
+
 def generate_explanation_from_evidence(
     *,
     session_factory: Callable[[], Session],
@@ -350,6 +377,7 @@ def generate_explanation_from_evidence(
     ownership_check: Optional[Callable[[], None]] = None,
     checkpoint_commit: Optional[Callable[[Callable[[], None]], None]] = None,
     preparation_lease: Optional[tuple[int, str, int]] = None,
+    text_artifact: Optional[dict] = None,
 ) -> ExplanationArtifact:
     """Return a cached explanation or generate and cache one from evidence."""
     if ownership_check is not None:
@@ -364,7 +392,7 @@ def generate_explanation_from_evidence(
 
     # Double-check after acquiring the lock. This prevents a manual request and
     # a queued job from generating the same cache key twice.
-    with _explanation_resources():
+    with (nullcontext() if text_artifact is not None else _explanation_resources()):
         if ownership_check is not None:
             ownership_check()
         with session_factory() as db:
@@ -392,7 +420,13 @@ def generate_explanation_from_evidence(
         if "ownership_check" in inspect.signature(synthesize).parameters:
             kwargs["ownership_check"] = ownership_check
             kwargs["checkpoint_commit"] = checkpoint_commit
-        result = synthesize(**kwargs)
+        if text_artifact is not None:
+            result = orchestrator.generate_intervention_audio(
+                text_artifact, on_stage=on_stage, ownership_check=ownership_check,
+                checkpoint_commit=checkpoint_commit,
+            )
+        else:
+            result = synthesize(**kwargs)
         if ownership_check is not None:
             ownership_check()
 

@@ -31,6 +31,7 @@ from stage_tracing import trace_stage
 from voice.lifecycle import VoiceWarmup
 from voice.routes import router as voice_router, shutdown_voice_runtime
 from transcription.lifecycle import TranscriptionWarmup
+from tts_engine.lifecycle import TTSWarmup
 from youtube_runtime import extract_youtube_video_id
 
 load_dotenv()
@@ -81,6 +82,12 @@ async def lifespan(app: FastAPI):
     transcription_warmup = TranscriptionWarmup()
     transcription_warmup.start()
     app.state.transcription_warmup = transcription_warmup
+    tts_warmup = TTSWarmup(before_warm=lambda: (
+        voice_warmup.status not in {'idle', 'warming'}
+        and transcription_warmup.status not in {'idle', 'warming'}
+    ))
+    tts_warmup.start()
+    app.state.tts_warmup = tts_warmup
     trace_stage("backend", "ready", started_at=startup_started)
     try:
         yield
@@ -93,19 +100,20 @@ async def lifespan(app: FastAPI):
         mistral_warmup.request_stop()
         voice_warmup.request_stop()
         transcription_warmup.request_stop()
+        tts_warmup.request_stop()
         processing.shutdown()
         preparation.shutdown()
         warmup.stop()
         mistral_warmup.stop()
         voice_warmup.stop()
         transcription_warmup.stop()
+        tts_warmup.stop()
         shutdown_voice_runtime()
         # Loaded only if an explanation ran; stops only a server Synapse started.
         ollama = sys.modules.get("orchestrator.ollama_service")
         if ollama is not None:
             ollama.shutdown_shared_ollama()
-        # SpeechT5 stays resident across interventions and is released only at
-        # backend shutdown. Edge-TTS itself has no resident model to unload.
+        # Shared CPU speech models are released at backend shutdown.
         tts = sys.modules.get("tts_engine.tts_engine")
         if tts is not None:
             tts.shutdown_shared_tts_engine()
@@ -158,7 +166,9 @@ async def readiness_check(response: Response):
     transcription_status = getattr(
         app.state.transcription_warmup, "status", "unavailable"
     )
-    ready = voice_status == "ready" and transcription_status == "ready"
+    tts_status = getattr(getattr(app.state, "tts_warmup", None), "status", "unavailable")
+    ready = (voice_status == "ready" and transcription_status == "ready"
+             and tts_status in {"ready", "disabled"})
     if not ready:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
     return {
@@ -167,6 +177,7 @@ async def readiness_check(response: Response):
             "api": "ready",
             "voice": voice_status,
             "transcription": transcription_status,
+            "tts": tts_status,
             "modal": getattr(app.state.model_warmup, "status", "unavailable"),
             "mistral": getattr(getattr(app.state, "mistral_warmup", None), "status", "disabled"),
         },

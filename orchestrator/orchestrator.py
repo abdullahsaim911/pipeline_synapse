@@ -1521,7 +1521,7 @@ class PipelineOrchestrator:
             ),
         }
 
-    def synthesize_intervention_explanation(
+    def synthesize_intervention_text(
         self,
         video_id: str,
         intervention_id: str,
@@ -1536,7 +1536,7 @@ class PipelineOrchestrator:
         checkpoint_commit: Optional[Any] = None,
     ) -> Dict:
         """
-        Reconcile saved evidence with the transcript, then run Mistral and TTS.
+        Reconcile saved evidence with the transcript and checkpoint Mistral text.
 
         Args:
             vlm_snapshot: Evidence already in memory from extraction. When
@@ -1608,34 +1608,6 @@ class PipelineOrchestrator:
             fact_count=(vlm_snapshot.get("coverage_plan") or {}).get("fact_count", 0),
         )
 
-        ollama_started = time.monotonic()
-        if ownership_check is not None:
-            ownership_check()
-        text_provider = configured_explanation_provider()
-        # If predictive warm-up is still running, this joins it through the
-        # service's warm lock. The first real request therefore never races a
-        # duplicate model load or uses different CPU/context options.
-        if text_provider is None:
-            trace_stage("ollama_readiness", "start")
-            ollama_service = get_ollama_service()
-            warm_model = getattr(ollama_service, "warm_model", None)
-            if warm_model is not None:
-                warm_model()
-            else:  # Backward-compatible test/dry-run service adapter.
-                ollama_service.ensure_ready()
-            trace_stage("ollama_readiness", "complete", started_at=ollama_started)
-
-        from synthesizer import LLMSynthesizer
-        synthesizer = LLMSynthesizer(
-            ollama_url="http://localhost:11434",
-            model="mistral:latest",
-            timeout=120,
-            max_retries=3,
-            transcripts=transcript_entries,
-            output_mode=output_mode,
-            **({"text_provider": text_provider} if text_provider is not None else {}),
-            **({"ownership_check": ownership_check} if ownership_check is not None else {}),
-        )
         # Backend alignment is prompt context, not a new VLM observation. Keep it
         # out of persisted raw evidence and use the same window for every depth.
         vlm_snapshot = dict(vlm_snapshot, _lecture_context=lecture_context)
@@ -1644,6 +1616,7 @@ class PipelineOrchestrator:
         input_hash = fingerprint([vlm_snapshot, transcript_context, content_type, trigger_reason, output_mode])
         reuse_generation = False
         explanation = ""
+        synthesizer = None
         try:
             if os.path.isfile(text_file_path):
                 with open(text_file_path, "r", encoding="utf-8") as handle:
@@ -1651,11 +1624,42 @@ class PipelineOrchestrator:
                 reuse_generation = cache_is_current(
                     explanation, audio_file_path, vlm_snapshot_path, input_hash=input_hash
                 ) and self._valid_mp3(audio_file_path)
-                if not reuse_generation:
+                from explanation_cache import text_cache_is_current
+                if not reuse_generation and not text_cache_is_current(
+                    explanation, audio_file_path, vlm_snapshot_path, input_hash=input_hash
+                ):
                     explanation = ""
             if explanation:
                 trace_stage("mistral_generation", "reused", text_chars=len(explanation))
             else:
+                ollama_started = time.monotonic()
+                if ownership_check is not None:
+                    ownership_check()
+                text_provider = configured_explanation_provider()
+                # If predictive warm-up is still running, this joins it through the
+                # service's warm lock. The first real request therefore never races a
+                # duplicate model load or uses different CPU/context options.
+                if text_provider is None:
+                    trace_stage("ollama_readiness", "start")
+                    ollama_service = get_ollama_service()
+                    warm_model = getattr(ollama_service, "warm_model", None)
+                    if warm_model is not None:
+                        warm_model()
+                    else:  # Backward-compatible test/dry-run service adapter.
+                        ollama_service.ensure_ready()
+                    trace_stage("ollama_readiness", "complete", started_at=ollama_started)
+
+                from synthesizer import LLMSynthesizer
+                synthesizer = LLMSynthesizer(
+                    ollama_url="http://localhost:11434",
+                    model="mistral:latest",
+                    timeout=120,
+                    max_retries=3,
+                    transcripts=transcript_entries,
+                    output_mode=output_mode,
+                    **({"text_provider": text_provider} if text_provider is not None else {}),
+                    **({"ownership_check": ownership_check} if ownership_check is not None else {}),
+                )
                 mistral_started = time.monotonic()
                 if ownership_check is not None:
                     ownership_check()
@@ -1685,7 +1689,11 @@ class PipelineOrchestrator:
                 try:
                     with open(temporary_text, "w", encoding="utf-8") as handle:
                         handle.write(explanation)
-                    commit_text = lambda: os.replace(temporary_text, text_file_path)
+                    def commit_text():
+                        os.replace(temporary_text, text_file_path)
+                        from explanation_cache import write_text_checkpoint
+                        write_text_checkpoint(explanation, audio_file_path, vlm_snapshot_path,
+                                              input_hash=input_hash)
                     if checkpoint_commit is not None:
                         checkpoint_commit(commit_text)
                     else:
@@ -1701,8 +1709,34 @@ class PipelineOrchestrator:
                     text_path=text_file_path, text_chars=len(explanation),
                 )
         finally:
-            synthesizer.cleanup()
+            if synthesizer is not None:
+                synthesizer.cleanup()
         print("[Orchestrator] Text synthesis complete")
+        return {
+            "intervention_id": intervention_id,
+            "text_explanation": explanation,
+            "audio_file_path": audio_file_path,
+            "text_file_path": text_file_path,
+            "vlm_snapshot_path": vlm_snapshot_path,
+            "output_mode": output_mode,
+            "input_hash": input_hash,
+            "reuse_generation": reuse_generation,
+        }
+
+    def generate_intervention_audio(
+        self, text_artifact, *, on_stage=None, ownership_check=None,
+        checkpoint_commit=None,
+    ) -> Dict:
+        """Render the exact checkpointed text and publish validated audio."""
+        intervention_id = text_artifact["intervention_id"]
+        explanation = text_artifact["text_explanation"]
+        text_file_path = text_artifact["text_file_path"]
+        vlm_snapshot_path = text_artifact["vlm_snapshot_path"]
+        output_mode = text_artifact["output_mode"]
+        input_hash = text_artifact["input_hash"]
+        audio_file_path = text_artifact["audio_file_path"]
+        intervention_dir = os.path.dirname(audio_file_path)
+        reuse_generation = text_artifact["reuse_generation"]
 
         if on_stage is not None:
             on_stage("generating_tts")
@@ -1763,6 +1797,24 @@ class PipelineOrchestrator:
             "vlm_snapshot_path": vlm_snapshot_path,
             "output_mode": output_mode
         }
+
+    def synthesize_intervention_explanation(
+        self, video_id, intervention_id, intervention_timestamp, content_type,
+        trigger_reason, transcript_entries, output_mode="explanatory",
+        vlm_snapshot=None, on_stage=None, ownership_check=None, checkpoint_commit=None,
+    ) -> Dict:
+        """Compatibility entry point using the same text and audio operations."""
+        text = self.synthesize_intervention_text(
+            video_id=video_id, intervention_id=intervention_id,
+            intervention_timestamp=intervention_timestamp, content_type=content_type,
+            trigger_reason=trigger_reason, transcript_entries=transcript_entries,
+            output_mode=output_mode, vlm_snapshot=vlm_snapshot, on_stage=on_stage,
+            ownership_check=ownership_check, checkpoint_commit=checkpoint_commit,
+        )
+        return self.generate_intervention_audio(
+            text, on_stage=on_stage, ownership_check=ownership_check,
+            checkpoint_commit=checkpoint_commit,
+        )
 
     def generate_intervention_explanation(
         self,

@@ -47,8 +47,8 @@ DEFAULT_GPU_COUNT: Final[int] = 1
 MIN_CONTAINERS: Final[int] = 0
 MAX_CONTAINERS: Final[int] = 1
 
-# Keep GPU warm for 5 minutes of idle time across pipeline stages or frames.
-SCALEDOWN_WINDOW_SECONDS: Final[int] = 300
+# Keep GPU warm for 7 minutes of idle time across pipeline stages or frames.
+SCALEDOWN_WINDOW_SECONDS: Final[int] = 420
 
 # Container timeout in seconds (10 minutes max per connection/execution)
 CONTAINER_TIMEOUT_SECONDS: Final[int] = 600

@@ -1,9 +1,8 @@
-"""Persistent two-stage explanation preparation for local Synapse.
+"""Persistent three-stage explanation preparation for local Synapse.
 
 The evidence worker runs VLM extraction one intervention at a time and hands
-each validated result to the explanation worker, which runs reconciliation,
-Mistral and TTS one at a time. Extraction of intervention N+1 therefore overlaps
-explanation of intervention N, while a failure in one intervention leaves later
+each validated result to the text worker, then the CPU speech worker. Extraction,
+text synthesis and streaming speech overlap, while a failure in one item leaves later
 ones running. Durable status is unchanged; ``stage`` adds internal detail.
 """
 
@@ -29,6 +28,7 @@ from api.explanation_service import (
     ExplanationTargetNotFoundError,
     find_valid_cached_explanation,
     generate_explanation_from_evidence,
+    prepare_explanation_text,
     prepare_visual_evidence,
     PreparationCancelledError,
     InvalidPreparedArtifactError,
@@ -42,6 +42,7 @@ from api.processing_jobs import (
     release_terminal_video_slot,
 )
 from stage_tracing import TraceContext, bind_trace, new_trace_id, trace_stage
+from tts_engine.streaming import AudioStreams
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +63,7 @@ STAGE_WAITING_FOR_VLM = "waiting_for_vlm"
 STAGE_EXTRACTING = "extracting_evidence"
 STAGE_EVIDENCE_READY = "evidence_ready"
 STAGE_EXPLAINING = "generating_explanation"
+STAGE_TEXT_READY = "text_ready"
 STAGE_TTS = "generating_tts"
 STAGE_READY = "ready"
 STAGE_FAILED = "failed"
@@ -109,10 +111,11 @@ class PreparationJob:
 class _PreparationQueue(queue.Queue):
     """Stable priority at dispatch, including promotion of already queued work."""
 
-    def __init__(self, priorities, maxsize=0, wait_for_priority=False, priority_order=None, deferred=None):
+    def __init__(self, priorities, maxsize=0, wait_for_priority=False, priority_order=None, deferred=None, completed=None):
         self.priorities = priorities
         self.priority_order = priority_order if priority_order is not None else {}
         self.deferred = deferred if deferred is not None else set()
+        self.completed = completed if completed is not None else set()
         self.wait_for_priority = wait_for_priority
         super().__init__(maxsize)
 
@@ -126,7 +129,7 @@ class _PreparationQueue(queue.Queue):
             while True:
                 foreground = any(item is not None and getattr(item, "job", item).key in self.priorities for item in self.queue)
                 stopping = any(item is None for item in self.queue)
-                runnable_priority = self.priorities - self.deferred
+                runnable_priority = self.priorities - self.deferred - self.completed
                 if self._qsize() and (not runnable_priority or foreground or stopping):
                     item = self._get()
                     self.not_full.notify()
@@ -165,6 +168,9 @@ class _ExplanationWork:
     job: PreparationJob
     lease: "_Lease"
     snapshot: Optional[dict]
+    text_artifact: Optional[dict] = None
+    attempt: Any = None
+    queued_at: float = field(default_factory=time.monotonic)
 
 
 @dataclass(frozen=True)
@@ -271,10 +277,18 @@ class ExplanationPreparationManager:
         self._priority_keys: set[tuple[str, str, str]] = set()
         self._priority_order = {}
         self._deferred_keys = set()
+        self._text_completed_keys = set()
         self._queue = _PreparationQueue(self._priority_keys, priority_order=self._priority_order)
         self._explanation_queue = _PreparationQueue(
             self._priority_keys, maxsize=EXPLANATION_QUEUE_CAPACITY, wait_for_priority=True,
             priority_order=self._priority_order, deferred=self._deferred_keys,
+            completed=self._text_completed_keys,
+        )
+        # Always drain ready speech. Waiting here for an upstream foreground
+        # item could deadlock a full handoff queue.
+        self._tts_queue = _PreparationQueue(
+            self._priority_keys, maxsize=EXPLANATION_QUEUE_CAPACITY,
+            priority_order=self._priority_order,
         )
         self._scheduled: set[tuple[str, str, str]] = set()
         self._active_leases: set[tuple[str, str]] = set()
@@ -285,12 +299,14 @@ class ExplanationPreparationManager:
         self._shutdown_started = False
         self._thread: Optional[threading.Thread] = None
         self._explanation_thread: Optional[threading.Thread] = None
+        self._tts_thread: Optional[threading.Thread] = None
         self._maintenance_thread: Optional[threading.Thread] = None
         self._worker_id = ""
         self._provider_retry_after = 0.0
         self._provider_probe_key: Optional[tuple[str, str, str]] = None
         # Recent stage transitions: (monotonic time, intervention, mode, stage).
         self.timeline: deque[tuple[float, str, str, str]] = deque(maxlen=1000)
+        self.audio_streams = AudioStreams()
 
     @property
     def is_running(self) -> bool:
@@ -319,6 +335,9 @@ class ExplanationPreparationManager:
                 name="synapse-explanation-preparation",
                 daemon=True,
             )
+            tts_thread = threading.Thread(
+                target=self._run_tts_worker, name="synapse-tts-preparation", daemon=True,
+            )
             maintenance_thread = threading.Thread(
                 target=self._run_lease_maintenance,
                 name="synapse-explanation-lease-maintenance",
@@ -326,11 +345,13 @@ class ExplanationPreparationManager:
             )
             self._thread = thread
             self._explanation_thread = explanation_thread
+            self._tts_thread = tts_thread
             self._maintenance_thread = maintenance_thread
         try:
             self._recover_tracked_jobs()
             thread.start()
             explanation_thread.start()
+            tts_thread.start()
             if before_dispatch is not None:
                 before_dispatch()
             self._dispatch_ready.set()
@@ -341,6 +362,7 @@ class ExplanationPreparationManager:
             with self._state_lock:
                 self._thread = None
                 self._explanation_thread = None
+                self._tts_thread = None
                 self._maintenance_thread = None
             raise
 
@@ -536,6 +558,7 @@ class ExplanationPreparationManager:
         self._priority_keys.discard(key)
         self._priority_order.pop(key, None)
         self._deferred_keys.discard(key)
+        self._text_completed_keys.discard(key)
 
     def _promote(self, job, requested_at=None):
         with self._session_factory() as db:
@@ -608,6 +631,10 @@ class ExplanationPreparationManager:
                 db.commit()
                 raise PreparationRetryExhaustedError(state.attempt_count)
 
+            if state.failure_reason == 'tts_stream_interrupted':
+                with self.audio_streams.condition:
+                    self.audio_streams.fallback_keys.add(job.key)
+
             video_job = db.query(ProcessingJob).filter(
                 ProcessingJob.video_id == video_id
             ).one_or_none()
@@ -636,7 +663,7 @@ class ExplanationPreparationManager:
             state.status = "pending"
             state.stage = STAGE_PENDING
             state.error_code = None
-            state.failure_reason = None
+            state.failure_reason = state.failure_reason if state.failure_reason == 'tts_stream_interrupted' else None
             state.lease_owner = None
             state.lease_started_at = None
             state.provider_wait_started_at = None
@@ -677,7 +704,7 @@ class ExplanationPreparationManager:
                 state.status = "pending"
                 state.stage = STAGE_PENDING
                 state.error_code = None
-                state.failure_reason = None
+                state.failure_reason = state.failure_reason if state.failure_reason == 'tts_stream_interrupted' else None
                 state.lease_owner = None
                 state.lease_started_at = None
                 state.provider_wait_started_at = None
@@ -699,29 +726,9 @@ class ExplanationPreparationManager:
         job = PreparationJob(video_id, intervention_id, output_mode)
         owns_slot = self._admit_manual(job)
         try:
-            lease = self._begin_manual(job)
-            if lease is None:
-                return self._wait_for_existing(job)
-            self._track_lease(job, lease)
-            try:
-                with bind_trace(self._trace_context(job, lease)):
-                    self._activate(job, lease)
-                    try:
-                        snapshot = self._prepare_evidence(job, lease)
-                        result = self._generate(job, lease, snapshot)
-                        self._mark_ready(job, lease)
-                    finally:
-                        self._deactivate(job, lease)
-                    return result
-            except Exception as exc:
-                if not (
-                    self._is_retryable_vlm_unavailable(exc)
-                    and self._defer_for_vlm(job, lease.owner)
-                ):
-                    self._mark_failed(job, exc, lease.owner)
-                raise
-            finally:
-                self._untrack_lease(lease)
+            self._promote(job)
+            self._enqueue(job)
+            return self._wait_for_existing(job)
         finally:
             if owns_slot:
                 release_terminal_video_slot(self._session_factory, video_id)
@@ -759,6 +766,12 @@ class ExplanationPreparationManager:
                     state.error_code = None
                     state.failure_reason = None
                     state.updated_at = now
+                elif not restart_cancelled and state.status == "cancelled":
+                    raise PreparationCancelledError("Video preparation is cancelled")
+                elif not restart_cancelled and state.status in {"failed", "ready"}:
+                    if state.status == "failed" and state.attempt_count >= self._max_attempts:
+                        raise PreparationRetryExhaustedError(state.attempt_count)
+                    self._set_recoverable_or_exhausted(state, now, "interrupted")
 
                 if video_job is None:
                     video_job = ProcessingJob(
@@ -812,7 +825,8 @@ class ExplanationPreparationManager:
             self._stop_event.set()
             for tracked in self._tracked_leases.values():
                 tracked.lost = True
-        for pending_queue in (self._queue, self._explanation_queue):
+        self.audio_streams.close()
+        for pending_queue in (self._queue, self._explanation_queue, self._tts_queue):
             while True:
                 try:
                     queued = pending_queue.get_nowait()
@@ -827,6 +841,7 @@ class ExplanationPreparationManager:
                 pending_queue.task_done()
         self._queue.put(None)
         self._explanation_queue.put(None)
+        self._tts_queue.put(None)
         return True
 
     def shutdown(self, timeout: Optional[float] = None) -> bool:
@@ -841,6 +856,7 @@ class ExplanationPreparationManager:
             self._maintenance_thread,
             self._thread,
             self._explanation_thread,
+            self._tts_thread,
         ):
             if thread is not None and thread.ident is not None:
                 thread.join(timeout=max(0.0, deadline - time.monotonic()))
@@ -858,6 +874,8 @@ class ExplanationPreparationManager:
                 and not self._explanation_thread.is_alive()
             ):
                 self._explanation_thread = None
+            if self._tts_thread is not None and not self._tts_thread.is_alive():
+                self._tts_thread = None
             if (
                 self._maintenance_thread is not None
                 and not self._maintenance_thread.is_alive()
@@ -922,16 +940,86 @@ class ExplanationPreparationManager:
                 self._explanation_queue.task_done()
                 break
             job = work.job
+            handed_off = False
             try:
                 with bind_trace(self._trace_context(job, work.lease)):
-                    trace_stage("explanation_queue", "dequeued")
+                    trace_stage("explanation_queue", "dequeued", started_at=work.queued_at)
                     if self._holds_lease(job, work.lease.owner):
                         self._activate(job, work.lease)
                         try:
-                            self._generate(job, work.lease, work.snapshot)
-                            self._mark_ready(job, work.lease)
+                            text = None
+                            if self._generator is generate_explanation_from_evidence:
+                                self._set_stage(job, work.lease.owner, STAGE_EXPLAINING)
+                                text = prepare_explanation_text(
+                                    session_factory=self._session_factory,
+                                    orchestrator_factory=self._orchestrator_factory,
+                                    data_dir=self._data_dir, video_id=job.video_id,
+                                    intervention_id=job.intervention_id,
+                                    output_mode=job.output_mode, vlm_snapshot=work.snapshot,
+                                    ownership_check=lambda: self._require_lease(job, work.lease.owner),
+                                    checkpoint_commit=lambda action: self._commit_checkpoint(job, work.lease, action),
+                                )
+                            if text is None:
+                                # Compatible combined generators used by older adapters.
+                                self._generate(
+                                    job, work.lease, work.snapshot,
+                                    stage_started=self._generator is generate_explanation_from_evidence,
+                                )
+                                self._mark_ready(job, work.lease)
+                            else:
+                                self._require_lease(job, work.lease.owner)
+                                attempt = self._begin_audio_attempt(job, work.lease)
+                                self._commit_checkpoint(job, work.lease, lambda: attempt.text_ready(
+                                    text["text_explanation"], intervention_id=job.intervention_id,
+                                    output_mode=job.output_mode,
+                                ))
+                                self._set_stage(job, work.lease.owner, STAGE_TEXT_READY)
+                                with self._state_lock:
+                                    self._text_completed_keys.add(job.key)
+                                speech = replace(work, snapshot=None, text_artifact=text,
+                                                 attempt=attempt, queued_at=time.monotonic())
+                                while not self._stop_event.is_set():
+                                    self._require_lease(job, work.lease.owner)
+                                    try:
+                                        self._tts_queue.put(speech, timeout=0.1)
+                                        handed_off = True
+                                        trace_stage("tts_queue", "entered")
+                                        break
+                                    except queue.Full:
+                                        continue
                         finally:
                             self._deactivate(job, work.lease)
+            except Exception as exc:
+                self._finish_failed(job, work.lease, exc)
+            finally:
+                if not handed_off:
+                    self._untrack_lease(work.lease)
+                    with self._state_lock:
+                        self._scheduled.discard(job.key)
+                    self._reschedule_if_pending(job)
+                self._explanation_queue.task_done()
+
+    def _run_tts_worker(self) -> None:
+        self._dispatch_ready.wait()
+        if self._stop_event.is_set():
+            return
+        while True:
+            work = self._tts_queue.get()
+            if work is None:
+                self._tts_queue.task_done()
+                return
+            job = work.job
+            try:
+                with bind_trace(self._trace_context(job, work.lease)):
+                    trace_stage("tts_queue", "dequeued", started_at=work.queued_at)
+                    self._require_lease(job, work.lease.owner)
+                    self._activate(job, work.lease)
+                    try:
+                        self._generate(job, work.lease, None,
+                                       text_artifact=work.text_artifact, attempt=work.attempt)
+                        self._mark_ready(job, work.lease)
+                    finally:
+                        self._deactivate(job, work.lease)
             except Exception as exc:
                 self._finish_failed(job, work.lease, exc)
             finally:
@@ -939,7 +1027,7 @@ class ExplanationPreparationManager:
                 with self._state_lock:
                     self._scheduled.discard(job.key)
                 self._reschedule_if_pending(job)
-                self._explanation_queue.task_done()
+                self._tts_queue.task_done()
 
     def _finish_failed(
         self, job: PreparationJob, lease: Optional[_Lease], exc: Exception
@@ -958,6 +1046,12 @@ class ExplanationPreparationManager:
             )
         )
         if isinstance(exc, PreparationCancelledError):
+            self._fail_audio_attempt(job, lease, 'cancelled')
+            # A provider can abort while this attempt still owns its row.
+            # Settle that row instead of leaving a live lease stranded. Real
+            # cancellation/supersession has already fenced it and is untouched.
+            if lease is not None and self._holds_lease(job, lease.owner):
+                self._mark_failed(job, exc, lease.owner)
             trace_stage(
                 "video_cancellation", "late_stage_result_discarded",
                 context=context, status="cancelled",
@@ -965,6 +1059,7 @@ class ExplanationPreparationManager:
             )
             return
         if lease is not None and not self._local_lease_is_healthy(lease.owner):
+            self._fail_audio_attempt(job, lease, 'superseded')
             trace_stage(
                 "preparation_state", "stale_result_discarded",
                 context=context, status="superseded",
@@ -1066,9 +1161,11 @@ class ExplanationPreparationManager:
         job: PreparationJob,
         lease: _Lease,
         snapshot: Optional[dict],
+        *, text_artifact=None, attempt=None, stage_started=False,
     ) -> ExplanationArtifact:
         self._require_lease(job, lease.owner)
-        self._set_stage(job, lease.owner, STAGE_EXPLAINING)
+        if not stage_started:
+            self._set_stage(job, lease.owner, STAGE_TTS if text_artifact is not None else STAGE_EXPLAINING)
         kwargs = dict(
             session_factory=self._session_factory,
             orchestrator_factory=self._orchestrator_factory,
@@ -1080,6 +1177,8 @@ class ExplanationPreparationManager:
             on_stage=lambda stage: self._advance_stage(job, lease.owner, stage),
         )
         if self._generator is generate_explanation_from_evidence:
+            if text_artifact is not None:
+                kwargs["text_artifact"] = text_artifact
             kwargs["ownership_check"] = lambda: self._require_lease(job, lease.owner)
             kwargs["checkpoint_commit"] = lambda action: self._commit_checkpoint(
                 job, lease, action
@@ -1087,9 +1186,40 @@ class ExplanationPreparationManager:
             kwargs["preparation_lease"] = (
                 int(lease.preparation_job_id), lease.owner, lease.attempt_count
             )
-        result = self._generator(**kwargs)
+        attempt = attempt or self._begin_audio_attempt(job, lease)
+        try:
+            from tts_engine.tts_engine import speech_priority
+            with attempt.bind(), speech_priority(lambda: 1 if job.key in self._priority_keys else 2):
+                result = self._generator(**kwargs)
+            self._require_lease(job, lease.owner)
+            attempt.artifact = result
+            return result
+        except Exception as exc:
+            attempt.fail('cancelled' if isinstance(exc, PreparationCancelledError)
+                         else getattr(exc, 'code', 'tts_failed'))
+            raise
+
+    def _begin_audio_attempt(self, job, lease):
         self._require_lease(job, lease.owner)
-        return result
+        with self._session_factory() as db:
+            state = self._get_state(db, job)
+            fallback = state is not None and state.failure_reason == 'tts_stream_interrupted'
+        attempt = self.audio_streams.begin(
+            job.key, lambda: self._require_lease(job, lease.owner), prefer_fallback=fallback,
+        )
+        attempt.lease_owner = lease.owner
+        return attempt
+
+    def get_stream_attempt(self, key):
+        """Return delivery for the currently admitted lease, never an old retry."""
+        with self._session_factory() as db:
+            state = self._get_state(db, PreparationJob(*key))
+            owner = state.lease_owner if state is not None and state.status == 'generating' else None
+        with self.audio_streams.condition:
+            attempt = self.audio_streams.attempts.get(key)
+            if attempt is not None and not attempt.done and owner == getattr(attempt, 'lease_owner', None):
+                return attempt
+        return None
 
     def _set_stage(
         self, job: PreparationJob, lease_owner: Optional[str], stage: str
@@ -1227,7 +1357,7 @@ class ExplanationPreparationManager:
                     stage=STAGE_EXTRACTING,
                     attempt_count=previous_attempts + 1,
                     error_code=None,
-                    failure_reason=None,
+                    failure_reason=state.failure_reason if state.failure_reason == 'tts_stream_interrupted' else None,
                     lease_owner=lease_owner,
                     lease_started_at=now,
                     deferred_until=None,
@@ -1239,67 +1369,6 @@ class ExplanationPreparationManager:
             if claimed != 1:
                 return None
             return _Lease(lease_owner, str(state_id), previous_attempts + 1)
-
-    def _begin_manual(self, job: PreparationJob) -> Optional[_Lease]:
-        now = _utcnow()
-        with self._session_factory() as db:
-            self._load_intervention(db, job)
-            video_job = db.query(ProcessingJob.status).filter(
-                ProcessingJob.video_id == job.video_id
-            ).first()
-            if video_job is not None and video_job[0] in {"cancelling", "cancelled"}:
-                raise PreparationCancelledError("Video preparation is cancelled")
-            state = self._get_state(db, job)
-            cached = find_valid_cached_explanation(
-                db, job.intervention_id, job.output_mode, self._data_dir
-            )
-            if cached is not None:
-                if state is None or state.status != "generating":
-                    self._set_ready_state(db, job, state, now)
-                db.commit()
-                return None
-            if state is not None and state.status == "generating":
-                return None
-            if state is not None and state.status == "cancelled":
-                raise PreparationCancelledError("Video preparation is cancelled")
-            if state is not None and state.status != "ready" and state.attempt_count >= self._max_attempts:
-                raise PreparationRetryExhaustedError(state.attempt_count)
-            if state is None:
-                state = self._new_state(job, status="pending")
-                db.add(state)
-                try:
-                    db.flush()
-                except IntegrityError:
-                    db.rollback()
-                    return None
-            lease_owner = f"{self._worker_id}:manual:{uuid.uuid4()}"
-            previous_attempts = state.attempt_count
-            next_attempt = 1 if state.status == "ready" else previous_attempts + 1
-            state_id = state.id
-            claimed = db.execute(
-                update(ExplanationPreparation)
-                .where(
-                    ExplanationPreparation.id == state_id,
-                    ExplanationPreparation.status.in_(("pending", "failed", "ready")),
-                    ExplanationPreparation.attempt_count == previous_attempts,
-                )
-                .values(
-                    status="generating",
-                    stage=STAGE_EXTRACTING,
-                    attempt_count=next_attempt,
-                    error_code=None,
-                    failure_reason=None,
-                    lease_owner=lease_owner,
-                    lease_started_at=now,
-                    deferred_until=None,
-                    updated_at=now,
-                    failed_at=None,
-                )
-            ).rowcount
-            db.commit()
-            if claimed != 1:
-                return None
-            return _Lease(lease_owner, str(state_id), next_attempt)
 
     def _wait_for_existing(self, job: PreparationJob) -> ExplanationArtifact:
         """Join the durable owner instead of duplicating work in another process."""
@@ -1313,6 +1382,8 @@ class ExplanationPreparationManager:
                     return cached
                 state = self._get_state(db, job)
                 if state is None or state.status == "failed":
+                    if state is not None and state.failure_reason == "PreparationCancelledError":
+                        raise PreparationCancelledError("Explanation generation was cancelled")
                     raise InvalidPreparedArtifactError(
                         "The joined explanation preparation did not complete"
                     )
@@ -1322,17 +1393,7 @@ class ExplanationPreparationManager:
                     state, _utcnow()
                 )
             if stale:
-                lease = self._begin_manual(job)
-                if lease is not None:
-                    with bind_trace(self._trace_context(job, lease)):
-                        self._activate(job, lease)
-                        try:
-                            snapshot = self._prepare_evidence(job, lease)
-                            result = self._generate(job, lease, snapshot)
-                            self._mark_ready(job, lease)
-                        finally:
-                            self._deactivate(job, lease)
-                        return result
+                self._recover_stale_preparations()
             if self._stop_event.wait(0.1):
                 break
         raise InvalidPreparedArtifactError("Timed out joining explanation preparation")
@@ -1364,14 +1425,29 @@ class ExplanationPreparationManager:
             (time.monotonic(), job.intervention_id, job.output_mode, STAGE_READY)
         )
         trace_stage("frontend_ready", "complete")
+        attempt = self.audio_streams.attempts.get(job.key)
+        if (attempt is not None and getattr(attempt, 'lease_owner', None) == lease.owner
+                and getattr(attempt, 'artifact', None) is not None):
+            artifact = attempt.artifact
+            attempt.complete(explanation_id=artifact.explanation_id,
+                             intervention_id=job.intervention_id,
+                             output_mode=job.output_mode,
+                             text_explanation=artifact.text_explanation,
+                             audio_url=f'/video/intervention/{job.intervention_id}/audio?output_mode={job.output_mode}')
 
     def _mark_failed(
         self, job: PreparationJob, exc: Exception, lease_owner: str
     ) -> None:
+        attempt = self.audio_streams.attempts.get(job.key)
+        if attempt is not None and getattr(attempt, 'lease_owner', None) == lease_owner:
+            attempt.fail(getattr(exc, 'code', 'tts_failed'))
         now = _utcnow()
         failure = getattr(exc, "failure", None)
         reason = failure.get("code") if isinstance(failure, dict) else None
-        reason = reason or type(exc).__name__
+        reason = reason or getattr(exc, 'code', None) or type(exc).__name__
+        if (attempt is not None and getattr(attempt, 'lease_owner', None) == lease_owner
+                and attempt.prefer_fallback):
+            reason = 'tts_stream_interrupted'
         with self._session_factory() as db:
             state = self._get_state(db, job)
             if state is None or state.status in {"ready", "cancelled"}:
@@ -1727,7 +1803,7 @@ class ExplanationPreparationManager:
                         status="pending",
                         stage=STAGE_PENDING,
                         error_code="interrupted",
-                        failure_reason=None,
+                        failure_reason=state.failure_reason if state.failure_reason == 'tts_stream_interrupted' else None,
                         lease_owner=None,
                         lease_started_at=None,
                         provider_wait_started_at=None,
@@ -1772,6 +1848,8 @@ class ExplanationPreparationManager:
             current = self._tracked_leases.get(lease.owner)
             if current is not None and current.lease == lease:
                 current.lost = True
+        if current is not None:
+            self._fail_audio_attempt(current.job, lease, 'superseded')
 
     def _local_lease_is_healthy(self, lease_owner: str) -> bool:
         with self._state_lock:
@@ -1783,6 +1861,17 @@ class ExplanationPreparationManager:
             for tracked in self._tracked_leases.values():
                 if tracked.job.video_id == video_id:
                     tracked.lost = True
+        with self.audio_streams.condition:
+            attempts = [attempt for key, attempt in self.audio_streams.attempts.items()
+                        if key[0] == video_id and not attempt.done]
+        for attempt in attempts:
+            attempt.fail('cancelled')
+
+    def _fail_audio_attempt(self, job, lease, code):
+        with self.audio_streams.condition:
+            attempt = self.audio_streams.attempts.get(job.key)
+        if attempt is not None and lease is not None and getattr(attempt, 'lease_owner', None) == lease.owner:
+            attempt.fail(code)
 
     def _invalidate_all_tracked_leases(self) -> None:
         with self._state_lock:
@@ -1905,6 +1994,7 @@ class ExplanationPreparationManager:
         with self._state_lock:
             if job.key in self._scheduled:
                 return False
+            self._text_completed_keys.discard(job.key)
             self._scheduled.add(job.key)
             queued_job = replace(job, enqueued_at=time.monotonic())
             self._queue.put(queued_job)

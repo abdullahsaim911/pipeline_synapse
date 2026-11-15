@@ -63,11 +63,17 @@ class StartupPreflightTests(unittest.TestCase):
 
         with (
             mock.patch.object(main, "require_current_schema"),
+            mock.patch("api.personal_storage.reconcile_media"),
+            mock.patch.object(main, "OnDemandExplanations"),
+            mock.patch.object(main, "VoiceWarmup"),
+            mock.patch.object(main, "TranscriptionWarmup"),
+            mock.patch.object(main, "shutdown_voice_runtime"),
             mock.patch.object(
                 main, "ExplanationPreparationManager", return_value=preparation,
             ),
             mock.patch.object(main, "ProcessingJobManager", return_value=processing),
             mock.patch.object(main, "ModalWarmup", return_value=warmup) as warmup_type,
+            mock.patch.object(main, "TTSWarmup") as tts_type,
         ):
             warmup_type.for_mistral.return_value = mistral_warmup
             asyncio.run(enter_lifespan())
@@ -77,6 +83,10 @@ class StartupPreflightTests(unittest.TestCase):
         mistral_warmup.request_stop.assert_called_once()
         mistral_warmup.stop.assert_called_once()
         self.assertIs(app.state.mistral_warmup, mistral_warmup)
+        tts_type.return_value.start.assert_called_once()
+        tts_type.return_value.request_stop.assert_called_once()
+        tts_type.return_value.stop.assert_called_once()
+        self.assertIs(app.state.tts_warmup, tts_type.return_value)
 
 
 if __name__ == "__main__":

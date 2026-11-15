@@ -34,6 +34,16 @@ def test_corrupt_manifest_is_a_cache_miss(tmp_path):
         assert not cache_is_current("Text", audio)
 
 
+def test_text_checkpoint_survives_failed_audio_without_reusing_stale_inputs(tmp_path):
+    from explanation_cache import write_text_checkpoint, text_cache_is_current
+    audio = tmp_path / 'brief.mp3'
+    write_text_checkpoint('Grounded text.', audio, input_hash='first')
+    assert text_cache_is_current('Grounded text.', audio, input_hash='first')
+    assert not text_cache_is_current('Grounded text.', audio, input_hash='second')
+    assert not text_cache_is_current('Changed text.', audio, input_hash='first')
+    assert not cache_is_current('Grounded text.', audio, input_hash='first')
+
+
 def test_provider_or_model_change_invalidates_completed_cache(tmp_path, monkeypatch):
     audio = tmp_path / "brief.mp3"
     audio.write_bytes(b"ID3audio")

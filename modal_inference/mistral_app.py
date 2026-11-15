@@ -26,7 +26,7 @@ weights = modal.Volume.from_name("synapse-hf-cache", create_if_missing=True)
 
 @app.function(
     image=image, gpu=["L4", "A10G"], min_containers=0, max_containers=1,
-    scaledown_window=300, timeout=900,
+    scaledown_window=420, timeout=900,
     volumes={"/root/.cache/huggingface": weights},
     secrets=[modal.Secret.from_name("synapse-modal-secret")],
 )

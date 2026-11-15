@@ -1,210 +1,153 @@
-"""Offline REL-011 retry classification and fallback tests."""
-
-import tempfile
-import unittest
-import os
-from pathlib import Path
-from unittest import mock
+"""CPU speech migration: real encoding, fake inference, cancellation and fallback."""
+import json
+import threading
+from types import SimpleNamespace
 
 import numpy as np
-import torch
+import pytest
 
-from tts_engine.exceptions import (
-    TTSEngineError,
-    TTSPermanentError,
-    TTSTimeoutError,
-)
-from tts_engine.providers import EdgeTTSProvider, SpeechT5Provider
-from tts_engine import tts_engine as tts_module
-from tts_engine.tts_engine import TTSEngine
+from tts_engine import TTSEngine, TTSEngineError
+from tts_engine.streaming import AudioAttempt, AudioStreams
 
 
-class FakeProvider:
-    def __init__(self, name, effects):
-        self._name = name
-        self.effects = list(effects)
-        self.calls = 0
+class Provider:
+    def __init__(self, effects, name='fake'):
+        self.effects, self.name, self.calls = effects, name, 0
 
-    @property
-    def name(self):
-        return self._name
-
-    def generate(self, _text, output_path):
-        effect = self.effects[min(self.calls, len(self.effects) - 1)]
+    def chunks(self, text, stop):
         self.calls += 1
-        if isinstance(effect, Exception):
-            raise effect
-        Path(output_path).write_bytes(b"ID3-mock")
-        return output_path
+        for effect in self.effects:
+            if isinstance(effect, Exception):
+                raise effect
+            yield effect
 
 
-class TTSReliabilityTests(unittest.TestCase):
-    def setUp(self):
-        self.temp = tempfile.TemporaryDirectory()
-        self.addCleanup(self.temp.cleanup)
-        self.output = str(Path(self.temp.name) / "audio.mp3")
-        previous = EdgeTTSProvider._available_voices
-        EdgeTTSProvider._available_voices = {
-            "en-US-AndrewMultilingualNeural", "en-US-AriaNeural"
-        }
-        self.addCleanup(
-            setattr, EdgeTTSProvider, "_available_voices", previous
-        )
-
-    def test_default_speecht5_fallback_uses_cpu(self):
-        with mock.patch.dict(os.environ, {"SYNAPSE_TTS_DEVICE": "cpu"}):
-            engine = TTSEngine()
-        fallback = next(provider for provider in engine._providers if provider.name.startswith("SpeechT5"))
-        self.assertEqual(fallback.device, "cpu")
-
-    @mock.patch("tts_engine.providers.edge_tts.Communicate")
-    @mock.patch("tts_engine.providers.time.sleep")
-    def test_transient_edge_failure_retries_once_then_succeeds(self, sleep, communicate):
-        provider = EdgeTTSProvider(retry_backoff_seconds=0.01)
-        provider._run_async = mock.Mock(side_effect=[TimeoutError(), None])
-        result = provider.generate("hello", self.output)
-        self.assertEqual(result, self.output)
-        self.assertEqual(communicate.call_count, 2)
-        sleep.assert_called_once_with(0.01)
-
-    @mock.patch("tts_engine.providers.edge_tts.Communicate")
-    @mock.patch("tts_engine.providers.time.sleep")
-    def test_permanent_edge_failure_is_not_retried(self, sleep, communicate):
-        provider = EdgeTTSProvider(retry_backoff_seconds=0.01)
-        communicate.side_effect = ValueError("invalid voice with secret payload")
-        with self.assertRaises(TTSPermanentError) as raised:
-            provider.generate("hello", self.output)
-        self.assertEqual(raised.exception.code, "tts_invalid_request")
-        self.assertNotIn("secret payload", str(raised.exception))
-        self.assertEqual(communicate.call_count, 1)
-        sleep.assert_not_called()
-
-    @mock.patch("tts_engine.providers.edge_tts.Communicate")
-    @mock.patch("tts_engine.providers.time.sleep")
-    def test_invalid_output_failure_is_not_retried(self, sleep, communicate):
-        provider = EdgeTTSProvider(retry_backoff_seconds=0.01)
-        provider._run_async = mock.Mock(
-            side_effect=PermissionError("private output path")
-        )
-        with self.assertRaises(TTSPermanentError) as raised:
-            provider.generate("hello", self.output)
-        self.assertEqual(raised.exception.code, "tts_invalid_output")
-        self.assertNotIn("private output path", str(raised.exception))
-        self.assertEqual(communicate.call_count, 1)
-        sleep.assert_not_called()
-
-    @mock.patch("tts_engine.providers.edge_tts.Communicate")
-    @mock.patch("tts_engine.providers.time.sleep")
-    def test_timeout_attempts_and_backoff_are_bounded(self, sleep, communicate):
-        provider = EdgeTTSProvider(max_attempts=2, retry_backoff_seconds=0.02)
-        provider._run_async = mock.Mock(side_effect=TimeoutError())
-        with self.assertRaises(TTSTimeoutError):
-            provider.generate("hello", self.output)
-        self.assertEqual(communicate.call_count, 2)
-        sleep.assert_called_once_with(0.02)
-
-    @mock.patch("tts_engine.providers.edge_tts.Communicate")
-    def test_unavailable_preferred_voice_uses_stable_edge_fallback(self, communicate):
-        EdgeTTSProvider._available_voices = {"en-US-AriaNeural"}
-        provider = EdgeTTSProvider(voice="en-US-MissingNeural")
-        provider._run_async = mock.Mock(return_value=None)
-        provider.generate("hello", self.output)
-        communicate.assert_called_once_with("hello", "en-US-AriaNeural")
-
-    def test_long_speecht5_text_is_split_without_dropping_words(self):
-        provider = SpeechT5Provider(device="cpu")
-
-        class Tokenizer:
-            def __call__(self, text, **_kwargs):
-                return {"input_ids": text.split()}
-
-        provider._processor = mock.Mock(tokenizer=Tokenizer())
-        text = " ".join(f"word-{index}" for index in range(1300))
-        chunks = provider._split_chunks(text)
-        self.assertGreater(len(chunks), 2)
-        self.assertEqual(" ".join(chunks), text)
-        self.assertTrue(all(provider._token_count(chunk) <= 540 for chunk in chunks))
-
-    def test_speecht5_joins_every_chunk_and_normalizes_once(self):
-        provider = SpeechT5Provider(device="cpu")
-        provider._load_models = mock.Mock()
-        provider._split_chunks = mock.Mock(return_value=["first", "second"])
-
-        class Batch(dict):
-            def to(self, _device):
-                return self
-
-        provider._processor = mock.Mock(return_value=Batch(input_ids=torch.tensor([[1]])))
-        provider._model = mock.Mock(generate=mock.Mock(return_value=torch.ones(1, 2)))
-        provider._vocoder = mock.Mock(side_effect=[torch.tensor([[2.0, -2.0]]), torch.tensor([[1.0]])])
-        provider._speaker_embeddings = torch.zeros(1, 512)
-        written = {}
-
-        def capture_write(path, audio, samplerate):
-            written.update(path=path, audio=audio, samplerate=samplerate)
-
-        with mock.patch.object(provider, "is_available", return_value=True), mock.patch(
-            "tts_engine.providers.sf.write", side_effect=capture_write
-        ):
-            provider.generate("long text", self.output)
-
-        expected_silence = int(16000 * provider.CHUNK_SILENCE_SECONDS)
-        self.assertEqual(len(written["audio"]), 2 + expected_silence + 1)
-        self.assertEqual(written["samplerate"], 16000)
-        self.assertAlmostEqual(float(np.max(np.abs(written["audio"]))), 0.9)
-
-    def test_shared_engine_is_reused_and_unloaded_only_at_shutdown(self):
-        previous = tts_module._shared_engine
-        tts_module._shared_engine = None
-        self.addCleanup(setattr, tts_module, "_shared_engine", previous)
-        fake = mock.Mock()
-        with mock.patch.object(tts_module, "TTSEngine", return_value=fake) as factory:
-            first = tts_module.get_shared_tts_engine()
-            second = tts_module.get_shared_tts_engine()
-            self.assertIs(first, second)
-            factory.assert_called_once_with()
-            fake.cleanup.assert_not_called()
-            tts_module.shutdown_shared_tts_engine()
-            fake.cleanup.assert_called_once_with()
-            self.assertIsNone(tts_module._shared_engine)
-
-    def test_permanent_primary_failure_uses_existing_fallback_once(self):
-        primary = FakeProvider("edge", [TTSPermanentError(
-            "rejected", code="tts_request_rejected"
-        )])
-        fallback = FakeProvider("speecht5", [self.output])
-        engine = TTSEngine.__new__(TTSEngine)
-        engine._providers = [primary, fallback]
-        engine._last_provider_used = None
-        result = engine.generate("hello", self.output)
-        self.assertEqual(result, self.output)
-        self.assertEqual((primary.calls, fallback.calls), (1, 1))
-        self.assertEqual(engine.last_provider_used, "speecht5")
-
-    def test_unexpected_programming_error_is_not_called_transient(self):
-        primary = FakeProvider("edge", [AttributeError("bug details")])
-        fallback = FakeProvider("speecht5", [self.output])
-        engine = TTSEngine.__new__(TTSEngine)
-        engine._providers = [primary, fallback]
-        engine._last_provider_used = None
-        with self.assertLogs("tts_engine.tts_engine", level="ERROR") as captured:
-            self.assertEqual(engine.generate("hello", self.output), self.output)
-        self.assertEqual((primary.calls, fallback.calls), (1, 1))
-        self.assertNotIn("bug details", "\n".join(captured.output))
-
-    def test_all_provider_failure_returns_sanitized_classification(self):
-        provider = FakeProvider("edge", [TTSPermanentError(
-            "credential payload", code="tts_request_rejected"
-        )])
-        engine = TTSEngine.__new__(TTSEngine)
-        engine._providers = [provider]
-        engine._last_provider_used = None
-        with self.assertRaises(TTSEngineError) as raised:
-            engine.generate("hello", self.output)
-        self.assertEqual(raised.exception.code, "tts_request_rejected")
-        self.assertNotIn("credential payload", str(raised.exception))
-        self.assertEqual(provider.calls, 1)
+def engine_with(*providers):
+    engine = TTSEngine()
+    engine._providers = list(providers)
+    return engine
 
 
-if __name__ == "__main__":
-    unittest.main()
+def test_default_chain_is_local_and_lazy():
+    engine = TTSEngine()
+    assert [p.name for p in engine._providers] == ['PocketTTS', 'Kokoro']
+    assert engine._providers[0].model is None
+    assert engine._providers[1].pipeline is None
+
+
+def test_before_first_audio_falls_back_and_writes_valid_mp3(tmp_path):
+    primary = Provider([RuntimeError('private detail')], 'primary')
+    fallback = Provider([np.ones(2400) * .1], 'fallback')
+    engine = engine_with(primary, fallback)
+    output = tmp_path / 'speech.tmp'
+    attempt = AudioAttempt(root=tmp_path)
+    with attempt.bind():
+        engine.generate('Hello.', output)
+    assert output.read_bytes().startswith((b'ID3', b'\xff'))
+    assert engine.last_provider_used == 'fallback'
+    assert primary.calls == fallback.calls == 1
+    events = [json.loads(line) for line in attempt.path.read_text().splitlines()]
+    assert events[0]['provider'] == 'fallback'
+    assert sum(len(__import__('base64').b64decode(e['pcm'])) // 2 for e in events[1:]) == 2400
+
+
+def test_midstream_failure_never_replays_fallback_or_overwrites_output(tmp_path):
+    primary = Provider([np.zeros(2400), RuntimeError('secret')])
+    fallback = Provider([np.zeros(2400)])
+    engine = engine_with(primary, fallback)
+    output = tmp_path / 'audio.mp3'
+    output.write_bytes(b'original')
+    attempt = AudioAttempt(root=tmp_path)
+    with attempt.bind(), pytest.raises(TTSEngineError) as error:
+        engine.generate('Hello.', output)
+    assert error.value.code == 'tts_stream_interrupted'
+    assert 'secret' not in str(error.value)
+    assert output.read_bytes() == b'original'
+    assert not fallback.calls
+    assert attempt.prefer_fallback
+    assert list(tmp_path.glob('*.mp3')) == [output]
+
+
+def test_explicit_retry_uses_kokoro_after_interruption(tmp_path):
+    engine = engine_with(Provider([RuntimeError()]), Provider([np.zeros(2400)], 'Kokoro'))
+    attempt = AudioAttempt(root=tmp_path, prefer_fallback=True)
+    with attempt.bind():
+        engine.generate('Retry.', tmp_path / 'retry.mp3')
+    assert engine._providers[0].calls == 0
+    assert engine.last_provider_used == 'Kokoro'
+
+
+def test_file_only_generation_can_fallback_after_partial_private_output(tmp_path):
+    primary = Provider([np.zeros(2400), RuntimeError('failed')])
+    fallback = Provider([np.zeros(2400)], 'Kokoro')
+    engine = engine_with(primary, fallback)
+    engine.generate('File only.', tmp_path / 'audio.mp3')
+    assert fallback.calls == 1
+    assert engine.last_provider_used == 'Kokoro'
+
+
+def test_ownership_loss_cannot_trigger_fallback(tmp_path):
+    def check():
+        raise RuntimeError('lease lost')
+    engine = engine_with(Provider([np.zeros(2400)]), Provider([np.zeros(2400)]))
+    with AudioAttempt(check, root=tmp_path).bind(), pytest.raises(RuntimeError, match='lease lost'):
+        engine.generate('Cancelled.', tmp_path / 'audio.mp3')
+    assert not (tmp_path / 'audio.mp3').exists()
+    assert not engine._providers[1].calls
+
+
+def test_nonfinite_and_empty_audio_fail_without_artifact(tmp_path):
+    for samples in (np.array([np.nan]), np.array([])):
+        with pytest.raises(TTSEngineError):
+            engine_with(Provider([samples])).generate('Test.', tmp_path / 'speech.mp3')
+        assert not (tmp_path / 'speech.mp3').exists()
+
+
+def test_spool_replays_from_beginning_to_late_subscribers(tmp_path):
+    attempt = AudioAttempt(root=tmp_path)
+    attempt.audio('Hello', 'PocketTTS', b'\0\0' * 120)
+    attempt.audio('Hello', 'PocketTTS', b'\0\0' * 120)
+    attempt.complete(explanation_id=1)
+    for _ in range(2):
+        events = [json.loads(line) for line in attempt.lines()]
+        assert [e['type'] for e in events] == ['start', 'audio', 'audio', 'complete']
+        assert [e['sample_offset'] for e in events if e['type'] == 'audio'] == [0, 120]
+
+
+def test_retry_retires_old_attempt_and_carries_fallback(monkeypatch, tmp_path):
+    import tts_engine.streaming as module
+    original = module.AudioAttempt
+    monkeypatch.setattr(module, 'AudioAttempt', lambda check, fallback: original(check, fallback, root=tmp_path))
+    streams = AudioStreams()
+    first = streams.begin(('video', 'point', 'brief'), lambda: None)
+    first.prefer_fallback = True
+    first.fail('tts_stream_interrupted')
+    second = streams.begin(('video', 'point', 'brief'), lambda: None)
+    assert second.id != first.id
+    assert second.prefer_fallback
+    assert not first.path.exists()
+    streams.close()
+
+
+def test_cancellation_publishes_error_not_completion(tmp_path):
+    cancelled = threading.Event()
+    def check():
+        if cancelled.is_set():
+            raise RuntimeError('cancelled')
+    attempt = AudioAttempt(check, root=tmp_path)
+    attempt.audio('Hello', 'PocketTTS', b'\0\0')
+    cancelled.set()
+    events = [json.loads(line) for line in attempt.lines()]
+    assert events[-1]['type'] == 'error'
+    assert events[-1]['code'] == 'cancelled'
+
+
+def test_shared_engine_reused_and_cleaned(monkeypatch):
+    from tts_engine import tts_engine as module
+    monkeypatch.setattr(module, '_shared_engine', None)
+    calls = []
+    fake = SimpleNamespace(cleanup=lambda: calls.append('cleaned'))
+    monkeypatch.setattr(module, 'TTSEngine', lambda: fake)
+    assert module.get_shared_tts_engine() is module.get_shared_tts_engine()
+    module.shutdown_shared_tts_engine()
+    assert calls == ['cleaned']

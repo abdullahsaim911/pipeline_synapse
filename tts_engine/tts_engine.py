@@ -1,241 +1,269 @@
-"""
-TTS Engine Module (M6)
-
-Converts finalized text scripts (from LLM Synthesizer) into high-fidelity MP3 audio files.
-Uses Microsoft Edge-TTS for enterprise-grade Neural Voices with SpeechT5 as local fallback.
-  
-
-"""
-
-import asyncio
-import edge_tts
-import os
+"""One shared CPU TTS engine, with PCM publication and MP3 encoding."""
 import logging
+import os
+from contextlib import contextmanager
+from contextvars import ContextVar
+from pathlib import Path
+import subprocess
+import tempfile
 import threading
-from typing import Optional, List
+import time
 
-# Import shared exceptions
-try:
-    from .exceptions import (
-        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
-    )
-except ImportError:
-    from exceptions import (
-        TTSEngineError, TTSConnectionError, TTSPermanentError, TTSTimeoutError,
-    )
+from .exceptions import TTSEngineError
+from .providers import PocketTTSProvider, KokoroProvider, SAMPLE_RATE
+from .streaming import current_stream
 
-# Handle both relative and absolute imports for providers
-try:
-    from .providers import EdgeTTSProvider, SpeechT5Provider, TTSProvider, get_provider
-except ImportError:
-    from providers import EdgeTTSProvider, SpeechT5Provider, TTSProvider, get_provider
-
-# Set up logging
 logger = logging.getLogger(__name__)
 
 
+_speech_priority = ContextVar('speech_priority', default=1)
+
+
+@contextmanager
+def speech_priority(priority):
+    """Bind 0=voice, 1=foreground, 2=background, or a callable returning one.
+
+    Callables are re-evaluated for queued admission, allowing live promotion.
+    They must be cheap and must not acquire manager locks (e.g. set membership).
+    """
+    if not callable(priority) and priority not in (0, 1, 2):
+        raise ValueError('Speech priority must be 0, 1 or 2')
+    token = _speech_priority.set(priority)
+    try:
+        yield
+    finally:
+        _speech_priority.reset(token)
+
+
+class _SpeechPriorityGate:
+    """Non-preemptive, shared admission with FIFO order within each priority."""
+
+    def __init__(self):
+        self._condition = threading.Condition()
+        self._active = False
+        self._waiters = []
+        self._sequence = 0
+
+    @staticmethod
+    def _rank(ticket):
+        sequence, priority = ticket
+        value = priority() if callable(priority) else priority
+        if value not in (0, 1, 2):
+            raise ValueError('Speech priority must be 0, 1 or 2')
+        return value, sequence
+
+    def acquire(self, blocking=True, timeout=-1, *, check=None):
+        if not blocking and timeout != -1:
+            raise ValueError("can't specify a timeout for a non-blocking call")
+        if timeout < 0 and timeout != -1:
+            raise ValueError('timeout value must be positive')
+        deadline = None if timeout == -1 else time.monotonic() + timeout
+        with self._condition:
+            ticket = (self._sequence, _speech_priority.get())
+            self._sequence += 1
+            self._waiters.append(ticket)
+        try:
+            while True:
+                # Ownership checks may perform I/O; do not hold the condition.
+                if check is not None:
+                    check()
+                with self._condition:
+                    if not self._active and ticket == min(self._waiters, key=self._rank):
+                        self._waiters.remove(ticket)
+                        self._active = True
+                        return True
+                    remaining = None if deadline is None else deadline - time.monotonic()
+                    if not blocking or (remaining is not None and remaining <= 0):
+                        return False
+                    # Cancellation and live priority changes have no notification.
+                    dynamic = any(callable(waiter[1]) for waiter in self._waiters)
+                    interval = .05 if check is not None or dynamic else None
+                    if remaining is not None:
+                        interval = remaining if interval is None else min(interval, remaining)
+                    self._condition.wait(interval)
+        finally:
+            with self._condition:
+                if ticket in self._waiters:
+                    self._waiters.remove(ticket)
+                    self._condition.notify_all()
+
+    def release(self):
+        with self._condition:
+            if not self._active:
+                raise RuntimeError('release unlocked lock')
+            self._active = False
+            self._condition.notify_all()
+
+    def locked(self):
+        with self._condition:
+            return self._active
+
+    def __enter__(self):
+        return self.acquire()
+
+    def __exit__(self, *exc):
+        self.release()
+
+    @contextmanager
+    def admission(self, check):
+        self.acquire(check=check)
+        try:
+            yield
+        finally:
+            self.release()
+
+
 class TTSEngine:
-    """
-    Text-to-Speech Engine with provider fallback.
+    DEFAULT_VOICE = 'alba'
+    _inference_lock = _SpeechPriorityGate()
 
-    Primary: Microsoft Edge-TTS (high quality, requires internet)
-    Fallback: Microsoft SpeechT5 (good quality, works offline)
-
-    Handles async/sync bridging to work seamlessly with synchronous pipelines.
-    """
-
-    # Default voice
-    DEFAULT_VOICE = "en-US-AndrewMultilingualNeural"
-
-    def __init__(
-        self,
-        voice: str = DEFAULT_VOICE,
-        fallback_enabled: bool = True,
-        preferred_provider: Optional[str] = None
-    ):
-        """
-        Initialize TTS Engine.
-
-        Args:
-            voice: Voice ID to use for Edge-TTS (default: en-US-AndrewMultilingualNeural)
-            fallback_enabled: Enable fallback to SpeechT5 if Edge-TTS fails (default: True)
-            preferred_provider: Force specific provider ('edge' or 'speecht5'), or None for auto
-        """
+    def __init__(self, voice=DEFAULT_VOICE, fallback_enabled=True, preferred_provider=None):
+        from .providers import get_provider
         self.voice = voice
         self.fallback_enabled = fallback_enabled
-        self.preferred_provider = preferred_provider
-
-        # Initialize providers
-        self._providers: List[TTSProvider] = []
-
-        if preferred_provider:
-            # Use only the preferred provider
-            self._providers.append(get_provider(preferred_provider, voice=voice))
-            logger.debug(f"[TTS Engine] Using preferred provider: {preferred_provider}")
-        else:
-            # Default: Edge-TTS first, then SpeechT5 if fallback enabled
-            self._providers.append(EdgeTTSProvider(voice=voice))
-            if fallback_enabled:
-                # Keep the fallback off the GPU. This avoids competing with
-                # VLM/Ollama allocations and makes it usable on CPU-only hosts.
-                self._providers.append(
-                    SpeechT5Provider(device=os.environ.get("SYNAPSE_TTS_DEVICE", "cpu"))
-                )
-                logger.debug("[TTS Engine] Initialized with Edge-TTS + SpeechT5 fallback")
-            else:
-                logger.debug("[TTS Engine] Initialized with Edge-TTS only (no fallback)")
-
-        # Track which provider was used for last generation
+        self._providers = ([get_provider(preferred_provider)] if preferred_provider else
+                           [PocketTTSProvider()] + ([KokoroProvider()] if fallback_enabled else []))
         self._last_provider_used = None
+        self._stop = threading.Event()
+        self._active_stop = None
 
-    def generate(self, text: str, output_path: str) -> str:
-        """
-        Converts text to audio using configured providers with fallback.
+    def warm(self, stop_event=None, admission_check=None):
+        """Load the primary speech model through the shared inference gate."""
+        def check():
+            if self._stop.is_set() or (stop_event is not None and stop_event.is_set()):
+                raise TTSEngineError('Speech warm-up was cancelled', code='tts_cancelled')
+            if admission_check is not None and not self.primary_loaded:
+                admission_check()
 
-        Args:
-            text: The synthesized script ready for audio
-            output_path: Full file path where audio should be saved
-
-        Returns:
-            Path to generated audio file
-
-        Raises:
-            TTSEngineError: If all providers fail
-        """
-        if not text or not text.strip():
-            logger.warning("[TTS Engine] Empty text provided, skipping generation")
-            return output_path
-
-        # Ensure output directory exists
-        output_dir = os.path.dirname(output_path)
-        if output_dir:  # Only create if there's a directory part
-            os.makedirs(output_dir, exist_ok=True)
-
-        last_error = None
-
-        for provider in self._providers:
-            try:
-                logger.debug(f"[TTS Engine] Trying provider: {provider.name}")
-                result = provider.generate(text, output_path)
-                self._last_provider_used = provider.name
-                logger.debug(f"[TTS Engine] Successfully generated with {provider.name}")
-                return result
-
-            except TTSEngineError as e:
-                logger.warning(
-                    "[TTS Engine] %s failed: code=%s retryable=%s",
-                    provider.name, e.code, e.retryable,
-                )
-                last_error = e
-                continue
-
-            except Exception as e:
-                logger.error(
-                    "[TTS Engine] %s raised an unexpected provider error: error_type=%s",
-                    provider.name, type(e).__name__,
-                )
-                last_error = TTSPermanentError(
-                    "TTS provider failed unexpectedly",
-                    code="tts_unexpected_provider_error",
-                )
-                continue
-
-        # All providers failed
-        code = getattr(last_error, "code", "tts_failed")
-        logger.error("All TTS providers failed: code=%s", code)
-        raise TTSEngineError("All TTS providers failed", code=code) from last_error
+        with speech_priority(2), self._inference_lock.admission(check):
+            check()
+            self._providers[0].warm()
+            check()
 
     @property
-    def last_provider_used(self) -> Optional[str]:
-        """Get the name of the provider used for the last generation."""
+    def primary_loaded(self):
+        return self._providers[0].loaded
+
+    def generate(self, text, output_path):
+        import numpy as np
+        import imageio_ffmpeg
+        if not text or not text.strip():
+            raise TTSEngineError('Speech text is empty', code='tts_empty_text')
+        output = Path(output_path)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        stream = current_stream.get()
+        def check():
+            if stream:
+                stream.check()
+            if self._stop.is_set():
+                raise TTSEngineError('TTS is shutting down', code='tts_cancelled')
+
+        with self._inference_lock.admission(check):
+            check()
+            providers = self._providers
+            if stream and stream.prefer_fallback and len(providers) > 1:
+                providers = providers[1:]
+            last = None
+            for provider in providers:
+                stop = threading.Event()
+                self._active_stop = stop
+                iterator = None
+                published = False
+                encoder = None
+                fd, temporary = tempfile.mkstemp(suffix='.mp3', dir=output.parent)
+                os.close(fd)
+                try:
+                    encoder = subprocess.Popen([
+                        imageio_ffmpeg.get_ffmpeg_exe(), '-hide_banner', '-loglevel', 'error',
+                        '-y', '-f', 's16le', '-ar', str(SAMPLE_RATE), '-ac', '1',
+                        '-i', 'pipe:0', '-c:a', 'libmp3lame', '-b:a', '96k', temporary,
+                    ], stdin=subprocess.PIPE, stdout=subprocess.DEVNULL,
+                        stderr=subprocess.DEVNULL, creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+                    samples = 0
+                    iterator = provider.chunks(text, stop)
+                    for chunk in iterator:
+                        check()
+                        if self._stop.is_set():
+                            raise TTSEngineError('TTS is shutting down', code='tts_cancelled')
+                        chunk = np.asarray(chunk, dtype=np.float32).reshape(-1)
+                        if not chunk.size:
+                            continue
+                        if not np.isfinite(chunk).all():
+                            raise TTSEngineError('Invalid speech samples', code='tts_invalid_audio')
+                        pcm = (np.clip(chunk, -1, 1) * 32767).astype('<i2').tobytes()
+                        for offset in range(0, len(pcm), 12000):
+                            check()
+                            part = pcm[offset:offset + 12000]
+                            encoder.stdin.write(part)
+                            if stream:
+                                stream.audio(text, provider.name, part)
+                                published = True
+                        samples += chunk.size
+                    if not samples:
+                        raise TTSEngineError('No speech was generated', code='tts_empty_audio')
+                    encoder.stdin.close()
+                    if encoder.wait(timeout=30) != 0:
+                        raise TTSEngineError('Audio encoding failed', code='tts_encoding_failed')
+                    check()
+                    if Path(temporary).stat().st_size < 4:
+                        raise TTSEngineError('Empty encoded audio', code='tts_invalid_audio')
+                    os.replace(temporary, output)
+                    self._last_provider_used = provider.name
+                    return str(output)
+                except Exception as exc:
+                    if stream:
+                        check()
+                    last = exc
+                    logger.warning('TTS provider failed: provider=%s error_type=%s', provider.name, type(exc).__name__)
+                    if published:
+                        if stream:
+                            stream.prefer_fallback = True
+                        raise TTSEngineError('Speech was interrupted; retry using fallback',
+                                             code='tts_stream_interrupted') from exc
+                finally:
+                    stop.set()
+                    if iterator is not None and hasattr(iterator, 'close'):
+                        try:
+                            iterator.close()
+                        except Exception as exc:
+                            logger.warning('Speech iterator cleanup failed: error_type=%s', type(exc).__name__)
+                    self._active_stop = None
+                    if encoder and encoder.poll() is None:
+                        encoder.kill()
+                        encoder.wait()
+                    if encoder and encoder.stdin and not encoder.stdin.closed:
+                        try:
+                            encoder.stdin.close()
+                        except OSError:
+                            pass  # A killed Windows encoder has already closed its pipe.
+                    Path(temporary).unlink(missing_ok=True)
+            raise TTSEngineError('Speech providers unavailable',
+                                 code=getattr(last, 'code', 'tts_unavailable')) from last
+
+    @property
+    def last_provider_used(self):
         return self._last_provider_used
 
-    def is_fallback_enabled(self) -> bool:
-        """Check if fallback is enabled."""
+    def is_fallback_enabled(self):
         return self.fallback_enabled
 
-    def cleanup(self) -> None:
-        """
-        Unload all TTS provider models and free memory.
-
-        Call this after all TTS generation is complete to ensure
-        SpeechT5 models are removed from GPU/CPU memory.
-        """
-        logger.debug("[TTS Engine] Cleaning up providers...")
-
-        for provider in self._providers:
+    def cleanup(self):
+        self._stop.set()
+        if self._active_stop is not None:
+            self._active_stop.set()
+        if self._inference_lock.acquire(timeout=1):
             try:
-                # SpeechT5Provider has explicit unload method
-                if hasattr(provider, 'unload_models'):
+                for provider in self._providers:
                     provider.unload_models()
-            except Exception as e:
-                logger.warning(
-                    "[TTS Engine] Provider cleanup failed: provider=%s error_type=%s",
-                    provider.name, type(e).__name__,
-                )
-
-        logger.debug("[TTS Engine] Cleanup complete")
-
-    @staticmethod
-    def _run_async(coro):
-        """Run coroutine, handling both async and sync contexts."""
-        try:
-            # Check if there's already a running event loop
-            loop = asyncio.get_running_loop()
-            # nest_asyncio allows run_until_complete on running loop
-            return loop.run_until_complete(coro)
-        except RuntimeError:
-            # No running loop, create a new one
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            try:
-                return loop.run_until_complete(coro)
             finally:
-                loop.close()
-
-    @staticmethod
-    def list_available_voices():
-        """List the currently advertised English Edge voices."""
-        voices = TTSEngine._run_async(edge_tts.list_voices())
-        english_voices = [
-            voice for voice in voices if voice["Locale"].startswith("en-")
-        ]
-        print("\n=== Available English Voices ===\n")
-        for voice in english_voices:
-            print(f"Name: {voice['Name']}")
-            print(f"  ID: {voice['ShortName']}")
-            print(f"  Gender: {voice['Gender']}")
-            print(f"  Locale: {voice['Locale']}")
-
-    def list_available_providers(self):
-        """List installed TTS providers and the current fallback policy."""
-        try:
-            import edge_tts as _edge_tts  # noqa: F401
-            edge_available = True
-        except ImportError:
-            edge_available = False
-        print("\n=== Available TTS Providers ===\n")
-        print(f"Edge-TTS: {'[OK] Available' if edge_available else '[X] Not installed'}")
-
-        try:
-            from transformers import SpeechT5Processor as _processor  # noqa: F401
-            import soundfile as _soundfile  # noqa: F401
-            speech_t5_available = True
-        except ImportError:
-            speech_t5_available = False
-        print(f"SpeechT5: {'[OK] Available' if speech_t5_available else '[X] Not installed'}")
-        print("\nCurrent Configuration:")
-        print("  Primary: Edge-TTS")
-        print(f"  Fallback enabled: {self.fallback_enabled}")
-        print(f"  Last provider used: {self._last_provider_used or 'None'}")
+                self._inference_lock.release()
 
 
 _shared_engine = None
 _shared_engine_lock = threading.Lock()
 
 
-def get_shared_tts_engine() -> TTSEngine:
-    """Return one process-wide engine so SpeechT5 weights remain resident."""
+def get_shared_tts_engine():
     global _shared_engine
     with _shared_engine_lock:
         if _shared_engine is None:
@@ -243,31 +271,9 @@ def get_shared_tts_engine() -> TTSEngine:
         return _shared_engine
 
 
-def shutdown_shared_tts_engine() -> None:
+def shutdown_shared_tts_engine():
     global _shared_engine
     with _shared_engine_lock:
         engine, _shared_engine = _shared_engine, None
-    if engine is not None:
+    if engine:
         engine.cleanup()
-
-
-# Example usage
-if __name__ == "__main__":
-    # Test basic generation (backward compatible - uses Edge-TTS)
-    print("=== Test 1: Default (Edge-TTS with fallback) ===")
-    engine = TTSEngine()
-
-    test_path = engine.generate(
-        "The graph shows velocity increasing over time.",
-        "test_output.mp3"
-    )
-
-    print(f"Test audio saved to: {test_path}")
-    print(f"File exists: {os.path.exists(test_path)}")
-    print(f"Provider used: {engine.last_provider_used}")
-
-    # List available providers
-    engine.list_available_providers()
-
-    # List available voices
-    # TTSEngine.list_available_voices()

@@ -21,7 +21,7 @@ from fastapi import (
     Request,
     Response,
 )
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy.orm import Session, sessionmaker
 
 # Add project root to path for module imports
@@ -681,6 +681,58 @@ def generate_explanation(
 # ============================================================================
 # Persistent Explanation Preparation Status and Retry
 # ============================================================================
+
+@router.post('/intervention/explain/stream', dependencies=[Depends(enforce_allowed_origin)])
+def stream_explanation(
+    body: GenerateExplanationRequest,
+    preparation_manager=Depends(get_preparation_manager),
+):
+    """Subscribe to the admitted attempt; status and persistence remain manager-owned."""
+    import time
+    from tts_engine.streaming import event_line
+    manager = preparation_manager
+    if manager is None:
+        raise HTTPException(503, 'Explanation preparation is unavailable.')
+    try:
+        admitted = manager.request(body.video_id, body.intervention_id, body.output_mode)
+    except ExplanationTargetNotFoundError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    except ProcessingJobBusyError as exc:
+        raise HTTPException(409, detail={'code': 'video_processing_busy'}) from exc
+    key = (body.video_id, body.intervention_id, body.output_mode)
+
+    def deliver():
+        if admitted.status == 'ready':
+            yield event_line('complete', cached=True)
+            return
+        if admitted.status in ('failed', 'cancelled'):
+            yield event_line('error', code=admitted.error_code or admitted.status, retryable=admitted.status == 'failed')
+            return
+        deadline = time.monotonic() + 1800
+        while time.monotonic() < deadline and not manager.audio_streams.closed:
+            attempt = manager.get_stream_attempt(key)
+            if attempt is not None:
+                break
+            with manager.audio_streams.condition:
+                manager.audio_streams.condition.wait(timeout=1)
+            statuses = manager.get_status(body.video_id, body.output_mode)
+            state = next((item for item in statuses if item.intervention_id == body.intervention_id), None)
+            if state and state.status in ('ready', 'failed', 'cancelled'):
+                yield event_line('complete', cached=True) if state.status == 'ready' else event_line(
+                    'error', code=state.error_code or state.status, retryable=state.status == 'failed')
+                return
+            yield event_line('keepalive')
+        else:
+            yield event_line('error', code='stream_unavailable', retryable=True)
+            return
+        try:
+            yield from attempt.lines()
+        except OSError:
+            yield event_line('error', code='stream_unavailable', retryable=True)
+
+    return StreamingResponse(deliver(), media_type='application/x-ndjson',
+                             headers={'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no'})
+
 
 @router.get(
     "/{video_id}/explanations/status",

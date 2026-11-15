@@ -34,11 +34,11 @@ _STAGE_TAGS = {
     "vlm_queue": "VLM", "modal_warmup": "VLM", "modal_request": "VLM",
     "modal_attempt": "VLM", "vlm_inference": "VLM", "vlm_json_parsing": "VLM",
     "snapshot_validation": "VLM", "snapshot_persistence": "VLM",
-    "evidence_preparation": "VLM", "explanation_queue": "JOB",
+    "evidence_preparation": "VLM", "explanation_queue": "LLM", "tts_queue": "TTS",
     "preparation_state": "JOB", "explanation_reconciliation": "RECON",
     "ollama_startup": "OLLAMA", "ollama_model": "OLLAMA", "ollama_readiness": "OLLAMA",
     "mistral_generation": "LLM", "mistral_model": "LLM", "mistral_attempt": "LLM",
-    "explanation_text_persistence": "LLM", "tts_creation": "TTS",
+    "explanation_text_persistence": "LLM", "tts_creation": "TTS", "tts_first_audio": "TTS",
     "explanation_persistence": "DB", "frontend_ready": "READY",
 }
 _SYNAPSE_NAMESPACES = (
