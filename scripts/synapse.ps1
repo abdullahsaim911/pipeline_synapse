@@ -258,7 +258,7 @@ if ($Command -eq "setup") {
     Remove-Item Env:TRANSFORMERS_OFFLINE -ErrorAction SilentlyContinue
     & (Join-Path $RuntimeRoot "api\Scripts\python.exe") `
       (Join-Path $RepoRoot "scripts\cache_models.py") api
-    Assert-NativeSuccess "Caching Pocket TTS and Kokoro models"
+    Assert-NativeSuccess "Caching Pocket TTS, Kokoro and Piper models"
     & (Join-Path $RuntimeRoot "voice\Scripts\python.exe") `
       (Join-Path $RepoRoot "scripts\cache_models.py") voice
     Assert-NativeSuccess "Caching voice models"
