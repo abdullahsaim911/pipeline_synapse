@@ -42,6 +42,18 @@ _ORDINALS = {"first": 1, "second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixt
 _PAIRS = {("next_moment", "previous_moment"), ("quiz_next", "quiz_previous"), ("next_saved_page", "previous_saved_page")}
 _BACK_WORDS = {"previous", "back", "before", "earlier", "prior", "preceding", "last", "backward", "backwards", "behind"}
 _FORWARD_WORDS = {"next", "following", "forward", "after", "ahead", "later", "onward", "upcoming"}
+# "I want to practise this lecture": the embedding hears "this lecture" louder than "practise" and lands on the
+# timeline ("give me an overview of this lecture"). A practice word settles it for start_practice the same way a
+# direction word settles next/previous, unless the sentence names the timeline or is a question.
+_PRACTICE_WORDS = {"practice", "practise", "practising", "practicing", "quiz", "quizzes"}
+_PRACTICE_RIVALS_KEPT = {"start_practice", "ask_question", "app_question"}
+# On the Library, "open explanation one" sat between open_item and play_item_audio (0.63 vs 0.67). Playing is
+# only meant when the sentence says so; otherwise opening (the safer, silent choice) wins the close call.
+_AUDIO_WORDS = {"play", "playing", "listen", "hear", "audio", "aloud", "loud", "spoken", "sound"}
+# On the lecture screen "open my notes" (or a mishearing like "open my wise notes") landed on toggle_voice_note
+# and started a recording. Going somewhere with notes means the notes screen; recording needs a recording word.
+_NOTES_NAV_WORDS = {"open", "show", "go", "see", "view", "screen", "page", "list", "where", "visit"}
+_RECORD_WORDS = {"record", "start", "stop", "save", "dictate", "take", "leave", "say", "begin", "finish", "end"}
 _LETTERS = {"a": 1, "b": 2, "c": 3, "d": 4, "e": 5, "f": 6}
 _LETTER_LEADS = {"answer", "option", "choice", "letter", "choose", "pick", "select", "is"}
 _ENUM_WORDS = {
@@ -359,7 +371,17 @@ class Interpreter:
             if wants_back != wants_forward:
                 win, lose = (backward, forward) if wants_back else (forward, backward)
                 scores[win] = max(scores.get(win, 0.0), scores.get(lose, 0.0) + 0.02)
-        ranked = sorted(((a, s) for a, s in scores.items() if a in allowed), key=lambda x: -x[1])
+        if ("start_practice" in allowed and words & _PRACTICE_WORDS and "timeline" not in words
+                and best_now not in _PRACTICE_RIVALS_KEPT and not _APP_QUESTION_FORM.search(text.lower())):
+            scores["start_practice"] = max(scores.get("start_practice", 0.0), scores[best_now] + 0.06)
+        if (best_now in ("open_item", "play_item_audio") and {"open_item", "play_item_audio"} <= allowed
+                and abs(scores["open_item"] - scores["play_item_audio"]) < 0.10):
+            win, lose = ("play_item_audio", "open_item") if words & _AUDIO_WORDS else ("open_item", "play_item_audio")
+            scores[win] = max(scores[win], scores[lose] + 0.06)
+        if (best_now in ("toggle_voice_note", "navigate_notes") and {"toggle_voice_note", "navigate_notes"} <= allowed
+                and words & {"note", "notes"} and words & _NOTES_NAV_WORDS and not words & _RECORD_WORDS):
+            scores["navigate_notes"] = max(scores["navigate_notes"], scores["toggle_voice_note"] + 0.06)
+        ranked =sorted(((a, s) for a, s in scores.items() if a in allowed), key=lambda x: -x[1])
         # A number or name in the sentence is evidence for the actions that need one ("moment 3" -> go to moment).
         # The few best are nudged: up when their required values are all present, down when one is missing.
         nudged = []

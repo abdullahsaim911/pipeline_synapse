@@ -33,7 +33,12 @@
       "take me to my audio notes",
       "go to the recordings I made",
       "where are my spoken notes",
-      "notes screen"
+      "notes screen",
+      "open my notes",
+      "go to my notes",
+      "show me my notes",
+      "take me to the voice notes screen",
+      "I want to see my voice notes"
     ],
     "open_timeline": [
       "show the timeline",
@@ -49,7 +54,12 @@
       "I want to practise what I learned",
       "open the questions for this lecture",
       "test my understanding",
-      "can I take a quiz"
+      "can I take a quiz",
+      "I want to practise this lecture",
+      "practice this lecture",
+      "let me practise on this lecture",
+      "take me to practice",
+      "I would like to practice now"
     ],
     "set_theme": [
       "switch to night mode",
@@ -322,7 +332,12 @@
       "open the latest note",
       "go into number five",
       "let me read the third bookmark",
-      "open bookmark number one"
+      "open bookmark number one",
+      "go to the explanation screen",
+      "open the explanation",
+      "open explanation one",
+      "show me the second explanation",
+      "take me to the explanation of item three"
     ],
     "play_item_audio": [
       "play the audio of the first item",
