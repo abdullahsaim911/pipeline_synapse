@@ -98,6 +98,24 @@ class PersonalStorageTests(unittest.TestCase):
         # New client simulates reopening after frontend restart.
         self.assertEqual(len(self.client.get("/me/voice-notes").json()), 1)
 
+    def test_library_repairs_existing_placeholder_title_without_reprocessing(self):
+        video_id = "abcdefghijk"
+        with self.Session() as db:
+            db.get(Video, video_id).title = f"Video {video_id}"
+            db.commit()
+        self.assertEqual(self.client.put(f"/me/saved-library/{video_id}").status_code, 200)
+        folder = self.root / video_id
+        folder.mkdir()
+        (folder / "video_meta.json").write_text(
+            json.dumps({"title": "Conservation of energy"}), encoding="utf-8")
+        response = self.client.get("/me/saved-library")
+        self.assertEqual(response.status_code, 200, response.text)
+        lecture = response.json()[0]
+        self.assertEqual(lecture["videoTitle"], "Conservation of energy")
+        # Existing explanation snapshots remain intact, including their old metadata.
+        self.assertTrue(lecture["explanations"])
+        self.assertEqual(lecture["explanations"][0]["videoTitle"], f"Video {video_id}")
+
     def test_note_without_context_and_invalid_uploads(self):
         self.assertEqual(self.upload(seconds=400).json()["explanations"], [])
         self.assertEqual(self.upload("invalid", data=b"fake audio").status_code, 422)

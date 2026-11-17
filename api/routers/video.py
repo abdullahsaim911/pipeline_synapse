@@ -30,6 +30,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 from api.database import get_db
+from api.video_metadata import resolve_video_title
 from api.explanation_service import (
     ExplanationTargetNotFoundError,
     find_valid_cached_explanation,
@@ -303,7 +304,7 @@ async def get_video_metadata(
     if video:
         return VideoMetaResponse(
             video_id=video.id,
-            title=video.title,
+            title=resolve_video_title(video.id, video.title, video_dir),
             channel_name=channel_name,
             duration_seconds=video.duration_seconds,
             duration_formatted=video.duration_formatted,

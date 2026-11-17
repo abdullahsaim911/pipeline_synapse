@@ -133,7 +133,8 @@ plans/
 frame-extraction/
 misc/
 data/
-
+/.agents/
+/.codex/
 
 /synapse-web/
 /Synapse-References/
@@ -143,6 +144,8 @@ data/
 /backups/
 
 !docs/tts-streaming.md
+!docs/synapse-screen-reader-and-voice-guide-hi.md
+!docs/synapse-screen-reader-and-voice-guide-en.md
 
 !tests/test_speech_priority.py
 

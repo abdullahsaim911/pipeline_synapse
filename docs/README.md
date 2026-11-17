@@ -4,6 +4,8 @@ Welcome to the Synapse project documentation. This index provides an overview of
 
 ## Quick Start
 
+- **[Screen Reader and Voice Control User Guide — English](synapse-screen-reader-and-voice-guide-en.md)** - Detailed NVDA, keyboard, and voice workflows for lectures, explanations, notes, Library, and quizzes.
+- **[स्क्रीन रीडर और वॉयस कंट्रोल की हिंदी यूज़र गाइड](synapse-screen-reader-and-voice-guide-hi.md)** - NVDA, keyboard shortcuts, voice commands, lectures, explanations, notes, Library और quiz चलाने के चरण।
 - **[Complete Pipeline Documentation](SYNAPSE_COMPLETE_PIPELINE_DOCUMENTATION.md)** - Start here for a comprehensive overview of the entire Synapse pipeline, including problem statement, solution architecture, installation, usage guide, and troubleshooting.
 
 ## Module Documentation

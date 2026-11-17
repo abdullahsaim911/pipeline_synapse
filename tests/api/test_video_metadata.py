@@ -78,6 +78,19 @@ class VideoMetadataEndpointTests(unittest.TestCase):
         self.assertIsNone(response.json()["title"])
         self.assertIsNone(response.json()["thumbnail_url"])
 
+    def test_repairs_placeholder_title_from_extracted_metadata(self):
+        with self.Session() as db:
+            db.add(Video(id=VIDEO_ID, title=f"Video {VIDEO_ID}",
+                         source_url=f"https://www.youtube.com/watch?v={VIDEO_ID}"))
+            db.commit()
+        video_dir = os.path.join(self.temp.name, VIDEO_ID)
+        os.makedirs(video_dir)
+        with open(os.path.join(video_dir, "video_meta.json"), "w", encoding="utf-8") as handle:
+            json.dump({"title": "But what is a neural network?"}, handle)
+        response = self.client.get(f"/video/meta/{VIDEO_ID}")
+        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.json()["title"], "But what is a neural network?")
+
     def test_rejects_invalid_video_ids(self):
         response = self.client.get("/video/meta/not-valid")
         self.assertEqual(response.status_code, 422)

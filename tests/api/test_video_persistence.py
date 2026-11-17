@@ -1,5 +1,6 @@
 """Transactional persistence and complete intervention retrieval tests."""
 
+import json
 import os
 import tempfile
 import unittest
@@ -134,6 +135,15 @@ class VideoPersistenceTests(unittest.TestCase):
         self.assertEqual([(row.start_time, row.end_time) for row in transcripts], [(0.0, 4.0), (5.0, 8.0)])
         self.assertEqual(loaded.source, "database")
         self.assertEqual([segment.text for segment in loaded.segments], ["First concept", "Second concept"])
+
+    def test_processing_saves_extracted_title_instead_of_transcript_placeholder(self):
+        self.result["title"] = f"Video {VIDEO_ID}"
+        with open(os.path.join(self.video_dir, "video_meta.json"), "w", encoding="utf-8") as handle:
+            json.dump({"title": "Conservation of energy"}, handle)
+        response = self.process()
+        self.assertEqual(response.status_code, 200, response.text)
+        with self.Session() as db:
+            self.assertEqual(db.get(Video, VIDEO_ID).title, "Conservation of energy")
 
     def test_retrieval_includes_unexplained_interventions_in_timestamp_order(self):
         self.assertEqual(self.process().status_code, 200)

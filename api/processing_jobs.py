@@ -21,6 +21,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 
 from api.database import PROJECT_ROOT
+from api.video_metadata import resolve_video_title
 from api.models import (
     Explanation,
     ExplanationPreparation,
@@ -191,7 +192,10 @@ def persist_processing_result(
 
         db.add(Video(
             id=video_id,
-            title=result.get("title") or f"Video {video_id}",
+            title=resolve_video_title(
+                video_id, result.get("title"),
+                result.get("video_dir") or PROJECT_ROOT / "data" / video_id,
+            ),
             source_url=source_url,
             duration_seconds=result.get("duration_seconds"),
             duration_formatted=result.get("duration_formatted"),

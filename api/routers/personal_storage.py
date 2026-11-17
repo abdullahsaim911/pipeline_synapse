@@ -18,6 +18,7 @@ from api.personal_storage import (MAX_RECORDING_BYTES, capture_lecture, drain_de
     explanation_response, media_path, publish, snapshot, validate_recording)
 from api.routers.learning_history import get_local_development_user
 from api.security import enforce_allowed_origin
+from api.video_metadata import resolve_video_title
 
 
 def local_transport(request: Request):
@@ -88,7 +89,9 @@ def library(db: Session = Depends(get_db), user: User = Depends(get_local_develo
             SavedExplanation.created_at.desc(), SavedExplanation.id).all()
         metadata = json.loads(item.lecture_snapshot) if item.lecture_snapshot else {}
         if video:
-            metadata = {"videoId": video.id, "videoTitle": video.title, "videoUrl": video.source_url, "videoThumbnail": video.thumbnail_url}
+            metadata = {"videoId": video.id,
+                        "videoTitle": resolve_video_title(video.id, video.title, media_path(video.id)),
+                        "videoUrl": video.source_url, "videoThumbnail": video.thumbnail_url}
             item.lecture_snapshot = json.dumps(metadata)
         result.append({**metadata, "videoId": item.video_id,
                        "savedAt": int(item.added_at.replace(tzinfo=timezone.utc).timestamp() * 1000),
