@@ -67,6 +67,8 @@ _ENUM_WORDS = {
                              "practice": ["practice", "practise", "practising", "practicing"]},
     ("change_text_size", "change"): {"larger": ["bigger", "larger", "increase", "enlarge", "big", "large"],
                                      "smaller": ["smaller", "reduce", "shrink", "decrease", "small"]},
+    ("change_lecture_volume", "direction"): {"louder": ["louder", "up", "raise", "increase", "higher", "quiet", "low"],
+                                             "quieter": ["quieter", "down", "lower", "decrease", "softer", "reduce", "loud"]},
     ("change_listening_speed", "direction"): {"faster": ["faster", "quicker", "quick", "speed", "fast", "increase"],
                                               "slower": ["slower", "slow", "decrease"]},
     ("filter_moments", "category"): {
@@ -199,6 +201,18 @@ def extract_args(action_id: str, text: str, catalog: ActionCatalog) -> dict:
                 ordinal = 1  # lists are newest first
             if ordinal or numbers:
                 args["index"] = ordinal or numbers[0]
+        elif name == "seconds" and action_id == "seek_to_time":
+            numbers = _numbers(tokens)
+            minutes = "minute" in tokens or "minutes" in tokens
+            hours = "hour" in tokens or "hours" in tokens
+            if hours and numbers:
+                args["seconds"] = numbers[0] * 3600 + (numbers[1] * 60 if len(numbers) > 1 else 0)
+            elif minutes and numbers:
+                args["seconds"] = numbers[0] * 60 + (numbers[1] if len(numbers) > 1 else 0)
+            elif len(numbers) >= 2:
+                args["seconds"] = numbers[0] * 60 + numbers[1]  # "3:45"
+            elif numbers:
+                args["seconds"] = numbers[0]
         elif name == "seconds":
             numbers = _numbers(tokens)
             minutes = "minute" in tokens or "minutes" in tokens

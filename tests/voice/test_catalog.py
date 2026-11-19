@@ -195,3 +195,18 @@ def test_frontend_copy_matches_the_catalog(catalog):
     generated = os.path.join(web, "src", "voice", "actions.generated.js")
     with open(generated, encoding="utf-8", newline="") as f:
         assert f.read() == catalog.to_frontend_js()
+
+
+@pytest.mark.parametrize("action,text,expected", [
+    ("seek_to_time", "go to five minutes thirty seconds", {"seconds": 330}),
+    ("seek_to_time", "take me to 3:45 in the lecture", {"seconds": 225}),
+    ("seek_to_time", "jump to minute ten", {"seconds": 600}),
+    ("seek_to_time", "seek to ninety seconds", {"seconds": 90}),
+    ("change_lecture_volume", "the video is too quiet, turn it up", {"direction": "louder"}),
+    ("change_lecture_volume", "too loud, turn it down", {"direction": "quieter"}),
+])
+def test_time_and_volume_arguments_are_extracted(catalog, action, text, expected):
+    from voice.interpret import extract_args
+    args = extract_args(action, text, catalog)
+    assert args == expected
+    assert catalog.validate_args(action, args) == expected

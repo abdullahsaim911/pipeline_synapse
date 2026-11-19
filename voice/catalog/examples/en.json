@@ -829,6 +829,22 @@
       "help me understand this",
       "I need an explanation",
       "explain in detail"
+    ],
+    "seek_to_time": [
+      "go to five minutes thirty seconds",
+      "jump to minute ten",
+      "move the video to two minutes",
+      "take me to 3:45 in the lecture",
+      "go to the one minute mark",
+      "seek to ninety seconds"
+    ],
+    "change_lecture_volume": [
+      "turn the lecture volume up",
+      "make the video louder",
+      "lower the lecture volume",
+      "the video is too quiet, turn it up",
+      "make the lecture quieter",
+      "turn the video down"
     ]
   }
 }

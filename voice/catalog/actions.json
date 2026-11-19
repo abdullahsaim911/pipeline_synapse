@@ -262,6 +262,46 @@
       "binding_status": "wrapper"
     },
     {
+      "id": "seek_to_time",
+      "category": "lecture",
+      "description": "Jump the lecture video to a specific time, such as 5 minutes 30 seconds.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "seconds": {
+          "type": "int",
+          "min": 0,
+          "max": 86400,
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.seekLectureTo(seconds)",
+      "binding_status": "wrapper"
+    },
+    {
+      "id": "change_lecture_volume",
+      "category": "lecture",
+      "description": "Make the lecture video louder or quieter.",
+      "screens": [
+        "explanation"
+      ],
+      "params": {
+        "direction": {
+          "type": "enum",
+          "values": [
+            "louder",
+            "quieter"
+          ],
+          "required": true
+        }
+      },
+      "risk": "low",
+      "binding": "Explanation.stepLectureVolume(+10 or -10)",
+      "binding_status": "wrapper"
+    },
+    {
       "id": "play_explanation",
       "category": "lecture",
       "description": "Listen to the spoken explanation of the current moment.",
